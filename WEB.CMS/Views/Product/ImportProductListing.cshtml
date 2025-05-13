@@ -1,0 +1,94 @@
+﻿@{
+    Layout = null;
+}
+@using Entities.ViewModels.Products
+@model List<ProductExcelUploadModel>
+
+@if (Model != null && Model.Any())
+{
+    var ready_checked = false;
+    if (ViewBag.CheckedAll != null) ready_checked = (bool)ViewBag.CheckedAll;
+    <div class="green p-3 rounded mb20" style="padding:0!important;">
+      Thông tin sản phẩm trong file đăng tải
+      <br />
+      (Sau khi xem và xác nhận thông tin là đúng, vui lòng nhấn nút [Đăng tải sản phẩm] để lưu sản phẩm vào hệ thống)
+    </div>
+    <div class="table-responsive table-default table-gray table-modal mb20" style="max-height:500px;">
+        <table class="table table-nowrap">
+            <thead>
+                <tr>
+                    <th>Ngành hàng	</th>
+                    <th>Tên sản phẩm	</th>
+                    <th>Mô tả sản phẩm	</th>
+                    <th>SKU sản phẩm	</th>
+                    <th>Mã sản phẩm	</th>
+                    <th>Tên nhóm phân loại hàng 1	</th>
+                    <th>Tên phân loại hàng cho nhóm phân loại hàng 1	</th>
+                    <th>Hình ảnh mỗi phân loại	</th>
+                    <th>Tên nhóm phân loại hàng 2	</th>
+                    <th>Tên phân loại hàng cho nhóm phân loại hàng 2	</th>
+                    <th>SKU phân loại	</th>
+                    <th>Giá nhập	</th>
+                    <th>Lợi nhuận	</th>
+                    <th>Giá bán	</th>
+                    <th>Kho hàng	</th>
+                    <th>Ảnh bìa	</th>
+                    <th>Video sản phẩm (Nếu có)	</th>
+                    <th>Hình ảnh mẫu 1	</th>
+                    <th>Hình ảnh mẫu 2	</th>
+                    <th>Hình ảnh mẫu 3	</th>
+                    <th>Hình ảnh mẫu 4	</th>
+                    <th>Hình ảnh mẫu 5	</th>
+                    <th>Hình ảnh mẫu 6	</th>
+                    <th>Hình ảnh mẫu 7	</th>
+                    <th>Hình ảnh mẫu 8	</th>
+                    <th>Cân nặng (grams)	</th>
+                    <th>Chiều dài (cm)	</th>
+                    <th>Chiều rộng (cm)	</th>
+                    <th>Chiều cao (cm)	</th>
+                    <th>Thương hiệu</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="group_product_id">@item.group_product_id</td>
+                        <td class="name">@item.name</td>
+                        <td class="description">@item.description</td>
+                        <td class="sku">@item.sku</td>
+                        <td class="product_code">@item.product_code</td>
+                        <td class="attribute_1_name">@item.attribute_1_name</td>
+                        <td class="variation_1_name">@item.variation_1_name</td>
+                        <td class="variation_images">@item.variation_images</td>
+                        <td class="attribute_2_name">@item.attribute_2_name</td>
+                        <td class="variation_2_name">@item.variation_2_name</td>
+                        <td class="variation_sku">@item.variation_sku</td>
+                        <td class="price">@item.price</td>
+                        <td class="profit">@item.profit</td>
+                        <td class="amount">@item.amount</td>
+                        <td class="stock">@item.stock</td>
+                        <td class="avatar">@item.avatar</td>
+                        <td class="video">@item.video</td>
+                        <td class="image_1">@item.image_1</td>
+                        <td class="image_2">@item.image_2</td>
+                        <td class="image_3">@item.image_3</td>
+                        <td class="image_4">@item.image_4</td>
+                        <td class="image_5">@item.image_5</td>
+                        <td class="image_6">@item.image_6</td>
+                        <td class="image_7">@item.image_7</td>
+                        <td class="image_8">@item.image_8</td>
+                        <td class="weight">@item.weight</td>
+                        <td class="width">@item.width</td>
+                        <td class="height">@item.height</td>
+                        <td class="depth">@item.depth</td>
+                        <td class="brand">@item.brand</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="text-right">Tổng cộng:  @Model.Count bản ghi </div>
+}

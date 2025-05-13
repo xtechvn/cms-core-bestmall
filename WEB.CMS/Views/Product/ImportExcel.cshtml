@@ -1,0 +1,49 @@
+﻿@{
+    Layout = null;
+}
+<ol class="breadcrumb">
+    <li class="breadcrumb-item product-mass-upload-breadcumb-step1" style="font-weight:bold;"><a href="javascript:;">Tải tệp lên</a></li>
+    <li class="breadcrumb-item product-mass-upload-breadcumb-step2"><a href="javascript:;">Xác nhận thông tin tải lên</a></li>
+    <li class="breadcrumb-item product-mass-upload-breadcumb-step3"><a href="javascript:;">Đăng sản phẩm thành công</a></li>
+</ol>
+<div class="green p-3 rounded mb20 product-mass-upload-step1" style="padding:0!important;">
+    Nhấn vào nút [Tải tập tin] để upload tệp tin sản phẩm
+    <br />
+    hoặc Nhấn vào nút [Tải mẫu đăng tải sản phẩm hàng loạt] để tải tập tin mẫu
+</div>
+<div class="mb10 product-mass-upload-step1">
+    <label class="btn btn-success" style="margin-right:10px;width: 40%;font-size: 18px;">
+        <input class="mfp-hide" type="file" id="import-file-product">
+        Tải tập tin
+    </label>
+    <span style="color:#ADB0B1"> Định dạng: xlsx</span>
+</div>
+<div class="mb10 product-mass-upload-step1">
+    <a type="button" class="btn download size download_data_guest" href="/Template/Import/Hulotoy-mass-upload-product.xlsx" download style="font-size: 16px;">
+        <svg class="icon-svg mr-1" width="9" height="13" viewBox="0 0 9 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M7.90141 8.64C7.58141 8.32 7.10141 8.32 6.78141 8.64L5.34141 10.08V0.8C5.34141 0.32 5.02141 0 4.54141 0C4.06141 0 3.74141 0.32 3.74141 0.8V10.08L2.30141 8.64C1.98141 8.32 1.50141 8.32 1.18141 8.64C0.861406 8.96 0.861406 9.44 1.18141 9.76L3.98141 12.56C4.14141 12.72 4.38141 12.8 4.54141 12.8C4.70141 12.8 4.94141 12.72 5.10141 12.56L7.90141 9.76C8.22141 9.44 8.22141 8.88 7.90141 8.64Z" fill="#1254FF"></path>
+        </svg>
+        Tải mẫu đăng tải sản phẩm hàng loạt
+    </a>
+</div>
+<div class="red p-3 rounded mb20 mfp-hide" id="import-error" style="background: #F3DFDF;">
+    Lỗi xảy ra: File upload không đúng định dạng, Hệ thống không nhận biết được các cột
+</div>
+
+<div class="row">
+    <div class="col-md-12" id="grid_ws">
+    </div>
+</div>
+
+<div class="form-default">
+    <div class="form-group align-right mt20 block">
+        <div class="btn loading-gif" style=" align-self: center; display:none;">
+            <img src="/images/icons/loading.gif" style="width: 30px;height: 30px;margin-left: 10px;margin-bottom: 10px;" class="img_loading_summit coll"> 
+            </div>
+        <button type="button" id="confirm-ws-import" class="btn btn-default bg-main  product-mass-upload-step2">
+            <i class="fa fa-floppy-o"></i>Đăng tải sản phẩm
+        </button>
+        <button type="button" class="btn btn-default cancel" data-dismiss="modal" onclick="$.magnificPopup.close()"><i class="fa fa-minus-circle"></i>Đóng</button>
+    </div>
+</div>
+<script>product_import_excel.Initialization(false)</script>

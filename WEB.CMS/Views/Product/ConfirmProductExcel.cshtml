@@ -1,0 +1,57 @@
+﻿@{
+    Layout = null;
+}
+@using Entities.ViewModels.Products
+@model List<ProductMongoDbModel>
+@if (Model != null && Model.Count > 0)
+{
+    var ready_checked = false;
+    if (ViewBag.CheckedAll != null) ready_checked = (bool)ViewBag.CheckedAll;
+    <div class="green p-3 rounded mb20" style="padding:0!important;">
+        Tải lên đơn hàng thành công, để xem chi tiết ản phẩm, vui lòng nhấn vào phần Link bên dưới.
+        <br />
+        Hoặc nhấn nút "Đóng" để kết thúc quy trình.
+    </div>
+    <div class="table-responsive table-default table-gray table-modal mb20" style="max-height:500px;">
+        <table class="table table-nowrap">
+            <thead>
+                <tr>
+
+                    <th>Link sản phẩm</th>
+                    <th>ID sản phẩm</th>
+                    <th>Tên</th>
+                    <th>Giá sản phẩm</th>
+                    <th>SKU</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+
+                        <td ><strong style="color:blue;"><a href="/product/detail/@item._id" target="_blank">Link</a></strong></td>
+                        <td >@item._id</td>
+                        <td >@item.name</td>
+                        @if(item.attributes!=null && item.attributes.Count > 0)
+                        {
+                            <td>@(((double)item.amount_min).ToString("N0")) - @(((double)item.amount_max).ToString("N0"))</td>
+                        }
+                        else
+                        {
+                            <td>@(item.amount.ToString("N0"))</td>
+                        }
+                        <td >@item.sku</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="text-right">Tổng cộng:  @Model.Count bản ghi </div>
+}
+else
+{
+    <div class="red p-3 rounded mb20">
+        Tệp tin rỗng / Dữ liệu tải lên không chính xác, vui lòng kiểm tra lại, tải lại tệp tin hoặc liên hệ IT hoặc liên hệ IT
+    </div>
+}

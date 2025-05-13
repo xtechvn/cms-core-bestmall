@@ -1,0 +1,98 @@
+﻿@{
+    Layout = null;
+}
+@using Entities.ViewModels
+@using Entities.ViewModels.Funding
+@using Utilities
+@model GenericViewModel<SupplierViewModel>
+
+<div class="table-responsive table-default table-gray">
+    <table class="table table-nowrap">
+        <thead>
+            <tr>
+                <th style="min-width: 30px;">STT</th>
+                <th>Mã</th>
+                <th style="min-width: 250px;">Tên NCC</th>
+                <th>Liên hệ</th>
+                <th>Địa chỉ</th>
+                <th style="width: 250px;">Dịch vụ</th>
+                <th>Người tạo</th>
+                <th>Ngày tạo</th>
+                <th>Người cập nhật</th>
+                <th>Ngày cập nhật</th>
+                <th style="min-width: 100px;">Tác vụ</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.ListData != null && Model.ListData.Count > 0)
+            {
+                var counter = (Model.CurrentPage - 1) * Model.PageSize;
+                foreach (var item in Model.ListData)
+                {
+                    counter++;
+                    <tr>
+                        <td>@counter</td>
+                        <td>@item.SupplierId</td>
+                        <td>
+                            <a href="/supplier/detail/@item.SupplierId" class="blue txt_14">
+                                @item.FullName
+                            </a>
+                        </td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(item.Phone))
+                            {
+                                <p>SĐT: @item.Phone</p>
+                            }
+
+                            @if (!string.IsNullOrEmpty(item.Email))
+                            {
+                                <p>Email: @item.Email</p>
+                            }
+                        </td>
+                        <td>@item.Address</td>
+                        <td>N/A</td>
+                        <td>@item.CreatedName</td>
+                        <td>
+                            @(item.CreatedDate.HasValue && item.CreatedDate != DateTime.MinValue ? item.CreatedDate.Value.ToString("dd-MM-yyyy HH:mm") : string.Empty)
+                        </td>
+                        <td>@item.UpdatedName</td>
+                        <td>
+                            @(item.UpdatedDate.HasValue && item.UpdatedDate != DateTime.MinValue ? item.UpdatedDate.Value.ToString("dd-MM-yyyy HH:mm") : string.Empty)
+                        </td>
+                        <td>
+                            <a class="delete blue" onclick="_supplier_service.ShowAddOrUpdate('@item.SupplierId')"><i class="fa fa-edit"></i></a> &nbsp;&nbsp;
+                            @*<a class="red" ><i class="fa fa-times"></i></a>*@
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="13" class="text-center">
+                        <div class="search-null center mt40 mb40">
+                            <div class="mb24">
+                                <img src="/images/graphics/icon-search.png" alt="">
+                            </div>
+                            <h2 class="title txt_24">Không tìm thấy kết quả</h2>
+                            <div class="gray">Chúng tôi không tìm thấy thông tin mà bạn cần, vui lòng thử lại</div>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@await Component.InvokeAsync("Paging", new
+{
+    pageModel = new Paging()
+    {
+        TotalRecord = Model.TotalRecord,
+        TotalPage = Model.TotalPage,
+        CurrentPage = Model.CurrentPage,
+        PageSize = Model.PageSize,
+        RecordName = "kết quả lọc",
+        PageAction = "_supplier_service.OnPaging({0})"
+    }
+})

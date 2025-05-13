@@ -1,0 +1,44 @@
+﻿@{
+    Layout = null;
+}
+
+@using Entities.Models
+@model BankingAccount
+<form id="form_supplier_payment">
+    <div class="grid-item">
+        <div class="pd10">
+            <div class="form-group">
+                <label class="lbl">Số tài khoản <sup class="red">*</sup></label>
+                <div class="wrap_input">
+                    <input type="hidden" asp-for="@Model.Id" />
+                    <input type="hidden" asp-for="@Model.SupplierId" />
+                    <input type="text" class="form-control" asp-for="@Model.AccountNumber" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="lbl">Chủ tài khoản <sup class="red">*</sup></label>
+                <div class="wrap_input">
+                    <input type="text" class="form-control" asp-for="@Model.AccountName" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="lbl">Tên ngân hàng <sup class="red">*</sup></label>
+                <div class="wrap_input">
+                    <input type="text" class="form-control" asp-for="@Model.BankId" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="lbl">Chi nhánh</label>
+                <div class="wrap_input">
+                    <input type="text" class="form-control" asp-for="@Model.Branch" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="text-right">
+        <button type="button" class="btn btn-default btn btn-default cancel" data-dismiss="modal">Bỏ qua</button>
+        <button type="button" class="btn btn-default" onclick="_supplier_payment.Upsert()">
+            @(Model.Id > 0 ? "Cập nhật" : "Thêm mới")
+        </button>
+    </div>
+</form>

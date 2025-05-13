@@ -1,0 +1,103 @@
+﻿@using Entities.ViewModels;
+@using Entities.Models;
+@using Utilities.Contants;
+@{
+    var provinces = (List<Province>)ViewBag.Provinces;
+    var District = (List<District>?)ViewBag.District;
+    var Ward = (List<Ward>?)ViewBag.Ward;
+}
+@model OrderDetailViewModel
+<form id="form_Update_Address">
+    <div>
+        <div >
+            <div class="border">
+                <div class="form-default3 pd10">
+                    <div class="row row_min">
+                        <input id="OrderId" value="@ViewBag.orderId " style="display:none;" />
+                        <div class="form-group col-6">
+                            <label class="lbl">Tỉnh/Thành phố <sup class="red">*</sup></label>
+                            <div class="wrap_input">
+                                <select class="form-control select2-modal" style="width:100%" onchange="_orderDetail.loadingDistrict()" id="ProvinceId" name="ProvinceId">
+                                    @if (Model.ProvinceId != null)
+                                    {
+                                        <option value="@Model.ProvinceId">@Model.ProvinceName</option>
+
+                                    }
+                                    <option value="">Chọn địa điểm</option>
+                                    @if (provinces != null && provinces.Any())
+                                    {
+                                        foreach (var item in provinces)
+                                        {
+                                            @if (item.ProvinceId != Model.ProvinceId)
+                                            {
+                                                <option value="@item.Id">@item.Name</option>
+                                            }
+
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-6">
+                            <label class="lbl">Quận/huyện <sup class="red">*</sup></label>
+                            <div class="wrap_input">
+                                <select class="form-control select2-modal" onchange="_orderDetail.loadingWard()" style="width:100%" id="DistrictId" name="DistrictId">
+                                    @if (Model.DistrictId != null)
+                                    {
+                                        <option value="@Model.DistrictId">@Model.DistrictName</option>
+
+                                    }
+                                    <option value="">Chọn địa điểm</option>
+                                    @if (District != null && District.Any())
+                                    {
+                                        foreach (var item in District)
+                                        {
+                                            @if (item.DistrictId != Model.DistrictId)
+                                            {
+                                                <option value="@item.Id">@item.Name</option>
+                                            }
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-6">
+                            <label class="lbl">Phường/Xã <sup class="red">*</sup></label>
+                            <div class="wrap_input">
+                                <select class="form-control select2-modal" style="width:100%" id="WardId" name="WardId">
+                                    @if (Model.WardId != null)
+                                    {
+                                        <option value="@Model.WardId">@Model.WardName</option>
+
+                                    }
+                                    <option value="">Chọn địa điểm</option>
+                                    @if (Ward != null && Ward.Any())
+                                    {
+                                        foreach (var item in Ward)
+                                        {
+                                            @if (item.WardId != Model.WardId)
+                                            {
+                                                <option value="@item.Id">@item.Name</option>
+                                            }
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="form-group">
+                        <label class="lbl">Địa chỉ <sup class="red">*</sup></label>
+                        <div class="wrap_input">
+                            <textarea type="text" style="width:100%;height:80px;" id="Address" name="Address">@Model.Address</textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<div class="text-right">
+    <button type="button" class="btn btn-default btn btn-default cancel" data-dismiss="modal">Bỏ qua</button>
+    <button type="button" class="btn btn-default" onclick="_orderDetail.UpdateAddress()"><i class="fa fa-save"></i> Lưu</button>
+</div>

@@ -1,0 +1,77 @@
+﻿@{
+    Layout = null;
+}
+@using Entities.ViewModels
+@using Entities.ViewModels.SupplierConfig
+@using Utilities
+@model GenericViewModel<SupplierProgramGridViewModel>
+
+<div class="table-responsive table-default table-gray">
+    <table class="table table-nowrap">
+        <thead>
+            <tr>
+                <th style="min-width: 30px;">STT</th>
+                <th>Mã chương trình</th>
+                <th>Tên chương trình</th>
+                <th>ID Gốc</th>
+                <th>ID Điều chỉnh</th>
+                <th>Dịch vụ</th>
+                <th>Tên dịch vụ</th>
+                <th>Thời gian áp dụng</th>
+                <th>Mô tả</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.ListData != null && Model.ListData.Count > 0)
+            {
+                var counter = (Model.CurrentPage - 1) * Model.PageSize;
+                foreach (var item in Model.ListData)
+                {
+                    counter++;
+                    <tr>
+                        <td>@counter</td>
+                        <td>@item.ProgramCode</td>
+                        <td>N/A</td>
+                        <td>@item.ProgramId</td>
+                        <td>N/A</td>
+                        <td>@item.ServiceTypeName</td>
+                        <td>@item.FullName</td>
+                        <td>
+                            @item.StartDate.ToString("dd/MM/yyyy") - @item.EndDate.ToString("dd/MM/yyyy")
+                        </td>
+                        <td>
+                            @Html.Raw(item.Description)
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="9" class="text-center">
+                        <div class="search-null center mt40 mb40">
+                            <div class="mb24">
+                                <img src="/images/graphics/icon-search.png" alt="">
+                            </div>
+                            <h2 class="title txt_24">Không tìm thấy kết quả</h2>
+                            <div class="gray">Chúng tôi không tìm thấy thông tin mà bạn cần, vui lòng thử lại</div>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@await Component.InvokeAsync("Paging", new
+{
+    pageModel = new Paging()
+    {
+        TotalRecord = Model.TotalRecord,
+        TotalPage = Model.TotalPage,
+        CurrentPage = Model.CurrentPage,
+        PageSize = Model.PageSize,
+        RecordName = "kết quả lọc",
+        PageAction = "_supplier_program.Paging({0})"
+    }
+})

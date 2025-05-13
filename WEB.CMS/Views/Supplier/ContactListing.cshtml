@@ -1,0 +1,86 @@
+﻿@{
+    Layout = null;
+}
+@using Entities.ViewModels
+@using Entities.ViewModels.SupplierConfig
+@using Utilities
+@model GenericViewModel<SupplierContactViewModel>
+
+<div class="table-responsive table-default table-gray">
+    <table class="table table-nowrap">
+        <thead>
+            <tr>
+                <th style="min-width: 30px;">STT</th>
+                <th>Họ tên</th>
+                <th>Điện thoại</th>
+                <th>Email</th>
+                <th>Chức vụ</th>
+                <th>Người tạo</th>
+                <th>Ngày tạo</th>
+                <th style="min-width: 100px;">Tác vụ</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.ListData != null && Model.ListData.Count > 0)
+            {
+                var counter = (Model.CurrentPage - 1) * Model.PageSize;
+                foreach (var item in Model.ListData)
+                {
+                    counter++;
+                    <tr>
+                        <td>@counter</td>
+                        <td>@item.Name</td>
+                        <td>
+                            @item.Mobile
+                        </td>
+                        <td>@item.Email</td>
+                        <td>@item.Position</td>
+                        <td>
+                            @item.UserCreate
+                        </td>
+                        <td>
+                            @item.CreateDate.ToString("dd/MM/yyyy HH:mm")
+                        </td>
+                        <td>
+                            <a href="#" class="blue" title="Chỉnh sửa"
+                       onclick="_supplier_contact.OnAddOrUpdate('@item.Id')">
+                                <i class="fa fa-edit"></i>
+                            </a> &nbsp;&nbsp;
+                            <a href="#" class="red" title="Xóa"
+                       onclick="_supplier_contact.Delete('@item.Id')">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="13" class="text-center">
+                        <div class="search-null center mt40 mb40">
+                            <div class="mb24">
+                                <img src="/images/graphics/icon-search.png" alt="">
+                            </div>
+                            <h2 class="title txt_24">Không tìm thấy kết quả</h2>
+                            <div class="gray">Chúng tôi không tìm thấy thông tin mà bạn cần, vui lòng thử lại</div>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@await Component.InvokeAsync("Paging", new
+{
+    pageModel = new Paging()
+    {
+        TotalRecord = Model.TotalRecord,
+        TotalPage = Model.TotalPage,
+        CurrentPage = Model.CurrentPage,
+        PageSize = Model.PageSize,
+        RecordName = "kết quả lọc",
+        PageAction = "_supplier_detail.PagingRoom({0})"
+    }
+})

@@ -1,0 +1,186 @@
+﻿@{
+    ViewData["Title"] = "Chi tiết nhà cung cấp";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using Entities.Models
+@using Entities.ViewModels.Funding
+@model SupplierDetailViewModel
+
+<style>
+    .main-pad-top {
+        padding-top: 121px;
+    }
+</style>
+
+<section style="overflow-x: hidden;">
+    <div class="row-main container">
+        <input type="hidden" id="global_supplier_id" value="@Model.SupplierId" />
+        <h2 class="txt_18 bold mb10">Chi tiết nhà cung cấp</h2>
+        <div class="table-responsive table-white">
+            <table class="table table-nowrap">
+                <tbody>
+                    <tr>
+                        <td colspan="3">
+                            <div style="width:100%">
+                                <strong>@Model.FullName</strong>
+                                <strong style="float: right;"><a class="blue edit-supplier-detail" href="javascript:;" onclick="_supplier_service.ShowAddOrUpdate('@Model.SupplierId')"><i class="fa fa-edit blue"></i></a></strong>
+
+                            </div>
+                            
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="min-width: 400px;">
+                            <div class="row">
+                                <div class="col-4 mb10 gray">Mã nhà cung cấp</div>
+                                <div class="col-8 mb10">: @Model.SupplierId</div>
+                                <div class="col-4 mb10 gray">Điện thoại</div>
+                                <div class="col-8 mb10">: @Model.Phone</div>
+                                <div class="col-4 mb10 gray">Email</div>
+                                <div class="col-8 mb10">: @Model.Email</div>
+                                <div class="col-4 mb10 gray">Địa điểm</div>
+                                <div class="col-8 mb10">: @Model.Address</div>
+                                <div class="col-4 mb10 gray">Khách sạn</div>
+                                <div class="col-8 mb10">: N/A</div>
+                                <div class="col-4 mb10 gray">Tour du lịch</div>
+                                <div class="col-8 mb10">: N/A</div>
+                            </div>
+                        </td>
+                        <td style="min-width: 400px;">
+                            <div class="row">
+                                <div class="col-4 mb10 gray">Người tạo</div>
+                                <div class="col-8 mb10">: @Model.CreatedByName</div>
+                                <div class="col-4 mb10 gray">Ngày tạo</div>
+                                <div class="col-8 mb10">: @(Model.CreatedDate.HasValue ? Model.CreatedDate.Value.ToString("dd/MM/yyyy HH:mm") : string.Empty)</div>
+                                <div class="col-4 mb10 gray">Người cập nhật</div>
+                                <div class="col-8 mb10">: @Model.UpdatedByName</div>
+                                <div class="col-4 mb10 gray">Ngày cập nhật</div>
+                                <div class="col-8 mb10">: @(Model.UpdatedDate.HasValue ? Model.UpdatedDate.Value.ToString("dd/MM/yyyy HH:mm") : string.Empty)</div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="tab-default nav nav-tabs">
+            <a class="active" href="#tab-order" data-toggle="tab">Lịch sử đặt hàng</a>
+            <a href="#tab-payment" data-toggle="tab">Thông tin thanh toán</a>
+            <a href="#tab-contact" data-toggle="tab">Liên hệ</a>
+            @* <a href="#tab-service" data-toggle="tab">Danh sách dịch vụ</a>
+            <a href="#tab-program" data-toggle="tab">Chương trình</a>
+          <a href="#tab-price" data-toggle="tab">Bảng giá</a>*@
+            <a href="#tab-ticket" data-toggle="tab">Phiếu chi liên quan</a>
+        </div>
+        <div class="tab-content">
+            <div class="tab-pane show active" id="tab-order" role="tabpanel">
+                <div class="row">
+                    <div class="col-md-12" id="grid_supplier_order">
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane" id="tab-payment" role="tabpanel">
+                <div class="row">
+                    <div class="col-md-12 mb10">
+                        <button type="button" class="btn btn-success min"
+                                onclick="_supplier_payment.OnAddOrUpdate(0)">
+                            Thêm thông tin thanh toán
+                        </button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12" id="grid_supplier_payment">
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane" id="tab-contact" role="tabpanel">
+                <div class="row">
+                    <div class="col-md-12 mb10">
+                        <button type="button" class="btn btn-success min"
+                                onclick="_supplier_contact.OnAddOrUpdate(0)">
+                            Thêm liên hệ
+                        </button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12" id="grid_supplier_contact">
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane" id="tab-service" role="tabpanel">
+                <div class="row">
+                    <div class="col-md-12 mb10">
+                        <button type="button" class="btn btn-success min mr-2"
+                                onclick="_supplier_service_detail.OnAddOrUpdate()">
+                            Cập nhật dịch vụ
+                        </button>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="rdo_supplie_service" id="rdo_supplie_service" checked
+                                   onchange="_supplier_service_detail.OnChangeServiceType(1)" />
+                            <label class="form-check-label" for="inlineRadio1">Khách sạn</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="rdo_supplie_service" id="rdo_supplie_service"
+                                   onchange="_supplier_service_detail.OnChangeServiceType(5)" />
+                            <label class="form-check-label" for="inlineRadio2">Tour du lịch</label>
+                        </div>
+                        <div class="form-check-inline">
+                            <input type="text" class="form-control" placeholder="Tìm kiếm nhanh theo tên dịch vụ " onkeyup="_supplier_service_detail.OnKeyUpSearchName(event);" style="width: 250px;">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12" id="grid_supplier_service_detail">
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane" id="tab-program" role="tabpanel">
+               @*<div class="row">
+                    <div class="col-md-12 mb10">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="rdo_supplie_program" id="rdo_supplie_program" checked
+                                   onchange="_supplier_program.OnChangeServiceType('1')" />
+                            <label class="form-check-label">Khách sạn</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="rdo_supplie_program" id="rdo_supplie_program"
+                                   onchange="_supplier_program.OnChangeServiceType('5')" />
+                            <label class="form-check-label">Tour du lịch</label>
+                        </div>
+                        <div class="form-check-inline">
+                            <input type="text" class="form-control" placeholder="Tìm kiếm nhanh theo mã chương trình"
+                                   onkeyup="_supplier_program.OnKeyUpSearchProgramCode(event);" style="width: 250px;">
+                        </div>
+                    </div>
+                </div>*@
+                <div class="row">
+                    <div class="col-md-12" id="grid_supplier_program">
+                    </div>
+                </div>
+            </div>
+
+           @* <div class="tab-pane" id="tab-price" role="tabpanel">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h1>tab - Bảng giá</h1>
+                    </div>
+                </div>
+            </div>*@
+
+            <div class="tab-pane" id="tab-ticket" role="tabpanel">
+                <div class="row">
+                    <div class="col-md-12" id="grid_supplier_ticket">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section scripts {
+<script type="text/javascript" src="~/modules/supplier_detail.js"></script>
+<script type="text/javascript" src="~/modules/supplier.js"></script>
+}

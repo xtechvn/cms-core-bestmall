@@ -1,0 +1,171 @@
+﻿@{
+    ViewData["Title"] = "Danh sách nhà cung cấp";
+}
+@using Entities.Models
+@{
+    var service_types = (List<AllCode>)ViewBag.ServiceTypes;
+}
+
+<section style="overflow-x: hidden;">
+    <div class="row-main container">
+        <h2 class="txt_18 bold mb20">Danh sách nhà cung cấp</h2>
+        <div class="flex fillter-donhang">
+            <button type="button" class="btn btn-default mb10 mr-2" onclick="_supplier_service.ShowAddOrUpdate(0)">
+                <i class="fa fa-plus"></i>Tạo nhà cung cấp
+            </button>
+            <div class="form-group mb10 mr-2">
+                <input type="text" class="form-control" id="ip_search_fullname" placeholder="Tên nhà cung cấp" style="width: 150px;">
+            </div>
+            <div class="form-group mb10 mr-2" style="min-width: 200px;">
+                <select class="" id="sl_search_service" multiple style="width: 100%!important;">
+                    @if (service_types != null && service_types.Any())
+                    {
+                        foreach (var item in service_types)
+                        {
+                            <option value="@item.CodeValue">@item.Description</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="form-group mb10 mr-2" style="min-width: 200px;">
+                <select class="main-staff-select" id="sl_search_suggest_user" style="width:100%!important">
+                </select>
+            </div>
+
+
+            <div class="row-main-head mb10 mr-2 mfp-hide">
+                <div class="down-up">
+                    <a class="btn btn-default onclick" href="javascript:;">
+                        <i class="fa fa-bars"></i>
+                        <i class="fa fa-caret-down"></i>
+                    </a>
+                    <div class="form-down" style="display: none;">
+                        <label class="check-list mb10 mr25">
+                            <input type="checkbox" checked="">
+                            <span class="checkmark"></span>
+                            Hình thức
+                        </label>
+                        <label class="check-list mb10 mr25">
+                            <input type="checkbox">
+                            <span class="checkmark"></span>
+                            Mã đơn
+                        </label>
+                        <label class="check-list mb10 mr25">
+                            <input type="checkbox">
+                            <span class="checkmark"></span>
+                            Ngày bắt đầu
+                        </label>
+                        <label class="check-list mb10 mr25">
+                            <input type="checkbox">
+                            <span class="checkmark"></span>
+                            Ngày kết thúc
+                        </label>
+                        <label class="check-list mb10 mr25">
+                            <input type="checkbox">
+                            <span class="checkmark"></span>
+                            Nhãn đơn
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="mb10 mr-2">
+                <button class="btn-search btn-default " type="button" onclick="_supplier_service.Export()" id="btnExport">
+                    <i class="fa fa-file-excel-o" id="icon-export"></i>
+                </button>
+                <button type="button" class="btn btn-default bg-main" onclick="_supplier_service.OnSearch()">
+                    <svg class="icon-svg" style="vertical-align: sub;">
+                        <use xlink:href="/images/icons/icon.svg#search"></use>
+                    </svg>
+                    Tìm kiếm
+                </button>
+            </div>
+        </div>
+        <div class="line-bottom mb20">
+            <div class="flex row-main-head">
+
+                <div class="btn-right text-right ">
+                    <div class="row-main-head mb10 mr-2" style="display: none;">
+                        <div class="down-up">
+                            <a class="btn btn-default onclick" href="javascript:;">
+                                <i class="fa fa-bars"></i>
+                                <i class="fa fa-caret-down"></i>
+                            </a>
+                            <div class="form-down text-nowrap">
+                                <div class="grid-slide">
+                                    <label class="check-list mb10 mr25">
+                                        <input type="checkbox" id="STT" onclick="_supplier_service.ChangeSetting(1)" class="checkbox-tb-column" data-id="1">
+                                        <span class="checkmark"></span>
+                                        STT
+                                    </label>
+                                    <label class="check-list mb10 mr25">
+                                        <input type="checkbox" id="SupplierId" onclick="_supplier_service.ChangeSetting(2)" class="checkbox-tb-column" data-id="1">
+                                        <span class="checkmark"></span>
+                                        ID
+                                    </label>
+                                    <label class="check-list mb10 mr25">
+                                        <input type="checkbox" id="SupplierName" onclick="_supplier_service.ChangeSetting(3)" class="checkbox-tb-column" data-id="1">
+                                        <span class="checkmark"></span>
+                                        Tên nhà cung cấp
+                                    </label>
+                                    <label class="check-list mb10 mr25">
+                                        <input type="checkbox" id="EstablistYear" onclick="_supplier_service.ChangeSetting(4)" class="checkbox-tb-column" data-id="1">
+                                        <span class="checkmark"></span>
+                                        Năm thành lập
+                                    </label>
+                                    <label class="check-list mb10 mr25">
+                                        <input type="checkbox" id="Address" onclick="_supplier_service.ChangeSetting(5)" class="checkbox-tb-column" data-id="1">
+                                        <span class="checkmark"></span>
+                                        Địa điểm
+                                    </label>
+                                    <label class="check-list mb10 mr25">
+                                        <input type="checkbox" id="Contact" onclick="_supplier_service.ChangeSetting(6)" class="checkbox-tb-column" data-id="1">
+                                        <span class="checkmark"></span>
+                                        Liên hệ
+                                    </label>
+                                    <label class="check-list mb10 mr25">
+                                        <input type="checkbox" id="Service" onclick="_supplier_service.ChangeSetting(7)" class="checkbox-tb-column" data-id="1">
+                                        <span class="checkmark"></span>
+                                        Dịch vụ
+                                    </label>
+                                    <label class="check-list mb10 mr25">
+                                        <input type="checkbox" id="SalerId" onclick="_supplier_service.ChangeSetting(8)" class="checkbox-tb-column" data-id="1">
+                                        <span class="checkmark"></span>
+                                        Nhân viên phụ trách
+                                    </label>
+                                    <label class="check-list mb10 mr25">
+                                        <input type="checkbox" id="CreateBy" onclick="_supplier_service.ChangeSetting(9)" class="checkbox-tb-column" data-id="1">
+                                        <span class="checkmark"></span>
+                                        Người tạo
+                                    </label>
+                                    <label class="check-list mb10 mr25">
+                                        <input type="checkbox" id="CreateDate" onclick="_supplier_service.ChangeSetting(10)" class="checkbox-tb-column" data-id="1">
+                                        <span class="checkmark"></span>
+                                        Ngày tạo
+                                    </label>
+                                    <label class="check-list mb10 mr25">
+                                        <input type="checkbox" id="UpdatedBy" onclick="_supplier_service.ChangeSetting(11)" class="checkbox-tb-column" data-id="1">
+                                        <span class="checkmark"></span>
+                                        Người cập nhật
+                                    </label>
+                                    <label class="check-list mb10 mr25">
+                                        <input type="checkbox" id="UpdatedDate" onclick="_supplier_service.ChangeSetting(12)" class="checkbox-tb-column" data-id="1">
+                                        <span class="checkmark"></span>
+                                        Ngày cập nhật
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="grid_data" class="wrap_bg wrap_bg_no-padding mb20">
+            <div class="col-xl-12 text-center" style="margin-top:200px">
+            </div>
+        </div>
+    </div>
+</section>
+
+@section scripts {
+    <script type="text/javascript" src="~/modules/supplier.js?v=3"></script>
+}
