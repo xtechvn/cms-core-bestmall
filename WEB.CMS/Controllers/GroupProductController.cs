@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using Repositories.IRepositories;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,7 @@ using System.Threading.Tasks;
 using Utilities;
 using Utilities.Contants;
 using WEB.CMS.Customize;
+using WEB.CMS.RabitMQ;
 
 namespace WEB.CMS.Controllers
 {
@@ -28,6 +30,7 @@ namespace WEB.CMS.Controllers
         private readonly IWebHostEnvironment _WebHostEnvironment;
         private readonly string _UrlStaticImage;
         private readonly IConfiguration _configuration;
+        private readonly WorkQueueClient work_queue;
         private readonly RedisConn _redisService;
 
         public GroupProductController(IGroupProductRepository groupProductRepository,
@@ -37,6 +40,7 @@ namespace WEB.CMS.Controllers
             _GroupProductRepository = groupProductRepository;
             _WebHostEnvironment = hostEnvironment;
             _PositionRepository = positionRepository;
+            work_queue = new WorkQueueClient(configuration);
 
             _AllCodeRepository = allCodeRepository;
             _UrlStaticImage = domainConfig.Value.ImageStatic;
@@ -141,6 +145,18 @@ namespace WEB.CMS.Controllers
                 {
                     _redisService.clear(CacheName.ARTICLE_B2C_CATEGORY_MENU + rs, Convert.ToInt32(_configuration["Redis:Database:db_common"]));
                     _redisService.clear(CacheName.ARTICLE_B2C_CATEGORY_MENU + upsertModel.ParentId, Convert.ToInt32(_configuration["Redis:Database:db_common"]));
+
+                    var j_param = new Dictionary<string, object>
+                                {
+                                     { "store_name", "SP_GetGroupProduct" },
+                                    { "index_es", "hulotoys_sp_getgroupproduct" },
+                                    {"project_type", Convert.ToInt16(ProjectType.HULOTOYS) },
+                                      {"id" , model.Id }
+
+                                };
+                    var _data_push = JsonConvert.SerializeObject(j_param);
+                    // Push message vào queue
+                    var response_queue = work_queue.InsertQueueSimple(_data_push, QueueName.queue_app_push);
 
                     return new JsonResult(new
                     {

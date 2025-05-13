@@ -218,8 +218,8 @@ namespace WEB.CMS.Controllers
                     // Tạo message để push vào queue
                     var j_param = new Dictionary<string, object>
                             {
-                                 { "store_name", "Sp_GetAllArticle" },
-                                { "index_es", "es_hulotoys_sp_get_article" },
+                                 { "store_name", "SP_GetAllArticle" },
+                                { "index_es", "hulotoys_sp_getarticle" },
                                 {"project_type", Convert.ToInt16(ProjectType.HULOTOYS) },
                                   {"id" , articleId }
 
@@ -286,8 +286,8 @@ namespace WEB.CMS.Controllers
                     // Tạo message để push vào queue
                     var j_param = new Dictionary<string, object>
                             {
-                                  { "store_name", "Sp_GetAllArticle" },
-                                { "index_es", "es_hulotoys_sp_get_article" },
+                                 { "store_name", "SP_GetAllArticle" },
+                                { "index_es", "hulotoys_sp_getarticle" },
                                 {"project_type", Convert.ToInt16(ProjectType.HULOTOYS) },
                                   {"id" , Id }
 
