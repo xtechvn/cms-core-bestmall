@@ -39,6 +39,8 @@ var label_service = {
             success: function (result) {
                 $('#grid_data').html(result);
                 $('#grid_data').removeClass('placeholder');
+                $('#index-count .count').html($('#total-record').val())
+                $('#total-record').remove()
             }
         });
     },
