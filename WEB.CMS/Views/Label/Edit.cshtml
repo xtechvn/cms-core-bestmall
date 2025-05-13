@@ -1,0 +1,113 @@
+﻿@using Entities.Models
+@{
+    Layout = null;
+    Label data = (Label)ViewBag.Data;
+    if (data == null) data = new Label();
+}
+
+<div id="form_label">
+    <input style="display:none;" id="update-detail" value="@data.Id" />
+    <div class="row row_min">
+        <div class="grid-item col-md-6">
+            <div class="border mb20">
+                <div class="lb-form">Thông tin cơ bản</div>
+                <div class="pd10">
+                    <div class="form-group">
+                        <label class="lbl">Mã thương hiệu <sup class="red">*</sup></label>
+                        <div class="wrap_input">
+                            <input type="text" id="update-code" class="form-control" value="@(data.LabelCode==null?"":data.LabelCode)" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="lbl">Tên thương hiệu <sup class="red">*</sup></label>
+                        <div class="wrap_input">
+                            <input type="text" id="update-name" class="form-control" value="@(data.LabelName==null?"":data.LabelName)" />
+                        </div>
+                    </div>
+                    
+                   
+                    <div class="form-group">
+                        <label class="lbl">Trạng thái</label>
+                        <div class="wrap_input">
+                            <select id="update-status" class="select2 form-control">
+                                @if(data.Status==null ||data.Status==0)
+                                {
+                                    <option value="0" selected>Hoạt động</option>
+                                }
+                                else
+                                {
+                                    <option value="0">Hoạt động</option>
+                                }
+                                @if ( data.Status == 1)
+                                {
+                                    <option value="1" selected>Tạm ngưng</option>
+                                }
+                                else
+                                {
+                                    <option value="1">Tạm ngưng</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="lbl">Mô tả thương hiệu</label>
+                        <div class="wrap_input">
+                            <textarea id="update-description" class="form-control" style="height: 200px;" rows="6"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="grid-item col-md-6">
+            <div class="border mb20">
+                <div class="lb-form">Thông tin bổ sung</div>
+                <div class="pd10">
+
+                    <div class="form-group">
+                        <label class="lbl">Icon <sup class="red">*</sup></label>
+                        <div class="wrap_input">
+                            <div class="manage-color  w-100" style="max-height:200px;">
+                                <div class="flex list align-items-center w-100">
+                                    <div class="items import magnific_popup" style=" min-width: 130px; min-height: 130px;max-width: 200px; max-height: 200px; ">
+                                        <a id="update-icon-import" href="javascript:;" class="thumb_img thumb_1x1 magnific_thumb" >
+                                            <img src="@(data.Icon==null?"":data.Icon)">
+                                        </a>
+                                        <input type="file" id="update-icon-input" style="display:none;" class="form-control" />
+                                    </div>
+                                    <div class="import magnific_popup" > 
+                                        <span>(Click vào hình ảnh để @(data.Id > 0 && data.Icon!=null && data.Icon.Trim()!=""? "thay đổi":"thêm"))</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <input type="text" id="update-icon" class="form-control" disabled value="@(data.Icon==null?"":data.Icon)" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="lbl">ParentId</label>
+                        <div class="wrap_input">
+                            <input type="number" id="update-parentid" class="form-control" value="@(data.ParentId==null?"":data.ParentId)" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="lbl">Level</label>
+                        <div class="wrap_input">
+                            <input type="number" id="update-level" class="form-control" value="@(data.Level==null?"":data.Level)" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="lbl">UserSupplierId</label>
+                        <div class="wrap_input">
+                            <input type="number" id="update-userSupplierId" class="form-control" value="@(data.UserSupplierId==null?"":data.UserSupplierId)" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="text-right">
+    <button type="button" class="btn btn-default btn btn-default cancel" data-dismiss="modal">Hủy</button>
+    <button type="button" class="btn btn-default" onclick="label_detail.Update()">@(data.Id > 0 ? "Cập nhật" : "Thêm mới")</button>
+
+</div>

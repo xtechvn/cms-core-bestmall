@@ -1,13 +1,6 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
 using Telegram.Bot;
-using Telegram.Bot.Types.InputFiles;
-using Utilities.Contants;
 
 namespace Utilities
 {
@@ -63,7 +56,7 @@ namespace Utilities
             {
                 LoadConfig();
                 TelegramBotClient alertMsgBot = new TelegramBotClient(botToken);
-                var rs_push = alertMsgBot.SendTextMessageAsync(group_Id, "[" + enviromment + "-" + CompanyType + "] - " + message).Result;
+                var rs_push = alertMsgBot.SendMessage(group_Id, "[" + enviromment + "-" + CompanyType + "] - " + message).Result;
             }
             catch (Exception ex)
             {

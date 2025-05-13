@@ -1178,7 +1178,7 @@ var product_detail_new = {
     Select2Label: function (element) {
         element.select2({
             ajax: {
-                url: "/Label/Search",
+                url: "/Label/SearchLabel",
                 type: "post",
                 dataType: 'json',
                 delay: 250,

@@ -4,6 +4,7 @@ using Entities.Models;
 using Entities.ViewModels.Label;
 using HuloToys_Service.Models.Label;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -22,17 +23,19 @@ namespace DAL
         }
       
 
-        public async Task<List<LabelListingModel>> Listing(int status=-1, string label_name=null, int page_index = -1, int page_size = 100)
+        public async Task<List<LabelListingModel>> Listing(int status=-1, string label_name=null,string label_code=null, int page_index = -1, int page_size = 100)
         {
             try
             {
 
-                SqlParameter[] objParam = new SqlParameter[4];
-                objParam[0] = new SqlParameter("@Status", status<-1?-1:status);
-                objParam[1] = new SqlParameter("@LabelName", label_name==null?DBNull.Value: label_name);
-                objParam[2] = new SqlParameter("@PageIndex", page_index<0?-1:page_index);
-                objParam[3] = new SqlParameter("@PageSize", page_size);
-
+                SqlParameter[] objParam =
+                [
+                    new SqlParameter("@Status", status<0?DBNull.Value:status),
+                    new SqlParameter("@LabelName", label_name==null?DBNull.Value: label_name),
+                    new SqlParameter("@PageIndex", page_index<0?-1:page_index),
+                    new SqlParameter("@PageSize", page_size<10?10:page_size),
+                    new SqlParameter("@LabelCode", label_code == null ? DBNull.Value : label_code),
+                ];
                 DataTable dt = _DbWorker.GetDataTable(StoreProcedureConstant.GetListLabels, objParam);
                 if (dt != null && dt.Rows.Count > 0)
                 {
@@ -49,20 +52,24 @@ namespace DAL
         {
             try
             {
-                SqlParameter[] objParam = new SqlParameter[11];
-                objParam[0] = new SqlParameter("@LabelName ", model.LabelName);
-                objParam[1] = new SqlParameter("@LabelCode", model.LabelCode);
-                objParam[2] = new SqlParameter("@SupplierId", model.SupplierId);
-                objParam[3] = new SqlParameter("@Icon", model.Icon);
-                objParam[4] = new SqlParameter("@ParentId", model.ParentId);
-                objParam[5] = new SqlParameter("@Level", model.Level);
-                objParam[6] = new SqlParameter("@Description", model.Description);
-                objParam[7] = new SqlParameter("@Status", model.Status);
-                objParam[8] = new SqlParameter("@CreateTime", model.CreateTime);
-                objParam[9] = new SqlParameter("@UpdateTime", model.UpdateTime);
-                objParam[10] = new SqlParameter("@CreatedBy", model.CreatedBy);
-
-                return _DbWorker.ExecuteNonQuery(StoreProcedureConstant.InsertLabel, objParam);
+                SqlParameter[] objParam =
+                [
+                    new SqlParameter("@LabelName ", model.LabelName),
+                    new SqlParameter("@LabelCode", model.LabelCode),
+                    new SqlParameter("@SupplierId", model.SupplierId),
+                    new SqlParameter("@Icon", model.Icon),
+                    new SqlParameter("@ParentId", model.ParentId),
+                    new SqlParameter("@Level", model.Level),
+                    new SqlParameter("@Description", model.Description),
+                    new SqlParameter("@Status", model.Status),
+                    new SqlParameter("@CreateTime", model.CreateTime),
+                    new SqlParameter("@UpdateTime", model.UpdateTime),
+                    new SqlParameter("@CreatedBy", model.CreatedBy),
+                    new SqlParameter("@UserSupplierId", model.UserSupplierId),
+                ];
+                var id = _DbWorker.ExecuteNonQuery(StoreProcedureConstant.InsertLabel, objParam);
+                model.Id = id;
+                return id;
             }
             catch (Exception ex)
             {
@@ -74,26 +81,46 @@ namespace DAL
         {
             try
             {
-                SqlParameter[] objParam = new SqlParameter[12];
-                objParam[0] = new SqlParameter("@LabelName ", model.LabelName);
-                objParam[1] = new SqlParameter("@LabelCode", model.LabelCode);
-                objParam[2] = new SqlParameter("@SupplierId", model.SupplierId);
-                objParam[3] = new SqlParameter("@Icon", model.Icon);
-                objParam[4] = new SqlParameter("@ParentId", model.ParentId);
-                objParam[5] = new SqlParameter("@Level", model.Level);
-                objParam[6] = new SqlParameter("@Description", model.Description);
-                objParam[7] = new SqlParameter("@Status", model.Status);
-                objParam[8] = new SqlParameter("@CreateTime", model.CreateTime);
-                objParam[9] = new SqlParameter("@UpdateTime", model.UpdateTime);
-                objParam[10] = new SqlParameter("@UpdatedBy", model.UpdatedBy);
-                objParam[11] = new SqlParameter("@Id ", model.Id);
-
-                return _DbWorker.ExecuteNonQuery(StoreProcedureConstant.UpdateLabel, objParam);
+                SqlParameter[] objParam =
+                [
+                    new SqlParameter("@LabelName ", model.LabelName),
+                    new SqlParameter("@LabelCode", model.LabelCode),
+                    new SqlParameter("@SupplierId", model.SupplierId),
+                    new SqlParameter("@Icon", model.Icon),
+                    new SqlParameter("@ParentId", model.ParentId),
+                    new SqlParameter("@Level", model.Level),
+                    new SqlParameter("@Description", model.Description),
+                    new SqlParameter("@Status", model.Status),
+                    new SqlParameter("@CreateTime", model.CreateTime),
+                    new SqlParameter("@UpdateTime", model.UpdateTime),
+                    new SqlParameter("@UpdatedBy", model.UpdatedBy),
+                    new SqlParameter("@Id ", model.Id),
+                    new SqlParameter("@UserSupplierId ", model.UserSupplierId),
+                ];
+                var id = _DbWorker.ExecuteNonQuery(StoreProcedureConstant.UpdateLabel, objParam);
+                model.Id = id;
+                return id;
             }
             catch (Exception ex)
             {
                 LogHelper.InsertLogTelegram("Update - LabelDAL: " + ex);
                 return 0;
+            }
+        }
+        public async Task<Label> GetById(int id)
+        {
+            try
+            {
+                using (var _DbContext = new EntityDataContext(_connection))
+                {
+
+                    return await _DbContext.Labels.AsNoTracking().FirstOrDefaultAsync(s => s.Id==id);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("GetById - LabelDAL: " + ex);
+                return null;
             }
         }
     }

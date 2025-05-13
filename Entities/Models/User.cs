@@ -51,6 +51,8 @@ public partial class User
 
     public int? CompanyType { get; set; }
 
+    public int? SupplierId { get; set; }
+
     public virtual ICollection<UserAgent> UserAgents { get; set; } = new List<UserAgent>();
 
     public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();

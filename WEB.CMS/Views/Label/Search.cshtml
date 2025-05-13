@@ -1,0 +1,66 @@
+﻿@using Entities.ViewModels;
+@using Entities.ViewModels.Label;
+@{
+    Layout = null;
+    string StaticDomain = (string)ViewBag.StaticDomain;
+
+}
+@model GenericViewModel<LabelListingModel>
+<div class="table-responsive table-default table-gray">
+    <table class="table table-nowrap">
+        <thead>
+            <tr>
+                <th style="width: 30px;">STT</th>
+                <th style="min-width: 100px;">Ảnh thương hiệu</th>
+                <th style="min-width: 100px;">Mã thương hiệu</th>
+                <th style="min-width: 170px;">Tên thương hiệu</th>
+                <th style="max-width: 120px;"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @if(Model!=null && Model.ListData!=null && Model.ListData.Count > 0)
+            {
+                int count = 0;
+                foreach(var item in Model.ListData)
+                {
+                    count++;
+                    var img_src = item.Icon;
+                    if (img_src != null && !img_src.Contains(StaticDomain) && !img_src.Contains("data:image") && !img_src.Contains("http"))
+                        img_src = StaticDomain + item.Icon;
+                    <tr>
+                        <td>@count</td>
+                        <td>
+                            <a class="blue" href="javascript:;" onclick="label_service.Update(@item.Id)"> <img src="@img_src" width="100" height="100" /></a>
+                           
+                            </td>
+
+                        <td>
+                            <a class="blue" href="javascript:;" onclick="label_service.Update(@item.Id)">@item.LabelCode</a>
+                        </td>
+                        <td>
+                            <a class="blue" href="javascript:;" onclick="label_service.Update(@item.Id)">@item.LabelName</a>
+                        </td>
+                        <td>
+                            <a class="delete blue" href="javascript:;" onclick="label_service.Update(@item.Id)"><i class="fa fa-edit"></i></a> &nbsp;&nbsp;
+
+                        </td>
+                    </tr>
+                }
+            }
+            
+        </tbody>
+    </table>
+</div>
+@await Component.InvokeAsync("PagingNew", new
+    {
+        pageModel = new Paging()
+       {
+           TotalRecord = Model.TotalRecord,
+           TotalPage = Model.TotalPage,
+           CurrentPage = Model.CurrentPage,
+           PageSize = Model.PageSize,
+           RecordName = "thương hiệu",
+        PageAction = "label_service.OnPaging({0})",
+        PageSelectPageSize = "label_service.onSelectPageSize()"
+       }
+    })
