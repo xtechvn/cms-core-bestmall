@@ -30,13 +30,14 @@ namespace Repositories.Repositories
         {
             try
             {
-                var model = await _AttachFileDAL.FindAsync(Id);
-                if (model.UserId != userLogin)
+                var model = await _AttachFileDAL.GetByID(Id);
+                if (model==null || model.UserId!=userLogin)
                 {
                     return -1;
                 }
-
-                await _AttachFileDAL.DeleteAsync(Id);
+                model.DataId *= -1;
+                model.Type *= -1;
+                _AttachFileDAL.Update(model);
                 return Id;
             }
             catch (Exception ex)

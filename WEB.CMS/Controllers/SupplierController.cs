@@ -23,9 +23,10 @@ namespace WEB.Adavigo.CMS.Controllers.Order
         private readonly IWebHostEnvironment _WebHostEnvironment;
         private readonly ISupplierRepository _supplierRepository;
         private readonly WEB.CMS.Models.AppSettings config;
+        private readonly IAttachFileRepository _AttachFileRepository;
 
         public SupplierController(IAllCodeRepository allCodeRepository, ISupplierRepository supplierRepository,
-            ICommonRepository commonRepository, IConfiguration _configuration, IWebHostEnvironment webHostEnvironment)
+            ICommonRepository commonRepository, IConfiguration _configuration, IWebHostEnvironment webHostEnvironment, IAttachFileRepository attachFileRepository)
         {
             _allCodeRepository = allCodeRepository;
             _supplierRepository = supplierRepository;
@@ -33,6 +34,7 @@ namespace WEB.Adavigo.CMS.Controllers.Order
             config = ReadFile.LoadConfig();
             configuration = _configuration;
             _WebHostEnvironment = webHostEnvironment;
+            _AttachFileRepository = attachFileRepository;
         }
 
         #region supplier
@@ -64,11 +66,15 @@ namespace WEB.Adavigo.CMS.Controllers.Order
             return PartialView(model);
         }
 
-        public IActionResult AddOrUpdate(int id)
+        public async Task<IActionResult> AddOrUpdate(int id,int type=35)
         {
             var model = new SupplierViewModel();
-
-            if (id > 0) model = _supplierRepository.GetById(id);
+            ViewBag.Attachment = new List<AttachFile>();
+            if (id > 0)
+            {
+                model = _supplierRepository.GetById(id);
+                ViewBag.Attachment = await _AttachFileRepository.GetListByDataID(id, type);
+            }
 
             return View(model);
         }
@@ -85,7 +91,8 @@ namespace WEB.Adavigo.CMS.Controllers.Order
                         return new JsonResult(new
                         {
                             isSuccess = false,
-                            message = "Nhà cung cấp đã tồn tại"
+                            message = "Nhà cung cấp đã tồn tại",
+                            data=suplier
                         });
                     }
                 }
@@ -96,7 +103,8 @@ namespace WEB.Adavigo.CMS.Controllers.Order
                     return new JsonResult(new
                     {
                         isSuccess = true,
-                        message = "Thêm nhà cung cấp thành công"
+                        message = "Thêm nhà cung cấp thành công",
+                        data = result
                     });
                 }
                 else
@@ -130,7 +138,9 @@ namespace WEB.Adavigo.CMS.Controllers.Order
                     return new JsonResult(new
                     {
                         isSuccess = true,
-                        message = "Cập nhật nhà cung cấp thành công"
+                        message = "Cập nhật nhà cung cấp thành công",
+                        data = result
+
                     });
                 }
                 else

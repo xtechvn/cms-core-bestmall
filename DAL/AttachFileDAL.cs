@@ -167,5 +167,20 @@ namespace DAL
                 return -1;
             }
         }
+        public async Task<AttachFile> GetByID(long Id)
+        {
+            try
+            {
+                using (var _DbContext = new EntityDataContext(_connection))
+                {
+                    return await _DbContext.AttachFiles.AsNoTracking().FirstOrDefaultAsync(s => s.Id == Id);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("GetByID - AttachFileDAL: " + ex);
+                return null;
+            }
+        }
     }
 }

@@ -1,4 +1,20 @@
-﻿var _supplier_detail = {
+﻿$(document).ready(function () {
+    _supplier_detail.DynamicBind()
+})
+var _supplier_detail = {
+    Data: {
+        Processing: false,
+        Images: `<div class="col-sm-3 col-4 mb10 file" style="max-width:150px;" data-path="@item.Path" data-id="@item.Id" data-ext="@item.Ext">
+                        <button type="button" class="delete-file" onclick="$(this).closest('.file').remove()"
+                        style=" background: #ED5C6A; color: #fff; position: absolute; right: -7px; top: -7px; z-index: 2; border: 0; width: 20px; height: 20px; border-radius: 50%; outline: 0; cursor: pointer; ">
+                        x
+                        </button>
+                        <div class="choose-ava lightgallery">
+                            <img src="@item.Path" />
+                        </div>
+                        <p style=" overflow: hidden; "><span>@(file_name)</span> </p>
+                    </div>`
+    },
     Init: function () {
         this.elModal = $('#global_modal_popup');
         this.supplier_id = $('#global_supplier_id').val();
@@ -17,7 +33,46 @@
 
         return indexed_array;
     },
-   
+    DynamicBind: function () {
+        $('body').on('change', '#supplier-attachfile', function () {
+            if ($(this)[0].files[0] && _supplier_detail.Data.Processing == false) {
+                _supplier_detail.Upload()
+            }
+        })
+    },
+    Upload: function () {
+        _supplier_detail.Data.Processing = true;
+        var element = $('#supplier-attachfile')
+        var formData = new FormData()
+        $(element[0].files).each(function (index, item) {
+            formData.append("files", item);
+        });
+
+        $.ajax({
+            url: "/AttachFile/Upload",
+            data: formData,
+            processData: false,
+            contentType: false,
+            type: "POST",
+            success: function (result) {
+                $(result.data).each(function (index, item) {
+                    var path=item.split('.')
+                    $('#supplier-attachfile-list').append(
+                        _supplier_detail.Data.Images
+                            .replaceAll('@item.Path', item)
+                            .replaceAll('@(file_name)', item)
+                            .replaceAll('@item.Id', '0')
+                            .replaceAll('@item.Ext', path[path.length -1])
+
+                    )
+
+                });
+                element.val(null).trigger('change')
+                _supplier_detail.Data.Processing = false
+
+            }
+        });
+    },
 
 }
 

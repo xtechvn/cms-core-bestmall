@@ -1,5 +1,8 @@
 ﻿
 var _supplier_service = {
+    Data: {
+        Attachment_Type:35
+    },
     Init: function () {
         this.modal_element = $('#global_modal_popup');
         this.OnSearch();
@@ -124,7 +127,7 @@ var _supplier_service = {
         $('#global_modal_popup').find('.modal-title').html(title);
         $('#global_modal_popup').find('.modal-dialog').css('max-width', '1200px');
 
-        _ajax_caller.get(url, { id: id }, function (result) {
+        _ajax_caller.get(url, { id: id, type: _supplier_service.Data.Attachment_Type }, function (result) {
 
             _supplier_service.modal_element.find('.modal-title').html(title);
             _supplier_service.modal_element.find('.modal-body').html(result);
@@ -204,6 +207,8 @@ var _supplier_service = {
             _global_function.RemoveLoading()
 
             if (result.isSuccess) {
+                _supplier_service.ConfirmAttachment(result.data);
+
                 _msgalert.success(result.message);
                 _supplier_service.modal_element.modal('hide');
                 _supplier_service.ReLoad();
@@ -405,6 +410,7 @@ var _supplier_service = {
                 break;
             default:
         }
+        
     },
 
     setCookie: function (name, value, days) {
@@ -435,6 +441,30 @@ var _supplier_service = {
     saveCookieFilter: function () {
         this.setCookie(cookieFilterName, JSON.stringify(this.getModel()), 1)
     },
+    ConfirmAttachment: function (id) {
+        var model = {
+            files: [],
+            data_id: id,
+            type: _supplier_service.Data.Attachment_Type
+        }
+        $('#supplier-attachfile-list .file').each(function (index, item) {
+            var element=$(this)
+            model.files.push({
+                id: element.attr('data-id'),
+                path: element.attr('data-path'),
+                ext: element.attr('data-ext')
+            })
+        });
+        $.ajax({
+            url: "/AttachFile/ConfirmAttachFile",
+            data: model,
+            type: "Post",
+            success: function (result) {
+               
+            }
+        });
+
+    }
 }
 
 var _changeInterval = null;
