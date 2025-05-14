@@ -388,6 +388,8 @@ namespace WEB.CMS.Controllers
                     { "category_id",ArrCategoryId }
                 };
                 api.POST(ReadFile.LoadConfig().API_SYNC_ARTICLE, j_param);
+                //api.POST(_configuration["API:Api_get_list_by_article"], j_param);
+
                 var category_list_id = ArrCategoryId.Split(",");
                 foreach (var item in category_list_id)
                 {
