@@ -336,32 +336,35 @@ namespace WEB.CMS.Controllers
                         name=product_main.name,
                         product_code=product_main.code,
                         product_id=product_main._id,
-                        product_name_no_tv = CommonHelper.RemoveSpecialCharacters(StringHelpers.RemoveUnicode(product_main.name).ToLower().Replace(" ", "").Trim())
+                        product_name_no_tv = CommonHelper.RemoveSpecialCharacters(StringHelpers.RemoveUnicode(product_main.name).ToLower().Replace(" ", "").Trim()),
+                        avatar=product_main.avatar
                     };
                     await _productESRepository.InsertAsync(product_es);
                 }
-                //var products = await _productV2DetailMongoAccess.GetAllProducts();
-                //if (products != null && products.Count > 0)
-                //{
-                //    products = products.Where(x => (x.parent_product_id == null || x.parent_product_id == "") && x.status == (int)ProductStatus.ACTIVE).ToList();
-                //    products = products.GroupBy(x => x.name).Select(x => x.First()).ToList();
-                //    foreach (var product in products)
-                //    {
-                //        await _productESRepository.DeleteByProductIdAsync(product._id);
+                var products = await _productV2DetailMongoAccess.GetAllProducts();
+                if (products != null && products.Count > 0)
+                {
+                    products = products.Where(x => (x.parent_product_id == null || x.parent_product_id == "") && x.status == (int)ProductStatus.ACTIVE).ToList();
+                    products = products.GroupBy(x => x.name).Select(x => x.First()).ToList();
+                    foreach (var product in products)
+                    {
+                        await _productESRepository.DeleteByProductIdAsync(product._id);
 
-                //        ProductESModel product_es = new ProductESModel()
-                //        {
-                //            id = _productESRepository.GenerateId(),
-                //            amount = 0,
-                //            description = product.description,
-                //            name = product.name,
-                //            product_code = product.code,
-                //            product_id = product._id,
-                //            product_name_no_tv = CommonHelper.RemoveSpecialCharacters(StringHelpers.RemoveUnicode(product.name).ToLower().Replace(" ", "").Trim())
-                //        };
-                //        await _productESRepository.InsertAsync(product_es);
-                //    }
-                //}
+                        ProductESModel product_es = new ProductESModel()
+                        {
+                            id = _productESRepository.GenerateId(),
+                            amount = 0,
+                            description = product.description,
+                            name = product.name,
+                            product_code = product.code,
+                            product_id = product._id,
+                            product_name_no_tv = CommonHelper.RemoveSpecialCharacters(StringHelpers.RemoveUnicode(product.name).ToLower().Replace(" ", "").Trim()),
+                            avatar = product.avatar
+
+                        };
+                        await _productESRepository.InsertAsync(product_es);
+                    }
+                }
                 await _redisConn.DeleteCacheByKeyword(CacheName.PRODUCT_LISTING, db_index);
                 await _redisConn.DeleteCacheByKeyword(CacheName.PRODUCT_DETAIL + product_main._id, db_index);
                 if (rs != null)

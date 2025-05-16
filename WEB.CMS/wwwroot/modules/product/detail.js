@@ -410,6 +410,10 @@ var product_detail_new = {
             var profit = isNaN(parseFloat($('#main-profit').find('input').val().replaceAll(',', ''))) ? 0 : parseFloat($('#main-profit').find('input').val().replaceAll(',', ''))
             $('#main-amount').find('input').val(_product_function.Comma(price + profit))
         });
+        $('body').on('keyup', '#old-price input', function (e) {
+            var element = $(this)
+            product_detail_new.CalucateDiscount()
+        });
     },
     ShowProductTab: function () {
         $('#specification-disabled').hide()
@@ -787,7 +791,8 @@ var product_detail_new = {
             price: $('#main-price input').val() == undefined || $('#main-price input').val().trim() == '' ? 0 : parseFloat($('#main-price input').val().replaceAll(',', '')),
             profit: $('#main-profit input').val() == undefined || $('#main-profit input').val().trim() == '' ? 0 : parseFloat($('#main-profit input').val().replaceAll(',', '')),
             amount: $('#main-amount input').val() == undefined || $('#main-amount input').val().trim() == '' ? 0 : parseFloat($('#main-amount input').val().replaceAll(',', '')),
-            discount: 0,
+            discount: $('#discount input').val() == undefined || $('#discount input').val().trim() == '' ? 0 : parseFloat($('#discount input').val().replaceAll(',', '')),
+            old_price: $('#old-price input').val() == undefined || $('#old-price input').val().trim() == '' ? 0 : parseFloat($('#old-price input').val().replaceAll(',', '')),
             quanity_of_stock: $('#main-stock input').val() == undefined || $('#main-stock input').val().trim() == '' ? 0 : parseInt($('#main-stock input').val().replaceAll(',', '')),
             label_id: $('#label-id select').find(':selected').val() == undefined || $('#label-id select').find(':selected').val().trim() == '' ? 0 : $('#label-id select').find(':selected').val(),
             supplier_id: $('#supplier-id select').find(':selected').val() == undefined || $('#supplier-id select').find(':selected').val().trim() == '' ? 0 : $('#supplier-id select').find(':selected').val(),
@@ -1223,5 +1228,22 @@ var product_detail_new = {
 
             }
         });
+    },
+    CalucateDiscount: function () {
+        var min_price = $('#main-amount input').val() == undefined || $('#main-amount input').val().trim() == '' ? 0 : parseFloat($('#main-amount input').val().replaceAll(',', ''));
+        var old_price = $('#old-price input').val() == undefined || $('#old-price input').val().trim() == '' ? 0 : parseFloat($('#old-price input').val().replaceAll(',', ''));
+        if (!$('#product-attributes-table').is(':hidden')) {
+            min_price=-1
+            $('#product-attributes-prices tbody tr').each(function (index, index) {
+                var element = $(this)
+                var amount = element.find('.td-amount').find('input').val() == undefined || element.find('.td-amount').find('input').val().trim() == '' ? 0 : parseFloat(element.find('.td-amount').find('input').val().replaceAll(',', ''))
+                if (min_price < 0 || min_price > amount) {
+                    min_price = amount
+                }
+            })
+        }
+        var discount_value = ((old_price - min_price) / old_price) * 100
+        var discount = (discount_value <= 0 ? 0 : discount_value).toFixed(2)
+        $('#discount input').val(discount).trigger('change')
     }
 }

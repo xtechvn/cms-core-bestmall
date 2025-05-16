@@ -245,6 +245,24 @@
                     </div>
                 </div>
             </div>
+            <div id="old-price" class="item flex flex-lg-nowrap gap10 mb-2 w-100">
+                <label class="label">Giá gốc</label>
+                <div class="wrap_input">
+                    <div class="form-group namesp">
+                        <input type="text" class="form-control input-price" placeholder="Giá gốc" value="@(product != null && product.old_price!=null&& product.old_price>0 ? ((double)product.old_price).ToString("N0"):"")">
+
+                    </div>
+                </div>
+            </div>
+            <div id="discount" class="item flex flex-lg-nowrap gap10 mb-2 w-100">
+                <label class="label">Mức giảm so với giá gốc</label>
+                <div class="wrap_input">
+                    <div class="form-group namesp">
+                        <input type="text" class="form-control input-price" placeholder="0" disabled value="@(product != null && product.discount>0 ? product.discount.ToString("N2"):"0")">
+                        <span class="note">%</span>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div id="specification-disabled" class="box-info bg-white p-3 mb-3  disabled">

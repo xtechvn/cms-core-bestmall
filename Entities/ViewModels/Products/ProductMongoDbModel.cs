@@ -53,6 +53,7 @@ namespace Entities.ViewModels.Products
         public float? package_depth { get; set; }
         public int? supplier_id { get; set; }
         public int? label_id { get; set; }
+        public double? old_price { get; set; }
 
     }
 }
