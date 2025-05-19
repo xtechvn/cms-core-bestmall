@@ -161,7 +161,10 @@ namespace WEB.CMS.Controllers
                                await _AttachFileRepository.Delete(att.Id, 0);
                             }
                         }
+
                     }
+                    
+                    
                     foreach (var file in files) 
                     {
                         if (file.id > 0 && file.path.Contains(static_domain)) { continue; }
@@ -215,6 +218,14 @@ namespace WEB.CMS.Controllers
                         }
                     }
 
+                }
+                else
+                {
+                    var current_attachs = await _AttachFileRepository.GetListByDataID(data_id, type);
+                    foreach (var att in current_attachs)
+                    {
+                        await _AttachFileRepository.Delete(att.Id, 0);
+                    }
                 }
                 return Ok(new
                 {

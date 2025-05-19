@@ -1243,7 +1243,7 @@ var product_detail_new = {
             })
         }
         var discount_value = ((old_price - min_price) / old_price) * 100
-        var discount = (discount_value <= 0 ? 0 : discount_value).toFixed(2)
+        var discount = Math.round(discount_value <= 0 ? 0 : discount_value)
         $('#discount input').val(discount).trigger('change')
     }
 }

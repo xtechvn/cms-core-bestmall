@@ -331,7 +331,7 @@ namespace WEB.CMS.Controllers
                     ProductESModel product_es = new ProductESModel()
                     {
                         id=_productESRepository.GenerateId(),
-                        amount=0,
+                        amount= product_main.amount_min==null?product_main.amount: (double)product_main.amount_min,
                         description=product_main.description,
                         name=product_main.name,
                         product_code=product_main.code,
@@ -353,7 +353,7 @@ namespace WEB.CMS.Controllers
                 //        ProductESModel product_es = new ProductESModel()
                 //        {
                 //            id = _productESRepository.GenerateId(),
-                //            amount = 0,
+                //            amount = product.amount_min == null ? product.amount : (double)product.amount_min,
                 //            description = product.description,
                 //            name = product.name,
                 //            product_code = product.code,
