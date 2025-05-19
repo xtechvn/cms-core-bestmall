@@ -1,11 +1,16 @@
-﻿using Entities.ViewModels.Attachment;
+﻿using Caching.Elasticsearch;
+using Entities.Models;
+using Entities.ViewModels.Attachment;
+using Entities.ViewModels.ElasticSearch;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Repositories.IRepositories;
 using System.Security.Claims;
 using Utilities;
 using Utilities.Contants;
 using WEB.Adavigo.CMS.Service;
 using WEB.CMS.Models;
+using WEB.CMS.RabitMQ;
 
 namespace WEB.CMS.Controllers
 {
@@ -17,8 +22,10 @@ namespace WEB.CMS.Controllers
         private readonly StaticAPIService staticAPIService;
         private readonly IConfiguration _configuration;
         private readonly string static_domain = "";
-
-        public AttachFileController(IAttachFileRepository attachFileRepository, IWebHostEnvironment hostEnvironment, IConfiguration configuration)
+        private readonly WorkQueueClient work_queue;
+        private readonly QueueService _queueService;
+        private readonly AttachFileESModelESRepository attachFileESRepository;
+        public AttachFileController(IAttachFileRepository attachFileRepository, IWebHostEnvironment hostEnvironment, IConfiguration configuration, QueueService queueService)
         {
             _AttachFileRepository = attachFileRepository;
             _WebHostEnvironment = hostEnvironment;
@@ -26,6 +33,10 @@ namespace WEB.CMS.Controllers
             staticAPIService=new StaticAPIService(configuration);
             _configuration = configuration;
             static_domain = configuration["DomainConfig:ImageStatic"];
+            work_queue = new WorkQueueClient(configuration);
+            _queueService = queueService;
+            attachFileESRepository = new AttachFileESModelESRepository(_configuration["DataBaseConfig:Elastic:Host"], configuration);
+
         }
 
         public async Task<IActionResult> Upload(IFormFile[] files)
@@ -225,6 +236,17 @@ namespace WEB.CMS.Controllers
                     foreach (var att in current_attachs)
                     {
                         await _AttachFileRepository.Delete(att.Id, 0);
+                    }
+                }
+                await attachFileESRepository.DeleteByDataidAndType(data_id, type);
+
+                var attachs = await _AttachFileRepository.GetListByDataID(data_id, type);
+                if (attachs != null && attachs.Count > 0)
+                {
+                    foreach (var a in attachs)
+                    {
+                        var insert_model = JsonConvert.DeserializeObject<AttachFileESModel>(JsonConvert.SerializeObject(a));
+                        await attachFileESRepository.InsertAsync(insert_model);
                     }
                 }
                 return Ok(new
