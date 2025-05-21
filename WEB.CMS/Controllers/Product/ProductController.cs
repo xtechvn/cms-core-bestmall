@@ -326,21 +326,18 @@ namespace WEB.CMS.Controllers
                 }
                 //--ES:
                 var delete_es= await _productESRepository.DeleteByProductIdAsync(product_main._id);
-                if (delete_es)
+                ProductESModel product_es = new ProductESModel()
                 {
-                    ProductESModel product_es = new ProductESModel()
-                    {
-                        id=_productESRepository.GenerateId(),
-                        amount= product_main.amount_min==null?product_main.amount: (double)product_main.amount_min,
-                        description=product_main.description,
-                        name=product_main.name,
-                        product_code=product_main.code,
-                        product_id=product_main._id,
-                        product_name_no_tv = CommonHelper.RemoveSpecialCharacters(StringHelpers.RemoveUnicode(product_main.name).ToLower().Replace(" ", "").Trim()),
-                        avatar=product_main.avatar
-                    };
-                    await _productESRepository.InsertAsync(product_es);
-                }
+                    id = _productESRepository.GenerateId(),
+                    amount = product_main.amount_min == null ? product_main.amount : (double)product_main.amount_min,
+                    description = product_main.description,
+                    name = product_main.name,
+                    product_code = product_main.code,
+                    product_id = product_main._id,
+                    product_name_no_tv = CommonHelper.RemoveSpecialCharacters(StringHelpers.RemoveUnicode(product_main.name).ToLower().Replace(" ", "").Trim()),
+                    avatar = product_main.avatar
+                };
+                await _productESRepository.InsertAsync(product_es);
                 //var products = await _productV2DetailMongoAccess.GetAllProducts();
                 //if (products != null && products.Count > 0)
                 //{
