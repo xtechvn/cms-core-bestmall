@@ -207,18 +207,7 @@
                     </div>
                 </div>
             </div>
-            <div id="description" class="item flex flex-lg-nowrap gap10 mb-2 w-100">
-                <label class="label">Mô tả sản phẩm <sup class="red">*</sup></label>
-                <div class="wrap_input">
-                    <div class="form-group">
-                        <textarea id="description-textarea" rows="5" class="form-control" maxlength="3000">
-                            @(product != null && product.description != null && product.description.Trim() != "" ? product.description : "")
-
-                        </textarea>
-                        <p class="text-right mt-1"><nw class="count">@(product != null && product.description != null && product.description.Trim() != "" ? product.description.Length : "0")</nw>/3000</p>
-                    </div>
-                </div>
-            </div>
+           
             <div id="label-id" class="item flex flex-lg-nowrap gap10 mb-2 w-100">
                 <label class="label">Chọn nhãn hiệu</label>
                 <div class="wrap_input">
@@ -260,6 +249,58 @@
                     <div class="form-group namesp">
                         <input type="text" class="form-control input-price" placeholder="0" disabled value="@(product != null && product.discount>0 ? product.discount.ToString("N2"):"0")">
                         <span class="note">%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="box-info bg-white p-3 mb-3">
+            <h5 class="title-box mb-2 text-uppercase">Mô tả</h5>
+            <div id="description" class="item flex flex-lg-nowrap gap10 mb-2 w-100">
+                <label class="label">Mô tả chung <sup class="red">*</sup></label>
+                <div class="wrap_input">
+                    <div class="form-group">
+                        <textarea id="description-textarea" rows="5" class="form-control" maxlength="3000">
+                            @(product != null && product.description != null && product.description.Trim() != "" ? product.description : "")
+
+                        </textarea>
+                        @* <p class="text-right mt-1"><nw class="count">@(product != null && product.description != null && product.description.Trim() != "" ? product.description.Length : "0")</nw>/3000</p> *@
+                    </div>
+                </div>
+            </div>
+            <div id="description-ingredients" class="item flex flex-lg-nowrap gap10 mb-2 w-100">
+                <label class="label">Thành phần <sup class="red">*</sup></label>
+                <div class="wrap_input">
+                    <div class="form-group">
+                        <textarea id="description-ingredients-textarea" rows="5" class="form-control" maxlength="3000">
+                            @(product != null && product.description_ingredients != null && product.description_ingredients.Trim() != "" ? product.description_ingredients : "")
+
+                        </textarea>
+                        @* <p class="text-right mt-1"><nw class="count">@(product != null && product.description_ingredients != null && product.description_ingredients.Trim() != "" ? product.description_ingredients.Length : "0")</nw>/3000</p> *@
+                    </div>
+                </div>
+            </div>
+            <div id="description-effect" class="item flex flex-lg-nowrap gap10 mb-2 w-100">
+                <label class="label">Công dụng <sup class="red">*</sup></label>
+                <div class="wrap_input">
+                    <div class="form-group">
+                        <textarea id="description-effect-textarea" rows="5" class="form-control" maxlength="3000">
+                            @(product != null && product.description_effect != null && product.description_effect.Trim() != "" ? product.description_effect : "")
+
+                        </textarea>
+                        @* <p class="text-right mt-1"><nw class="count">@(product != null && product.description_effect != null && product.description_effect.Trim() != "" ? product.description_effect.Length : "0")</nw>/3000</p> *@
+                    </div>
+                </div>
+            </div>
+            <div id="description-usepolicy" class="item flex flex-lg-nowrap gap10 mb-2 w-100">
+                <label class="label">Cách dùng<sup class="red">*</sup></label>
+                <div class="wrap_input">
+                    <div class="form-group">
+                        <textarea id="description-usepolicy-textarea" rows="5" class="form-control" maxlength="3000">
+                            @(product != null && product.description_usepolicy != null && product.description_usepolicy.Trim() != "" ? product.description_usepolicy : "")
+
+                        </textarea>
+                        @* <p class="text-right mt-1"><nw class="count">@(product != null && product.description_usepolicy != null && product.description_usepolicy.Trim() != "" ? product.description_usepolicy.Length : "0")</nw>/3000</p> *@
                     </div>
                 </div>
             </div>

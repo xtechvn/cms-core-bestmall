@@ -18,6 +18,9 @@ var product_detail_new = {
         product_detail_new.Select2Label($('#label-id select'))
         $('#specifications-list .spec-value').attr('readonly', 'readonly')
         _common.tinyMce('#description-textarea')
+        _common.tinyMce('#description-ingredients-textarea')
+        _common.tinyMce('#description-effect-textarea')
+        _common.tinyMce('#description-usepolicy-textarea')
     },
     DynamicBind: function () {
         $('body').on('click', '.change-tab', function () {
@@ -876,6 +879,9 @@ var product_detail_new = {
         model.group_product_id = $('#group-id input').attr('data-id')
         // model.description = $('#description textarea').val()
         model.description = tinymce.get('description-textarea').getContent()
+        model.description_ingredients = tinymce.get('description-ingredients-textarea').getContent()
+        model.description_effect = tinymce.get('description-effect-textarea').getContent()
+        model.description_usepolicy = tinymce.get('description-usepolicy-textarea').getContent()
         model.specification = []
         $('#specifications .col-md-6').each(function (index, item) {
             var element = $(this)
