@@ -55,14 +55,14 @@ namespace WEB.CMS.Controllers
                     foreach (var file in files)
                     {
                         string _FileName = file.FileName;
-                        string _UploadFolder = @"uploads/images/"+ _UserLogin;
+                        string _UploadFolder = (@"uploads/images/" + _UserLogin).Replace("/","\\");
                         string _UploadDirectory = Path.Combine(_WebHostEnvironment.WebRootPath, _UploadFolder);
 
                         if (!Directory.Exists(_UploadDirectory))
                         {
                             Directory.CreateDirectory(_UploadDirectory);
                         }
-                        string filePath = Path.Combine(_UploadDirectory, _FileName);
+                        string filePath = _UploadDirectory +"\\"+_FileName;
                         if (!System.IO.File.Exists(filePath))
                         {
                             using (var fileStream = new FileStream(filePath, FileMode.Create))
@@ -70,7 +70,7 @@ namespace WEB.CMS.Controllers
                                 await file.CopyToAsync(fileStream);
                             }
                         }
-                        urls.Add("/" + _UploadFolder + "/" + _FileName);
+                        urls.Add("\\" + _UploadFolder + "\\" + _FileName);
                     }
                 }
 

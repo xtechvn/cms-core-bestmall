@@ -17,7 +17,7 @@ var product_detail_new = {
         product_detail_new.Select2Supplier($('#supplier-id select'))
         product_detail_new.Select2Label($('#label-id select'))
         $('#specifications-list .spec-value').attr('readonly', 'readonly')
-        
+        _common.tinyMce('#description-textarea')
     },
     DynamicBind: function () {
         $('body').on('click', '.change-tab', function () {
@@ -784,6 +784,8 @@ var product_detail_new = {
             return
         }
         _global_function.AddLoading();
+       
+
         var model = {
             _id: $('#product_detail').attr('data-id') == undefined || $('#product_detail').attr('data-id').trim() == '' ? null : $('#product_detail').attr('data-id'),
             status: 1,
@@ -872,7 +874,8 @@ var product_detail_new = {
         //console.log("Normalized Product Name before sending:", model.name);
         //Console.WriteLine("Received Product Name: " + model.name);
         model.group_product_id = $('#group-id input').attr('data-id')
-        model.description = $('#description textarea').val()
+        // model.description = $('#description textarea').val()
+        model.description = tinymce.get('description-textarea').getContent()
         model.specification = []
         $('#specifications .col-md-6').each(function (index, item) {
             var element = $(this)

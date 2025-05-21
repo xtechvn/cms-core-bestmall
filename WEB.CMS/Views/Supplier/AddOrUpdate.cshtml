@@ -1,14 +1,19 @@
 ﻿@{
     Layout = null;
-    List<AttachFile> attachfiles = (List<AttachFile>)ViewBag.Attachment;
+    List<AttachFile> Attachment_Root = (List<AttachFile>)ViewBag.Attachment_Root;
+    List<AttachFile> Attachment_Product = (List<AttachFile>)ViewBag.Attachment_Product;
+    List<AttachFile> Attachment_Supply = (List<AttachFile>)ViewBag.Attachment_Supply;
+    List<AttachFile> Attachment_Confirm = (List<AttachFile>)ViewBag.Attachment_Confirm;
+    bool has_permission= (bool)ViewBag.HaveValidatePermission;
 }
 @using Entities.Models
 @using Entities.ViewModels.Funding
+@using Utilities.Contants
 @model SupplierViewModel
 
 <form id="form_supplier">
     <div class="row row_min">
-        <div class="grid-item @(Model.SupplierId > 0 ? "col-md-12" : "col-md-6")">
+        <div class="grid-item col-md-12 @*@(Model.SupplierId > 0 ? " col-md-12" : "col-md-6" )*@">
             <div class="border mb20">
                 <div class="lb-form">Thông tin cơ bản</div>
                 <div class="pd10">
@@ -37,13 +42,22 @@
                             <input type="text" class="form-control" asp-for="@Model.Address" />
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label class="lbl">Chứng chỉ kinh doanh <sup class="red">*</sup></label>
+                   
+                </div>
+            </div>
+        </div>
+        <div class="grid-item col-md-12">
+            <div class="border mb20">
+                <div class="lb-form">Giấy tờ chứng nhận</div>
+                <div class="pd10">
+                    <div class="form-group form-group-attachment" data-type-id="@(((int)AttachmentType.Supplier_Cert_RootProduct).ToString())">
+
+                        <label class="lbl">Giấy tờ thương hiệu gốc <sup class="red">*</sup></label>
                         <div class="wrap_input">
-                            <div id="supplier-attachfile-list" class="row list-choose lightgallery attachment-file-gallery">
-                                @if(attachfiles!=null && attachfiles.Count > 0)
+                            <div class="row list-choose lightgallery attachment-file-gallery">
+                                @if (Attachment_Root != null && Attachment_Root.Count > 0)
                                 {
-                                    foreach(var item in attachfiles)
+                                    foreach (var item in Attachment_Root)
                                     {
                                         <div class="col-sm-3 col-4 mb10 file" style="max-width:150px;" data-path="@item.Path" data-id="@item.Id" data-ext="@item.Ext">
                                             <button type="button" class="delete-file" onclick="$(this).closest('.file').remove()"
@@ -62,9 +76,9 @@
                                 <div class="flex list align-items-center w-100">
                                     <div class="flex align-center pd10 mb20">
                                         <label class="choose mb0" style="width: 100% !important;">
-                                            <input id="supplier-attachfile" type="file" class="attachfile-add" multiple style="display: none;">
+                                            <input type="file" class="attachfile-add" multiple style="display: none;">
                                             <a class="btn-default" href="javascript:;" onclick="$(this).closest('.choose').find('.attachfile-add').trigger('click')" style="color: #fff;cursor: pointer; margin-top:10px;">
-                                                <i class="fa fa-upload"></i>&nbsp;&nbsp;Upload file
+                                                <i class="fa fa-upload"></i>&nbsp;&nbsp;Tải lên Giấy tờ thương hiệu gốc
                                             </a>
 
                                         </label>
@@ -76,10 +90,130 @@
                             </div>
                         </div>
                     </div>
+                    <div class="form-group form-group-attachment" data-type-id="@(((int)AttachmentType.Supplier_Cert_Product).ToString())">
+                        <label class="lbl">Giấy tờ hàng hóa <sup class="red">*</sup></label>
+                        <div class="wrap_input">
+                            <div class="row list-choose lightgallery attachment-file-gallery">
+                                @if (Attachment_Product != null && Attachment_Product.Count > 0)
+                                {
+                                    foreach (var item in Attachment_Product)
+                                    {
+                                        <div class="col-sm-3 col-4 mb10 file" style="max-width:150px;" data-path="@item.Path" data-id="@item.Id" data-ext="@item.Ext">
+                                            <button type="button" class="delete-file" onclick="$(this).closest('.file').remove()"
+                                                    style=" background: #ED5C6A; color: #fff; position: absolute; right: -7px; top: -7px; z-index: 2; border: 0; width: 20px; height: 20px; border-radius: 50%; outline: 0; cursor: pointer; ">
+                                                x
+                                            </button>
+                                            <div class="choose-ava lightgallery">
+                                                <img src="@item.Path" />
+                                            </div>
+                                            <p style=" overflow: hidden; "><span>@item.Path</span> </p>
+                                        </div>
+                                    }
+                                }
+                            </div>
+                            <div class="manage-color  w-100" style="max-height:200px;">
+                                <div class="flex list align-items-center w-100">
+                                    <div class="flex align-center pd10 mb20">
+                                        <label class="choose mb0" style="width: 100% !important;">
+                                            <input type="file" class="attachfile-add" multiple style="display: none;">
+                                            <a class="btn-default" href="javascript:;" onclick="$(this).closest('.choose').find('.attachfile-add').trigger('click')" style="color: #fff;cursor: pointer; margin-top:10px;">
+                                                <i class="fa fa-upload"></i>&nbsp;&nbsp;Tải lên Giấy tờ hàng hóa
+                                            </a>
+
+                                        </label>
+                                        <div class="gray txt_12" style="margin-top: 10px; width: 100% !important;">
+                                            <p style="margin-left: 3px;">Upload nhiều file cùng lúc. Định dạng: .jpg,.png,.jpeg, .gif. Dung lượng tối đa 5Mb.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group form-group-attachment" data-type-id="@(((int)AttachmentType.Supplier_Cert_Supply).ToString())">
+                        <label class="lbl">Giấy tờ nhà phân phối <sup class="red">*</sup></label>
+                        <div class="wrap_input">
+                            <div class="row list-choose lightgallery attachment-file-gallery">
+                                @if (Attachment_Supply != null && Attachment_Supply.Count > 0)
+                                {
+                                    foreach (var item in Attachment_Supply)
+                                    {
+                                        <div class="col-sm-3 col-4 mb10 file" style="max-width:150px;" data-path="@item.Path" data-id="@item.Id" data-ext="@item.Ext">
+                                            <button type="button" class="delete-file" onclick="$(this).closest('.file').remove()"
+                                                    style=" background: #ED5C6A; color: #fff; position: absolute; right: -7px; top: -7px; z-index: 2; border: 0; width: 20px; height: 20px; border-radius: 50%; outline: 0; cursor: pointer; ">
+                                                x
+                                            </button>
+                                            <div class="choose-ava lightgallery">
+                                                <img src="@item.Path" />
+                                            </div>
+                                            <p style=" overflow: hidden; "><span>@item.Path</span> </p>
+                                        </div>
+                                    }
+                                }
+                            </div>
+                            <div class="manage-color  w-100" style="max-height:200px;">
+                                <div class="flex list align-items-center w-100">
+                                    <div class="flex align-center pd10 mb20">
+                                        <label class="choose mb0" style="width: 100% !important;">
+                                            <input type="file" class="attachfile-add" multiple style="display: none;">
+                                            <a class="btn-default" href="javascript:;" onclick="$(this).closest('.choose').find('.attachfile-add').trigger('click')" style="color: #fff;cursor: pointer; margin-top:10px;">
+                                                <i class="fa fa-upload"></i>&nbsp;&nbsp;Tải lên Giấy tờ nhà phân phối
+                                            </a>
+
+                                        </label>
+                                        <div class="gray txt_12" style="margin-top: 10px; width: 100% !important;">
+                                            <p style="margin-left: 3px;">Upload nhiều file cùng lúc. Định dạng: .jpg,.png,.jpeg, .gif. Dung lượng tối đa 5Mb.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group form-group-attachment" data-type-id="@(((int)AttachmentType.Supplier_Cert_Confirm).ToString())">
+                        <label class="lbl">Giấy tờ xác nhận <sup class="red">*</sup></label>
+                        <div class="wrap_input">
+                            <div class="row list-choose lightgallery attachment-file-gallery">
+                                @if (Attachment_Confirm != null && Attachment_Confirm.Count > 0)
+                                {
+                                    foreach (var item in Attachment_Confirm)
+                                    {
+                                        <div class="col-sm-3 col-4 mb10 file" style="max-width:150px;" data-path="@item.Path" data-id="@item.Id" data-ext="@item.Ext">
+                                            <button type="button" class="delete-file" onclick="$(this).closest('.file').remove()"
+                                                    style=" background: #ED5C6A; color: #fff; position: absolute; right: -7px; top: -7px; z-index: 2; border: 0; width: 20px; height: 20px; border-radius: 50%; outline: 0; cursor: pointer; ">
+                                                x
+                                            </button>
+                                            <div class="choose-ava lightgallery">
+                                                <img src="@item.Path" />
+                                            </div>
+                                            <p style=" overflow: hidden; "><span>@item.Path</span> </p>
+                                        </div>
+                                    }
+                                }
+                            </div>
+                            <div class="manage-color  w-100" style="max-height:200px;">
+                                <div class="flex list align-items-center w-100">
+                                    <div class="flex align-center pd10 mb20">
+                                        <label class="choose mb0" style="width: 100% !important;">
+                                            <input type="file" class="attachfile-add" multiple style="display: none;">
+                                            <a class="btn-default" href="javascript:;" onclick="$(this).closest('.choose').find('.attachfile-add').trigger('click')" style="color: #fff;cursor: pointer; margin-top:10px;">
+                                                <i class="fa fa-upload"></i>&nbsp;&nbsp;Tải lên Giấy tờ xác nhận
+                                            </a>
+
+                                        </label>
+                                        <div class="gray txt_12" style="margin-top: 10px; width: 100% !important;">
+                                            <p style="margin-left: 3px;">Upload nhiều file cùng lúc. Định dạng: .jpg,.png,.jpeg, .gif. Dung lượng tối đa 5Mb.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
                 </div>
             </div>
+           
         </div>
-        @if (Model.SupplierId == 0)
+       @*  @if (Model.SupplierId == 0)
         {
             <div class="grid-item col-md-6">
                 <div class="border mb20">
@@ -141,18 +275,41 @@
                     </div>
                 </div>
             </div>
-        }
+        } *@
     </div>
 </form>
+<div class="row row_min">
+    <div class="grid-item text-left col-md-6">
+        @if (Model.SupplierId > 0)
+        {
+            @if (has_permission && (Model.Status == null || Model.Status == (int)SUPPLIER_STATUS.ON_WAITING_CONFIRMATION))
+            {
+                <button type="button" class="btn btn-default" onclick="_supplier_service.ValidateSupplier(@Model.SupplierId, @((int)SUPPLIER_STATUS.CONFIRMED))">Duyệt NCC</button>
+            }
+            @if (has_permission && (Model.Status == (int)SUPPLIER_STATUS.CONFIRMED))
+            {
+                <button type="button" class="btn btn-default" onclick="_supplier_service.ValidateSupplier(@Model.SupplierId,@((int)SUPPLIER_STATUS.ON_WAITING_CONFIRMATION))">Bỏ duyệt NCC</button>
+            }
+            @if (has_permission && (Model.Status != (int)SUPPLIER_STATUS.DELETED))
+            {
+                <button type="button" class="btn btn-default" onclick="_supplier_service.ValidateSupplier(@Model.SupplierId,@((int)SUPPLIER_STATUS.DELETED))">Xóa NCC</button>
+            }
+        }
 
-<div class="text-right">
-    <button type="button" class="btn btn-default btn btn-default cancel" data-dismiss="modal">Bỏ qua</button>
-    @if (Model.SupplierId > 0)
-    {
-        <button type="button" class="btn btn-default" onclick="_supplier_service.OnAdd()">Cập nhật</button>
-    }
-    else
-    {
-        <button type="button" class="btn btn-default" onclick="_supplier_service.OnAdd()">Thêm mới</button>
-    }
+    </div>
+    <div class=" grid-item text-right col-md-6">
+
+        <button type="button" class="btn btn-default btn btn-default cancel" data-dismiss="modal">Bỏ qua</button>
+        @if (Model.SupplierId > 0)
+        {
+            <button type="button" class="btn btn-default" onclick="_supplier_service.OnAdd()">Cập nhật</button>
+
+        }
+        else
+        {
+            <button type="button" class="btn btn-default" onclick="_supplier_service.OnAdd()">Thêm mới</button>
+        }
+
+    </div>
+
 </div>

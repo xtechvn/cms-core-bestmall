@@ -1,13 +1,18 @@
-﻿using Entities.Models;
+﻿using Caching.RedisWorker;
+using Entities.Models;
 using Entities.ViewModels;
 using Entities.ViewModels.BankingAccount;
 using Entities.ViewModels.Funding;
 using Entities.ViewModels.SupplierConfig;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
 using MongoDB.Driver;
+using Nest;
+using Newtonsoft.Json;
 using Repositories.IRepositories;
 using System.Security.Claims;
 using Utilities;
+using Utilities.Contants;
 using WEB.CMS.Customize;
 using WEB.CMS.Models;
 
@@ -24,6 +29,7 @@ namespace WEB.Adavigo.CMS.Controllers.Order
         private readonly ISupplierRepository _supplierRepository;
         private readonly WEB.CMS.Models.AppSettings config;
         private readonly IAttachFileRepository _AttachFileRepository;
+        private RedisConn _redisConn;
 
         public SupplierController(IAllCodeRepository allCodeRepository, ISupplierRepository supplierRepository,
             ICommonRepository commonRepository, IConfiguration _configuration, IWebHostEnvironment webHostEnvironment, IAttachFileRepository attachFileRepository)
@@ -35,6 +41,8 @@ namespace WEB.Adavigo.CMS.Controllers.Order
             configuration = _configuration;
             _WebHostEnvironment = webHostEnvironment;
             _AttachFileRepository = attachFileRepository;
+            _redisConn = new RedisConn(configuration);
+            _redisConn.Connect();
         }
 
         #region supplier
@@ -66,15 +74,48 @@ namespace WEB.Adavigo.CMS.Controllers.Order
             return PartialView(model);
         }
 
-        public async Task<IActionResult> AddOrUpdate(int id,int type=35)
+        public async Task<IActionResult> AddOrUpdate(int id)
         {
             var model = new SupplierViewModel();
-            ViewBag.Attachment = new List<AttachFile>();
+            ViewBag.Attachment_Root = new List<AttachFile>();
+            ViewBag.Attachment_Product = new List<AttachFile>();
+            ViewBag.Attachment_Supply = new List<AttachFile>();
+            ViewBag.Attachment_Confirm = new List<AttachFile>();
+            ViewBag.HaveValidatePermission = false;
+
             if (id > 0)
             {
                 model = _supplierRepository.GetById(id);
-                ViewBag.Attachment = await _AttachFileRepository.GetListByDataID(id, type);
+                ViewBag.Attachment_Root = await _AttachFileRepository.GetListByDataID(id, (int)AttachmentType.Supplier_Cert_RootProduct);
+                ViewBag.Attachment_Product = await _AttachFileRepository.GetListByDataID(id, (int)AttachmentType.Supplier_Cert_Product);
+                ViewBag.Attachment_Supply = await _AttachFileRepository.GetListByDataID(id, (int)AttachmentType.Supplier_Cert_Supply);
+                ViewBag.Attachment_Confirm = await _AttachFileRepository.GetListByDataID(id, (int)AttachmentType.Supplier_Cert_Confirm);
             }
+            try
+            {
+                int _UserId = 0;
+
+                if (HttpContext.User.FindFirst(ClaimTypes.NameIdentifier) != null)
+                {
+                    _UserId = Convert.ToInt32(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+                }
+                string cache_name = CacheName.USER_ROLE + _UserId + "_" + configuration["CompanyType"];
+                var j_data = await _redisConn.GetAsync(cache_name, Convert.ToInt32(configuration["Redis:Database:db_common"]));
+                if (j_data != null && j_data.Trim() != "")
+                {
+                    string decode = CommonHelper.Decode(j_data, configuration["DataBaseConfig:key_api:api_manual"]);
+                    UserRoleCacheModel user_role_cache = JsonConvert.DeserializeObject<UserRoleCacheModel>(decode);
+                    if (user_role_cache != null && user_role_cache.Permission != null && user_role_cache.Permission.Count() > 0 && user_role_cache.Permission.Any(x => x.MenuId == 22 && x.PermissionId >=  (int)Utilities.Contants.SortOrder.SUA))
+                    {
+                        ViewBag.HaveValidatePermission = true;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("AddOrUpdate - SupplierController: " + ex);
+            }
+            //ViewBag.HaveValidatePermission = true;
 
             return View(model);
         }
@@ -92,7 +133,7 @@ namespace WEB.Adavigo.CMS.Controllers.Order
                         {
                             isSuccess = false,
                             message = "Nhà cung cấp đã tồn tại",
-                            data=suplier
+                            data = suplier
                         });
                     }
                 }
@@ -369,7 +410,7 @@ namespace WEB.Adavigo.CMS.Controllers.Order
                     {
                         await affCollection.DeleteOneAsync(filter);
                     }
-                   
+
                     return new JsonResult(new
                     {
                         isSuccess = true,
@@ -526,15 +567,67 @@ namespace WEB.Adavigo.CMS.Controllers.Order
         #endregion
 
         [HttpPost]
-        public  IActionResult SearchSupplier(string txt_search)
+        public IActionResult SearchSupplier(string txt_search)
         {
             try
             {
-                var list= _supplierRepository.GetSuggestSupplier(txt_search,20);
+                var list = _supplierRepository.GetSuggestSupplier(txt_search, 20);
                 return new JsonResult(new
                 {
                     isSuccess = true,
-                    data=list
+                    data = list
+                });
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("Search - SupplierController: " + ex.Message);
+                return new JsonResult(new
+                {
+                    isSuccess = false,
+                    message = ex.Message
+                });
+            }
+        }
+        [HttpPost]
+        public IActionResult ChangetStausSupplier(int data_id, int status)
+        {
+            try
+            {
+                if (data_id <= 0)
+                {
+                    return new JsonResult(new
+                    {
+                        isSuccess = false,
+                        message = "Dữ liệu không chính xác, vui lòng thử lại"
+                    });
+                }
+                var id = _supplierRepository.UpdateSupplierStatus(status, data_id);
+                string msg = "Dữ liệu không chính xác, vui lòng thử lại";
+                switch (status)
+                {
+                    case (int)SUPPLIER_STATUS.DELETED:
+                        {
+                            msg = "Xóa nhà cung cấp thành công";
+                        }
+                        break;
+                    case (int)SUPPLIER_STATUS.ON_WAITING_CONFIRMATION:
+                        {
+                            msg = "Bỏ duyệt nhà cung cấp thành công";
+
+                        }
+                        break;
+                    case (int)SUPPLIER_STATUS.CONFIRMED:
+                        {
+                            msg = "Duyệt nhà cung cấp thành công";
+
+                        }
+                        break;
+                }
+                return new JsonResult(new
+                {
+                    isSuccess = (id > 0),
+                    message = msg,
+                    data = id
                 });
             }
             catch (Exception ex)

@@ -34,15 +34,15 @@ var _supplier_detail = {
         return indexed_array;
     },
     DynamicBind: function () {
-        $('body').on('change', '#supplier-attachfile', function () {
+        $('body').on('change', '.form-group-attachment .attachfile-add', function () {
+            var element = $(this)
             if ($(this)[0].files[0] && _supplier_detail.Data.Processing == false) {
-                _supplier_detail.Upload()
+                _supplier_detail.Upload(element)
             }
         })
     },
-    Upload: function () {
+    Upload: function (element) {
         _supplier_detail.Data.Processing = true;
-        var element = $('#supplier-attachfile')
         var formData = new FormData()
         $(element[0].files).each(function (index, item) {
             formData.append("files", item);
@@ -56,8 +56,8 @@ var _supplier_detail = {
             type: "POST",
             success: function (result) {
                 $(result.data).each(function (index, item) {
-                    var path=item.split('.')
-                    $('#supplier-attachfile-list').append(
+                    var path = item.split('.')
+                    element.closest('.form-group-attachment').find('.attachment-file-gallery').append(
                         _supplier_detail.Data.Images
                             .replaceAll('@item.Path', item)
                             .replaceAll('@(file_name)', item)
@@ -300,33 +300,6 @@ var _supplier_order = {
 }
 
 
-var _supplier_ticket = {
-    Init: function () {
-        this.modal = $('#global_modal_popup');
-        this.search_params = {
-            supplier_id: $('#global_supplier_id').val(),
-            page_index: 1,
-            page_size: 10
-        }
-        this.ReloadListing(this.search_params);
-    },
-
-    Listing: function (input) {
-        _ajax_caller.post("/Supplier/TicketListing", input, function (result) {
-            $('#grid_supplier_ticket').html(result);
-        });
-    },
-
-    ReloadListing: function () {
-        this.search_params.page_index = 1;
-        this.Listing(this.search_params);
-    },
-
-    Paging: function (input) {
-        this.search_params.page_index = input;
-        this.Listing(this.search_params);
-    }
-}
 
 
 $(document).ready(function () {
@@ -335,5 +308,5 @@ $(document).ready(function () {
     _supplier_contact.Init();
     _supplier_payment.Init();
     _supplier_order.Init();
-    _supplier_ticket.Init();
+  //  _supplier_ticket.Init();
 });

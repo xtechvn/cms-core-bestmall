@@ -448,5 +448,23 @@ namespace DAL.Funding
             }
         }
         #endregion
+        public int UpdateSupplierStatus(int new_status,int supplier_id)
+        {
+            try
+            {
+                SqlParameter[] objParam_contractPay = new SqlParameter[]
+                {
+                    new SqlParameter("@SupplierId", supplier_id),
+                    new SqlParameter("@Status",new_status),
+                };
+                return _DbWorker.ExecuteNonQuery(StoreProcedureConstant.SP_UpdateSupplierStatus, objParam_contractPay);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("UpdateSupplier - SupplierDAL. " + ex);
+                return -1;
+            }
+        }
+
     }
 }

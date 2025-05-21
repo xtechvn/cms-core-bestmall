@@ -581,5 +581,12 @@ namespace Repositories.Repositories
 
 
         #endregion
+
+
+        public int UpdateSupplierStatus(int new_status, int supplier_id)
+        {
+            return supplierDAL.UpdateSupplierStatus(new_status,supplier_id);
+
+        }
     }
 }

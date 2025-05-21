@@ -48,7 +48,10 @@ namespace Utilities.Contants
         //Addservice_WaterSport = 33,
         //SetService_WaterSport = 34,
 
-        Supplier=35
+        Supplier_Cert_RootProduct=35,
+        Supplier_Cert_Product=36,
+        Supplier_Cert_Supply=37,
+        Supplier_Cert_Confirm=38,
 
     }
 }

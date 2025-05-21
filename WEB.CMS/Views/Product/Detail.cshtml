@@ -211,7 +211,7 @@
                 <label class="label">Mô tả sản phẩm <sup class="red">*</sup></label>
                 <div class="wrap_input">
                     <div class="form-group">
-                        <textarea rows="5" class="form-control" maxlength="3000">
+                        <textarea id="description-textarea" rows="5" class="form-control" maxlength="3000">
                             @(product != null && product.description != null && product.description.Trim() != "" ? product.description : "")
 
                         </textarea>

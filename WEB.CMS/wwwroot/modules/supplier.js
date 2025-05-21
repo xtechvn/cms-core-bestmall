@@ -1,8 +1,5 @@
 ﻿
 var _supplier_service = {
-    Data: {
-        Attachment_Type:35
-    },
     Init: function () {
         this.modal_element = $('#global_modal_popup');
         this.OnSearch();
@@ -127,7 +124,7 @@ var _supplier_service = {
         $('#global_modal_popup').find('.modal-title').html(title);
         $('#global_modal_popup').find('.modal-dialog').css('max-width', '1200px');
 
-        _ajax_caller.get(url, { id: id, type: _supplier_service.Data.Attachment_Type }, function (result) {
+        _ajax_caller.get(url, { id: id }, function (result) {
 
             _supplier_service.modal_element.find('.modal-title').html(title);
             _supplier_service.modal_element.find('.modal-body').html(result);
@@ -442,28 +439,78 @@ var _supplier_service = {
         this.setCookie(cookieFilterName, JSON.stringify(this.getModel()), 1)
     },
     ConfirmAttachment: function (id) {
-        var model = {
-            files: [],
-            data_id: id,
-            type: _supplier_service.Data.Attachment_Type
-        }
-        $('#supplier-attachfile-list .file').each(function (index, item) {
-            var element=$(this)
-            model.files.push({
-                id: element.attr('data-id'),
-                path: element.attr('data-path'),
-                ext: element.attr('data-ext')
-            })
-        });
-        $.ajax({
-            url: "/AttachFile/ConfirmAttachFile",
-            data: model,
-            type: "Post",
-            success: function (result) {
-               
+        $('.form-group-attachment').each(function (index, item) {
+            var element = $(this)
+            var model = {
+                files: [],
+                data_id: id,
+                type: element.attr('data-type-id')
             }
-        });
+            element.find('.attachment-file-gallery').find('.file').each(function (index, item) {
+                var element = $(this)
+                model.files.push({
+                    id: element.attr('data-id'),
+                    path: element.attr('data-path'),
+                    ext: element.attr('data-ext')
+                })
+            });
+            $.ajax({
+                url: "/AttachFile/ConfirmAttachFile",
+                data: model,
+                type: "Post",
+                success: function (result) {
 
+                }
+            });
+        });
+       
+
+    },
+    ValidateSupplier: function (id,status) {
+        var title = "Xác nhận duyệt nhà cung cấp";
+        var description = "Nhà cung cấp này sẽ được duyệt, bạn có chắc chắn không?"
+        switch (status) {
+            case 2:
+                {
+                    description = "Nhà cung cấp này sẽ bị xóa, bạn có chắc chắn không?"
+                }
+                break;
+            case 0:
+                {
+                    description = "Bỏ duyệt Nhà cung cấp này sẽ đưa về trạng thái chờ duyệt, bạn có chắc chắn không?"
+                }
+                break;
+            case 1:
+                {
+                    description = "Nhà cung cấp này sẽ được duyệt, bạn có chắc chắn không?"
+                }
+                break;
+        }
+        _msgconfirm.openDialog(title, description, function () {
+            var model = {
+                data_id: id,
+                status: status
+            }
+            $.ajax({
+                url: "/Supplier/ChangetStausSupplier",
+                data: model,
+                type: "Post",
+                success: function (result) {
+                    if (result.isSuccess) {
+                        $('button').prop('disabled', true)
+                        $('button').css('background-color', 'lightgray')
+                        $('button').css('border', '1px solid lightgray')
+                        _msgalert.success(result.message);
+                        setTimeout(function () {
+                            window.location.reload();
+                            
+                        }, 1500)
+                    } else {
+                        _msgalert.error(result.message);
+                    }
+                }
+            });
+        });
     }
 }
 

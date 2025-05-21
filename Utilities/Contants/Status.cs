@@ -80,4 +80,11 @@ namespace Utilities.Contants
         HOA_DON = 7,
         YEU_CAU_XUAT_HOA_DON = 6,
     }
+    public enum SUPPLIER_STATUS
+    {
+        ON_WAITING_CONFIRMATION = 0,
+        CONFIRMED = 1,
+        DELETED = 2
+    }
+
 }

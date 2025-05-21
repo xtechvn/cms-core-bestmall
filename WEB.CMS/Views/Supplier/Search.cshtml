@@ -4,6 +4,7 @@
 @using Entities.ViewModels
 @using Entities.ViewModels.Funding
 @using Utilities
+@using Utilities.Contants
 @model GenericViewModel<SupplierViewModel>
 
 <div class="table-responsive table-default table-gray">
@@ -15,7 +16,7 @@
                 <th style="min-width: 250px;">Tên NCC</th>
                 <th>Liên hệ</th>
                 <th>Địa chỉ</th>
-                <th style="width: 250px;">Dịch vụ</th>
+                <th>Trạng thái</th>
                 <th>Người tạo</th>
                 <th>Ngày tạo</th>
                 <th>Người cập nhật</th>
@@ -50,7 +51,31 @@
                             }
                         </td>
                         <td>@item.Address</td>
-                        <td>N/A</td>
+                        <td>
+                            @{
+                                @switch (item.Status)
+                                {
+                                    case (int)SUPPLIER_STATUS.ON_WAITING_CONFIRMATION:
+                                        {
+                                            <span class="status-oranger">Chờ duyệt</span>
+                                        }
+                                        break;
+                                    case (int)SUPPLIER_STATUS.CONFIRMED:
+
+                                        {
+                                            <span class="status-green">Hoạt động</span>
+
+                                        }
+                                        break;
+                                   default:
+                                        {
+                                            <span class="status-oranger">Chờ duyệt</span>
+                                        }
+                                        break;
+                                }
+                            }
+
+                        </td>
                         <td>@item.CreatedName</td>
                         <td>
                             @(item.CreatedDate.HasValue && item.CreatedDate != DateTime.MinValue ? item.CreatedDate.Value.ToString("dd-MM-yyyy HH:mm") : string.Empty)
