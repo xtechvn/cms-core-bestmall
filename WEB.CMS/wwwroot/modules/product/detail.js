@@ -915,10 +915,11 @@ var product_detail_new = {
         $('#description-specification tbody tr').each(function (index, item) {
             var element = $(this)
             if (element.hasClass('summary')) { return true }
-            var selected_value = element.find('select').find(':selected')
-            if (selected_value != null && selected_value != undefined) {
+            var selected_key = element.find('select').find(':selected')
+            var selected_value = element.find('input')
+            if (selected_key != null && selected_key != undefined) {
                 model.detail_specification.push({
-                    key:selected_value.val(),
+                    key: selected_key.val(),
                     value:selected_value.val()
                 })
             }
