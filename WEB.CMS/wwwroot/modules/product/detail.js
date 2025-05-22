@@ -801,6 +801,9 @@ var product_detail_new = {
             quanity_of_stock: $('#main-stock input').val() == undefined || $('#main-stock input').val().trim() == '' ? 0 : parseInt($('#main-stock input').val().replaceAll(',', '')),
             label_id: $('#label-id select').find(':selected').val() == undefined || $('#label-id select').find(':selected').val().trim() == '' ? 0 : $('#label-id select').find(':selected').val(),
             supplier_id: $('#supplier-id select').find(':selected').val() == undefined || $('#supplier-id select').find(':selected').val().trim() == '' ? 0 : $('#supplier-id select').find(':selected').val(),
+            review_count: $('#review-count input').val() == undefined || $('#review-count input').val().trim() == '' ? 0 : parseInt($('#review-count input').val().replaceAll(',', '')),
+            rating: $('#rating input').val() == undefined || $('#rating input').val().trim() == '' ? 0 : parseFloat($('#rating input').val().replaceAll(',', '')),
+            total_sold: $('#total-sold input').val() == undefined || $('#total-sold input').val().trim() == '' ? 0 : parseInt($('#total-sold input').val().replaceAll(',', '')),
 
         }
         model.images = []
@@ -882,19 +885,19 @@ var product_detail_new = {
         model.description_ingredients = tinymce.get('description-ingredients-textarea').getContent()
         model.description_effect = tinymce.get('description-effect-textarea').getContent()
         model.description_usepolicy = tinymce.get('description-usepolicy-textarea').getContent()
-        model.specification = []
-        $('#specifications .col-md-6').each(function (index, item) {
-            var element = $(this)
+        //model.specification = []
+        //$('#specifications .col-md-6').each(function (index, item) {
+        //    var element = $(this)
 
-            model.specification.push({
-                _id: '-1',
-                attribute_id: element.find('.item').attr('data-id'),
-                value_type: element.find('.item').attr('data-type'),
-                value: element.find('.item').find('.namesp').find('input').val(),
-                type_ids: element.find('.item').find('.namesp').find('input').attr('data-value'),
-            })
+        //    model.specification.push({
+        //        _id: '-1',
+        //        attribute_id: element.find('.item').attr('data-id'),
+        //        value_type: element.find('.item').attr('data-type'),
+        //        value: element.find('.item').find('.namesp').find('input').val(),
+        //        type_ids: element.find('.item').find('.namesp').find('input').attr('data-value'),
+        //    })
 
-        })
+        //})
 
 
 

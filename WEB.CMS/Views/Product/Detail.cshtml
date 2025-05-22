@@ -319,20 +319,20 @@
             <p class="mb-0">Có thể điều chỉnh sau khi chọn ngành hàng</p>
         </div>
 
-        <div id="specifications" class="box-info bg-white p-3 mb-3">
+@*         <div id="specifications" class="box-info bg-white p-3 mb-3">
             <h5 class="title-box mb-2 text-uppercase">Thông tin chi tiết</h5>
             <p>
-@*                 Hoàn thành: <nw class="specification-finish">0</nw>/<nw class="specification-max">1</nw>
- *@                <span style="color: #919191" class="mx-2">
+               Hoàn thành: <nw class="specification-finish">0</nw>/<nw class="specification-max">1</nw>
+                 <span style="color: #919191" class="mx-2">
                     Điền thông tin thuộc tính để tăng mức độ hiển thị cho
                     sản
                     phẩm
                 </span>
                 <a href="javascript:;" class="text-primary" style="display:none;">Xem hướng dẫn bổ sung thuộc tính</a>
             </p>
-            <div id="specifications-list" class="row specifications-list">
-               
-                <div class="col-md-6">
+         <div id="specifications-list" class="row specifications-list">
+
+            @*     <div class="col-md-6">
                     <div class="item flex flex-lg-nowrap gap10 mb-2 w-100" data-id="1" data-type="3">
                         <label class="label">Thương hiệu</label>
                         <div class="wrap_input">
@@ -677,10 +677,12 @@
                             <i class="icofont-simple-down"></i>
                         </span>
                     </a>
-                </div>
-            </div>
+            </div>*@
+
+            </div> 
+
         </div>
-        <div id="selling-information" class="box-info bg-white p-3 mb-3">
+         <div id="selling-information" class="box-info bg-white p-3 mb-3">
             <h5 class="title-box mb-2 text-uppercase">Thông tin bán hàng</h5>
             <div class="row">
                 <div class="col-md-6">
@@ -1154,7 +1156,35 @@
                     </div>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div id="total-sold" class="item flex flex-lg-nowrap gap10 mb-2 w-100">
+                            <label class="label">Số lượng sản phẩm đã bán</label>
+                            <div class="wrap_input">
+                                <div class="form-group namesp">
+                                <input type="text" class="form-control input-price" placeholder="0" value="@(product != null && product.total_sold!=null&& product.total_sold>0 ? ((int)product.total_sold).ToString("N0"):"0")">
+                                </div>
+                            </div>
+                    </div>
+                    <div id="rating" class="item flex flex-lg-nowrap gap10 mb-2 w-100">
+                        <label class="label">Điểm Đánh giá sản phẩm</label>
+                        <div class="wrap_input">
+                            <div class="form-group namesp">
+                            <input type="text" class="form-control input-price" placeholder="0" value="@(product != null && product.rating!=null&& product.rating>0 ? ((int)product.rating).ToString("N1"):"0")">
+                            </div>
+                        </div>
+                    </div>
+                    <div id="review-count" class="item flex flex-lg-nowrap gap10 mb-2 w-100">
+                        <label class="label">Số lượng đánh giá</label>
+                        <div class="wrap_input">
+                            <div class="form-group namesp">
+                            <input type="text" class="form-control input-price" placeholder="0" value="@(product != null && product.review_count!=null&& product.review_count>0 ? ((int)product.review_count).ToString("N0"):"0")">
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
+            </div>
         </div>
         <div class="action-form">
             <a id="product-detail-cancel" href="javascript:;" class="btn btn-round btn-outline-base btn-cancel">Hủy</a>
