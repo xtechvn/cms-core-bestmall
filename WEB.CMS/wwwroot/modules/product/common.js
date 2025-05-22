@@ -479,7 +479,7 @@ var _product_constants = {
                                             <td>
                                                 <div class="flex gap10 flex-nowrap align-items-center justify-content-center">
                                                     <div class="form-group mb-0">
-                                                        <input type="text" class="form-control input-price description-specification-value" placeholder="Giá trị" value="">
+                                                        <input type="text" class="form-control description-specification-value" placeholder="Giá trị" value="">
                                                     </div>
                                                 </div>
                                             </td>
