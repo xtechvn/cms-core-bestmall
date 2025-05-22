@@ -1,4 +1,5 @@
 ﻿@using Entities.ViewModels.Products
+@using Utilities.Contants.ProductV2
 @{
     Layout = null;
     List<ProductMongoDbModel> sub_products = (List<ProductMongoDbModel>)ViewBag.Sub;
@@ -58,6 +59,36 @@
                     stock_count = main.quanity_of_stock;
                 }
             }
+            <td class="text-center">
+                @{
+                    @switch (main.status)
+                    {
+                        case (int)ProductStatus.ON_WAITING_CONFIRM:
+                            {
+                                <span class="status-oranger">Chờ duyệt</span>
+                            }
+                            break;
+                        case (int)ProductStatus.ACTIVE:
+                            {
+                                <span class="status-green">Hoạt động</span>
+
+                            }
+                            break;
+                        case (int)ProductStatus.DEACTIVE:
+                            {
+                                <span class="status-red">Ngưng hoạt động</span>
+
+                            }
+                            break;
+                        default:
+                            {
+                                <span class="status-oranger">Chờ duyệt</span>
+                            }
+                            break;
+                    }
+                }
+
+            </td>
             <td class="text-center"></td>
             <td class="text-center">@amount_html</td>
             <td class="text-center">@stock_count.ToString("N0")</td>

@@ -325,7 +325,7 @@ namespace WEB.CMS.Controllers
 
                 }
                 //--ES:
-                var delete_es= await _productESRepository.DeleteByProductIdAsync(product_main._id);
+                await _productESRepository.DeleteByProductIdAsync(product_main._id);
                 ProductESModel product_es = new ProductESModel()
                 {
                     id = _productESRepository.GenerateId(),
