@@ -911,17 +911,18 @@ var product_detail_new = {
 
         //})
 
-        model.specification = []
-        $('#specifications .col-md-6').each(function (index, item) {
+        model.detail_specification = []
+        $('#description-specification tbody tr').each(function (index, item) {
             var element = $(this)
-
-            model.specification.push({
-                _id: '-1',
-                attribute_id: element.find('.item').attr('data-id'),
-                value_type: element.find('.item').attr('data-type'),
-                value: element.find('.item').find('.namesp').find('input').val(),
-                type_ids: element.find('.item').find('.namesp').find('input').attr('data-value'),
-            })
+            if (element.hasClass('summary')) { return true }
+            var selected_value = element.find('select').find(':selected')
+            if (selected_value != null && selected_value != undefined) {
+                model.detail_specification.push({
+                    key:selected_value.val(),
+                    value:selected_value.val()
+                })
+            }
+           
 
         })
 
