@@ -1051,12 +1051,12 @@ var product_detail_new = {
         }
         if (!success) return success
 
-        if ($('#description textarea').val() == undefined
-            || $('#description textarea').val().trim()=='') {
-            _msgalert.error('Mô tả sản phẩm không được bỏ trống')
-            success = false
-        }
-        if (!success) return success
+        //if ($('#description textarea').val() == undefined
+        //    || $('#description textarea').val().trim()=='') {
+        //    _msgalert.error('Mô tả sản phẩm không được bỏ trống')
+        //    success = false
+        //}
+        //if (!success) return success
 
         if ($('#group-id .namesp input').val() == undefined
             || $('#group-id .namesp input').val().trim() == ''
