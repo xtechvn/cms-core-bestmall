@@ -3,3 +3,6 @@
     font-weight:bold;
 
 }
+.description-specification-list .select2, .description-specification-list .form-group {
+    width: 100% !important;
+}

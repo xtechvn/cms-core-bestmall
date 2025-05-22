@@ -16,6 +16,7 @@ var product_detail_new = {
         product_detail_new.RenderAttributesPrice()
         product_detail_new.Select2Supplier($('#supplier-id select'))
         product_detail_new.Select2Label($('#label-id select'))
+        product_detail_new.Select2Spec($('#description-specification-list select'))
         $('#specifications-list .spec-value').attr('readonly', 'readonly')
         _common.tinyMce('#description-textarea')
         _common.tinyMce('#description-ingredients-textarea')
@@ -416,6 +417,17 @@ var product_detail_new = {
         $('body').on('keyup', '#old-price input', function (e) {
             var element = $(this)
             product_detail_new.CalucateDiscount()
+        });
+        $('body').on('click', '#description-specification .summary .btn-add', function (e) {
+            var template = _product_constants.HTML.ProductDetail_Description_Specification
+            var html = template
+            $(html).insertBefore('#description-specification .summary')
+            product_detail_new.Select2Spec($('#description-specification .tr-new select'))
+            $('#description-specification .tr-new').removeClass('tr-new')
+        });
+        $('body').on('click', '#description-specification table .delete-row', function () {
+            var element = $(this)
+            element.closest('tr').remove()
         });
     },
     ShowProductTab: function () {
@@ -899,7 +911,19 @@ var product_detail_new = {
 
         //})
 
+        model.specification = []
+        $('#specifications .col-md-6').each(function (index, item) {
+            var element = $(this)
 
+            model.specification.push({
+                _id: '-1',
+                attribute_id: element.find('.item').attr('data-id'),
+                value_type: element.find('.item').attr('data-type'),
+                value: element.find('.item').find('.namesp').find('input').val(),
+                type_ids: element.find('.item').find('.namesp').find('input').attr('data-value'),
+            })
+
+        })
 
         model.discount_group_buy = []
         $('#discount-groupbuy tbody .discount-groupbuy-row').each(function (index, item) {
@@ -1218,6 +1242,37 @@ var product_detail_new = {
                 cache: true
             }
         });
+    },
+    Select2Spec: function (selector) {
+        selector.each(function (index, item) {
+            var element=$(this)
+            element.select2({
+                ajax: {
+                    url: "/product/SpecificationKeySearch",
+                    type: "post",
+                    dataType: 'json',
+                    delay: 250,
+                    data: function (params) {
+                        var query = {
+                            txt_search: params.term,
+                        }
+                        return query;
+                    },
+                    processResults: function (response) {
+                        return {
+                            results: $.map(response.data, function (item) {
+                                return {
+                                    text: item.description,
+                                    id: item.description,
+                                }
+                            })
+                        };
+                    },
+                    cache: true
+                }
+            });
+        })
+       
     },
     ActiveProduct: function () {
         _global_function.AddLoading()

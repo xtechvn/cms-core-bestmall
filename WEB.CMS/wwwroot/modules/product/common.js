@@ -113,7 +113,8 @@ var _product_constants = {
         StaticDomain: `https://static-image.adavigo.com`,
         ImageExtension: ['jpeg', 'jpg', 'png', 'bmp'],
         VideoExtension: ['mp4'],
-        VideoMaxSize: 31457280
+        VideoMaxSize: 31457280,
+        
     },
     HTML: {
         Product: `
@@ -462,7 +463,33 @@ var _product_constants = {
                                 
                             </ul>
                         </div>
-                    </div>`
+                    </div>`,
+        ProductDetail_Description_Specification: `  <tr  class="tr-new">
+                                            <td>
+                                                <div class="flex gap10 flex-nowrap align-items-center justify-content-center">
+                                                    <div class="form-group mb-0">
+                                                        <select class="select2 description-specification-key">
+                                                           
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                               
+
+                                            </td>
+                                            <td>
+                                                <div class="flex gap10 flex-nowrap align-items-center justify-content-center">
+                                                    <div class="form-group mb-0">
+                                                        <input type="text" class="form-control input-price description-specification-value" placeholder="Giá trị" value="">
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="text-center">
+                                                <a href="javascript:;" class="delete-row">
+                                                    <i class="icofont-trash"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                    `
     }
 }
 

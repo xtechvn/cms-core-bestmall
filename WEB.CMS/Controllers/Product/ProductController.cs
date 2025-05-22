@@ -1,4 +1,5 @@
-﻿using Caching.Elasticsearch;
+﻿using Azure.Core;
+using Caching.Elasticsearch;
 using Caching.RedisWorker;
 using Entities.Models;
 using Entities.ViewModels.Products;
@@ -37,9 +38,10 @@ namespace WEB.CMS.Controllers
         private readonly int db_index = 9;
         private readonly ProductESRepository _productESRepository;
         private readonly ISupplierRepository _supplierRepository;
+        private readonly IAllCodeRepository _allCodeRepository;
 
         public ProductController(IConfiguration configuration, RedisConn redisConn, IGroupProductRepository groupProductRepository, ILabelRepository labelRepository,
-            ISupplierRepository supplierRepository)
+            ISupplierRepository supplierRepository, IAllCodeRepository allCodeRepository)
         {
             _productV2DetailMongoAccess = new ProductDetailMongoAccess(configuration);
             _productSpecificationMongoAccess = new ProductSpecificationMongoAccess(configuration);
@@ -53,6 +55,7 @@ namespace WEB.CMS.Controllers
             _productESRepository = new ProductESRepository(_configuration["DataBaseConfig:Elastic:Host"], configuration);
             _labelRepository = labelRepository;
             _supplierRepository = supplierRepository;
+            _allCodeRepository = allCodeRepository;
         }
         public IActionResult Index()
         {
@@ -961,6 +964,51 @@ namespace WEB.CMS.Controllers
                 });
             }
 
+        }
+        [HttpPost]
+        public async Task<IActionResult> SpecificationKeySearch(string txt_search)
+        {
+            try
+            {
+                List<AllCode> list = new List<AllCode>();
+                var cache_name = AllCodeType.PRODUCT_SPECIFICATION;
+                var j_data = await _redisConn.GetAsync(cache_name, Convert.ToInt32(_configuration["Redis:Database:db_search_result"]));
+                if (j_data != null && j_data.Trim() != "")
+                {
+                    list = JsonConvert.DeserializeObject<List<AllCode>>(j_data);
+
+                }
+                if (list == null || list.Count<=0)
+                {
+                    list = _allCodeRepository.GetListByType(AllCodeType.PRODUCT_SPECIFICATION);
+                }
+                if (list == null || list.Count <= 0)
+                {
+                    return new JsonResult(new
+                    {
+                        isSuccess = false,
+                        message = "No Data"
+                    });
+                }
+                if(txt_search!=null && txt_search.Trim() != "")
+                {
+                    list = list.Where(x => CommonHelper.RemoveUnicode(x.Description).ToLower().Contains(CommonHelper.RemoveUnicode(txt_search).ToLower())).ToList();
+                }
+                return new JsonResult(new
+                {
+                    isSuccess = true,
+                    data = list
+                });
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("SpecificationSearch - ProductController: " + ex.Message);
+                return new JsonResult(new
+                {
+                    isSuccess = false,
+                    message = ex.Message
+                });
+            }
         }
     }
     
