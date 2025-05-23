@@ -219,7 +219,7 @@ namespace WEB.CMS.Controllers
                     var j_param = new Dictionary<string, object>
                             {
                                  { "store_name", "SP_GetAllArticle" },
-                                { "index_es", "hulotoys_sp_getarticle" },
+                                { "index_es", "hulotoys_sp_getallarticle" },
                                 {"project_type", Convert.ToInt16(ProjectType.HULOTOYS) },
                                   {"id" , articleId }
 
@@ -287,7 +287,7 @@ namespace WEB.CMS.Controllers
                     var j_param = new Dictionary<string, object>
                             {
                                  { "store_name", "SP_GetAllArticle" },
-                                { "index_es", "hulotoys_sp_getarticle" },
+                                { "index_es", "hulotoys_sp_getallarticle" },
                                 {"project_type", Convert.ToInt16(ProjectType.HULOTOYS) },
                                   {"id" , Id }
 
