@@ -1294,7 +1294,6 @@ public partial class DataMSContext : DbContext
             entity.Property(e => e.BirthDay).HasColumnType("datetime");
             entity.Property(e => e.CreatedOn).HasColumnType("datetime");
             entity.Property(e => e.Email)
-                .IsRequired()
                 .HasMaxLength(250)
                 .IsUnicode(false);
             entity.Property(e => e.FullName).HasMaxLength(500);

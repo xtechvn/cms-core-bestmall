@@ -47,6 +47,8 @@ namespace Repositories.IRepositories
         Task<List<User>> GetByIds(List<long> userIds);
         Task<List<UserDepart>> GetListUserDepartById(List<int?> ids);
         public Task<int> CountUser();
+        Task<List<User>> GetBySuplierId(int suplier_id);
+        Task<int> UpdateSuplierUser(User request);
 
     }
 }

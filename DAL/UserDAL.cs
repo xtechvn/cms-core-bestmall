@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Utilities;
+using Utilities.Contants;
 
 namespace DAL
 {
@@ -534,6 +535,100 @@ namespace DAL
             catch (Exception ex)
             {
                 LogHelper.InsertLogTelegram("CountUser - UserDAL: " + ex);
+                return -1;
+            }
+        }
+        public async Task<List<User>> GetBySuplierId(int suplier_id)
+        {
+            try
+            {
+                using (var _DbContext = new EntityDataContext(_connection))
+                {
+                    return await _DbContext.Users.AsNoTracking().Where(s => s.SupplierId==suplier_id).ToListAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("GetBySuplierId - UserDAL: " + ex);
+                return new List<User>();
+            }
+        }
+        public int InsertUser(User model)
+        {
+            try
+            {
+                SqlParameter[] objParam = new SqlParameter[]
+                {
+                new SqlParameter("@UserMapId", model.UserMapId ?? (object)DBNull.Value),
+                new SqlParameter("@UserName", model.UserName),
+                new SqlParameter("@FullName", model.FullName ?? (object)DBNull.Value),
+                new SqlParameter("@Password", model.Password),
+                new SqlParameter("@ResetPassword", model.ResetPassword ?? (object)DBNull.Value),
+                new SqlParameter("@Phone", model.Phone ?? (object)DBNull.Value),
+                new SqlParameter("@BirthDay", model.BirthDay ?? (object)DBNull.Value),
+                new SqlParameter("@Gender", model.Gender ?? (object)DBNull.Value),
+                new SqlParameter("@Email", model.Email ?? (object)DBNull.Value),
+                new SqlParameter("@Avata", model.Avata ?? (object)DBNull.Value),
+                new SqlParameter("@Address", model.Address ?? (object)DBNull.Value),
+                new SqlParameter("@Status", model.Status),
+                new SqlParameter("@Note", model.Note ?? (object)DBNull.Value),
+                new SqlParameter("@CreatedBy", model.CreatedBy ?? (object)DBNull.Value),
+                new SqlParameter("@CreatedOn", model.CreatedOn ?? (object)DBNull.Value),
+                new SqlParameter("@ModifiedBy", model.ModifiedBy ?? (object)DBNull.Value),
+                new SqlParameter("@ModifiedOn", model.ModifiedOn ?? (object)DBNull.Value),
+                new SqlParameter("@Manager", model.Manager ?? (object)DBNull.Value),
+                new SqlParameter("@DepartmentId", model.DepartmentId ?? (object)DBNull.Value),
+                new SqlParameter("@Level", model.Level ?? (object)DBNull.Value),
+                new SqlParameter("@UserPositionId", model.UserPositionId ?? (object)DBNull.Value),
+                new SqlParameter("@CompanyType", model.CompanyType ?? (object)DBNull.Value),
+                new SqlParameter("@SupplierId", model.SupplierId ?? (object)DBNull.Value),
+                };
+
+                return _DbWorker.ExecuteNonQuery(StoreProcedureConstant.SP_InsertUser, objParam);
+            }
+            catch (Exception ex)
+            {
+                 LogHelper.InsertLogTelegram("InsertUser - UserDAL. " + ex); // Bỏ comment nếu bạn có LogHelper
+                return -1;
+            }
+        }
+        public int UpdateUser(User model)
+        {
+            try
+            {
+                SqlParameter[] objParam = new SqlParameter[]
+                {
+                new SqlParameter("@Id", model.Id), // Tham số Id cần thiết cho Update [cite: 7]
+                new SqlParameter("@UserMapId", model.UserMapId ?? (object)DBNull.Value),
+                new SqlParameter("@UserName", model.UserName),
+                new SqlParameter("@FullName", model.FullName ?? (object)DBNull.Value),
+                new SqlParameter("@Password", model.Password),
+                new SqlParameter("@ResetPassword", model.ResetPassword ??(object) DBNull.Value),
+                new SqlParameter("@Phone", model.Phone ?? (object)DBNull.Value),
+                new SqlParameter("@BirthDay", model.BirthDay ?? (object)DBNull.Value),
+                new SqlParameter("@Gender", model.Gender ?? (object)DBNull.Value),
+                new SqlParameter("@Email", model.Email ?? (object)DBNull.Value),
+                new SqlParameter("@Avata", model.Avata ?? (object)DBNull.Value),
+                new SqlParameter("@Address", model.Address ?? (object)DBNull.Value),
+                new SqlParameter("@Status", model.Status),
+                new SqlParameter("@Note", model.Note ?? (object)DBNull.Value),
+                new SqlParameter("@CreatedBy", model.CreatedBy ?? (object)DBNull.Value),
+                new SqlParameter("@CreatedOn", model.CreatedOn ?? (object)DBNull.Value),
+                new SqlParameter("@ModifiedBy", model.ModifiedBy ?? (object)DBNull.Value),
+                new SqlParameter("@ModifiedOn", model.ModifiedOn ?? (object)DBNull.Value),
+                new SqlParameter("@Manager", model.Manager ?? (object)DBNull.Value),
+                new SqlParameter("@DepartmentId", model.DepartmentId ?? (object)DBNull.Value),
+                new SqlParameter("@Level", model.Level ?? (object)DBNull.Value),
+                new SqlParameter("@UserPositionId", model.UserPositionId ?? (object)DBNull.Value),
+                new SqlParameter("@CompanyType", model.CompanyType ?? (object)DBNull.Value),
+                new SqlParameter("@SupplierId", model.SupplierId ?? (object)DBNull.Value),
+                };
+
+                return _DbWorker.ExecuteNonQuery(StoreProcedureConstant.SP_UpdateUser, objParam);
+            }
+            catch (Exception ex)
+            {
+                 LogHelper.InsertLogTelegram("UpdateUser - UserDAL. " + ex); // Bỏ comment nếu bạn có LogHelper
                 return -1;
             }
         }

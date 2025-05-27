@@ -797,5 +797,37 @@ namespace Repositories.Repositories
                 return -1;
             }
         }
+        public async Task<List<User>> GetBySuplierId(int suplier_id)
+        {
+            return await _UserDAL.GetBySuplierId(suplier_id);
+
+        }
+        public async Task<int> UpdateSuplierUser(User request)
+        {
+            try
+            {
+
+                var exists = await _UserDAL.GetById(request.Id);
+                if(exists!=null && exists.Id > 0)
+                {
+                    exists.UserName=request.UserName;
+                    exists.Password=request.Password;
+                    exists.FullName = request.FullName;
+                    exists.Email=request.Email;
+                    exists.Phone=request.Phone;
+                    exists.Status = request.Status;
+                    exists.ModifiedBy = request.ModifiedBy;
+                    exists.ModifiedOn = request.ModifiedOn;
+                    _UserDAL.UpdateUser(exists);
+                    return exists.Id;
+                }
+                return _UserDAL.InsertUser(request);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("UpdateSuplierUser - ClientDAL: " + ex);
+                return -1;
+            }
+        }
     }
 }

@@ -198,12 +198,12 @@ namespace Utilities
                 Mfauser new_mfa_record = new Mfauser()
                 {
                     UserId = client_detail.Entity.Id,
-                    Email = client_detail.Entity.Email.Trim(),
+                    Email = client_detail.Entity.Email==null?"": client_detail.Entity.Email.Trim(),
                     Username = client_detail.Entity.UserName.Trim(),
                     SecretKey = "",
                     Status = 0,
                     BackupCode = "",
-                    UserCreatedYear = client_detail.Entity.CreatedOn.Value.Year.ToString()
+                    UserCreatedYear = client_detail.Entity.CreatedOn==null?DateTime.Now.Year.ToString(): client_detail.Entity.CreatedOn.Value.Year.ToString()
                 };
                 string secret_key = GenerateSecretKey(client_detail);
                 if (secret_key == null)

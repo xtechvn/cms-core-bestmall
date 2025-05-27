@@ -1,6 +1,13 @@
 ﻿$(document).ready(function () {
     _supplier_detail.DynamicBind()
-})
+    // $('input').attr('autocomplete', 'off');
+    //_supplier_detail.Init();
+    //_supplier_contact.Init();
+    //_supplier_payment.Init();
+    // _supplier_order.Init();
+    //  _supplier_ticket.Init();
+    _suplier_user.Initialization()
+});
 var _supplier_detail = {
     Data: {
         Processing: false,
@@ -62,7 +69,7 @@ var _supplier_detail = {
                             .replaceAll('@item.Path', item)
                             .replaceAll('@(file_name)', item)
                             .replaceAll('@item.Id', '0')
-                            .replaceAll('@item.Ext', path[path.length -1])
+                            .replaceAll('@item.Ext', path[path.length - 1])
 
                     )
 
@@ -208,7 +215,7 @@ var _supplier_payment = {
                 AccountNumber: {
                     required: true,
                     maxlength: 20,
-                  /*  digits: true*/
+                    /*  digits: true*/
                 },
                 BankId: "required"
             },
@@ -217,7 +224,7 @@ var _supplier_payment = {
                 AccountNumber: {
                     required: "Vui lòng nhập số tài khoản",
                     maxlength: "Số tài khoản chỉ chứa tối đa 20 kí tự",
-                   /* digits: "Số tài khoản phải là kí tự dạng số"*/
+                    /* digits: "Số tài khoản phải là kí tự dạng số"*/
                 },
                 BankId: "Vui lòng nhập tên ngân hàng"
             }
@@ -299,14 +306,205 @@ var _supplier_order = {
     }
 }
 
+var _suplier_user = {
+    HTML: `
+      <tr class="tab-users-tr tab-users-tr-new" data-id="0">
+                                                    <td class="count">
+                                                        @(++count)
+                                                    </td>
+                                                    <td class="fullname">
+                                                        <div class="flex gap10 flex-nowrap align-items-center justify-content-center">
+                                                            <div class="form-group mb-0" style=" width: 100%; ">
+                                                                <input type="text" class="form-control" value="" />
+                                                                  <span class="error" style="padding: 0 3px;display:none;">
+                                                                    Vui lòng không để trống
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td class="username">
+                                                        <div class="flex gap10 flex-nowrap align-items-center justify-content-center">
+                                                            <div class="form-group mb-0" style=" width: 100%; ">
+                                                               <nw style=" display: flex; ">
+                                                                    <span style=" align-content: center; "> ncc@Model.SupplierId.</span>
+                                                                    <input type="text" class="form-control" value="" style="margin-left: 0;">
+                                                                </nw>
+                                                                <span class="error" style="padding: 0 3px;display:none;">
+                                                                    Vui lòng không để trống
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td class="password">
+                                                        <div class="flex gap10 flex-nowrap align-items-center justify-content-center">
+                                                            <div class="form-group mb-0" style=" width: 100%; ">
+                                                                <input type="password" class="form-control" value="" />
+                                                                  <span class="error" style="padding: 0 3px;display:none;">
+                                                                    Vui lòng không để trống
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td  class="status">
+                                                        <div class="wrap_input">
+                                                            <div class="form-group mb-0" style=" width: 100%; ">
+                                                                <select class="select2 w-100">
+                                                                   <option value="0">Hoạt động</option>
+                                                                    <option value="1">Tạm dừng</option>
+
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="flex gap10 flex-nowrap align-items-center justify-content-center">
+                                                            <a href="javascript:;" class="tab-users-tr-edit" style="display:none;"><i class="fa fa-edit blue"></i></a>
+                                                            <a href="javascript:;" class="tab-users-tr-confirm"><i class="fa fa-check green"></i></a>
+                                                            <a href="javascript:;" class="tab-users-tr-new-del"><i class="icofont-trash"></i></a>
+                                                        </div>
 
 
+                                                    </td>
+                                                </tr>
 
-$(document).ready(function () {
-    $('input').attr('autocomplete', 'off');
-    //_supplier_detail.Init();
-    _supplier_contact.Init();
-    _supplier_payment.Init();
-    _supplier_order.Init();
-  //  _supplier_ticket.Init();
-});
+    `,
+    Initialization: function () {
+        _suplier_user.DynamicBind()
+    },
+    DynamicBind: function () {
+        $('body').on('click', '.tab-users-tr-edit', function () {
+            var element = $(this)
+            var parent = element.closest('tr')
+            element.hide()
+            parent.find('.tab-users-tr-confirm').show()
+            parent.find('input').prop("disabled", false);
+            parent.find('select').prop("disabled", false);
+            parent.find('.password').find('input').val('').trigger('change');
+        })
+        $('body').on('click', '.tab-users-tr-confirm', function () {
+            var element = $(this)
+            var parent = element.closest('tr')
+            var id = parent.attr('data-id')
+            var is_update = (id != undefined && id.trim() != '' && parseInt(id) != undefined && parseInt(id) > 0)
+            var title = is_update ? "Xác nhận cập nhật tài khoản" : "Xác nhận tạo tài khoản";
+            var description = "Tài khoản thuộc NCC này sẽ được " + (is_update ? "cập nhật" : "tạo mới") + ", bạn có chắc chắn không? " + (is_update ? "" : "(Sau khi nhấn đồng ý sẽ không thể xóa tài khoản)")
+            if (_suplier_user.Validate(parent)) {
+                _msgconfirm.openDialog(title, description, function () {
+                    element.hide()
+                    parent.find('.tab-users-tr-edit').show()
+                    parent.find('input').prop('disabled', true)
+                    parent.find('select').prop('disabled', true)
+                    parent.find('.tab-users-tr-new-del').remove()
+                    _suplier_user.UpSert(parent)
+                });
+
+            }
+        })
+        $('body').on('click', '.tab-users-tr-new-del', function () {
+            var element = $(this)
+            element.closest('tr').remove()
+        })
+        $('body').on('click', '#tab-users-add', function () {
+            $('#tab-users tbody').append(_suplier_user.HTML.replaceAll('@Model.SupplierId', $('#global_supplier_id').val()))
+            $('.tab-users-tr-new').find('select').select2()
+            $('.tab-users-tr-new').removeClass('tab-users-tr-new')
+            _suplier_user.ReArrangeIndex()
+        })
+        $('body').on('click', '#tab-users-search', function () {
+            var element = $(this)
+            var input = $('#tab-users-search-input').val()
+            input = _suplier_user.removeSpecialCharacters(input).trim()
+            $('.tab-users-tr').each(function (index, item) {
+                var tr = $(this)
+                if (
+                    tr.find('.fullname').find('input').val().includes(input) ||
+                    tr.find('.username').find('input').val().includes(input)
+                ) {
+                    tr.show()
+                } else {
+                    tr.hide()
+                }
+            })
+        })
+        $('body').on('click', '.tab-users-tr input, .tab-users-tr select', function () {
+            var element = $(this)
+            element.closest('.form-group').find('.error').hide() 
+            element.closest('.form-group').find('.error').html('Vui lòng không để trống') 
+        })
+    },
+    ReArrangeIndex: function () {
+        var count = 0;
+        $('.tab-users-tr').each(function (index, item) {
+            count++;
+            var element = $(this)
+            element.find('.count').html(count)
+        })
+    },
+    Validate: function (rowElement) {
+        let isValid = true;
+
+        // Validate text inputs (FullName, UserName, Password)
+        $(rowElement).find('input[type="text"], input[type="password"]').each(function () {
+            const value = $(this).val();
+            if (value === null || value === undefined || value.trim() === '') {
+                isValid = false;
+                $(this).closest('.form-group').find('.error').show() 
+                return false; 
+            }
+        });
+        //-- Validate username
+        const regex = /^[a-zA-Z0-9._@-]+$/;
+        var username = rowElement.find('.username').find('input').val()
+        isValid = regex.test(username)
+        if (!isValid) {
+            rowElement.find('.username').find('input').closest('.form-group').find('.error').show()
+            rowElement.find('.username').find('input').closest('.form-group').find('.error').html('Tên tài khoản chỉ cho phép: chữ, số, các ký tự (.)(-)(_)(@)') 
+            return false
+        } 
+
+        $(rowElement).find('select').each(function () {
+            const value = $(this).val();
+            if (value === null || value === undefined || value.trim() === '') {
+                isValid = false;
+                $(this).closest('.form-group').find('.error').show() 
+                return false;
+            }
+        });
+
+        return isValid;
+    },
+    UpSert: function (parent) {
+        var user_name = 'ncc' + $('#global_supplier_id').val() +'.'+ _suplier_user.removeSpecialCharactersUsername(parent.find('.username').find('input').val().toLowerCase())
+        var request = {
+            Id: parent.attr('data-id'),
+            UserName: user_name,
+            FullName: parent.find('.fullname').find('input').val(),
+            Password: parent.find('.password').find('input').val(),
+            Status: parent.find('.status').find('select:selected').val(),
+            SupplierId: $('#global_supplier_id').val()
+        }
+
+        $.ajax({
+            url: "/Supplier/UpdateSuplierUser",
+            data: { request: request },
+            type: "POST",
+            success: function (result) {
+                if (result.isSuccess) {
+                    _msgalert.success(result.message);
+                    parent.attr('data-id', result.data)
+                } else {
+                    _msgalert.error(result.message);
+                }
+
+            }
+        });
+    },
+    removeSpecialCharacters: function (str) {
+        return str.replace(/[^a-zA-Z0-9_\-.]/g, '');
+    },
+    removeSpecialCharactersUsername: function (str) {
+        return str.replace(/[^a-zA-Z0-9._@-]/g, '');
+    }
+
+}
+

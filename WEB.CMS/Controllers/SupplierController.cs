@@ -29,9 +29,10 @@ namespace WEB.Adavigo.CMS.Controllers.Order
         private readonly ISupplierRepository _supplierRepository;
         private readonly WEB.CMS.Models.AppSettings config;
         private readonly IAttachFileRepository _AttachFileRepository;
+        private readonly IUserRepository _userRepository;
         private RedisConn _redisConn;
 
-        public SupplierController(IAllCodeRepository allCodeRepository, ISupplierRepository supplierRepository,
+        public SupplierController(IAllCodeRepository allCodeRepository, ISupplierRepository supplierRepository, IUserRepository userRepository,
             ICommonRepository commonRepository, IConfiguration _configuration, IWebHostEnvironment webHostEnvironment, IAttachFileRepository attachFileRepository)
         {
             _allCodeRepository = allCodeRepository;
@@ -43,6 +44,7 @@ namespace WEB.Adavigo.CMS.Controllers.Order
             _AttachFileRepository = attachFileRepository;
             _redisConn = new RedisConn(configuration);
             _redisConn.Connect();
+            _userRepository = userRepository;
         }
 
         #region supplier
@@ -277,9 +279,14 @@ namespace WEB.Adavigo.CMS.Controllers.Order
         }
         #endregion
 
-        public IActionResult Detail(int id)
+        public async Task<IActionResult> Detail(int id)
         {
             var model = _supplierRepository.GetDetailById(id);
+            ViewBag.Users = new List<User>();
+            if (id > 0)
+            {
+                ViewBag.Users = await _userRepository.GetBySuplierId(id);
+            }
             return View(model);
         }
 
@@ -627,6 +634,80 @@ namespace WEB.Adavigo.CMS.Controllers.Order
                 {
                     isSuccess = (id > 0),
                     message = msg,
+                    data = id
+                });
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("Search - SupplierController: " + ex.Message);
+                return new JsonResult(new
+                {
+                    isSuccess = false,
+                    message = ex.Message
+                });
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> UpdateSuplierUser(User request)
+        {
+            try
+            {
+                if (request ==null 
+                    || request.UserName==null|| request.UserName.Trim()==""
+                    || request.Password==null|| request.Password.Trim()==""
+                    || request.FullName==null|| request.FullName.Trim()==""
+                    || request.SupplierId==null|| request.SupplierId<=0
+
+                    )
+                {
+                    return new JsonResult(new
+                    {
+                        isSuccess = false,
+                        message = "Dữ liệu không chính xác, vui lòng thử lại"
+                    });
+                }
+                var suplier = _supplierRepository.GetById((int)request.SupplierId);
+                if (suplier == null || suplier.SupplierId <= 0)
+                {
+                    return new JsonResult(new
+                    {
+                        isSuccess = false,
+                        message = "Dữ liệu không chính xác, vui lòng thử lại"
+                    });
+                }
+                int _UserId = 0;
+
+                if (HttpContext.User.FindFirst(ClaimTypes.NameIdentifier) != null)
+                {
+                    _UserId = Convert.ToInt32(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+                }
+                var user = new User()
+                {
+                    Id = request.Id,
+                    FullName = request.FullName,
+                    Password = EncodeHelpers.MD5Hash(request.Password),
+                    UserName = request.UserName,
+                    Address = suplier.Address,
+                    Manager = 0,
+                    SupplierId = request.SupplierId,
+                    BirthDay = DateTime.Now,
+                    CompanyType = null,
+                    CreatedOn = DateTime.Now,
+                    Avata = "",
+                    CreatedBy = _UserId,
+                    DepartmentId = 0,
+                    Email = suplier.Email,
+                    Status = 0,
+                    Phone=suplier.Phone,
+                    ResetPassword= EncodeHelpers.MD5Hash(request.Password)
+                };
+                var id = await _userRepository.UpdateSuplierUser(user);
+               
+
+                return new JsonResult(new
+                {
+                    isSuccess = (id > 0),
+                    message = ((request.Id > 0) ? "Cập nhật tài khoản" : "Thêm mới tài khoản") +" cho nhà cung cấp"+ ((id > 0)?" thành công": " thất bại"),
                     data = id
                 });
             }
