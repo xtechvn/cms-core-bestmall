@@ -735,5 +735,23 @@ namespace DAL
                 return null;
             }
         }
+        public async Task<ArticleCategory> FindCategoryByArticleIdAndCategoryId(long ArticleId, int category_id)
+        {
+            try
+            {
+                using (var _DbContext = new EntityDataContext(_connection))
+                {
+                    return await _DbContext.ArticleCategories.FirstOrDefaultAsync(s => s.ArticleId == ArticleId && s.CategoryId==category_id);
+
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("MultipleInsertArticleCategory - ArticleDAL: " + ex);
+               
+            }
+            return null;
+        }
+
     }
 }

@@ -28,6 +28,7 @@ namespace Utilities.Contants
         public const string WARD = "WARD";
 
         public const string NINJAVAN_OAUTH = "NINJAVAN_OAUTH";
+        public const string ARTICLE_CATEGORY = "ARTICLE_CATEGORY_";
 
     }
 }

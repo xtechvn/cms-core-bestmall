@@ -1,6 +1,8 @@
 ﻿using Amazon.Runtime.Internal.Transform;
+using Caching.RedisWorker;
 using Entities.ViewModels;
 using Entities.ViewModels.News;
+using HuloToys_Service.ElasticSearch;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -39,6 +41,8 @@ namespace WEB.CMS.Controllers
         private readonly IConfiguration _configuration;
         private readonly WorkQueueClient work_queue;
         private readonly QueueService _queueService;
+        private readonly RedisConn _redisConn;
+        private readonly ArticleCategoryESService articleCategoryESService;
 
         public NewsController(IConfiguration configuration, IArticleRepository articleRepository, IUserRepository userRepository, ICommonRepository commonRepository, IWebHostEnvironment hostEnvironment, QueueService queueService,
             IGroupProductRepository groupProductRepository)
@@ -51,8 +55,9 @@ namespace WEB.CMS.Controllers
             _GroupProductRepository = groupProductRepository;
             work_queue = new WorkQueueClient(configuration);
             _queueService = queueService;
-
-
+            _redisConn = new RedisConn(configuration);
+            _redisConn.Connect();
+            articleCategoryESService = new ArticleCategoryESService(_configuration["DataBaseConfig:Elastic:Host"], configuration);
         }
 
         public async Task<IActionResult> Index()
@@ -198,35 +203,7 @@ namespace WEB.CMS.Controllers
                 // Kiểm tra xem quá trình lưu bài viết có thành công không
                 if (articleId > 0)
                 {
-                    // Xóa cache của bài viết sau khi cập nhật
-                    var strCategories = string.Empty;
-                    if (model.Categories != null && model.Categories.Count > 0)
-                        strCategories = string.Join(",", model.Categories);
-
-                    ClearCacheArticle(articleId, strCategories);
-
-                    // Tạo message để push vào queue
-
-                    //var result = _queueService.PushMessageToQueue(
-                    //    "SP_GetAllArticle",                           // Tên Stored Procedure
-                    //    "es_hulotoys_sp_get_article",                // Tên index trong Elasticsearch
-                    //    Convert.ToInt16(ProjectType.HULOTOYS),       // Project Type
-                    //    model.Id,                                    // ID bài viết
-                    //    QueueName.queue_app_push                     // Tên Queue
-                    //);
-
-                    // Tạo message để push vào queue
-                    var j_param = new Dictionary<string, object>
-                            {
-                                 { "store_name", "SP_GetAllArticle" },
-                                { "index_es", "hulotoys_sp_getallarticle" },
-                                {"project_type", Convert.ToInt16(ProjectType.HULOTOYS) },
-                                  {"id" , articleId }
-
-                            };
-                    var _data_push = JsonConvert.SerializeObject(j_param);
-                    // Push message vào queue
-                    var response_queue = work_queue.InsertQueueSimple(_data_push, QueueName.queue_app_push);
+                    ClearCacheArticle(articleId, model.Categories);
 
                     // Trả về kết quả thành công với ID của bài viết
                     return new JsonResult(new
@@ -281,7 +258,7 @@ namespace WEB.CMS.Controllers
                 {
                     //  clear cache article
                     var Categories = await _ArticleRepository.GetArticleCategoryIdList(Id);
-                    ClearCacheArticle(Id, string.Join(",", Categories));
+                    ClearCacheArticle(Id, Categories);
 
                     // Tạo message để push vào queue
                     var j_param = new Dictionary<string, object>
@@ -333,19 +310,7 @@ namespace WEB.CMS.Controllers
                 if (rs > 0)
                 {
                     //  clear cache article
-                    ClearCacheArticle(Id, string.Join(",", Categories));
-                    // Tạo message để push vào queue
-                    //var j_param = new Dictionary<string, object>
-                    //        {
-                    //              { "store_name", "SP_GetAllArticle" },
-                    //            { "index_es", "es_hulotoys_sp_get_article" },
-                    //            {"project_type", Convert.ToInt16(ProjectType.HULOTOYS) },
-                    //              {"id" , "-1" }
-
-                    //        };
-                    //var _data_push = JsonConvert.SerializeObject(j_param);
-                    //// Push message vào queue
-                    //var response_queue = work_queue.InsertQueueSimple(_data_push, QueueName.queue_app_push);
+                    ClearCacheArticle(Id, Categories);
 
                     return new JsonResult(new
                     {
@@ -374,39 +339,51 @@ namespace WEB.CMS.Controllers
             }
         }
 
-        public async Task ClearCacheArticle(long articleId, string ArrCategoryId)
+        public async Task ClearCacheArticle(long articleId, List<int> category_ids)
         {
-            string token = string.Empty;
             try
             {
-                var api = new APIService2(_configuration);
-                var apiPrefix = ReadFile.LoadConfig().API_URL + ReadFile.LoadConfig().API_SYNC_ARTICLE;
-                var key_token_api = ReadFile.LoadConfig().KEY_TOKEN_API;
-                HttpClient httpClient = new HttpClient();
-                var j_param = new Dictionary<string, string> {
-                    { "article_id", articleId.ToString() },
-                    { "category_id",ArrCategoryId }
-                };
-               // api.POST(ReadFile.LoadConfig().API_SYNC_ARTICLE, j_param);
-                api.POST(_configuration["API:Api_get_list_by_article"], j_param);
-
-                var category_list_id = ArrCategoryId.Split(",");
-                foreach (var item in category_list_id)
+                int db_index = Convert.ToInt32(_configuration["Redis:Database:db_common"]);
+                _redisConn.clear(CacheName.ARTICLE + articleId, db_index);
+                await articleCategoryESService.DeleteByArticleId(articleId);
+                // Xóa cache của bài viết sau khi cập nhật
+                if (category_ids != null && category_ids.Count > 0)
                 {
-                    var j_param2 = new Dictionary<string, string> {
-                        { "category_id", item },
-                        { "skip","1" },
-                        { "take","10" }
-                    };
-                    api.POST(_configuration["API:Api_get_list_by_categoryid_order"], j_param2);
-                    api.POST(_configuration["API:Api_get_list_by_categoryid"], j_param2);
+
+                    foreach (var category in category_ids)
+                    {
+                        _redisConn.DeleteCacheByKeyword(CacheName.ARTICLE_CATEGORY + category, db_index);
+                        var exists = await _ArticleRepository.FindCategoryByArticleIdAndCategoryId(articleId, category);
+                        if (exists != null && exists.Id > 0)
+                        {
+                            articleCategoryESService.Insert(new HuloToys_Service.Models.Article.ArticleCategoryESModel()
+                            {
+                                articleid = articleId,
+                                categoryid = category,
+                                Id = exists.Id
+                            });
+                        }
+
+                    }
                 }
+                // Tạo message để push vào queue
+                var j_param = new Dictionary<string, object>
+                            {
+                               { "store_name", "SP_GetAllArticle" },
+                                { "index_es", "hulotoys_sp_getallarticle" },
+                                {"project_type", Convert.ToInt16(ProjectType.HULOTOYS) },
+                                  {"id" , articleId }
+
+                            };
+                var _data_push = JsonConvert.SerializeObject(j_param);
+                // Push message vào queue
+                var response_queue = work_queue.InsertQueueSimple(_data_push, QueueName.queue_app_push);
 
 
             }
             catch (Exception ex)
             {
-                LogHelper.InsertLogTelegram("ClearCacheArticle - " + ex.ToString() + " Token:" + token);
+                LogHelper.InsertLogTelegram("ClearCacheArticle - articleId:" + articleId + "\ncategory_ids" +((category_ids == null || category_ids.Count <= 0) ?"[]":"["+string.Join(",",category_ids)+"]") + ex.ToString());
             }
         }
         [HttpPost]

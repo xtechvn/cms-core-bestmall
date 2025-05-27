@@ -1,4 +1,5 @@
-﻿using Entities.ViewModels;
+﻿using Entities.Models;
+using Entities.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -22,6 +23,6 @@ namespace Repositories.IRepositories
         Task<ArticleFEModelPagnition> getArticleListByCategoryIdOrderByDate(int cate_id, int skip, int take, string category_name);
         Task<ArticleFeModel> GetArticleDetailLiteFE(long article_id);
         Task<ArticleFeModel> GetPinnedArticleByPostition(int cate_id, string category_name, int position);
-
+        Task<ArticleCategory> FindCategoryByArticleIdAndCategoryId(long ArticleId, int category_id);
     }
 }
