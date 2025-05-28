@@ -398,6 +398,11 @@ var _suplier_user = {
                     _suplier_user.UpSert(parent)
                 });
 
+            } else {
+                parent.find('.tab-users-tr-confirm').show()
+                parent.find('input').prop("disabled", false);
+                parent.find('select').prop("disabled", false);
+                parent.find('.password').find('input').val('').trigger('change');
             }
         })
         $('body').on('click', '.tab-users-tr-new-del', function () {
@@ -452,6 +457,7 @@ var _suplier_user = {
                 return false; 
             }
         });
+        if (!isValid) return isValid
         //-- Validate username
         const regex = /^[a-zA-Z0-9._@-]+$/;
         var username = rowElement.find('.username').find('input').val()
@@ -461,6 +467,7 @@ var _suplier_user = {
             rowElement.find('.username').find('input').closest('.form-group').find('.error').html('Tên tài khoản chỉ cho phép: chữ, số, các ký tự (.)(-)(_)(@)') 
             return false
         } 
+        if (!isValid) return isValid
 
         $(rowElement).find('select').each(function () {
             const value = $(this).val();
@@ -470,11 +477,12 @@ var _suplier_user = {
                 return false;
             }
         });
+        if (!isValid) return isValid
 
         return isValid;
     },
     UpSert: function (parent) {
-        var user_name = 'ncc' + $('#global_supplier_id').val() +'.'+ _suplier_user.removeSpecialCharactersUsername(parent.find('.username').find('input').val().toLowerCase())
+        var user_name = _suplier_user.removeSpecialCharactersUsername(parent.find('.username').find('input').val().toLowerCase())
         var request = {
             Id: parent.attr('data-id'),
             UserName: user_name,

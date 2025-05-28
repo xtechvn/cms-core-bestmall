@@ -686,7 +686,7 @@ namespace WEB.Adavigo.CMS.Controllers.Order
                     Id = request.Id,
                     FullName = request.FullName,
                     Password = EncodeHelpers.MD5Hash(request.Password),
-                    UserName = request.UserName,
+                    UserName = "ncc"+request.SupplierId+"."+ request.UserName,
                     Address = suplier.Address,
                     Manager = 0,
                     SupplierId = request.SupplierId,

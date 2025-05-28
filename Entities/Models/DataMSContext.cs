@@ -1288,7 +1288,6 @@ public partial class DataMSContext : DbContext
 
             entity.ToTable("User");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.Address).HasMaxLength(500);
             entity.Property(e => e.Avata).HasMaxLength(500);
             entity.Property(e => e.BirthDay).HasColumnType("datetime");

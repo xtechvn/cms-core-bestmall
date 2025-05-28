@@ -807,19 +807,22 @@ namespace Repositories.Repositories
             try
             {
 
-                var exists = await _UserDAL.GetById(request.Id);
-                if(exists!=null && exists.Id > 0)
+                if (request!=null && request.Id > 0)
                 {
-                    exists.UserName=request.UserName;
-                    exists.Password=request.Password;
-                    exists.FullName = request.FullName;
-                    exists.Email=request.Email;
-                    exists.Phone=request.Phone;
-                    exists.Status = request.Status;
-                    exists.ModifiedBy = request.ModifiedBy;
-                    exists.ModifiedOn = request.ModifiedOn;
-                    _UserDAL.UpdateUser(exists);
-                    return exists.Id;
+                    var exists = await _UserDAL.GetById(request.Id);
+                    if (exists != null && exists.Id > 0)
+                    {
+                        exists.UserName = request.UserName;
+                        exists.Password = request.Password;
+                        exists.FullName = request.FullName;
+                        exists.Email = request.Email;
+                        exists.Phone = request.Phone;
+                        exists.Status = request.Status;
+                        exists.ModifiedBy = request.ModifiedBy;
+                        exists.ModifiedOn = request.ModifiedOn;
+                        _UserDAL.UpdateUser(exists);
+                        return exists.Id;
+                    }
                 }
                 return _UserDAL.InsertUser(request);
             }
