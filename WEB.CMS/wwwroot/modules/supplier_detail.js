@@ -503,6 +503,10 @@ var _suplier_user = {
                     if (request.Password == undefined || request.Password.trim() == '') parent.find('.password').find('input').val('51bcf8ad1596d06c4cdb3ec7fcc76d73').trigger('change')
                 } else {
                     _msgalert.error(result.message);
+                    parent.find('.tab-users-tr-confirm').show()
+                    parent.find('input').prop("disabled", false);
+                    parent.find('select').prop("disabled", false);
+                    parent.find('.password').find('input').val('').trigger('change');
                 }
 
             }
