@@ -98,8 +98,34 @@ namespace WEB.CMS.Controllers
         [HttpPost]
         public async Task<IActionResult> UpSert(Label updated_model)
         {
+            bool is_add_new = (updated_model!=null && updated_model.Id > 0);
+
             try
             {
+                if (updated_model == null 
+                    || updated_model.LabelCode==null || updated_model.LabelCode.Trim()==""
+                    || updated_model.LabelName==null || updated_model.LabelName.Trim()==""
+                    || updated_model.Icon==null || updated_model.Icon.Trim()==""
+                    )
+                {
+                    return new JsonResult(new
+                    {
+                        isSuccess = false,
+                        msg = "Dữ liệu không chính xác, vui lòng thử lại"
+                    });
+                }
+                if (updated_model.Id <= 0)
+                {
+                    var exists_label = await _labelRepository.GetByCode(updated_model.LabelCode.ToUpper().Trim());
+                    if(exists_label!=null && exists_label.Id > 0)
+                    {
+                        return new JsonResult(new
+                        {
+                            isSuccess = false,
+                            msg = "Mã thương hiệu trùng lặp, vui lòng sử dụng mã thương hiệu khác"
+                        });
+                    }
+                }
                 var _UserLogin = 0;
                 if (HttpContext.User.FindFirst(ClaimTypes.NameIdentifier) != null)
                 {
@@ -108,7 +134,7 @@ namespace WEB.CMS.Controllers
                 string static_domain = _configuration["DomainConfig:ImageStatic"];
                 //--Upload ảnh nếu ảnh chưa được upload:
                 if (updated_model.Icon!=null && updated_model.Icon.Trim()!="" 
-                    &&!updated_model.Icon.Contains(static_domain) && updated_model.Icon.Trim().StartsWith("/"))
+                    &&!updated_model.Icon.Contains(static_domain) && updated_model.Icon.Trim().StartsWith("\\"))
                 {
                     string full_path = Directory.GetCurrentDirectory() + "\\wwwroot\\" + updated_model.Icon.Replace("/", "\\");
                     try
@@ -155,7 +181,7 @@ namespace WEB.CMS.Controllers
                         return Ok(new
                         {
                             isSuccess = false,
-                            msg = (updated_model.Id > 0 ? "Cập nhật" : "Thêm mới") + " thương hiệu thất bại, vui lòng xem lại thông tin hoặc liên hệ admin"
+                            msg = (is_add_new ? "Cập nhật" : "Thêm mới") + " thương hiệu thất bại, vui lòng xem lại thông tin hoặc liên hệ admin"
                         });
                     }
                 }
@@ -171,7 +197,7 @@ namespace WEB.CMS.Controllers
                 return Ok(new
                 {
                     isSuccess = true,
-                    msg= (updated_model.Id > 0 ? "Cập nhật":"Thêm mới")+" thương hiệu thành công"
+                    msg= (is_add_new ? "Cập nhật":"Thêm mới")+" thương hiệu thành công"
                 });
             }
             catch (Exception ex)
@@ -181,7 +207,7 @@ namespace WEB.CMS.Controllers
             return Ok(new
             {
                 isSuccess = false,
-                msg = (updated_model.Id > 0 ? "Cập nhật" : "Thêm mới") + " thương hiệu thất bại, vui lòng xem lại thông tin hoặc liên hệ admin"
+                msg = (is_add_new ? "Cập nhật" : "Thêm mới") + " thương hiệu thất bại, vui lòng xem lại thông tin hoặc liên hệ admin"
             });
         }
     }

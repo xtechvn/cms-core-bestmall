@@ -52,7 +52,7 @@
                     <div class="form-group">
                         <label class="lbl">Mô tả thương hiệu</label>
                         <div class="wrap_input">
-                            <textarea id="update-description" class="form-control" style="height: 200px;" rows="6"></textarea>
+                            <textarea id="update-description" class="form-control" style="height: 200px;" rows="6">@(data.Description==null?"":data.Description)</textarea>
                         </div>
                     </div>
                 </div>
@@ -64,13 +64,13 @@
                 <div class="pd10">
 
                     <div class="form-group">
-                        <label class="lbl">Icon <sup class="red">*</sup></label>
+                        <label class="lbl">Ảnh đại diện thương hiệu <sup class="red">*</sup></label>
                         <div class="wrap_input">
                             <div class="manage-color  w-100" style="max-height:200px;">
                                 <div class="flex list align-items-center w-100">
                                     <div class="items import magnific_popup" style=" min-width: 130px; min-height: 130px;max-width: 200px; max-height: 200px; ">
                                         <a id="update-icon-import" href="javascript:;" class="thumb_img thumb_1x1 magnific_thumb" >
-                                            <img src="@(data.Icon==null?"":data.Icon)">
+                                            <img src="@(data.Icon==null?"/images/upload.png":data.Icon)" style="@(data.Icon==null?"top:40%;object-fit:scale-down;":"") ">
                                         </a>
                                         <input type="file" id="update-icon-input" style="display:none;" class="form-control" />
                                     </div>

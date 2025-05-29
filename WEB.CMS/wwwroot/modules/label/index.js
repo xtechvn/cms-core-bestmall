@@ -7,6 +7,15 @@ var label_service = {
     },
     Init: function () {
         label_service.OnSearch();
+        label_service.DynamicBind();
+    },
+    DynamicBind: function () {
+        $('body').on('keyup', '#search-name, #search-code', function (e) {
+            if (e.keyCode === 13 || e.key === 'Enter') {
+
+                label_service.OnSearch()
+            }
+        });
     },
     OnSearch: function () {
         let objSearch = label_service.GetParam();

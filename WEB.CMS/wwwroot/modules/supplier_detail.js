@@ -20,7 +20,8 @@ var _supplier_detail = {
                             <img src="@item.Path" />
                         </div>
                         <p style=" overflow: hidden; "><span>@(file_name)</span> </p>
-                    </div>`
+                    </div>`,
+        ImageMaxSize: 5242880
     },
     Init: function () {
         this.elModal = $('#global_modal_popup');
@@ -51,10 +52,20 @@ var _supplier_detail = {
     Upload: function (element) {
         _supplier_detail.Data.Processing = true;
         var formData = new FormData()
+        var validate=true
         $(element[0].files).each(function (index, item) {
             formData.append("files", item);
+            const fileSize = item.size; // Lấy dung lượng file theo bytes
+            if (fileSize > _supplier_detail.Data.ImageMaxSize) {
+                validate = false
+                _msgalert.error('File được chọn đang vượt quá dung lượng giới hạn (5MB). Tên file: '+item.name);
+                return true; 
+            }
         });
-
+        if (!validate) {
+            element.val(null).trigger('change')
+            return
+        }
         $.ajax({
             url: "/AttachFile/Upload",
             data: formData,
@@ -394,7 +405,6 @@ var _suplier_user = {
                     parent.find('.tab-users-tr-edit').show()
                     parent.find('input').prop('disabled', true)
                     parent.find('select').prop('disabled', true)
-                    parent.find('.tab-users-tr-new-del').remove()
                     _suplier_user.UpSert(parent)
                 });
 
@@ -500,6 +510,8 @@ var _suplier_user = {
                 if (result.isSuccess) {
                     _msgalert.success(result.message);
                     parent.attr('data-id', result.data)
+                    parent.find('.tab-users-tr-new-del').remove()
+
                     if (request.Password == undefined || request.Password.trim() == '') parent.find('.password').find('input').val('51bcf8ad1596d06c4cdb3ec7fcc76d73').trigger('change')
                 } else {
                     _msgalert.error(result.message);

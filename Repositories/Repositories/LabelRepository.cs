@@ -35,5 +35,9 @@ namespace Repositories.IRepositories
         {
             return labelDAL.Update(model);
         }
+        public async Task<Label> GetByCode(string code)
+        {
+            return await labelDAL.GetByCode(code);
+        }
     }
 }
