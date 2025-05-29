@@ -813,7 +813,10 @@ namespace Repositories.Repositories
                     if (exists != null && exists.Id > 0)
                     {
                         exists.UserName = request.UserName;
-                        exists.Password = request.Password;
+                        if(request.Password!=null && request.Password.Trim() != "")
+                        {
+                            exists.Password = EncodeHelpers.MD5Hash(request.Password);
+                        }
                         exists.FullName = request.FullName;
                         exists.Email = request.Email;
                         exists.Phone = request.Phone;

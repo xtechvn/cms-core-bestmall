@@ -449,7 +449,7 @@ var _suplier_user = {
         let isValid = true;
 
         // Validate text inputs (FullName, UserName, Password)
-        $(rowElement).find('input[type="text"], input[type="password"]').each(function () {
+        $(rowElement).find('input[type="text"]').each(function () {
             const value = $(this).val();
             if (value === null || value === undefined || value.trim() === '') {
                 isValid = false;
@@ -500,6 +500,7 @@ var _suplier_user = {
                 if (result.isSuccess) {
                     _msgalert.success(result.message);
                     parent.attr('data-id', result.data)
+                    if (request.Password == undefined || request.Password.trim() == '') parent.find('.password').find('input').val('51bcf8ad1596d06c4cdb3ec7fcc76d73').trigger('change')
                 } else {
                     _msgalert.error(result.message);
                 }
