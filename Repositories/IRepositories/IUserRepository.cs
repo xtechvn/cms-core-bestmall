@@ -49,6 +49,7 @@ namespace Repositories.IRepositories
         public Task<int> CountUser();
         Task<List<User>> GetBySuplierId(int suplier_id);
         Task<int> UpdateSuplierUser(User request);
+        Task<User> GetByUserName(string input);
 
     }
 }

@@ -3,8 +3,10 @@ using Entities.ConfigModels;
 using Entities.Models;
 using Entities.ViewModels;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Nest;
 using Repositories.IRepositories;
 using Repositories.Repositories.BaseRepos;
 using System;
@@ -818,5 +820,11 @@ namespace Repositories.Repositories
                 return -1;
             }
         }
+        public async Task<User> GetByUserName(string input)
+        {
+            return await _UserDAL.GetByUserName(input);
+        }
+
+
     }
 }
