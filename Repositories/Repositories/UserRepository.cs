@@ -48,26 +48,9 @@ namespace Repositories.Repositories
             {
                 var _encryptPassword = EncodeHelpers.MD5Hash(entity.Password);
                 var _model = await _UserDAL.GetByUserNameCMSCore(entity.UserName);
-                if (_model != null)
+                if (_model != null && _model.Password != null && _encryptPassword.Trim() == _model.Password.Trim())
                 {
-                    if (_encryptPassword == _model.Password || _encryptPassword == _model.ResetPassword)
-                    {
-                        if (_model.Password != _model.ResetPassword)
-                        {
-                            if (_encryptPassword == _model.Password)
-                            {
-                                _model.ResetPassword = _encryptPassword;
-                            }
-                            else
-                            {
-                                _model.Password = _encryptPassword;
-                            }
-
-                            await _UserDAL.UpdateAsync(_model);
-                        }
-
-                        return await GetDetailUser(_model.Id);
-                    }
+                    return await GetDetailUser(_model.Id);
                 }
             }
             catch (Exception ex)
