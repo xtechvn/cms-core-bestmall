@@ -668,14 +668,17 @@ namespace WEB.CMS.Controllers
                         message = "Dữ liệu không chính xác, vui lòng thử lại"
                     });
                 }
-                var exists_user = await _userRepository.GetByUserName("ncc" + request.SupplierId + "." + request.UserName);
-                if (exists_user != null && exists_user.Id > 0)
+                if (request.Id <= 0)
                 {
-                    return new JsonResult(new
+                    var exists_user = await _userRepository.GetByUserName("ncc" + request.SupplierId + "." + request.UserName);
+                    if (exists_user != null && exists_user.Id > 0)
                     {
-                        isSuccess = false,
-                        message = "Tên đăng nhập đã tồn tại, vui lòng sử dụng tên đăng nhập khác"
-                    });
+                        return new JsonResult(new
+                        {
+                            isSuccess = false,
+                            message = "Tên đăng nhập đã tồn tại, vui lòng sử dụng tên đăng nhập khác"
+                        });
+                    }
                 }
                 var suplier = _supplierRepository.GetById((int)request.SupplierId);
                 if (suplier == null || suplier.SupplierId <= 0)
