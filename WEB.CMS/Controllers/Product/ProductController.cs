@@ -274,10 +274,16 @@ namespace WEB.CMS.Controllers
                     product_main.amount_min = null;
                 }
                 product_main.parent_product_id = "";
-               
-
                 product_main.created_date = currentTimeInUtcPlus7;
                 product_main.updated_last = currentTimeInUtcPlus7;
+                if(product_main.supplier_id != null && product_main.supplier_id>0)
+                {
+                    var suplier = _supplierRepository.GetSuplierById((int)product_main.supplier_id);
+                    if(suplier!=null && suplier.SupplierId > 0)
+                    {
+                        product_main.supplier_status = suplier.Status;
+                    }
+                }
                 if (product_main._id == null || product_main._id.Trim() == "")
                 {
 

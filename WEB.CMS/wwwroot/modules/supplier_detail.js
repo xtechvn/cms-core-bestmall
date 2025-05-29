@@ -488,7 +488,7 @@ var _suplier_user = {
             UserName: user_name,
             FullName: parent.find('.fullname').find('input').val(),
             Password: parent.find('.password').find('input').val(),
-            Status: parent.find('.status').find('select:selected').val(),
+            Status: parent.find('.status').find('select').find(':selected').val(),
             SupplierId: $('#global_supplier_id').val()
         }
 

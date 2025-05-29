@@ -369,5 +369,29 @@ namespace WEB.CMS.Models.Product
                 Utilities.LogHelper.InsertLogTelegram("ProductDetailMongoAccess - UpdateProductAndChildrenStatus Error: " + ex);
             }
         }
+        public async Task<bool> UpdateStatusBySupplierId(int supplierId, int newStatus)
+        {
+            try
+            {
+                var filter = Builders<ProductMongoDbModel>.Filter;
+                // Create a filter to match documents by supplier_id
+                var filterDefinition = filter.Eq(x => x.supplier_id, supplierId);
+                var update = Builders<ProductMongoDbModel>.Update;
+                // Create an update definition to set the new status
+                var updateDefinition = update.Set(x => x.supplier_status, newStatus);
+
+                // Execute the update operation for multiple documents
+                var result = await _productDetailCollection.UpdateManyAsync(filterDefinition, updateDefinition);
+
+                // Check if any documents were modified
+                return result.IsAcknowledged && result.ModifiedCount > 0;
+            }
+            catch (Exception ex)
+            {
+                // Log the error using your utility helper
+                Utilities.LogHelper.InsertLogTelegram("ProductDetailMongoAccess - UpdateStatusBySupplierId Error: " + ex);
+                return false;
+            }
+        }
     }
 }

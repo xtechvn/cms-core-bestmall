@@ -5,18 +5,17 @@ using Entities.ViewModels.BankingAccount;
 using Entities.ViewModels.Funding;
 using Entities.ViewModels.SupplierConfig;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Hosting;
 using MongoDB.Driver;
-using Nest;
 using Newtonsoft.Json;
 using Repositories.IRepositories;
 using System.Security.Claims;
 using Utilities;
 using Utilities.Contants;
+using WEB.CMS.Controllers.Bussiness;
 using WEB.CMS.Customize;
 using WEB.CMS.Models;
 
-namespace WEB.Adavigo.CMS.Controllers.Order
+namespace WEB.CMS.Controllers
 {
     [CustomAuthorize]
     public class SupplierController : Controller
@@ -27,10 +26,11 @@ namespace WEB.Adavigo.CMS.Controllers.Order
         private readonly ICommonRepository _commonRepository;
         private readonly IWebHostEnvironment _WebHostEnvironment;
         private readonly ISupplierRepository _supplierRepository;
-        private readonly WEB.CMS.Models.AppSettings config;
+        private readonly Models.AppSettings config;
         private readonly IAttachFileRepository _AttachFileRepository;
         private readonly IUserRepository _userRepository;
         private RedisConn _redisConn;
+        private SupplierService _supplierService;
 
         public SupplierController(IAllCodeRepository allCodeRepository, ISupplierRepository supplierRepository, IUserRepository userRepository,
             ICommonRepository commonRepository, IConfiguration _configuration, IWebHostEnvironment webHostEnvironment, IAttachFileRepository attachFileRepository)
@@ -45,6 +45,7 @@ namespace WEB.Adavigo.CMS.Controllers.Order
             _redisConn = new RedisConn(configuration);
             _redisConn.Connect();
             _userRepository = userRepository;
+            _supplierService = new SupplierService(configuration);
         }
 
         #region supplier
@@ -107,7 +108,7 @@ namespace WEB.Adavigo.CMS.Controllers.Order
                 {
                     string decode = CommonHelper.Decode(j_data, configuration["DataBaseConfig:key_api:api_manual"]);
                     UserRoleCacheModel user_role_cache = JsonConvert.DeserializeObject<UserRoleCacheModel>(decode);
-                    if (user_role_cache != null && user_role_cache.Permission != null && user_role_cache.Permission.Count() > 0 && user_role_cache.Permission.Any(x => x.MenuId == 22 && x.PermissionId >=  (int)Utilities.Contants.SortOrder.SUA))
+                    if (user_role_cache != null && user_role_cache.Permission != null && user_role_cache.Permission.Count() > 0 && user_role_cache.Permission.Any(x => x.MenuId == 22 && x.PermissionId >= (int)Utilities.Contants.SortOrder.SUA))
                     {
                         ViewBag.HaveValidatePermission = true;
                     }
@@ -246,7 +247,7 @@ namespace WEB.Adavigo.CMS.Controllers.Order
             //delete all file in folder before export
             try
             {
-                System.IO.DirectoryInfo di = new DirectoryInfo(_UploadDirectory);
+                DirectoryInfo di = new DirectoryInfo(_UploadDirectory);
                 foreach (FileInfo file in di.GetFiles())
                 {
                     file.Delete();
@@ -596,7 +597,7 @@ namespace WEB.Adavigo.CMS.Controllers.Order
             }
         }
         [HttpPost]
-        public IActionResult ChangetStausSupplier(int data_id, int status)
+        public  IActionResult ChangetStausSupplier(int data_id, int status)
         {
             try
             {
@@ -630,9 +631,10 @@ namespace WEB.Adavigo.CMS.Controllers.Order
                         }
                         break;
                 }
+                _supplierService.UpdateSuplierAllProductStatus(data_id,status);
                 return new JsonResult(new
                 {
-                    isSuccess = (id > 0),
+                    isSuccess = id > 0,
                     message = msg,
                     data = id
                 });
@@ -652,11 +654,11 @@ namespace WEB.Adavigo.CMS.Controllers.Order
         {
             try
             {
-                if (request ==null 
-                    || request.UserName==null|| request.UserName.Trim()==""
-                    || request.Password==null|| request.Password.Trim()==""
-                    || request.FullName==null|| request.FullName.Trim()==""
-                    || request.SupplierId==null|| request.SupplierId<=0
+                if (request == null
+                    || request.UserName == null || request.UserName.Trim() == ""
+                    || request.Password == null || request.Password.Trim() == ""
+                    || request.FullName == null || request.FullName.Trim() == ""
+                    || request.SupplierId == null || request.SupplierId <= 0
 
                     )
                 {
@@ -686,7 +688,7 @@ namespace WEB.Adavigo.CMS.Controllers.Order
                     Id = request.Id,
                     FullName = request.FullName,
                     Password = EncodeHelpers.MD5Hash(request.Password),
-                    UserName = "ncc"+request.SupplierId+"."+ request.UserName,
+                    UserName = "ncc" + request.SupplierId + "." + request.UserName,
                     Address = suplier.Address,
                     Manager = 0,
                     SupplierId = request.SupplierId,
@@ -697,17 +699,17 @@ namespace WEB.Adavigo.CMS.Controllers.Order
                     CreatedBy = _UserId,
                     DepartmentId = 0,
                     Email = suplier.Email,
-                    Status = 0,
-                    Phone=suplier.Phone,
-                    ResetPassword= EncodeHelpers.MD5Hash(request.Password)
+                    Status = request.Status,
+                    Phone = suplier.Phone,
+                    ResetPassword = EncodeHelpers.MD5Hash(request.Password)
                 };
                 var id = await _userRepository.UpdateSuplierUser(user);
-               
+
 
                 return new JsonResult(new
                 {
-                    isSuccess = (id > 0),
-                    message = ((request.Id > 0) ? "Cập nhật tài khoản" : "Thêm mới tài khoản") +" cho nhà cung cấp"+ ((id > 0)?" thành công": " thất bại"),
+                    isSuccess = id > 0,
+                    message = (request.Id > 0 ? "Cập nhật tài khoản" : "Thêm mới tài khoản") + " cho nhà cung cấp" + (id > 0 ? " thành công" : " thất bại"),
                     data = id
                 });
             }
