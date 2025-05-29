@@ -508,6 +508,7 @@ var _suplier_user = {
                     parent.find('select').prop("disabled", false);
                     parent.find('.password').find('input').val('').trigger('change');
                     parent.find('.tab-users-tr-edit').hide()
+                    parent.find('.tab-users-tr-new-del').show()
 
                 }
 
