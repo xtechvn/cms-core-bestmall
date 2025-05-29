@@ -13,6 +13,7 @@ using Repositories.Repositories;
 using System.Security.Claims;
 using System.Text;
 using Utilities;
+using Utilities.Common;
 using Utilities.Contants;
 using Utilities.Contants.ProductV2;
 using WEB.Adavigo.CMS.Service;
@@ -247,7 +248,7 @@ namespace WEB.CMS.Controllers
                     });
                 }
                 string rs = "";
-                var uploaded_image = new List<string>();
+               // var uploaded_image = new List<string>();
 
                 //-- Add/Update product_main
                 var product_main = JsonConvert.DeserializeObject<ProductMongoDbModel>(JsonConvert.SerializeObject(request));
@@ -395,7 +396,7 @@ namespace WEB.CMS.Controllers
             }
 
         }
-        public async Task<IActionResult> SummitImages(string data_image)
+        public async Task<IActionResult> SummitImages(string data_image, int width = -1, int height = -1)
         {
             try
             {
@@ -409,6 +410,16 @@ namespace WEB.CMS.Controllers
 
                     });
                 }
+                try
+                {
+                    if(width>20 && height > 20)
+                    {
+                        var resized = ImageResizerLegacy.ResizeImageBase64Legacy(data_image,width,height);
+                        var base64Data = data_image.Split(',')[0];
+                        if (resized != null && resized.Trim() != "") data_image = base64Data+","+ resized;
+                    }
+                }
+                catch { }
                 var data_img = _staticAPIService.GetImageSrcBase64Object(data_image);
                 if (data_img != null)
                 {

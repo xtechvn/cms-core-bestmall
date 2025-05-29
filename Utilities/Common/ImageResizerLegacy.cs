@@ -1,0 +1,79 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Utilities.Common
+{
+    public static class ImageResizerLegacy
+    {
+
+
+        /// <summary>
+        /// Resize ảnh từ dạng base64 string và trả về ảnh đã resize dưới dạng base64 string.
+        /// Sử dụng System.Drawing.Common (cần lưu ý về đa nền tảng).
+        /// </summary>
+        /// <param name="base64Image">Dữ liệu ảnh dưới dạng base64 string.</param>
+        /// <param name="width">Chiều rộng mong muốn.</param>
+        /// <param name="height">Chiều cao mong muốn.</param>
+        /// <returns>Ảnh đã resize dưới dạng base64 string.</returns>
+        public static string ResizeImageBase64Legacy(string base64Image, int width, int height)
+        {
+            if (string.IsNullOrEmpty(base64Image))
+            {
+                throw new ArgumentException("Input base64 image string cannot be null or empty.", nameof(base64Image));
+            }
+
+            // Loại bỏ phần "data:image/png;base64," nếu có
+            var base64Data = base64Image.Contains(",") ? base64Image.Split(',')[1] : base64Image;
+
+            try
+            {
+                byte[] imageBytes = Convert.FromBase64String(base64Data);
+
+                using (MemoryStream ms = new MemoryStream(imageBytes))
+                {
+                    using (Image originalImage = Image.FromStream(ms))
+                    {
+                        // Tạo một Bitmap mới với kích thước mong muốn
+                        using (Bitmap resizedImage = new Bitmap(width, height))
+                        {
+                            using (Graphics graphics = Graphics.FromImage(resizedImage))
+                            {
+                                // Thiết lập chất lượng vẽ (tùy chọn)
+                                graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                                graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+                                graphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
+                                graphics.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+
+                                // Vẽ ảnh gốc vào Bitmap mới với kích thước đã thay đổi
+                                graphics.DrawImage(originalImage, 0, 0, width, height);
+                            }
+
+                            using (MemoryStream outputMs = new MemoryStream())
+                            {
+                                // Lưu ảnh đã resize vào MemoryStream
+                                // Lưu ý: System.Drawing.Common có thể không hỗ trợ lưu một số định dạng mà không có bộ giải mã/mã hóa phù hợp.
+                                // ImageFormat.Png hoặc ImageFormat.Jpeg là các lựa chọn phổ biến.
+                                resizedImage.Save(outputMs, System.Drawing.Imaging.ImageFormat.Png);
+
+                                byte[] resizedImageBytes = outputMs.ToArray();
+                                return Convert.ToBase64String(resizedImageBytes);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (FormatException ex)
+            {
+                throw new ArgumentException("Invalid base64 string format.", ex);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"An error occurred during image resizing: {ex.Message}", ex);
+            }
+        }
+    }
+}

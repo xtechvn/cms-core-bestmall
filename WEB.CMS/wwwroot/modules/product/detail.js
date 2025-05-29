@@ -840,7 +840,12 @@ var product_detail_new = {
         })
         model.avatar = $('#avatar .list .items').first().find('img').attr('src')
         if (_product_function.CheckIfImageVideoIsLocal(model.avatar)) {
-            var result = _product_function.POSTSynchorus('/Product/SummitImages', { data_image: model.avatar })
+            var result = _product_function.POSTSynchorus('/Product/SummitImages',
+                {
+                    data_image: model.avatar,
+                    width: _product_constants.VALUES.AvatarSize.Width,
+                    height: _product_constants.VALUES.AvatarSize.Height
+                })
             if (result != undefined && result.data != undefined && result.data.trim() != '') {
                 model.avatar = result.data
             }

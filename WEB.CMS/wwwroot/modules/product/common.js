@@ -114,7 +114,10 @@ var _product_constants = {
         ImageExtension: ['jpeg', 'jpg', 'png', 'bmp'],
         VideoExtension: ['mp4'],
         VideoMaxSize: 31457280,
-        
+        AvatarSize: {
+            Width: 207,
+            Height:207
+        }
     },
     HTML: {
         Product: `

@@ -632,6 +632,21 @@ namespace DAL
                 return -1;
             }
         }
+        public async Task<User> GetByUserNameCMSCore(string input)
+        {
+            try
+            {
+                using (var _DbContext = new EntityDataContext(_connection))
+                {
+                    return await _DbContext.Users.FirstOrDefaultAsync(s => s.UserName.Equals(input) && (s.SupplierId==null || s.SupplierId<=0));
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("GetByUserNameCMSCore - UserDAL: " + ex);
+                return null;
+            }
+        }
 
     }
 }

@@ -47,7 +47,7 @@ namespace Repositories.Repositories
             try
             {
                 var _encryptPassword = EncodeHelpers.MD5Hash(entity.Password);
-                var _model = await _UserDAL.GetByUserName(entity.UserName);
+                var _model = await _UserDAL.GetByUserNameCMSCore(entity.UserName);
                 if (_model != null)
                 {
                     if (_encryptPassword == _model.Password || _encryptPassword == _model.ResetPassword)
