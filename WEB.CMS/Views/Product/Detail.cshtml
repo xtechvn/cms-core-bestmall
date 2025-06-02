@@ -11,6 +11,7 @@
     string static_url = (string)ViewBag.Static;
     string group_product = (string)ViewBag.GroupProduct;
     ProductMongoDbModel product = (ProductMongoDbModel)ViewBag.Product;
+    List<ProductMongoDbModel> product_buy_with = (List<ProductMongoDbModel>)ViewBag.ProductBuyWith;
     Supplier supplier = (Supplier)ViewBag.Supplier;
     Label label = (Label)ViewBag.Label;
     ProductSpecificationDetailMongoDbModel brand = null;
@@ -30,6 +31,7 @@
         manuafacter_location = product.specification.FirstOrDefault(x => x.attribute_id == 7);
         specific_requirement = product.specification.FirstOrDefault(x => x.attribute_id == 4);
     }
+
 }
 <style>
     .list-toys .active a {
@@ -226,7 +228,7 @@
                 <label class="label">Chọn nhà cung cấp</label>
                 <div class="wrap_input">
                     <div class="form-group namesp">
-                        <select class="select2 w-100">
+                        <select class="select2 w-100" >
                             @if(supplier!=null && supplier.SupplierId > 0)
                             {
                                 <option value="@supplier.SupplierId" selected> @((supplier.Status != (int)SUPPLIER_STATUS.CONFIRMED ? "" : supplier.FullName)) </option>
@@ -1245,6 +1247,81 @@
                     </div>
                 </div>
 
+            </div>
+        </div>
+        <div id="product-buy-with" class="box-info bg-white p-3 mb-3">
+            <div  class="item-edit item flex flex-lg-nowrap gap10 mb-2 w-100">
+                <h5 class="title-box mb-2 text-uppercase">Sản phẩm mua cùng</h5>
+                <div class="wrap_input pb-4">
+                <a id="add-product-buy-with-btn" href="javascript:;" class="btn btn-add "><i class="icofont-plus mr-2"></i>Thêm sản phẩm</a>
+                <div class="table-responsive table-default mt-3">
+                    <table class="table text-center table-nowrap  w-100">
+                        <thead>
+                            <tr class="thead">
+                                <td style="max-width: 0">
+                                    <label class="check-list mb20 check-list-all">
+                                        <input type="checkbox" disabled>
+                                        <span class="checkmark"></span>
+                                    </label>
+                                </td>
+                                <td class="text-left" style="width: 50%;">Sản phẩm</td>
+                                
+                                <td class="has-order">
+                                    Giá
+                                    <div class="order">
+                                        <i class="icofont-caret-down"></i>
+                                        <i class="icofont-caret-up"></i>
+                                    </div>
+                                </td>
+                                <td>Kho hàng</td>
+                                <td>
+                                    Thao tác
+                                </td>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @if (product_buy_with != null && product_buy_with.Count > 0)
+                            {
+                                foreach (var item in product_buy_with)
+                                {
+                                    var img_src = item.avatar;
+                                    if (img_src != null && !img_src.Contains(static_url) && !img_src.Contains("data:image") && !img_src.Contains("http"))
+                                        img_src = static_url + item.avatar;
+                                    <tr data-id="@item._id">
+                                        <td style="max-width: 50px">
+                                            <label class="check-list mb20 mr25">
+                                                <input class="check-product" type="checkbox">
+                                                <span class="checkmark"></span>
+                                            </label>
+                                        </td>
+                                        <td style="max-width: 50%;">
+                                            <div class="item-order text-left" style=" display: flex; ">
+                                                <div class="img" style=" margin-right: 5px; ">
+                                                    <img src="@img_src" alt="" style=" width: 80px; ">
+                                                </div>
+                                                <div class="info">
+                                                    <h6 class="name-product"> @item.name </h6>
+                                                    <p class="text-secondary mb-0">Mã: @item.code</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            đ @(item.amount_min == null ? item.amount.ToString("N0") : ((double)item.amount_min).ToString("N0"))
+                                        </td>
+                                        <td>@item.quanity_of_stock</td>
+                                        <td class="text-center">
+                                            <a href="javascript:;" class="delete-row">
+                                                <i class="icofont-trash"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                           
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
         <div class="action-form">

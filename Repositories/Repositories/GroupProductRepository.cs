@@ -494,6 +494,7 @@ namespace Repositories.Repositories
         {
             return await _GroupProductDAL.IsGroupHeader(groups);
         }
+       
         public async Task<List<ProductGroupViewModel>> GetProductGroupByParentID(long parent_id, string url_static)
         {
             try
@@ -509,7 +510,10 @@ namespace Repositories.Repositories
             }
             return null;
         }
-
+        public List<GroupProduct> Search(string keyword, int parent_id = 1)
+        {
+            return  _GroupProductDAL.Search(keyword, parent_id);
+        }
 
     }
 }

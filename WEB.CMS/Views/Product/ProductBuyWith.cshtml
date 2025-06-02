@@ -1,0 +1,107 @@
+﻿@using Entities.ViewModels.Products
+@using Utilities.Contants
+@using Utilities.Contants.ProductV2
+@{
+    string product_id = (string)ViewBag.ProductId;
+    Layout = null;
+}
+<div class="modal fade" id="add-product-buy-with" style="display: none;    background-color: rgba(0, 0, 0, 0.5);" aria-hidden="true" data-id="@product_id">
+    <div class="modal-dialog" style="max-width: 860px;">
+        <div class="modal-content">
+            <div class="content_lightbox">
+                <h6 class="text-uppercase mb-3">chọn sản phẩm</h6>
+                <div class="row ">
+                    <div class="col-md-6">
+                        <div class="row">
+                            <label class="col-sm-3 col-4" style="">Tên sản phẩm</label>
+                            <div class="col-sm-9 col-8">
+                                <div class="form-group w-100 ">
+                                    <div class="search-wrapper">
+                                        <input id="add-product-buy-with-search-name" type="text" class="input_search onclick-togle border" name="" value="" placeholder="Tìm kiếm theo tên sản phẩm">
+                                        <span class="search-btn">
+                                            <button type="submit">
+                                                <svg class="icon-svg">
+                                                    <use xlink:href="#search">
+                                                    </use>
+                                                </svg>
+                                            </button>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="row">
+                            <label class="col-sm-3 col-4" style="">Ngành hàng</label>
+                            <div class="col-sm-9 col-8">
+                                <div class="form-group w-100 ">
+                                    <div class="search-wrapper">
+                                        <select id="add-product-buy-with-search-group" class="select2 w-100" style="width:100% !important;">
+
+
+                                        </select>
+
+@*                                         <input id="add-product-buy-with-search-group" type="text" class="input_search onclick-togle border" name="" value="" placeholder="Tìm kiếm theo ngành hàng">
+                                             <span class="search-btn">
+                                            <button type="submit">
+                                                <svg class="icon-svg">
+                                                    <use xlink:href="#search">
+                                                    </use>
+                                                </svg>
+                                            </button> *@
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex gap10 justify-content-between align-items-center">
+                    <div class="action">
+                        <a href="javascript:;" id="add-product-buy-with-search-confirm" class="btn btn-round btn-outline-base">Tìm</a>
+                        <a href="javascript:;" id="add-product-buy-with-search-clear"  class="btn btn-round btn-base">Nhập lại</a>
+                    </div>
+
+                </div>
+                <div class="table-responsive table-default mt-3" style="max-height:500px;">
+                    <table class="table text-center table-nowrap  w-100">
+                        <thead>
+                            <tr class="thead">
+                                <td style="max-width: 0">
+                                    <label class="check-list mb20 check-list-all">
+                                        <input type="checkbox">
+                                        <span class="checkmark"></span>
+                                    </label>
+                                </td>
+                                <td class="text-left" style="max-width: 50%;">Sản phẩm</td>
+                                <td class="has-order">
+                                    Doanh số
+                                    <div class="order">
+                                        <i class="icofont-caret-down"></i>
+                                        <i class="icofont-caret-up"></i>
+                                    </div>
+                                </td>
+                                <td class="has-order">
+                                    Giá
+                                    <div class="order">
+                                        <i class="icofont-caret-down"></i>
+                                        <i class="icofont-caret-up"></i>
+                                    </div>
+                                </td>
+                                <td>Kho hàng</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="action mt-3">
+                    <a href="javascript:;" id="add-product-buy-with-btn-cancel" class="btn btn-round btn-outline-base">Hủy</a>
+                    <a href="javascript:;" id="add-product-buy-with-btn-confirm" class="btn btn-round btn-base">Xác nhận</a>
+                </div>
+            </div>
+            <button title="Close (Esc)" type="button" class="mfp-close" data-dismiss="modal">×</button>
+        </div>
+    </div>
+</div>

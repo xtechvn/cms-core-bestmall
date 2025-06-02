@@ -23,5 +23,6 @@ namespace Repositories.IRepositories
         Task<string> GetGroupProductNameAsync(int cateID);
         Task<bool> IsGroupHeader(List<int> groups);
         Task<List<ProductGroupViewModel>> GetProductGroupByParentID(long parent_id, string url_static);
+        public List<GroupProduct> Search(string keyword, int parent_id = 1);
     }
 }

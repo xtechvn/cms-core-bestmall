@@ -14,6 +14,7 @@ var product_detail_new = {
         product_detail_new.ShowProductTab()
         product_detail_new.DynamicBind()
         product_detail_new.RenderAttributesPrice()
+        product_detail_new.RenderProductBuyWith()
         product_detail_new.Select2Supplier($('#supplier-id select'))
         product_detail_new.Select2Label($('#label-id select'))
         product_detail_new.Select2Spec($('#description-specification-list select'))
@@ -428,6 +429,46 @@ var product_detail_new = {
         $('body').on('click', '#description-specification table .delete-row', function () {
             var element = $(this)
             element.closest('tr').remove()
+        }); 
+        //-- Product Buy With
+        $('body').on('click', '#add-product-buy-with-btn', function () {
+
+            product_detail_new.AddNewProductBuyWith()
+
+        });
+        $('body').on('click', '#add-product-buy-with .mfp-close, #add-product-buy-with-btn-cancel', function () {
+
+            product_detail_new.CloseAddNewProductBuyWith()
+
+        });
+        $('body').on('click', '#add-product-buy-with-search-confirm', function () {
+
+            product_detail_new.ProductBuyWithSearch()
+
+        });
+        $('body').on('click', '#add-product-buy-with td', function () {
+            var element = $(this)
+            var tr = element.closest('tr')
+            var checked = tr.find('.check-product').prop('checked')
+            if (!checked) tr.find('.check-product').prop('checked', true)
+            else tr.find('.check-product').prop('checked', false)
+        });
+        $('body').on('click', '#add-product-buy-with-search-clear', function () {
+
+            $('#add-product-buy-with-search-group').val('null').trigger('change')
+            $('#add-product-buy-with-search-name').val('').trigger('change')
+            product_detail_new.ProductBuyWithSearch()
+
+        });
+        $('body').on('click', '#add-product-buy-with-btn-confirm', function () {
+
+            product_detail_new.ConfirmProductBuyWith()
+            product_detail_new.CloseAddNewProductBuyWith()
+
+        });
+        $('body').on('click', '#product-buy-with tbody tr .delete-row', function () {
+            var element = $(this)
+            element.closest('tr').remove()
         });
     },
     ShowProductTab: function () {
@@ -512,6 +553,7 @@ var product_detail_new = {
                 })
             }
         });
+     
 
     },
     RenderAttributesPrice: function () {
@@ -1025,7 +1067,14 @@ var product_detail_new = {
         model.condition_of_product = $('#condition_of_product').find(':selected').val()
         model.sku = $('#sku input').val()
 
-        
+        model.products_buy_with = []
+        $('#product-buy-with tbody tr').each(function (index, item) {
+            var compare = $(this)
+            var product_id_compare = compare.attr('data-id')
+            if (product_id_compare != undefined && product_id_compare.trim()!='') {
+                model.products_buy_with.push(product_id_compare)
+            }
+        })
         
         _product_function.POST('/Product/Summit', { request: model }, function (result) {
             if (result.is_success) {
@@ -1319,5 +1368,131 @@ var product_detail_new = {
         var discount_value = ((old_price - min_price) / old_price) * 100
         var discount = Math.round(discount_value <= 0 ? 0 : discount_value)
         $('#discount input').val(discount).trigger('change')
+    },
+    AddNewProductBuyWith: function () {
+        $('#add-product-buy-with').show()
+        $('#add-product-buy-with').addClass('show')
+        product_detail_new.ProductBuyWithSearch()
+    },
+    CloseAddNewProductBuyWith: function () {
+        $('#add-product-buy-with').hide()
+        $('#add-product-buy-with').removeClass('show')
+    },
+    RenderProductBuyWith: function () {
+        var model = {
+            id: $('#product_detail').attr('data-id')
+        }
+        _product_function.POST('/Product/ProductBuyWith', model, function (result) {
+            $('body').append(result)
+            product_detail_new.Select2BuyWith($('#add-product-buy-with-search-group'))
+        });
+    },
+    ProductBuyWithSearch: function () {
+        var group_selected = $('#add-product-buy-with-search-group') == undefined ? '-1' : $('#add-product-buy-with-search-group').find(':selected').val()
+        var model = {
+            keyword: $('#add-product-buy-with-search-name').val(),
+            group_id: group_selected == undefined ? '-1' : group_selected
+        }
+        _product_function.POST('/Product/ProductBuyWithSearch', model, function (result) {
+            $('#add-product-buy-with tbody').html(result)
+            $('#add-product-buy-with tbody tr').each(function (index, item) {
+                var element = $(this)
+                var product_id = element.attr('data-id')
+                $('#product-buy-with tbody tr').each(function (index, item) {
+                    var compare = $(this)
+                    var product_id_compare = compare.attr('data-id')
+                    if (product_id_compare.trim() == product_id) {
+                        element.find('.check-product').prop('checked', true)
+                        return false
+                    }
+                })
+
+            })
+        });
+    },
+    Select2BuyWith: function (element) {
+        element.select2({
+            ajax: {
+                url: "/Product/SearchGroupProduct",
+                type: "post",
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    var query = {
+                        keyword: params.term,
+                    }
+                    return query;
+                },
+                processResults: function (response) {
+                    return {
+                        results: $.map(response.data, function (item) {
+                            return {
+                                text: '[' + item.id +'] - '+ item.name,
+                                id: item.id,
+                            }
+                        })
+                    };
+                },
+                cache: true
+            }
+        });
+    },
+    ConfirmProductBuyWith: function () {
+        var template = `
+          <tr data-id="@item._id">
+                                        <td style="max-width: 50px">
+                                            <label class="check-list mb20 mr25">
+                                                <input class="check-product" type="checkbox">
+                                                <span class="checkmark"></span>
+                                            </label>
+                                        </td>
+                                        <td style="max-width: 50%;">
+                                            <div class="item-order text-left" style=" display: flex; ">
+                                                <div class="img" style=" margin-right: 5px; ">
+                                                    <img src="@img_src" alt="" style=" width: 80px; ">
+                                                </div>
+                                                <div class="info">
+                                                    <h6 class="name-product"> @item.name </h6>
+                                                    <p class="text-secondary mb-0">Mã: @item.code</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            đ @(item.amount_min == null ? item.amount.ToString("N0") : ((double)item.amount_min).ToString("N0"))
+                                        </td>
+                                        <td>@item.quanity_of_stock</td>
+                                        <td class="text-center">
+                                            <a href="javascript:;" class="delete-row">
+                                                <i class="icofont-trash"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+        `;
+        $('#add-product-buy-with tbody tr').each(function (index, item) {
+            var element = $(this)
+            var product_id = element.attr('data-id')
+            var exists =false
+            $('#product-buy-with tbody tr').each(function (index, item) {
+                var compare = $(this)
+                var product_id_compare = compare.attr('data-id')
+                if (product_id_compare.trim() == product_id) {
+                    exists = true
+                    return false
+                }
+            })
+            if (exists == false && element.find('.check-product').prop('checked') == true) {
+                $('#product-buy-with tbody').append(
+                    template.replaceAll('@item._id', element.attr('data-id'))
+                        .replaceAll('@img_src', element.find('img').attr('src'))
+                        .replaceAll('@item.name', element.find('.product-name').text())
+                        .replaceAll('đ @(item.amount_min == null ? item.amount.ToString("N0") : ((double)item.amount_min).ToString("N0"))', element.find('.product-amount').text())
+                        .replaceAll('@item.quanity_of_stock', element.find('.product-stock').text())
+                        .replaceAll('@item.code', element.find('.product-code').text())
+
+                )
+            }
+        })
+
+     
     }
 }

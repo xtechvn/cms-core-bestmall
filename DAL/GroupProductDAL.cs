@@ -160,6 +160,22 @@ namespace DAL
             }
             return null;
         }
+        public List<GroupProduct> Search(string keyword,int parent_id=1)
+        {
+            try
+            {
+                using (var _DbContext = new EntityDataContext(_connection))
+                {
+                    return _DbContext.GroupProducts.Where(s => s.Name.Contains(keyword) && s.ParentId==parent_id && s.Status == (int)ArticleStatus.PUBLISH).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("Search - GroupProductDAL: " + ex);
+
+            }
+            return new List<GroupProduct>();
+        }
 
 
     }

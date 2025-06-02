@@ -373,7 +373,7 @@ namespace WEB.CMS.Controllers
                 //    }
                 //}
                 await _redisConn.DeleteCacheByKeyword(CacheName.PRODUCT_LISTING, db_index);
-                await _redisConn.DeleteCacheByKeyword(CacheName.PRODUCT_DETAIL + product_main._id, db_index);
+                _redisConn.clear(CacheName.PRODUCT_DETAIL + product_main._id, db_index);
                 if (rs != null)
                 {
                     return Ok(new
@@ -707,6 +707,7 @@ namespace WEB.CMS.Controllers
                 return View();
 
             }
+            ViewBag.ProductBuyWith = new List<ProductMongoDbModel>();
             var product = await _productV2DetailMongoAccess.GetByID(id);
             if (product == null || product._id == null || product._id.Trim() == "")
             {
@@ -744,6 +745,14 @@ namespace WEB.CMS.Controllers
             ViewBag.Product = product;
             ViewBag.SubProduct = await _productV2DetailMongoAccess.SubListing(id);
             ViewBag.ProductId = id;
+            try
+            {
+                if(product!=null && product.products_buy_with!=null && product.products_buy_with.Count > 0)
+                {
+                    ViewBag.ProductBuyWith = await _productV2DetailMongoAccess.ListByProducts(product.products_buy_with);
+                }
+            }
+            catch { }
             return View();
         }
         public async Task<IActionResult> AttributesPrice(
@@ -1027,6 +1036,38 @@ namespace WEB.CMS.Controllers
                 });
             }
         }
+        [HttpPost]
+
+        public IActionResult ProductBuyWith(string id = "")
+        {
+            ViewBag.ProductId = id;
+            return View();
+        }
+        [HttpPost]
+
+        public async Task<IActionResult> ProductBuyWithSearch(string keyword = "",int group_id=-1)
+        {
+            ViewBag.Main = new List<ProductMongoDbModel>();
+
+            string static_domain = _configuration["DomainConfig:ImageStatic"];
+            ViewBag.StaticDomain = static_domain != null && static_domain.EndsWith("/") ? static_domain : static_domain + "/";
+            var main_products = await _productV2DetailMongoAccess.Listing(keyword, group_id, 1, 10);
+            ViewBag.Main = main_products;
+            return View();
+        }
+        [HttpPost]
+
+        public async Task<IActionResult> SearchGroupProduct(string keyword = "")
+        {
+            int parent_id = 1;
+            var list = _groupProductRepository.Search(keyword, parent_id);
+
+            return Ok(new
+            {
+                is_success=list!=null && list.Count>0,
+                data=list
+            });
+        }
     }
-    
+
 }
