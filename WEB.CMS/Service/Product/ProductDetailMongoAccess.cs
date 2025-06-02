@@ -1,5 +1,7 @@
 ﻿using Azure.Core;
 using Entities.ViewModels.Products;
+using IdGen;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using Nest;
 using Newtonsoft.Json;
@@ -408,6 +410,80 @@ namespace WEB.CMS.Models.Product
             catch (Exception ex)
             {
                 Utilities.LogHelper.InsertLogTelegram("ProductDetailMongoAccess - SubListing Error: " + ex);
+                return null;
+            }
+        }
+        public async Task<List<ProductMongoDbModel>> ListingProductBuyWith(string keyword = "", int group_id = -1)
+        {
+            try
+            {
+                var filter = Builders<ProductMongoDbModel>.Filter.Or(
+                                    Builders<ProductMongoDbModel>.Filter.Regex(p => p.name, new MongoDB.Bson.BsonRegularExpression(keyword.Trim().ToLower(), "i")),
+                                    Builders<ProductMongoDbModel>.Filter.Regex(p => p.sku, new MongoDB.Bson.BsonRegularExpression(keyword.Trim().ToLower(), "i")),
+                                    Builders<ProductMongoDbModel>.Filter.Regex(p => p.code, new MongoDB.Bson.BsonRegularExpression(keyword.Trim().ToLower(), "i"))
+
+                                    );
+              
+                filter &= Builders<ProductMongoDbModel>.Filter.Where(s => s.status != (int)ProductStatus.REMOVE);
+                if (group_id > 0)
+                {
+                    filter &= Builders<ProductMongoDbModel>.Filter.Regex(x => x.group_product_id, group_id.ToString());
+                }
+                // Điều kiện cho Trường hợp 1: parent_product_id là null hoặc rỗng, VÀ không có variation_detail
+                var condition1_ParentIdNullOrEmpty = Builders<ProductMongoDbModel>.Filter.Or(
+                    Builders<ProductMongoDbModel>.Filter.Eq(p => p.parent_product_id, null),
+                    Builders<ProductMongoDbModel>.Filter.Eq(p => p.parent_product_id, "")
+                );
+
+                // Trường hợp không có variation_detail (null hoặc rỗng)
+                var condition1_NoVariationDetail = Builders<ProductMongoDbModel>.Filter.Or(
+                    Builders<ProductMongoDbModel>.Filter.Eq(p => p.variation_detail, null),
+                    Builders<ProductMongoDbModel>.Filter.Size(p => p.variation_detail, 0)
+                );
+                // Hoặc cách này cũng hiệu quả và thường được dùng:
+                // var condition1_NoVariationDetail = Builders<ProductMongoDbModel>.Filter.Where(p => p.variation_detail == null || !p.variation_detail.Any());
+
+
+                var case1Filter = Builders<ProductMongoDbModel>.Filter.And(
+                    condition1_ParentIdNullOrEmpty,
+                    condition1_NoVariationDetail
+                );
+
+                // Điều kiện cho Trường hợp 2: Có parent_product_id VÀ cũng có variation_detail
+                var condition2_HasParentId = Builders<ProductMongoDbModel>.Filter.And(
+                    Builders<ProductMongoDbModel>.Filter.Ne(p => p.parent_product_id, null),
+                    Builders<ProductMongoDbModel>.Filter.Ne(p => p.parent_product_id, string.Empty)
+                );
+
+                // Trường hợp có variation_detail (không null và không rỗng)
+                var condition2_HasVariationDetail = Builders<ProductMongoDbModel>.Filter.ElemMatch(p => p.variation_detail, Builders<ProductDetailVariationAttributesMongoDbModel>.Filter.Exists(x=>x.id));
+
+                // Hoặc cách này:
+                // var condition2_HasVariationDetail = Builders<ProductMongoDbModel>.Filter.Where(p => p.variation_detail != null && p.variation_detail.Any());
+
+
+                var case2Filter = Builders<ProductMongoDbModel>.Filter.And(
+                    condition2_HasParentId,
+                    condition2_HasVariationDetail
+                );
+
+                // Kết hợp hai trường hợp bằng toán tử OR
+                filter &= Builders<ProductMongoDbModel>.Filter.Or(
+                    case1Filter,
+                    case2Filter
+                );
+                filter &= Builders<ProductMongoDbModel>.Filter.Gt(p => p.amount, 0);
+                var sort_filter = Builders<ProductMongoDbModel>.Sort;
+                var sort_filter_definition = sort_filter.Descending(x => x.updated_last);
+                var model = _productDetailCollection.Find(filter).Sort(sort_filter_definition);
+                model.Options.Skip = 1;
+                model.Options.Limit = 10;
+                var result = await model.ToListAsync();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Utilities.LogHelper.InsertLogTelegram("ProductDetailMongoAccess - Listing Error: " + ex);
                 return null;
             }
         }

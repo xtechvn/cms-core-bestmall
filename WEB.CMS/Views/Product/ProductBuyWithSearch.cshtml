@@ -1,6 +1,7 @@
 ﻿@using Entities.ViewModels.Products
 @using Utilities.Contants
 @using Utilities.Contants.ProductV2
+@using WEB.CMS.Service.Product
 @{
     Layout = null;
     List<ProductMongoDbModel> main_products = (List<ProductMongoDbModel>)ViewBag.Main;
@@ -16,6 +17,7 @@
         {
             img_src = StaticDomain + main.avatar;
         }
+        var variation_string = ProductVariationHelper.RenderVariationDetail(main.attributes,main.attributes_detail,main.variation_detail);
         <tr data-id="@main._id">
             <td style="max-width: 50px">
                 <label class="check-list mb20 mr25">
@@ -31,6 +33,7 @@
                     <div class="info">
                         <h3 class="name-product"> <nw class="product-name"> @main.name</nw> </h3>
                         <p class="text-secondary mb-0">Mã: <nw class="product-code"> @main.code</nw></p>
+                        <p class="text-secondary mb-0">Phân loại: <nw class="product-variation"> @(variation_string == null || variation_string.Trim() == "" ? "Mặc định" : variation_string)</nw></p>
                     </div>
                 </div>
             </td>

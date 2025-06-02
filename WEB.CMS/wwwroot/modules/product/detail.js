@@ -1454,6 +1454,8 @@ var product_detail_new = {
                                                 <div class="info">
                                                     <h6 class="name-product"> @item.name </h6>
                                                     <p class="text-secondary mb-0">Mã: @item.code</p>
+                                                    <p class="text-secondary mb-0">Phân loại: <nw class="product-variation"> @variation_string</nw></p>
+
                                                 </div>
                                             </div>
                                         </td>
@@ -1488,6 +1490,7 @@ var product_detail_new = {
                         .replaceAll('đ @(item.amount_min == null ? item.amount.ToString("N0") : ((double)item.amount_min).ToString("N0"))', element.find('.product-amount').text())
                         .replaceAll('@item.quanity_of_stock', element.find('.product-stock').text())
                         .replaceAll('@item.code', element.find('.product-code').text())
+                        .replaceAll('@variation_string', element.find('.product-variation').text())
 
                 )
             }

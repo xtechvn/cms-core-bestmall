@@ -1051,7 +1051,7 @@ namespace WEB.CMS.Controllers
 
             string static_domain = _configuration["DomainConfig:ImageStatic"];
             ViewBag.StaticDomain = static_domain != null && static_domain.EndsWith("/") ? static_domain : static_domain + "/";
-            var main_products = await _productV2DetailMongoAccess.Listing(keyword, group_id, 1, 10);
+            var main_products = await _productV2DetailMongoAccess.ListingProductBuyWith(keyword, group_id);
             ViewBag.Main = main_products;
             return View();
         }

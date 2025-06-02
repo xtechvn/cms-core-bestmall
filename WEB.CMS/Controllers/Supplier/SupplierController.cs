@@ -31,6 +31,7 @@ namespace WEB.CMS.Controllers
         private readonly IUserRepository _userRepository;
         private RedisConn _redisConn;
         private SupplierService _supplierService;
+        private readonly int db_index = 9;
 
         public SupplierController(IAllCodeRepository allCodeRepository, ISupplierRepository supplierRepository, IUserRepository userRepository,
             ICommonRepository commonRepository, IConfiguration _configuration, IWebHostEnvironment webHostEnvironment, IAttachFileRepository attachFileRepository)
@@ -46,6 +47,8 @@ namespace WEB.CMS.Controllers
             _redisConn.Connect();
             _userRepository = userRepository;
             _supplierService = new SupplierService(configuration);
+            db_index = Convert.ToInt32(configuration["Redis:Database:db_search_result"]);
+
         }
 
         #region supplier
@@ -141,6 +144,8 @@ namespace WEB.CMS.Controllers
                     }
                 }
                 var result = _supplierRepository.Add(model);
+                 _redisConn.DeleteCacheByKeyword(CacheName.PRODUCT_LISTING, db_index);
+                _redisConn.DeleteCacheByKeyword(CacheName.PRODUCT_DETAIL, db_index);
 
                 if (result > 0)
                 {
@@ -176,7 +181,8 @@ namespace WEB.CMS.Controllers
             try
             {
                 var result = _supplierRepository.Update(model);
-
+                _redisConn.DeleteCacheByKeyword(CacheName.PRODUCT_LISTING, db_index);
+                _redisConn.DeleteCacheByKeyword(CacheName.PRODUCT_DETAIL, db_index);
                 if (result > 0)
                 {
                     return new JsonResult(new
@@ -632,6 +638,7 @@ namespace WEB.CMS.Controllers
                         break;
                 }
                 _supplierService.UpdateSuplierAllProductStatus(data_id,status);
+
                 return new JsonResult(new
                 {
                     isSuccess = id > 0,
