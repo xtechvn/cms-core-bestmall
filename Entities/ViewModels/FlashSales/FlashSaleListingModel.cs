@@ -9,7 +9,9 @@ namespace Entities.ViewModels.FlashSales
 {
     public class FlashSaleListingModel: Entities.Models.FlashSale
     {
+        public long ActiveFlashSaleProductCount { get; set; }
         public long FlashSaleProductCount { get; set; }
         public string FlashSaleStatusText { get; set; }
+        public string SupplierName { get; set; }
     }
 }

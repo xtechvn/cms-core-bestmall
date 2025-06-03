@@ -15,10 +15,9 @@
 
                 <th style="width: 200px">Ngày</th>
                 <th style="width: 200px">Nhà cung cấp</th>
-                <th style="width: 200px">Lượt người mua đặt nhắc nhở</th>
-                <th style="width: 200px">Lượt nhấp chuột/xem</th>
+                <th style="width: 200px">Sản phẩm</th>
                 <th style="width: 200px">Trạng thái</th>
-                <th style="width: 200px">Bật/tắt</th>
+                <th style="width: 200px">Bật / Tắt</th>
                 <th style="width: 200px">Thao tác</th>
             </tr>
         </thead>
@@ -30,16 +29,26 @@
                     <tr>
 
                         <td>@(item.FromDate.ToString("dd/MM/yyyy HH:mm")) - @(item.ToDate.ToString("dd/MM/yyyy HH:mm"))</td>
+                        <td class="text-center">@item.SupplierName</td>
+
                         <td class="text-left">
-                            Bật Flash sale <span class="text-danger">0</span><br />
-                            <small class="text-secondary">Số sản phẩm tham gia 10</small>
+                            Bật Flash sale <span class="text-danger">@item.ActiveFlashSaleProductCount.ToString("N0")</span><br />
+                            <small class="text-secondary">Số sản phẩm tham gia: @item.FlashSaleProductCount.ToString("N0")</small>
                         </td>
-                        <td class="text-center">169</td>
-                        <td class="text-center"></td>
                         <td class="text-center">
+                            @{
+                                var now = DateTime.Now;
+                                if(now>=item.FromDate && now <= item.ToDate)
+                                {
+                                    <div class="status-green">Đang diễn ra</div>
+                                }
+                                else if (now <= item.FromDate && now <= item.ToDate)
+                                {
+                                    <div class="status-green">Đang diễn ra</div>
+                                }
+                            }
                             <div class="status-gray">Đã kết thúc</div>
                             <div class="status-red">Đã kết thúc</div>
-                            <div class="status-green">Đã kết thúc</div>
                         </td>
                         <td class="text-center">
                             <label class="switch no-text">
