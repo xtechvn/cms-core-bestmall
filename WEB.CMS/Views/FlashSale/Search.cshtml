@@ -1,6 +1,7 @@
 ﻿@using Entities.ViewModels;
 @using Entities.ViewModels.FlashSales
 @using Entities.ViewModels.Label;
+@using Utilities.Contants
 @{
     Layout = null;
     string StaticDomain = (string)ViewBag.StaticDomain;
@@ -26,7 +27,7 @@
             {
                 foreach (var item in Model.ListData)
                 {
-                    <tr>
+                    <tr data-id="@item.Id">
 
                         <td>@(item.FromDate.ToString("dd/MM/yyyy HH:mm")) - @(item.ToDate.ToString("dd/MM/yyyy HH:mm"))</td>
                         <td class="text-center">@item.SupplierName</td>
@@ -44,22 +45,31 @@
                                 }
                                 else if (now <= item.FromDate && now <= item.ToDate)
                                 {
-                                    <div class="status-green">Đang diễn ra</div>
+                                    <div class="status-gray">Sắp diễn ra</div>
+                                }
+                                else if (now >= item.ToDate)
+                                {
+                                    <div class="status-red">Đã kết thúc</div>
                                 }
                             }
-                            <div class="status-gray">Đã kết thúc</div>
-                            <div class="status-red">Đã kết thúc</div>
                         </td>
                         <td class="text-center">
                             <label class="switch no-text">
-                                <input type="checkbox">
+                                @if (item.Status == (int)SUPPLIER_STATUS.CONFIRMED)
+                                {
+                                    <input type="checkbox" checked>
+                                }
+                                else {
+
+                                    <input type="checkbox" checked>
+                                }
                                 <span class="slider round"></span>
                             </label>
                         </td>
                         <td class="text-center">
-                            <a href="" class="text-primary">Chi tiết</a><br />
-                            <a href="" class="text-primary">Sao chép</a><br />
-                            <a href="" class="text-primary">Dữ liệu</a>
+                            <a href="javascript:;" class="text-primary flashsale-viewdetail">Chi tiết</a><br />
+                            <a href="javascript:;" class="text-primary flashsale-clonedetail">Sao chép</a><br />
+                            <a href="javascript:;" class="text-primary flashsale-datadetail">Dữ liệu</a>
                         </td>
                     </tr>
                 }
