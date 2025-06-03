@@ -118,8 +118,8 @@
                 var sub_attr_img = new List<string>();string html_sub_attr = "";
                 foreach (var variation_attributes_item in sub.variation_detail)
                 {
-                    var attribute = sub.attributes.Where(obj => obj?._id == variation_attributes_item.id).ToList();
-                    var attribute_detail = sub.attributes_detail.Where(obj => obj?.attribute_id == variation_attributes_item.id && obj?.name == variation_attributes_item.name).ToList();
+                    var attribute = sub.attributes.Where(obj => obj?._id == variation_attributes_item._id).ToList();
+                    var attribute_detail = sub.attributes_detail.Where(obj => obj?.attribute_id == variation_attributes_item._id && obj?.name == variation_attributes_item.name).ToList();
 
                    
                     if (attribute_detail != null && attribute_detail.Count > 0 && !string.IsNullOrEmpty(attribute_detail[0]?.img?.Trim()))

@@ -111,14 +111,14 @@ namespace WEB.CMS.Controllers.Product.Bussiness
                         //-- Variation 1
                         model.variation_detail = new List<ProductDetailVariationAttributesMongoDbModel>()
                         {
-                            new ProductDetailVariationAttributesMongoDbModel(){id="0",name=item.variation_1_name.Trim()}
+                            new ProductDetailVariationAttributesMongoDbModel(){_id="0",name=item.variation_1_name.Trim()}
                         };
                         //--Attributes 2 & Attribute Detail 2 & Variation 2:
                         if (item.attribute_2_name != null && item.attribute_2_name.Trim() != "")
                         {
                             model.attributes.Add(new ProductAttributeMongoDbModel() { _id = "1", name = item.attribute_2_name.Trim() });
                             model.attributes_detail.Add(new ProductAttributeMongoDbModelItem() { attribute_id = "1", name = item.variation_2_name.Trim() });
-                            model.variation_detail.Add(new ProductDetailVariationAttributesMongoDbModel() { id = "1", name = item.variation_2_name.Trim() });
+                            model.variation_detail.Add(new ProductDetailVariationAttributesMongoDbModel() { _id = "1", name = item.variation_2_name.Trim() });
                         }
                        
                         //-- Check if main_products exists? :

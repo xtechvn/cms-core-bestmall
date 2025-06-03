@@ -18,7 +18,7 @@ namespace WEB.CMS.Service.Product
             {
                 foreach (var variationItem in variation_detail)
                 {
-                    var selected_attribute = attribute.FirstOrDefault(attr => attr._id == variationItem.id);
+                    var selected_attribute = attribute.FirstOrDefault(attr => attr._id == variationItem._id);
                     var selected_attributeDetail = attributeDetail.FirstOrDefault(detail => detail.name == variationItem.name);
                     if (selected_attribute != null && selected_attributeDetail != null)
                     {
