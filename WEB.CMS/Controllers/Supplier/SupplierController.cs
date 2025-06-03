@@ -127,7 +127,7 @@ namespace WEB.CMS.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(SupplierConfigUpsertModel model)
+        public async Task<IActionResult> Create(SupplierConfigUpsertModel model)
         {
             try
             {
@@ -144,8 +144,8 @@ namespace WEB.CMS.Controllers
                     }
                 }
                 var result = _supplierRepository.Add(model);
-                 _redisConn.DeleteCacheByKeyword(CacheName.PRODUCT_LISTING, db_index);
-                _redisConn.DeleteCacheByKeyword(CacheName.PRODUCT_DETAIL, db_index);
+                await  _redisConn.DeleteCacheByKeyword(CacheName.PRODUCT_LISTING, db_index);
+                await _redisConn.DeleteCacheByKeyword(CacheName.PRODUCT_DETAIL, db_index);
 
                 if (result > 0)
                 {
@@ -176,13 +176,13 @@ namespace WEB.CMS.Controllers
         }
 
         [HttpPost]
-        public IActionResult Update(SupplierConfigUpsertModel model)
+        public async Task<IActionResult> Update(SupplierConfigUpsertModel model)
         {
             try
             {
                 var result = _supplierRepository.Update(model);
-                _redisConn.DeleteCacheByKeyword(CacheName.PRODUCT_LISTING, db_index);
-                _redisConn.DeleteCacheByKeyword(CacheName.PRODUCT_DETAIL, db_index);
+                await _redisConn.DeleteCacheByKeyword(CacheName.PRODUCT_LISTING, db_index);
+                await _redisConn.DeleteCacheByKeyword(CacheName.PRODUCT_DETAIL, db_index);
                 if (result > 0)
                 {
                     return new JsonResult(new
