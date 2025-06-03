@@ -284,6 +284,7 @@ namespace WEB.CMS.Controllers
                         product_main.supplier_status = suplier.Status;
                     }
                 }
+               
                 if (product_main._id == null || product_main._id.Trim() == "")
                 {
 

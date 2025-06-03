@@ -11,6 +11,10 @@ using Entities.Models;
 using System.Collections.Generic;
 using WEB.Adavigo.CMS.Service;
 using System.Security.Claims;
+using Utilities.Contants;
+using WEB.CMS.Controllers.Bussiness;
+using WEB.CMS.Models.Product;
+using Nest;
 
 namespace WEB.CMS.Controllers
 {
@@ -21,6 +25,9 @@ namespace WEB.CMS.Controllers
         private readonly ILabelRepository _labelRepository;
         private readonly RedisConn _redisService;
         private readonly StaticAPIService staticAPIService;
+        private RedisConn _redisConn;
+        private readonly int db_index = 9;
+        private readonly ProductDetailMongoAccess _productV2DetailMongoAccess;
 
         public LabelController(IConfiguration configuration, RedisConn redisService, ILabelRepository labelRepository)
         {
@@ -29,6 +36,10 @@ namespace WEB.CMS.Controllers
             _redisService.Connect();
             _labelRepository = labelRepository;
             staticAPIService = new StaticAPIService(configuration);
+            _redisConn = new RedisConn(configuration);
+            _redisConn.Connect();
+            db_index = Convert.ToInt32(configuration["Redis:Database:db_search_result"]);
+            _productV2DetailMongoAccess = new ProductDetailMongoAccess(configuration);
 
         }
         [HttpPost]
@@ -114,6 +125,7 @@ namespace WEB.CMS.Controllers
                         msg = "Dữ liệu không chính xác, vui lòng thử lại"
                     });
                 }
+                if (updated_model.Status == null) updated_model.Status = 0;
                 if (updated_model.Id <= 0)
                 {
                     var exists_label = await _labelRepository.GetByCode(updated_model.LabelCode.ToUpper().Trim());
@@ -192,8 +204,8 @@ namespace WEB.CMS.Controllers
                     updated_model.CreatedBy = _UserLogin;
                     _labelRepository.Insert(updated_model);
                 }
-
-                
+                _redisConn.DeleteCacheByKeyword(CacheName.PRODUCT_LISTING, db_index);
+                _redisConn.DeleteCacheByKeyword(CacheName.PRODUCT_DETAIL, db_index);
                 return Ok(new
                 {
                     isSuccess = true,
