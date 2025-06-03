@@ -603,7 +603,7 @@ namespace WEB.CMS.Controllers
             }
         }
         [HttpPost]
-        public  IActionResult ChangetStausSupplier(int data_id, int status)
+        public async Task<IActionResult> ChangetStausSupplier(int data_id, int status)
         {
             try
             {
@@ -637,8 +637,9 @@ namespace WEB.CMS.Controllers
                         }
                         break;
                 }
-                _supplierService.UpdateSuplierAllProductStatus(data_id,status);
-
+                await _supplierService.UpdateSuplierAllProductStatus(data_id,status);
+                await _redisConn.DeleteCacheByKeyword(CacheName.PRODUCT_LISTING, db_index);
+                await _redisConn.DeleteCacheByKeyword(CacheName.PRODUCT_DETAIL, db_index);
                 return new JsonResult(new
                 {
                     isSuccess = id > 0,
