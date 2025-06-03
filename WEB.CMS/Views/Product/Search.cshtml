@@ -90,7 +90,36 @@
                 }
 
             </td>
-           
+            <td class="text-center">
+                @{
+                    @switch (main.supplier_status)
+                    {
+                        case (int)SUPPLIER_STATUS.ON_WAITING_CONFIRMATION:
+                            {
+                                <span class="status-oranger">Chờ duyệt</span>
+                            }
+                            break;
+                        case (int)SUPPLIER_STATUS.CONFIRMED:
+                            {
+                                <span class="status-green">Đã duyệt</span>
+
+                            }
+                            break;
+                        case (int)SUPPLIER_STATUS.DELETED:
+                            {
+                                <span class="status-red">Ngưng hoạt động</span>
+
+                            }
+                            break;
+                        default:
+                            {
+                                <span class="status-oranger">Chờ duyệt</span>
+                            }
+                            break;
+                    }
+                }
+
+            </td>
             <td class="text-center"></td>
             <td class="text-center">@amount_html</td>
             <td class="text-center">@stock_count.ToString("N0")</td>
@@ -164,6 +193,7 @@
                             </div>
                         </div>
                     </td>
+                    <td class="text-center"></td>
                     <td class="text-center"></td>
                     <td class="text-center"></td>
                     <td class="text-center">@sub.amount.ToString("N0")</td>

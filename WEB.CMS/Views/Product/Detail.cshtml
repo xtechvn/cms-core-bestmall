@@ -232,7 +232,8 @@
                         <select class="select2 w-100">
                             @if (supplier != null && supplier.SupplierId > 0)
                             {
-                                <option value="@supplier.SupplierId" selected> @((supplier.Status != (int)SUPPLIER_STATUS.CONFIRMED ? "" : supplier.FullName)) </option>
+                                <option value="@supplier.SupplierId" selected> @((supplier.Status != (int)SUPPLIER_STATUS.CONFIRMED ? "[NCC này chưa được duyệt/ Đã ngưng hoạt động, vui lòng chọn NCC khác]" : @supplier.FullName)) </option>
+                               
                             }
                         </select>
                     </div>
