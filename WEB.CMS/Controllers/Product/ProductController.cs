@@ -5,6 +5,7 @@ using Entities.Models;
 using Entities.ViewModels.Products;
 using HuloToys_Service.ElasticSearch.NewEs;
 using Microsoft.AspNetCore.Mvc;
+using Nest;
 using Newtonsoft.Json;
 using OfficeOpenXml;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
@@ -347,7 +348,9 @@ namespace WEB.CMS.Controllers
                     product_code = product_main.code,
                     product_id = product_main._id,
                     product_name_no_tv = CommonHelper.RemoveSpecialCharacters(StringHelpers.RemoveUnicode(product_main.name).ToLower().Replace(" ", "").Trim()),
-                    avatar = product_main.avatar
+                    avatar = product_main.avatar,
+                    status = product_main.status,
+                    supplier_status = product_main.supplier_status
                 };
                 await _productESRepository.InsertAsync(product_es);
                 //var products = await _productV2DetailMongoAccess.GetAllProducts();
@@ -368,8 +371,9 @@ namespace WEB.CMS.Controllers
                 //            product_code = product.code,
                 //            product_id = product._id,
                 //            product_name_no_tv = CommonHelper.RemoveSpecialCharacters(StringHelpers.RemoveUnicode(product.name).ToLower().Replace(" ", "").Trim()),
-                //            avatar = product.avatar
-
+                //            avatar = product.avatar,
+                //            status = product.status,
+                //            supplier_status = product.supplier_status
                 //        };
                 //        await _productESRepository.InsertAsync(product_es);
                 //    }

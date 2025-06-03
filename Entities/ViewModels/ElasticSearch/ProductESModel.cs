@@ -11,4 +11,6 @@ public class ProductESModel
    public string product_name_no_tv { get; set; }
    public string description { get; set; }
    public string avatar { get; set; }
+   public int status { get; set; }
+   public int? supplier_status { get; set; }
 }
