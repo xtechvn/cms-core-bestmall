@@ -82,6 +82,7 @@ builder.Services.AddTransient<IPaymentAccountRepository, PaymentAccountRepositor
 builder.Services.AddTransient<IDepositHistoryRepository, DepositHistoryRepository>();
 builder.Services.AddSingleton<ILabelRepository, LabelRepository>();
 builder.Services.AddSingleton<ISupplierRepository, SupplierRepository>();
+builder.Services.AddSingleton<IFlashSaleRepository, FlashSaleRepository>();
 // Đăng ký QueueService
 builder.Services.AddScoped<QueueService>();
 

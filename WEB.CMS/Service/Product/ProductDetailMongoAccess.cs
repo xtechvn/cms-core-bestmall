@@ -456,7 +456,7 @@ namespace WEB.CMS.Models.Product
                 );
 
                 // Trường hợp có variation_detail (không null và không rỗng)
-                var condition2_HasVariationDetail = Builders<ProductMongoDbModel>.Filter.ElemMatch(p => p.variation_detail, Builders<ProductDetailVariationAttributesMongoDbModel>.Filter.Exists(x=>x.id));
+                var condition2_HasVariationDetail = Builders<ProductMongoDbModel>.Filter.ElemMatch(p => p.variation_detail, Builders<ProductDetailVariationAttributesMongoDbModel>.Filter.Exists(x=>x._id));
 
                 // Hoặc cách này:
                 // var condition2_HasVariationDetail = Builders<ProductMongoDbModel>.Filter.Where(p => p.variation_detail != null && p.variation_detail.Any());

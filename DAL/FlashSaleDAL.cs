@@ -1,6 +1,7 @@
 ﻿using DAL.Generic;
 using DAL.StoreProcedure;
 using Entities.Models;
+using Entities.ViewModels;
 using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
@@ -83,6 +84,27 @@ namespace DAL
                 return 0;
             }
         }
+        public async Task<DataTable> GetList(DateTime fromdate, DateTime todate,int page_index,int page_size)
+        {
+            try
+            {
+
+                SqlParameter[] objParam =
+                [
+                    new SqlParameter("@PageIndex", page_index),
+                    new SqlParameter("@PageSize",page_size),
+                    new SqlParameter("@FromDate", fromdate),
+                    new SqlParameter("@ToDate", todate),
+                ];
+                return _DbWorker.GetDataTable(StoreProcedureConstant.SP_GetListFlashSale, objParam);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("GetPagingList - OrderDal: " + ex);
+            }
+            return null;
+        }
+
     }
 
     public class FlashSaleProductDAL : GenericService<FlashSaleProduct>
