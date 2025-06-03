@@ -456,7 +456,7 @@ namespace WEB.CMS.Models.Product
                 );
 
                 // Trường hợp có variation_detail (không null và không rỗng)
-                var condition2_HasVariationDetail = Builders<ProductMongoDbModel>.Filter.ElemMatch(p => p.variation_detail, Builders<ProductDetailVariationAttributesMongoDbModel>.Filter.Exists(x=>x._id));
+                var condition2_HasVariationDetail = Builders<ProductMongoDbModel>.Filter.ElemMatch(p => p.variation_detail, Builders<ProductDetailVariationAttributesMongoDbModel>.Filter.Exists(x=>x.name));
 
                 // Hoặc cách này:
                 // var condition2_HasVariationDetail = Builders<ProductMongoDbModel>.Filter.Where(p => p.variation_detail != null && p.variation_detail.Any());
@@ -476,7 +476,7 @@ namespace WEB.CMS.Models.Product
                 var sort_filter = Builders<ProductMongoDbModel>.Sort;
                 var sort_filter_definition = sort_filter.Descending(x => x.updated_last);
                 var model = _productDetailCollection.Find(filter).Sort(sort_filter_definition);
-                model.Options.Skip = 1;
+                model.Options.Skip = 0;
                 model.Options.Limit = 10;
                 var result = await model.ToListAsync();
                 return result;
