@@ -6,3 +6,41 @@
 .description-specification-list .select2, .description-specification-list .form-group {
     width: 100% !important;
 }
+.daterangepicker .drp-calendar{
+    min-width:370px;
+    width:100%;
+}
+    .daterangepicker .drp-calendar .hourselect, .daterangepicker .drp-calendar .minuteselect {
+        width: 80px;
+        height: 30px;
+        font-size: 14px;
+    }
+    .daterangepicker .drp-calendar .yearselect, .daterangepicker .drp-calendar .monthselect {
+        height: 30px;
+        font-size: 14px;
+    }
+
+/* Class này sẽ được thêm vào cả tr.flashsale-data-tr-product và tr.flashsale-data-tr-sale */
+/* khi chúng đang được kéo */
+tr.dragging-pair {
+    opacity: 0.5; /* Làm cho hàng mờ đi 50% */
+    background-color: #f0f0f0; /* Thêm một màu nền nhẹ để dễ nhìn hơn trên các nền khác nhau */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Thêm một chút đổ bóng để tạo hiệu ứng nổi */
+    cursor: grabbing; /* Thay đổi con trỏ chuột thành biểu tượng nắm kéo */
+}
+
+/* Class này sẽ được thêm vào placeholder để hiển thị vị trí thả */
+tr.flashsale-placeholder {
+    /* Đảm bảo placeholder có cùng số cột với bảng của bạn */
+    /* Ví dụ: nếu bảng của bạn có tổng cộng 10 cột, bạn sẽ cần một td với colspan="10" */
+    /* Trong ví dụ JS, bạn đã tạo <td colspan="10"></td> bên trong placeholder */
+    background-color: #e0e0e0; /* Màu nền cho placeholder */
+    border: 1px dashed #999; /* Viền nét đứt */
+    height: 50px; /* Chiều cao tùy chỉnh, có thể điều chỉnh để khớp với chiều cao trung bình của một cặp hàng */
+    transition: all 0.1s ease-in-out; /* Hiệu ứng chuyển động mượt mà khi placeholder thay đổi vị trí */
+}
+
+    /* Đảm bảo các td bên trong placeholder không có viền riêng */
+    tr.flashsale-placeholder td {
+        border: none !important;
+    }

@@ -3,6 +3,8 @@ using DAL.StoreProcedure;
 using Entities.Models;
 using Entities.ViewModels;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using Nest;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -40,11 +42,10 @@ namespace DAL
                     new SqlParameter("@Status", model.Status),
                     new SqlParameter("@UserCreateId", model.UserCreateId),
                     new SqlParameter("@SupplierId", (object)model.SupplierId ?? DBNull.Value), // Xử lý nullable
-                    new SqlParameter("@UserUpdateId", model.UserCreateId), // Đảm bảo SP có thể nhận hoặc tự xử lý
-                ]; 
+                ];
 
-                int newId = _DbWorker.ExecuteNonQuery(StoreProcedureConstant.SP_InsertFlashSale, objParam);
-                return newId; // DbWorker sẽ tự động trả về giá trị của @Identity
+                model.Id = _DbWorker.ExecuteNonQuery(StoreProcedureConstant.SP_InsertFlashSale, objParam);
+                return model.Id; // DbWorker sẽ tự động trả về giá trị của @Identity
             }
             catch (Exception ex)
             {
@@ -84,7 +85,7 @@ namespace DAL
                 return 0;
             }
         }
-        public async Task<DataTable> GetList(DateTime fromdate, DateTime todate,int page_index,int page_size)
+        public async Task<DataTable> GetList(DateTime? fromdate, DateTime? todate, int status, int page_index,int page_size)
         {
             try
             {
@@ -93,18 +94,39 @@ namespace DAL
                 [
                     new SqlParameter("@PageIndex", page_index),
                     new SqlParameter("@PageSize",page_size),
-                    new SqlParameter("@FromDate", fromdate),
-                    new SqlParameter("@ToDate", todate),
+                    new SqlParameter("@FromDate", fromdate??(object)DBNull.Value),
+                    new SqlParameter("@ToDate", todate??(object)DBNull.Value),
+                    new SqlParameter("@FlashSaleStatusFilter", status),
                 ];
                 return _DbWorker.GetDataTable(StoreProcedureConstant.SP_GetListFlashSale, objParam);
             }
             catch (Exception ex)
             {
-                LogHelper.InsertLogTelegram("GetPagingList - OrderDal: " + ex);
+                LogHelper.InsertLogTelegram("GetPagingList - FlashSaleDAL: " + ex);
             }
             return null;
         }
+        public async Task<FlashSale> GetByID(int id)
+        {
+            try
+            {
 
+                using (var _DbContext = new EntityDataContext(_connection))
+                {
+                    var detail = await _DbContext.FlashSales.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+                    if (detail != null)
+                    {
+                        return detail;
+                    }
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("GetByID - FlashSaleDAL: " + ex.ToString());
+                return null;
+            }
+        }
     }
 
     public class FlashSaleProductDAL : GenericService<FlashSaleProduct>
@@ -133,11 +155,11 @@ namespace DAL
                     new SqlParameter("@ValueType", (object)model.ValueType ?? DBNull.Value),
                     new SqlParameter("@Status", (object)model.Status ?? DBNull.Value),
                     new SqlParameter("@Position", (object)model.Position ?? DBNull.Value),
-                ]; 
+                ];
 
 
-                long newId = Convert.ToInt64(_DbWorker.ExecuteNonQuery(StoreProcedureConstant.SP_InsertFlashSaleProduct, objParam));
-                return newId; // DbWorker sẽ tự động trả về giá trị của @Identity
+                model.Id = Convert.ToInt64(_DbWorker.ExecuteNonQuery(StoreProcedureConstant.SP_InsertFlashSaleProduct, objParam));
+                return model.Id; // DbWorker sẽ tự động trả về giá trị của @Identity
             }
             catch (Exception ex)
             {
@@ -173,6 +195,27 @@ namespace DAL
             {
                 LogHelper.InsertLogTelegram("UpdateFlashSaleProduct - FlashSaleProductDAL: " + ex.Message);
                 return 0;
+            }
+        }
+        public async Task<List<FlashSaleProduct>> GetByFlashSaleID(int id)
+        {
+            try
+            {
+
+                using (var _DbContext = new EntityDataContext(_connection))
+                {
+                    var detail = await _DbContext.FlashSaleProducts.AsNoTracking().Where(x => x.CampaignId == id).ToListAsync();
+                    if (detail != null)
+                    {
+                        return detail;
+                    }
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("GetByFlashSaleID - FlashSaleProductDAL: " + ex.ToString());
+                return null;
             }
         }
     }

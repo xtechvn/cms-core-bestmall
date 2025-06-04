@@ -51,6 +51,7 @@ namespace Repositories.Repositories
             
             return _flashSaleDAL.UpdateFlashSale(model);
         }
+      
 
         /// <summary>
         /// Lấy danh sách Flash Sale với phân trang và bộ lọc thời gian.
@@ -60,12 +61,12 @@ namespace Repositories.Repositories
         /// <param name="page_index">Chỉ số trang.</param>
         /// <param name="page_size">Kích thước trang.</param>
         /// <returns>DataTable chứa danh sách Flash Sale.</returns>
-        public async Task<GenericViewModel<FlashSaleListingModel>> GetList(DateTime fromdate, DateTime todate, int page_index, int page_size)
+        public async Task<GenericViewModel<FlashSaleListingModel>> GetList(DateTime? fromdate, DateTime? todate,int status, int page_index, int page_size)
         {
             var model = new GenericViewModel<FlashSaleListingModel>();
             try
             {
-                var dt = await _flashSaleDAL.GetList(fromdate, todate, page_index, page_size);
+                var dt = await _flashSaleDAL.GetList(fromdate, todate, status, page_index, page_size);
                 if (dt != null && dt.Rows.Count > 0)
                 {
                     var data = dt.ToList<FlashSaleListingModel>();
@@ -80,6 +81,11 @@ namespace Repositories.Repositories
                 LogHelper.InsertLogTelegram("GetListFlashSale - FlashSaleRepository: " + ex);
             }
             return model;
+        }
+        public async Task<FlashSale> GetByID(int id)
+        {
+
+            return await _flashSaleDAL.GetByID(id);
         }
     }
 
@@ -112,6 +118,11 @@ namespace Repositories.Repositories
         {
             
             return _flashSaleProductDAL.UpdateFlashSaleProduct(model);
+        }
+        public async Task<List<FlashSaleProduct>> GetByFlashSaleID(int id)
+        {
+            
+            return await _flashSaleProductDAL.GetByFlashSaleID(id);
         }
     }
 }

@@ -83,6 +83,7 @@ builder.Services.AddTransient<IDepositHistoryRepository, DepositHistoryRepositor
 builder.Services.AddSingleton<ILabelRepository, LabelRepository>();
 builder.Services.AddSingleton<ISupplierRepository, SupplierRepository>();
 builder.Services.AddSingleton<IFlashSaleRepository, FlashSaleRepository>();
+builder.Services.AddSingleton<IFlashSaleProductRepository, FlashSaleProductRepository>();
 // Đăng ký QueueService
 builder.Services.AddScoped<QueueService>();
 
@@ -135,5 +136,12 @@ app.MapControllerRoute(name: "ProductDetail",
  pattern: "/product/detail/{id?}",
  defaults: new { controller = "Product", action = "Detail" });
 
+app.MapControllerRoute(name: "FlashSale",
+ pattern: "/flashsale/detail/new",
+ defaults: new { controller = "FlashSale", action = "Detail" });
+
+app.MapControllerRoute(name: "FlashSale",
+ pattern: "/flashsale/detail/{id?}",
+ defaults: new { controller = "FlashSale", action = "Detail" });
 
 app.Run();

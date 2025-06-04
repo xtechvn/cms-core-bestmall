@@ -1,0 +1,62 @@
+﻿@using Entities.ViewModels.Products
+@using Utilities.Contants
+@using Utilities.Contants.ProductV2
+@using WEB.CMS.Service.Product
+@{
+    Layout = null;
+    List<ProductMongoDbModel> main_products = (List<ProductMongoDbModel>)ViewBag.Main;
+    string StaticDomain = (string)ViewBag.StaticDomain;
+}
+@if (main_products != null && main_products.Count > 0)
+{
+    foreach (var main in main_products)
+    {
+        if (main == null) continue;
+        var img_src = main.avatar == null ? "" : main.avatar;
+        if (img_src != null && !img_src.Contains(StaticDomain) && !img_src.Contains("data:image") && !img_src.Contains("http"))
+        {
+            img_src = StaticDomain + main.avatar;
+        }
+        var variation_string = ProductVariationHelper.RenderVariationDetail(main.attributes,main.attributes_detail,main.variation_detail);
+        <tr data-id="@main._id">
+            <td style="max-width: 50px">
+                <label class="check-list mb20 mr25">
+                    <input class="check-product" type="checkbox">
+                    <span class="checkmark"></span>
+                </label>
+            </td>
+            <td style="max-width: 50%;">
+                <div class="item-order text-left" style=" display: flex; ">
+                    <div class="img" style=" margin-right: 5px; ">
+                        <img src="@img_src" alt="" style=" width: 80px; ">
+                    </div>
+                    <div class="info">
+                        <h3 class="name-product"> <nw class="product-name"> @main.name</nw> </h3>
+                        <p class="text-secondary mb-0">Mã: <nw class="product-code"> @main.code</nw></p>
+@*                         <p class="text-secondary mb-0">Phân loại: <nw class="product-variation"> @(variation_string == null || variation_string.Trim() == "" ? "Mặc định" : variation_string)</nw></p>
+ *@                    </div>
+                </div>
+            </td>
+            <td></td>
+            @{
+                double amount = 0;
+                if (main != null && main._id != null)
+                {
+                    if (main.amount_min != null && main.amount_min > 0)
+                    {
+                        amount = (double)main.amount_min;
+                    }
+                    else if (main.amount > 0)
+                    {
+                        amount = main.amount;
+                    }
+                }
+            }
+            <td class="product-amount" data-amount="@amount">
+               
+                đ @(amount.ToString("N0"))
+            </td>
+            <td class="product-stock">@main.quanity_of_stock</td>
+        </tr>
+    }
+}

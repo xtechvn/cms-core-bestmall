@@ -52,34 +52,42 @@
                 <h5 class="bold">Danh sách chương trình</h5>
                 <div class="text-secondary">Chạy chương trình flashsale để tăng doanh số</div>
             </div>
-            <a href="" class="btn btn-add"><i class="icofont-plus"></i> Thêm</a>
+            <a href="/flashsale/detail/new" class="btn btn-add btn-add-flashsale"><i class="icofont-plus"></i> Thêm</a>
         </div>
-        <div class="flex gap10 align-items-center mb-3 left-button">
-            <button class="btn btn-light btn-active">
+        <div class="flex gap10 align-items-center mb-3 left-button flashsale-search">
+            <button class="btn btn-light flashsale-search-status btn-active" data-id="0">
                 Tất cả
             </button>
-            <button class="btn btn-light">
+            <button class="btn btn-light flashsale-search-status" data-id="1">
                 Đang diễn ra
             </button>
-            <button class="btn btn-light">
+            <button class="btn btn-light flashsale-search-status" data-id="2">
                 Sắp diễn ra
             </button>
-            <button class="btn btn-light">
+            <button class="btn btn-light flashsale-search-status" data-id="3">
                 Đã kết thúc
             </button>
         </div>
-        <div class="flex gap10 align-items-center mb-3">
-            <label>Khung giờ</label>
+        <div class="flex gap10 align-items-center mb-3 flashsale-search">
+            <label>Thời gian bắt đầu </label>
             <div class="datetime">
                 <i class="icofont-calendar"></i>
-                <input class="form-control" placeholder="Chọn khung thời gian bạn muốn tìm kiếm">
+                <input id="flashsale-search-fromdate" class="form-control" placeholder="Thời gian bắt đầu" value="">
+            </div>
+            <label>Thời gian kết thúc </label>
+
+            <div class="datetime">
+                <i class="icofont-calendar"></i>
+                <input id="flashsale-search-todate" class="form-control" placeholder="Thời gian kết thúc" value="">
             </div>
         </div>
-        <div id="flashsale-data" class="wrap_bg wrap_bg_no-padding">
+        <div id="flashsale-data" class="wrap_bg wrap_bg_no-padding flashsale-search">
            
         </div>
     </div>
 </div>
 @section scripts {
+    <script type="text/javascript" src="~/js/moment.min.js"></script>
+    <script type="text/javascript" src="~/js/daterangepicker.min.js"></script>
     <script type="text/javascript" src="~/modules/flashsale/index.js"></script>
 }

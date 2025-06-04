@@ -487,7 +487,46 @@ namespace WEB.CMS.Models.Product
                 return null;
             }
         }
-      
+
+        public async Task<List<ProductMongoDbModel>> ListingProductFlashSale(string keyword = "", int group_id = -1,int supplier_id=-1)
+        {
+            try
+            {
+                var filter = Builders<ProductMongoDbModel>.Filter.Or(
+                                    Builders<ProductMongoDbModel>.Filter.Regex(p => p.name, new MongoDB.Bson.BsonRegularExpression(keyword.Trim().ToLower(), "i")),
+                                    Builders<ProductMongoDbModel>.Filter.Regex(p => p.sku, new MongoDB.Bson.BsonRegularExpression(keyword.Trim().ToLower(), "i")),
+                                    Builders<ProductMongoDbModel>.Filter.Regex(p => p.code, new MongoDB.Bson.BsonRegularExpression(keyword.Trim().ToLower(), "i"))
+
+                                    );
+
+                filter &= Builders<ProductMongoDbModel>.Filter.Where(s => s.status != (int)ProductStatus.REMOVE);
+                if (group_id > 0)
+                {
+                    filter &= Builders<ProductMongoDbModel>.Filter.Regex(x => x.group_product_id, group_id.ToString());
+                }
+                if (supplier_id > 0)
+                {
+                    filter &= Builders<ProductMongoDbModel>.Filter.Eq(x => x.supplier_id, supplier_id);
+                }
+                // chỉ lấy sản phẩm chính
+                filter &= Builders<ProductMongoDbModel>.Filter.Or(
+                    Builders<ProductMongoDbModel>.Filter.Eq(p => p.parent_product_id, null),
+                    Builders<ProductMongoDbModel>.Filter.Eq(p => p.parent_product_id, "")
+                );
+                var sort_filter = Builders<ProductMongoDbModel>.Sort;
+                var sort_filter_definition = sort_filter.Descending(x => x.updated_last);
+                var model = _productDetailCollection.Find(filter).Sort(sort_filter_definition);
+                model.Options.Skip = 0;
+                model.Options.Limit = 10;
+                var result = await model.ToListAsync();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Utilities.LogHelper.InsertLogTelegram("ProductDetailMongoAccess - Listing Error: " + ex);
+                return null;
+            }
+        }
 
     }
 }
