@@ -13,5 +13,6 @@ namespace Entities.ViewModels.FlashSales
         public long FlashSaleProductCount { get; set; }
         public string FlashSaleStatusText { get; set; }
         public string SupplierName { get; set; }
+        public int TotalRow { get; set; }
     }
 }

@@ -73,7 +73,7 @@ namespace Repositories.Repositories
                     model.ListData = data;
                     model.CurrentPage = page_index;
                     model.PageSize = page_size;
-                    model.TotalRecord = Convert.ToInt32(dt.Rows[0]["FlashSaleProductCount"]);
+                    model.TotalRecord = data[0].TotalRow;
                     model.TotalPage = (int)Math.Ceiling((double)model.TotalRecord / model.PageSize);
                 }
             }
