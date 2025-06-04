@@ -187,6 +187,20 @@ namespace WEB.CMS.Controllers.FlashSale
                 // 3. Validate and Create FlashSale Products
                 if (flashsale_product != null && flashsale_product.Any())
                 {
+                    var exists_list= await _flashSaleProductRepository.GetByFlashSaleID(flashsale.Id);
+                    if(exists_list!=null && exists_list.Count > 0)
+                    {
+                        var new_list = flashsale_product.Select(x => x.Id);
+                        var deleted = exists_list.Where(x => !new_list.Contains(x.Id));
+                        if (deleted.Any())
+                        {
+                            foreach(var del in deleted)
+                            {
+                                del.CampaignId *= -1;
+                                _flashSaleProductRepository.UpdateFlashSaleProduct(del);
+                            }
+                        }
+                    }
                     foreach (var product in flashsale_product)
                     {
                         product.CampaignId = flashsale.Id;
