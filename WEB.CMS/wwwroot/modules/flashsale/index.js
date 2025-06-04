@@ -36,7 +36,7 @@ var flashsale = {
             element.addClass('btn-active');
             flashsale.SearchData()
         });
-
+      
     },
     onSelectPageSize: function () {
         flashsale.Data.Search.page_size = $("#selectPaggingOptions").find(':selected').val()
@@ -57,7 +57,7 @@ var flashsale = {
         flashsale.Data.Search.todate = _global_function.GetDayText($('#flashsale-search-todate').data('daterangepicker').startDate._d, true)
         $('.flashsale-search-status').each(function () {
             let self = $(this);
-            if (self.hasClass('flashsale-search-status')) {
+            if (self.hasClass('btn-active')) {
                 flashsale.Data.Search.status = self.attr('data-id')
                 return false
             }

@@ -65,7 +65,8 @@ namespace WEB.CMS.Controllers.FlashSale
 
             if (fromdate >= todate)
             {
-                return View();
+                fromdate = null;
+                todate = null;
             }
             if (fromdate == DateTime.MinValue) fromdate = null;
             if (todate == DateTime.MinValue) todate = null;
