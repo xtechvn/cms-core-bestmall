@@ -413,7 +413,7 @@ namespace WEB.CMS.Models.Product
                 return null;
             }
         }
-        public async Task<List<ProductMongoDbModel>> ListingProductBuyWith(string keyword = "", int group_id = -1)
+        public async Task<List<ProductMongoDbModel>> ListingProductBuyWith(string keyword = "", int group_id = -1, List<string>? current_id = null)
         {
             try
             {
@@ -473,6 +473,12 @@ namespace WEB.CMS.Models.Product
                     case2Filter
                 );
                 filter &= Builders<ProductMongoDbModel>.Filter.Gt(p => p.amount, 0);
+                if(current_id!=null && current_id.Count > 0)
+                {
+                    filter &= Builders<ProductMongoDbModel>.Filter.Nin(p => p._id, current_id);
+                    filter &= Builders<ProductMongoDbModel>.Filter.Nin(p => p.parent_product_id, current_id);
+
+                }
                 var sort_filter = Builders<ProductMongoDbModel>.Sort;
                 var sort_filter_definition = sort_filter.Descending(x => x.updated_last);
                 var model = _productDetailCollection.Find(filter).Sort(sort_filter_definition);

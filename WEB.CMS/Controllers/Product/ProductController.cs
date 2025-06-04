@@ -1051,13 +1051,13 @@ namespace WEB.CMS.Controllers
         }
         [HttpPost]
 
-        public async Task<IActionResult> ProductBuyWithSearch(string keyword = "",int group_id=-1)
+        public async Task<IActionResult> ProductBuyWithSearch(string keyword = "",int group_id=-1, List<string>? current_id=null)
         {
             ViewBag.Main = new List<ProductMongoDbModel>();
 
             string static_domain = _configuration["DomainConfig:ImageStatic"];
             ViewBag.StaticDomain = static_domain != null && static_domain.EndsWith("/") ? static_domain : static_domain + "/";
-            var main_products = await _productV2DetailMongoAccess.ListingProductBuyWith(keyword, group_id);
+            var main_products = await _productV2DetailMongoAccess.ListingProductBuyWith(keyword, group_id, current_id);
             ViewBag.Main = main_products;
             return View();
         }

@@ -1392,7 +1392,10 @@ var product_detail_new = {
         var group_selected = $('#add-product-buy-with-search-group') == undefined ? '-1' : $('#add-product-buy-with-search-group').find(':selected').val()
         var model = {
             keyword: $('#add-product-buy-with-search-name').val(),
-            group_id: group_selected == undefined ? '-1' : group_selected
+            group_id: group_selected == undefined ? '-1' : group_selected,
+            current_id: [
+                $('#product_detail').attr('data-id')
+            ]
         }
         _product_function.POST('/Product/ProductBuyWithSearch', model, function (result) {
             $('#add-product-buy-with tbody').html(result)
