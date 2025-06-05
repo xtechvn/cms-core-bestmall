@@ -18,6 +18,8 @@ namespace Utilities.Contants
         public const string B2C_TOUR_SEARCH = "B2C_TOUR_SEARCH_";
         public const string LIST_TOUR_TYPE = "LIST_TOUR_TYPE_";
         public const string ARTICLE_B2C_CATEGORY_MENU = "ARTICLE_CATEGORY_MENU_";
+        public const string ARTICLE_B2C_CATEGORY_MENU_FOOTER = "ARTICLE_B2C_CATEGORY_MENU_FOOTER";
+
         public const string USER_ROLE = "USER_ROLE_";
         public const string ARTICLE = "ARTICLE_";
 

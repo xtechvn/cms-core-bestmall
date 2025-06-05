@@ -146,6 +146,8 @@ namespace WEB.CMS.Controllers
                     _redisService.clear(CacheName.ARTICLE_B2C_CATEGORY_MENU + rs, Convert.ToInt32(_configuration["Redis:Database:db_common"]));
                     _redisService.clear(CacheName.ARTICLE_B2C_CATEGORY_MENU + upsertModel.ParentId, Convert.ToInt32(_configuration["Redis:Database:db_common"]));
                     _redisService.clear(CacheName.ARTICLE_B2C_CATEGORY_MENU + 1, Convert.ToInt32(_configuration["Redis:Database:db_common"]));
+                    _redisService.clear(CacheName.ARTICLE_B2C_CATEGORY_MENU_FOOTER + 1, Convert.ToInt32(_configuration["Redis:Database:db_common"]));
+
 
 
                     var j_param = new Dictionary<string, object>
