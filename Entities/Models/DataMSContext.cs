@@ -617,10 +617,12 @@ public partial class DataMSContext : DbContext
 
             entity.ToTable("FlashSale");
 
+            entity.Property(e => e.Banner).HasMaxLength(500);
             entity.Property(e => e.CreateDate)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
             entity.Property(e => e.FromDate).HasColumnType("datetime");
+            entity.Property(e => e.Name).HasMaxLength(500);
             entity.Property(e => e.ToDate).HasColumnType("datetime");
             entity.Property(e => e.UpdateLast).HasColumnType("datetime");
         });

@@ -1,4 +1,5 @@
 ﻿using Caching.Elasticsearch;
+using Caching.Elasticsearch.FlashSale;
 using Caching.RedisWorker;
 using Entities.Models;
 using Entities.ViewModels.Products;
@@ -8,6 +9,7 @@ using Repositories.IRepositories;
 using System.Globalization;
 using System.Security.Claims;
 using Utilities;
+using Utilities.Contants.ProductV2;
 using WEB.Adavigo.CMS.Service;
 using WEB.CMS.Controllers.Product.Bussiness;
 using WEB.CMS.Customize;
@@ -30,6 +32,8 @@ namespace WEB.CMS.Controllers.FlashSale
         private readonly int group_product_root = 31;
         private readonly int db_index = 9;
         private readonly ProductESRepository _productESRepository;
+        private readonly FlashSaleESRepository _flashSaleESRepository;
+        private readonly FlashSaleProductESRepository _flashSaleProductESRepository;
         private readonly ISupplierRepository _supplierRepository;
         private readonly IAllCodeRepository _allCodeRepository;
         private readonly IFlashSaleRepository _flashSaleRepository;
@@ -47,6 +51,8 @@ namespace WEB.CMS.Controllers.FlashSale
             _configuration = configuration;
             productDetailService = new ProductDetailService(configuration);
             _productESRepository = new ProductESRepository(_configuration["DataBaseConfig:Elastic:Host"], configuration);
+            _flashSaleESRepository = new FlashSaleESRepository(_configuration["DataBaseConfig:Elastic:Host"], configuration);
+            _flashSaleProductESRepository = new FlashSaleProductESRepository(_configuration["DataBaseConfig:Elastic:Host"], configuration);
             _labelRepository = labelRepository;
             _supplierRepository = supplierRepository;
             _allCodeRepository = allCodeRepository;
@@ -132,7 +138,7 @@ namespace WEB.CMS.Controllers.FlashSale
             try
             {
                 // 1. Validate FlashSale
-                if (flashsale == null || !flashsale.SupplierId.HasValue|| flashsale.FromDate == default(DateTime) || flashsale.ToDate == default(DateTime))
+                if (flashsale == null || !flashsale.SupplierId.HasValue|| flashsale.SupplierId<=0|| flashsale.FromDate == default(DateTime) || flashsale.ToDate == default(DateTime))
                 {
                     return Ok(new
                     {
@@ -176,6 +182,7 @@ namespace WEB.CMS.Controllers.FlashSale
                         _flashSaleRepository.CreateFlashSale(flashsale);
                     }
                 }
+              
                 if (flashsale.Id <= 0)
                 {
                     return Ok(new
@@ -184,23 +191,45 @@ namespace WEB.CMS.Controllers.FlashSale
                         msg = "Lỗi trong quá trình xử lý, vui lòng thử lại / liên hệ hỗ trợ kỹ thuật",
                     });
                 }
+                #region Sync ES
+                await _flashSaleESRepository.DeleteByFlashsaleId(flashsale.Id);
+                var supplier= _supplierRepository.GetSuplierById((int)flashsale.SupplierId);
+                FlashSaleESModel flashsale_es = new FlashSaleESModel()
+                {
+                    id = _flashSaleESRepository.GenerateId(),
+                    flashsale_id = flashsale.Id,
+                    fromdate = flashsale.FromDate,
+                    status = flashsale.Status,
+                    supplierid = flashsale.SupplierId,
+                    todate = flashsale.ToDate,
+                    name=flashsale.Name,
+                    banner=flashsale.Banner,
+                    supplier_name=supplier.FullName
+                };
+                await _flashSaleESRepository.InsertAsync(flashsale_es);
+                #endregion
+              
+
                 // 3. Validate and Create FlashSale Products
                 if (flashsale_product != null && flashsale_product.Any())
                 {
                     var exists_list= await _flashSaleProductRepository.GetByFlashSaleID(flashsale.Id);
-                    if(exists_list!=null && exists_list.Count > 0)
+                    if (exists_list!=null && exists_list.Count > 0)
                     {
                         var new_list = flashsale_product.Select(x => x.Id);
                         var deleted = exists_list.Where(x => !new_list.Contains(x.Id));
                         if (deleted.Any())
                         {
-                            foreach(var del in deleted)
+                            foreach (var del in deleted)
                             {
                                 del.CampaignId *= -1;
                                 _flashSaleProductRepository.UpdateFlashSaleProduct(del);
                             }
                         }
+                        await _flashSaleProductESRepository.DeleteByIds(exists_list.Select(x=>x.Id).ToList());
+
                     }
+                    var new_items = new List<FlashSaleProductESModel>();
                     foreach (var product in flashsale_product)
                     {
                         product.CampaignId = flashsale.Id;
@@ -212,9 +241,56 @@ namespace WEB.CMS.Controllers.FlashSale
                         {
                             _flashSaleProductRepository.UpdateFlashSaleProduct(product);
                         }
+                        new_items.Add(new FlashSaleProductESModel()
+                        {
+                            valuetype=product.ValueType,
+                            discountvalue=product.DiscountValue,
+                            flashsale_id=product.CampaignId,
+                            flashsale_productid=product.Id,
+                            id=_flashSaleProductESRepository.GenerateId(),
+                            position=product.Position,
+                            productid=product.ProductId,
+                            status=product.Status
+                        });
                     }
+                    await _flashSaleProductESRepository.DeleteByIds(flashsale_product.Select(x => x.Id).ToList());
+                    await _flashSaleProductESRepository.IndexMany(new_items);
                 }
-
+                #region Sync All:
+                //var fsl = await _flashSaleRepository.GetAll();
+                //if (fsl != null && fsl.Count > 0)
+                //{
+                //    List<FlashSaleESModel> all_fsl_es = fsl.Select(x => new FlashSaleESModel()
+                //    {
+                //        id = _flashSaleESRepository.GenerateId(),
+                //        flashsale_id = x.Id,
+                //        fromdate = x.FromDate,
+                //        status = x.Status,
+                //        supplierid = x.SupplierId,
+                //        todate = x.ToDate,
+                //        name = x.Name
+                //    }).ToList();
+                //    await _flashSaleESRepository.DeleteByIds(all_fsl_es.Select(x => x.flashsale_id).ToList());
+                //    await _flashSaleESRepository.IndexMany(all_fsl_es);
+                //}
+                //var fspl = await _flashSaleProductRepository.GetAll();
+                //if (fspl != null && fspl.Count > 0)
+                //{
+                //    List<FlashSaleProductESModel> all_fspl_es = fspl.Select(x => new FlashSaleProductESModel()
+                //    {
+                //        id = _flashSaleProductESRepository.GenerateId(),
+                //        valuetype = x.ValueType,
+                //        discountvalue = x.DiscountValue,
+                //        flashsale_id = x.CampaignId,
+                //        flashsale_productid = x.Id,
+                //        position = x.Position,
+                //        productid = x.ProductId,
+                //        status = x.Status
+                //    }).ToList();
+                //    await _flashSaleProductESRepository.DeleteByIds(all_fspl_es.Select(x => x.flashsale_productid).ToList());
+                //    await _flashSaleProductESRepository.IndexMany(all_fspl_es);
+                //}
+                #endregion
                 return Ok(new
                 {
                     is_success = true,

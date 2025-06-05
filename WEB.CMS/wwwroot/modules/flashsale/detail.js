@@ -3,7 +3,7 @@ $(document).ready(function () {
     flashsale_detail.Initialization()
 })
 var flashsale_detail = {
-
+    Processing:false,
     Initialization: function () {
         flashsale_detail.DynamicBind()
         flashsale_detail.RenderFlashsale()
@@ -180,15 +180,50 @@ var flashsale_detail = {
         });
         $('body').on('click', '#flashsale-detail-confirm', function () {
             var validate = flashsale_detail.validateProducts()
+          
             if (!validate) return;
             var id = $('#flashsale-detail').val()
             var id_value = (id == undefined || isNaN(parseInt(id))) ? 0 : parseInt(id)
             _msgconfirm.openDialog('Xác nhận' + (id_value > 0 ? 'cập nhật chương trình' : 'thêm chương trình'), 'Thông tin chương trình Flashsale được ' + (id_value > 0 ? 'cập nhật' : 'thêm mới') + ', bạn chắc chắn không?', function () {
+
                 flashsale_detail.Summit()
             })
         });
-    },
 
+        $('body').on('click', '#update-icon-import', function () {
+            $('#update-icon-input').click()
+
+        });
+        $('body').on('change', '#update-icon-input', function () {
+            flashsale_detail.Upload()
+
+        })
+    },
+    Upload: function () {
+        flashsale_detail.Processing = true;
+        var element = $('#update-icon-input')
+        var ImageExtension= ['jpeg', 'jpg', 'png', 'bmp'];
+
+        if ($.inArray(element.val().split('.').pop().toLowerCase(), ImageExtension) == -1) {
+            _msgalert.error("Vui lòng chỉ upload các định dạng sau: " + ImageExtension.join(', '));
+            $('#update-icon-input').val(null).trigger('change')
+            return
+        }
+        $(element[0].files).each(function (index, item) {
+
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $('#update-icon-import img').attr('src', e.target.result)
+                $('#update-icon-import img').css('top', '0')
+                $('#update-icon-import img').css('object-fit', 'fill')
+            }
+            reader.readAsDataURL(item);
+            return false
+        });
+        $('#update-icon-import img').attr('src', url)
+        $('#update-icon').val(url).trigger('change')
+        $('#update-icon-input').val(null).trigger('change')
+    },
 
     SingleDateTimePicker: function (element) {
 
@@ -259,10 +294,15 @@ var flashsale_detail = {
     },
     FlashsaleSearch: function () {
         var group_selected = $('#add-flashsale-search-group') == undefined ? '-1' : $('#add-flashsale-search-group').find(':selected').val()
+        var supplier_id = '-1';
+        var supplier = $('#supplier-id select').find(':selected')
+        if (supplier != undefined && supplier.val() != undefined && supplier.val().trim() != '') {
+            supplier_id = supplier.val()
+        }
         var model = {
             keyword: $('#add-flashsale-search-name').val(),
             group_id: group_selected == undefined ? '-1' : group_selected,
-
+            supplier_id: supplier_id
         }
         flashsale_detail.POST('/FlashSale/ProductFlashSaleSearch', model, function (result) {
             $('#add-flashsale tbody').html(result)
@@ -408,6 +448,22 @@ var flashsale_detail = {
             }
         });
     },
+    POSTSynchorus: function (url, model) {
+        var data = undefined
+        $.ajax({
+            url: url,
+            type: "POST",
+            data: model,
+            success: function (result) {
+                data = result;
+            },
+            error: function (err) {
+                console.log(err)
+            },
+            async: false
+        });
+        return data
+    },
     Select2Supplier: function (element) {
         element.select2({
             ajax: {
@@ -492,7 +548,11 @@ var flashsale_detail = {
 
             return false
         }
-
+        var name = $('#flashsale-name').val()
+        if (name == undefined || name.trim() == '') {
+            _msgalert.error("Tên chương trình không được để trống")
+            return false
+        }
         $('tbody tr.flashsale-data-tr-product').each(function (index) {
             const $productRow = $(this); // Dòng sản phẩm hiện tại
             const $saleRow = $productRow.next('.flashsale-data-tr-sale'); // Dòng sale tương ứng
@@ -569,6 +629,9 @@ var flashsale_detail = {
         return productData; // Trả về mảng dữ liệu sản phẩm
     },
     Summit: function () {
+        var loading = '<img src="/images/icons/loading.gif" style="width:24px;">'
+        $('#flashsale-detail-confirm').html(loading)
+        $('#flashsale-detail-confirm').prop('disabled',true)
         var model = {
             flashsale_product: flashsale_detail.collectProductInfo(),
             flashsale: {
@@ -577,12 +640,30 @@ var flashsale_detail = {
                 ToDate: _global_function.GetDayText($('#flashsale-search-todate').data('daterangepicker').startDate._d, true),
                 SupplierId: $('#supplier-id select').find(':selected').val(),
                 Status: $('#status input').is(':checked')?1:0,
+                Name: $('#flashsale-name').val(),
+            }
+        }
+        model.flashsale.Banner = ''
+        var element_image = $('#update-icon-import')
+        if (element_image.find('img').length > 0) {
+            var data_src = element_image.find('img').attr('src')
+            if (data_src != null && data_src != undefined && data_src.trim() != '' && flashsale_detail.CheckIfImageVideoIsLocal(data_src)) {
+                var result = flashsale_detail.POSTSynchorus('/Files/SummitImages', { data_image: data_src, width: 1220, height:300 })
+                if (result != undefined && result.data != undefined && result.data.trim() != '') {
+                    model.flashsale.Banner = result.data
+                } else {
+                    model.flashsale.Banner = data_src
+                }
+            }
+            else {
+                model.flashsale.Banner = data_src
             }
         }
         flashsale_detail.POST('/FlashSale/Summit', model, function (result) {
             if (result.is_success) {
                 _global_function.RemoveLoading()
                 _msgalert.success(result.msg)
+                $('#flashsale-detail-confirm').html('Thành công')
                 setTimeout(function () {
                     window.location.href = '/FlashSale';
                 }, 2000);
@@ -590,11 +671,104 @@ var flashsale_detail = {
             else {
                 _global_function.RemoveLoading()
                 _msgalert.error(result.msg)
+                $('#flashsale-detail-confirm').html('Xác nhận')
+                $('#flashsale-detail-confirm').prop('disabled', false)
 
             }
         });
 
+    },
+    AddProductMedia: function (element) {
+        switch (element.attr('data-type')) {
+            case 'images':
+                {
+                    if ($.inArray(element.val().split('.').pop().toLowerCase(), _product_constants.VALUES.ImageExtension) == -1) {
+                        _msgalert.error("Vui lòng chỉ upload các định dạng sau: " + _product_constants.VALUES.ImageExtension.join(', '));
+                        return
+                    }
+                    $(element[0].files).each(function (index, item) {
+
+                        var reader = new FileReader();
+                        reader.onload = function (e) {
+                            element.closest('.list').prepend(_product_constants.HTML.ProductDetail_Images_Item.replaceAll('{src}', e.target.result).replaceAll('{id}', '-1'))
+                            element.closest('.items').find('.count').html(element.closest('.list').find('.magnific_popup').length)
+
+                        }
+                        reader.readAsDataURL(item);
+                    });
+                    element.val(null)
+                } break
+            case 'avatar':
+            case 'avatar':
+                {
+                    if ($.inArray(element.val().split('.').pop().toLowerCase(), _product_constants.VALUES.ImageExtension) == -1) {
+                        _msgalert.error("Vui lòng chỉ upload các định dạng sau: " + _product_constants.VALUES.ImageExtension.join(', '));
+                        return
+                    }
+                    $(element[0].files).each(function (index, item) {
+
+                        var reader = new FileReader();
+                        reader.onload = function (e) {
+                            element.closest('.list').prepend(_product_constants.HTML.ProductDetail_Images_Item.replaceAll('{src}', e.target.result).replaceAll('{id}', '-1'))
+                            element.closest('.items').find('.count').html(element.closest('.list').find('.magnific_popup').length)
+
+                        }
+                        reader.readAsDataURL(item);
+                    });
+                    element.val(null)
+                } break
+            case 'videos': {
+                if ($.inArray(element.val().split('.').pop().toLowerCase(), _product_constants.VALUES.VideoExtension) == -1) {
+                    _msgalert.error("Vui lòng chỉ upload các định dạng sau: " + _product_constants.VALUES.VideoExtension.join(', '));
+                    return
+                }
+                if (typeof FileReader !== "undefined") {
+                    var size = element[0].files[0].size;
+                    if (size > _product_constants.VALUES.VideoMaxSize) {
+                        _msgalert.error("Vui lòng chỉ upload video có dung lượng dưới 30MB.");
+                        return
+                    }
+                }
+                $(element[0].files).each(function (index, item) {
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        element.closest('.list').prepend(_product_constants.HTML.ProductDetail_Video_Item.replaceAll('{src}', e.target.result).replaceAll('{id}', '-1'))
+                        element.closest('.items').find('.count').html(element.closest('.list').find('.magnific_popup').length)
+
+                    }
+                    reader.readAsDataURL(item);
+                });
+                element.val(null)
+
+
+            } break
+            case 'image_row_item': {
+
+                if ($.inArray(element.val().split('.').pop().toLowerCase(), _product_constants.VALUES.ImageExtension) == -1) {
+                    _msgalert.error("Vui lòng chỉ upload các định dạng sau: " + _product_constants.VALUES.ImageExtension.join(', '));
+                    return
+                }
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    element.closest('.choose').find('.choose-content').html(_product_constants.HTML.ProductDetail_Images_Item.replaceAll('{src}', e.target.result).replaceAll('{id}', '-1'))
+                }
+                reader.readAsDataURL(element[0].files[0]);
+                element.val(null)
+            } break
+        }
+        element.closest('.choose-wrap').find('.count').html(_product_function.Comma(element.closest('.list').find('.items').length))
+
+
+    },
+    CheckIfImageVideoIsLocal: function (data) {
+        if (data != undefined && (data.includes("data:image") || data.includes("data:video") || data.includes("base64,"))) {
+            return true
+        }
+        else {
+            return false
+        }
     }
+
 }
 //-- Drag & Drop:
 $(document).ready(function () {

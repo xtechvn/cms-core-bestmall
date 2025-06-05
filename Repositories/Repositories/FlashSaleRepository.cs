@@ -87,6 +87,11 @@ namespace Repositories.Repositories
 
             return await _flashSaleDAL.GetByID(id);
         }
+        public async Task<List<FlashSale>> GetAll()
+        {
+
+            return await _flashSaleDAL.GetAllAsync();
+        }
     }
 
     // FlashSaleProductRepository.cs
@@ -123,6 +128,11 @@ namespace Repositories.Repositories
         {
             
             return await _flashSaleProductDAL.GetByFlashSaleID(id);
+        }
+        public async Task<List<FlashSaleProduct>> GetAll()
+        {
+
+            return await _flashSaleProductDAL.GetAllAsync();
         }
     }
 }

@@ -288,5 +288,25 @@ var _global_function = {
         });
 
         $('#topbar .flex').prepend(html.replace('{breadcrumb}', html_sub))
+    },
+    calculateNewImageDimensions: function (originalWidth = 1220, originalHeight = 300, newWidth = 500) {
+        // Đảm bảo các giá trị đầu vào là số và hợp lệ
+        if (typeof originalWidth !== 'number' || originalWidth <= 0 ||
+            typeof originalHeight !== 'number' || originalHeight <= 0 ||
+            typeof newWidth !== 'number' || newWidth <= 0) {
+            return null; // Trả về null nếu có lỗi
+        }
+
+        // Tính toán chiều cao mới dựa trên tỷ lệ khung hình
+        const newHeight = (newWidth / originalWidth) * originalHeight;
+
+        // Làm tròn chiều cao mới để có số pixel nguyên
+        // Math.round() sẽ làm tròn đến số nguyên gần nhất
+        const roundedNewHeight = Math.round(newHeight);
+
+        return {
+            width: newWidth,
+            height: roundedNewHeight
+        };
     }
 }

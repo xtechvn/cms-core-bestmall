@@ -19,6 +19,13 @@
         <div class="bg-white p-3 mb-3 tongquan">
             <h5 class="bold mb-3">Thông tin cơ bản</h5>
             <div class="flex gap10 align-items-center mb-3">
+                <div class="w-200px">Tên chiến dịch</div>
+                <div id="supplier-id" class="flex gap10 align-items-center" style="min-width:400px;">
+                    <input id="flashsale-name" class="form-control" placeholder="Tên chiến dịch" value="@(detail!=null && detail.Id>0? detail.Name:"")">
+
+                </div>
+            </div>
+            <div class="flex gap10 align-items-center mb-3">
                 <div class="w-200px">Thời gian</div>
                 <div class="flex gap10 align-items-center mb-3 flashsale-search" style="display: contents;">
                     <label> Từ </label>
@@ -55,6 +62,35 @@
                         </label>
                     </td>
                 </div>
+            </div>
+            <div class="flex gap10 align-items-center mb-3">
+                <div class="w-200px">Banner</div>
+                <div id="images" class="flex gap10 align-items-center" style="min-width:400px;">
+                    <div class="manage-color  w-100" style="max-height:200px;">
+                        <div class="flex list align-items-center w-100">
+                            <div class="items import magnific_popup" style="width: 500px; height: 123px; ">
+                                <a id="update-icon-import" href="javascript:;" class="thumb_img thumb_1x1 magnific_thumb" style="min-height: 123px !important;padding-bottom: 0px;">
+                                    @{
+                                        if (detail != null && detail.Banner != null)
+                                        {
+                                            var img_src = detail.Banner;
+                                            if (img_src != null && !img_src.Contains(StaticDomain) && !img_src.Contains("data:image") && !img_src.Contains("http"))
+                                                img_src = StaticDomain + detail.Banner;
+                                            <img src="@img_src" style="">
+                                        }
+                                        else
+                                        {
+                                            <img src="/images/upload.png" style="top:40%;object-fit:scale-down;">
+                                        }
+                                    }
+                                </a>
+                                <input type="file" id="update-icon-input" style="display:none;" class="form-control" />
+                            </div>
+                           
+                        </div>
+                    </div>
+                </div>
+               
             </div>
             @*  <div class="flex flex-md-nowrap gap10 mb-3">
             <div class="w-200px">Tiêu chí sản phẩm</div>

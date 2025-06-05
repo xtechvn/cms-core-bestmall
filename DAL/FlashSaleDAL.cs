@@ -41,6 +41,8 @@ namespace DAL
                     new SqlParameter("@ClientTypeId", (object)model.ClientTypeId ?? DBNull.Value), // Xử lý nullable
                     new SqlParameter("@Status", model.Status),
                     new SqlParameter("@UserCreateId", model.UserCreateId),
+                    new SqlParameter("@Name", model.Name),
+                    new SqlParameter("@Banner", model.Banner),
                     new SqlParameter("@SupplierId", (object)model.SupplierId ?? DBNull.Value), // Xử lý nullable
                 ];
 
@@ -72,7 +74,9 @@ namespace DAL
                     new SqlParameter("@Status", model.Status),
                     new SqlParameter("@UserUpdateId", model.UserUpdateId),
                     new SqlParameter("@SupplierId", (object)model.SupplierId ?? DBNull.Value),
-                    
+                    new SqlParameter("@Name", model.Name),
+                    new SqlParameter("@Banner", model.Banner),
+
                 ]; 
 
                 // Gọi ExecuteNonQuery và nhận giá trị trả về (ID đã cập nhật)

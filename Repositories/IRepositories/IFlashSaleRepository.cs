@@ -37,7 +37,7 @@ namespace Repositories.IRepositories
         /// <returns>DataTable chứa danh sách Flash Sale.</returns>
         public Task<GenericViewModel<FlashSaleListingModel>> GetList(DateTime? fromdate, DateTime? todate, int status, int page_index, int page_size);
         Task<FlashSale> GetByID(int id);
-
+        Task<List<FlashSale>> GetAll();
     }
 
     // IFlashSaleProductRepository.cs
@@ -57,5 +57,7 @@ namespace Repositories.IRepositories
         /// <returns>ID của FlashSaleProduct đã được cập nhật, hoặc 0 nếu có lỗi.</returns>
         long UpdateFlashSaleProduct(FlashSaleProduct model);
         Task<List<FlashSaleProduct>> GetByFlashSaleID(int id);
+
+        Task<List<FlashSaleProduct>> GetAll();
     }
 }

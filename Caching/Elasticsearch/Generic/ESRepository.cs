@@ -14,7 +14,7 @@ using Utilities;
 
 namespace Caching.Elasticsearch
 {
-    //https://www.steps2code.com/post/how-to-use-elasticsearch-in-csharp
+    
     public class ESRepository<TEntity> : IESRepository<TEntity> where TEntity : class
     {
         public static string _ElasticHost;
