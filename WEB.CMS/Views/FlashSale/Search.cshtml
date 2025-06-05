@@ -14,6 +14,8 @@
         <thead>
             <tr>
 
+                <th style="width: 50px">ID</th>
+                <th style="width: 200px">Tên chương trình</th>
                 <th style="width: 200px">Ngày</th>
                 <th style="width: 200px">Nhà cung cấp</th>
                 <th style="width: 200px">Sản phẩm</th>
@@ -28,6 +30,8 @@
                 foreach (var item in Model.ListData)
                 {
                     <tr data-id="@item.Id">
+                        <td class="text-center">@item.Id</td>
+                        <td class="text-center">@item.Name</td>
 
                         <td>@(item.FromDate.ToString("dd/MM/yyyy HH:mm")) - @(item.ToDate.ToString("dd/MM/yyyy HH:mm"))</td>
                         <td class="text-center">@item.SupplierName</td>

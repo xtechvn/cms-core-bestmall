@@ -4485,3 +4485,53 @@ label.switch {
 
     }
 }
+.table_nhacc{
+    td{
+        background: #fff;
+    }
+    th,td{
+        &.pin{
+            position: sticky;
+            left: 0;
+            z-index: 1;
+            &::before{
+                content: '';
+                display: block;
+                width: 1px;
+                height: 100%;
+                background: #CFD9EE;
+                position: absolute;
+                left: -1px;
+                top: 0;
+              }
+              &::after{
+                content: '';
+                display: block;
+                width: 1px;
+                height: 100%;
+                background: #CFD9EE;
+                position: absolute;
+                right: -1px;
+                top: 0;
+              }
+            &:nth-child(1){
+                left: 0;
+                min-width: 50px;
+                max-width: 50px;
+            }
+            &:nth-child(2){
+                left: 50px;
+                min-width: 270px;
+                max-width: 270px;
+            }
+            &:nth-child(3){
+                left: 320px;
+            }
+        }
+    }
+    tr:nth-child(2n){
+        td{
+            background: #f7f7f7;
+        }
+    }
+}

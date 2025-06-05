@@ -167,13 +167,12 @@
                                 <td>Giá gốc</td>
                                 <td>Khuyễn mãi</td>
                                 <td>Giá đã giảm</td>
-
-                              
+                                <td>Vị trí</td>
                                 <td>Bật/tắt</td>
                                 <td>Hành động</td>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="flashsale-data-tr-product-body">
                             @if (products != null && products.Count > 0)
                             {
                                 foreach (var item in products)
@@ -191,102 +190,114 @@
                                             amount = selected.amount;
                                         }
                                     }
+
                                     <tr class="flashsale-data-tr-product" data-id="@item.Id" data-product="@item.ProductId" data-amount="@amount">
-                                        <td style="max-width: 0">
-                                            <label class="check-list mb20 mr25">
-                                                <input type="checkbox">
-                                                <span class="checkmark"></span>
-                                            </label>
-                                        </td>
-                                        <td colspan="9">
-                                            <div class="item-order">
-                                                <div class="img">
-                                                    @{
-                                                        if(selected!=null && selected._id!=null){
-                                                            var img_src = selected.avatar;
-                                                            if (img_src != null && !img_src.Contains(StaticDomain) && !img_src.Contains("data:image") && !img_src.Contains("http"))
-                                                                img_src = StaticDomain + selected.avatar;
-                                                            <img src="@img_src" alt="">
-                                                        }
-                                                        else
-                                                        {
-                                                            <img src="/images/graphics/product.jpg" alt="">
-                                                        }
-                                                    }
-                                                </div>
-                                                <div class="info">
-                                                    <h3 class="name-product">
-                                                        @(selected != null && selected._id !=null && selected.name!=null ? selected.name : "")
-                                                    </h3>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr class="flashsale-data-tr-sale" data-id="@item.Id" data-product="@item.ProductId" data-amount="@amount">
-                                        <td colspan="2"></td>
-                                       
-                                        <td> @(amount.ToString("N0")) đ</td>
-                                        <td colspan="1">
-                                            <div class="flex gap10 flex-nowrap align-items-center" style="place-self: anchor-center;">
-                                                <div class="form-group mb-0 price">
-                                                    @{
-                                                        if (item.ValueType == 0)
-                                                        {
-                                                            <input type="text" class="form-control flashsale-data-tr-vnd" placeholder="Nhập số" value="@((item.DiscountValue==null?0: (double)item.DiscountValue).ToString("N0"))">
-                                                            <span class="note">đ</span>
-                                                        }
-                                                        else
-                                                        {
-                                                            <input type="text" class="form-control flashsale-data-tr-vnd" placeholder="Nhập số">
-                                                            <span class="note">đ</span>
-                                                        }
-                                                    }
-                                                </div>
-                                                <span>hoặc</span>
-                                                <div class="form-group mb-0 price">
-                                                    @{
-                                                        if (item.ValueType == 1)
-                                                        {
-                                                            <input type="text" class="form-control flashsale-data-tr-percent" placeholder="Nhập số" value="@((item.DiscountValue==null?0: (double)item.DiscountValue).ToString("N2"))">
-                                                            <span class="note">%</span>
-                                                        }
-                                                        else
-                                                        {
-                                                            <input type="text" class="form-control flashsale-data-tr-percent" placeholder="Nhập số">
-                                                            <span class="note">%</span>
-                                                        }
-                                                    }
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="flashsale-data-tr-final-amount">
-                                            @{
-                                                var final_amount = amount;
+                                        <td colspan="10" class="p-0">
+                                            <table class="table text-center table-nowrap  w-100">
+                                                <tbody>
+                                                    <tr>
+                                                        <td style="max-width: 0">
+                                                            <label class="check-list mb20 mr25">
+                                                                <input type="checkbox">
+                                                                <span class="checkmark"></span>
+                                                            </label>
+                                                        </td>
+                                                        <td colspan="9">
+                                                            <div class="item-order">
+                                                                <div class="img">
+                                                                    @{
+                                                                        if (selected != null && selected._id != null)
+                                                                        {
+                                                                            var img_src = selected.avatar;
+                                                                            if (img_src != null && !img_src.Contains(StaticDomain) && !img_src.Contains("data:image") && !img_src.Contains("http"))
+                                                                                img_src = StaticDomain + selected.avatar;
+                                                                            <img src="@img_src" alt="">
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <img src="/images/graphics/product.jpg" alt="">
+                                                                        }
+                                                                    }
+                                                                </div>
+                                                                <div class="info">
+                                                                    <h3 class="name-product">
+                                                                        @(selected != null && selected._id != null && selected.name != null ? selected.name : "")
+                                                                    </h3>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="2"></td>
+                                                        <td class="text-right" style="min-width: 180px;">@amount.ToString("N0")</td>
+                                                        <td colspan="2">
+                                                            <div class="flex gap10 flex-nowrap align-items-center " style="justify-self: anchor-center;">
+                                                                <div class="form-group mb-0 price">
+                                                                    @{
+                                                                        if (item.ValueType == 0)
+                                                                        {
+                                                                            <input type="text" class="form-control flashsale-data-tr-vnd" placeholder="Nhập số" value="@((item.DiscountValue==null?0: (double)item.DiscountValue).ToString("N0"))">
+                                                                            <span class="note">đ</span>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <input type="text" class="form-control flashsale-data-tr-vnd" placeholder="Nhập số">
+                                                                            <span class="note">đ</span>
+                                                                        }
+                                                                    }
+                                                                </div>
+                                                                <span>hoặc</span>
+                                                                <div class="form-group mb-0 price">
+                                                                    @{
+                                                                        if (item.ValueType == 1)
+                                                                        {
+                                                                            <input type="text" class="form-control flashsale-data-tr-percent" placeholder="Nhập số" value="@((item.DiscountValue==null?0: (double)item.DiscountValue).ToString("N2"))">
+                                                                            <span class="note">%</span>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <input type="text" class="form-control flashsale-data-tr-percent" placeholder="Nhập số">
+                                                                            <span class="note">%</span>
+                                                                        }
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="flashsale-data-tr-final-amount">
+                                                            @{
+                                                                var final_amount = amount;
 
-                                                if (item.ValueType == 0)
-                                                {
-                                                    final_amount = amount - (item.DiscountValue == null ? 0 : (double)item.DiscountValue);
-                                                }
-                                                else
-                                                {
-                                                    final_amount = amount - Math.Round((amount * (item.DiscountValue == null ? 0 : (double)item.DiscountValue) / 100),0);
+                                                                if (item.ValueType == 0)
+                                                                {
+                                                                    final_amount = amount - (item.DiscountValue == null ? 0 : (double)item.DiscountValue);
+                                                                }
+                                                                else
+                                                                {
+                                                                    final_amount = amount - Math.Round((amount * (item.DiscountValue == null ? 0 : (double)item.DiscountValue) / 100), 0);
 
-                                                }
-                                            }
-                                        @final_amount.ToString("N0") đ</td>
+                                                                }
+                                                            }
+                                                            @final_amount.ToString("N0") đ
+                                                        </td>
+                                                        <td class="tr-index">@item.Position</td>
 
-                                        <td>
-                                            <label class="switch no-text">
-                                                <input class="flashsale-data-tr-status" type="checkbox" @(item != null && item.Status != null && item.Status == 1 ? "checked" : "")>
-                                                <span class="slider round"></span>
-                                            </label>
+                                                        <td>
+                                                            <label class="switch no-text">
+                                                                <input class="flashsale-data-tr-status" type="checkbox" @(item != null && item.Status != null && item.Status == 1 ? "checked" : "")>
+                                                                <span class="slider round"></span>
+                                                            </label>
+                                                        </td>
+                                                        <td>
+                                                            <div class="flex gap10 align-items-center justify-content-center">
+                                                                <a class="icon-action  delete-row" href="javascript:;"><i class="icofont-trash"></i></a>
+                                                                <a class="icon-action flashsale-drag" href="javascript:;"><i class="icofont-drag"></i></a>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
                                         </td>
-                                        <td>
-                                            <div class="flex gap10 align-items-center justify-content-center">
-                                                <a class="icon-action  delete-row" href="javascript:;"><i class="icofont-trash"></i></a>
-                                                <a class="icon-action flashsale-drag" href="javascript:;"><i class="icofont-drag"></i></a>
-                                            </div>
-                                        </td>
+
                                     </tr>
                                 }
                             }
