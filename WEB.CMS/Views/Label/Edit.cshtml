@@ -3,6 +3,8 @@
     Layout = null;
     Label data = (Label)ViewBag.Data;
     if (data == null) data = new Label();
+    string StaticDomain = (string)ViewBag.StaticDomain;
+
 }
 
 <div id="form_label">
@@ -81,6 +83,33 @@
                                 </div>
                             </div>
                             <input type="text" id="update-icon" class="form-control" disabled value="@(data.Icon==null?"":data.Icon)" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="lbl">Banner Quảng cáo thương hiệu <sup class="red">*</sup></label>
+                        <div class="wrap_input">
+                            <div class="manage-color  w-100" style="max-height:200px;">
+                                <div class="flex list align-items-center w-100">
+                                    <div class="items import magnific_popup" style="width: 500px; height: 123px; ">
+                                        <a id="update-banner-import" href="javascript:;" class="thumb_img thumb_1x1 magnific_thumb" style="min-height: 123px !important;padding-bottom: 0px;">
+                                            @{
+                                                if (data != null && data.Banner != null)
+                                                {
+                                                    var img_src = data.Banner;
+                                                    if (img_src != null && !img_src.Contains(StaticDomain) && !img_src.Contains("data:image") && !img_src.Contains("http"))
+                                                        img_src = StaticDomain + data.Banner;
+                                                    <img src="@img_src" style="top:0;object-fit:fill;">
+                                                }
+                                                else
+                                                {
+                                                    <img src="/images/upload.png" style="top:40%;object-fit:scale-down;">
+                                                }
+                                            }
+                                        </a>
+                                        <input type="file" id="update-banner-input" style="display:none;" class="form-control" />
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="form-group">

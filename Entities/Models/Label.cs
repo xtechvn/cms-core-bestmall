@@ -32,4 +32,6 @@ public partial class Label
     public int? CreatedBy { get; set; }
 
     public int? UpdatedBy { get; set; }
+
+    public string Banner { get; set; }
 }
