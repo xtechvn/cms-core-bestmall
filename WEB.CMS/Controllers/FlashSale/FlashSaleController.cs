@@ -9,6 +9,7 @@ using Repositories.IRepositories;
 using System.Globalization;
 using System.Security.Claims;
 using Utilities;
+using Utilities.Contants;
 using Utilities.Contants.ProductV2;
 using WEB.Adavigo.CMS.Service;
 using WEB.CMS.Controllers.Product.Bussiness;
@@ -252,6 +253,8 @@ namespace WEB.CMS.Controllers.FlashSale
                             productid=product.ProductId,
                             status=product.Status
                         });
+                        _redisConn.clear(CacheName.PRODUCT_DETAIL + product.ProductId, db_index);
+
                     }
                     await _flashSaleProductESRepository.DeleteByIds(flashsale_product.Select(x => x.Id).ToList());
                     await _flashSaleProductESRepository.IndexMany(new_items);
@@ -291,6 +294,7 @@ namespace WEB.CMS.Controllers.FlashSale
                 //    await _flashSaleProductESRepository.IndexMany(all_fspl_es);
                 //}
                 #endregion
+                await _redisConn.DeleteCacheByKeyword(CacheName.PRODUCT_LISTING, db_index);
                 return Ok(new
                 {
                     is_success = true,
