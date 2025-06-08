@@ -266,8 +266,7 @@ namespace WEB.CMS.Controllers
                     product_main.package_width = request.package_width;
                     product_main.package_height = request.package_height;
                     product_main.package_depth = request.package_depth;
-
-
+                    product_main.amount = 0;
                 }
                 else
                 {
