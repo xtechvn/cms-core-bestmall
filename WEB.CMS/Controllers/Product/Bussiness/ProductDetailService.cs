@@ -12,10 +12,10 @@ namespace WEB.CMS.Controllers.Product.Bussiness
         private readonly ProductDetailMongoAccess _productV2DetailMongoAccess;
         private readonly ProductSpecificationMongoAccess _productSpecificationMongoAccess;
         private readonly IConfiguration _configuration;
-        public ProductDetailService(IConfiguration configuration)
+        public ProductDetailService(IConfiguration configuration, ProductDetailMongoAccess productV2DetailMongoAccess, ProductSpecificationMongoAccess productSpecificationMongoAccess)
         {
-            _productV2DetailMongoAccess = new ProductDetailMongoAccess(configuration);
-            _productSpecificationMongoAccess = new ProductSpecificationMongoAccess(configuration);
+            _productV2DetailMongoAccess = productV2DetailMongoAccess;
+            _productSpecificationMongoAccess = productSpecificationMongoAccess;
             _configuration = configuration;
         }
 

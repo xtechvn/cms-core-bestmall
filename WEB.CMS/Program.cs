@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Repositories.IRepositories;
 using Repositories.Repositories;
 using WEB.CMS.Customize;
+using WEB.CMS.Models.Product;
 using WEB.CMS.RabitMQ;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -84,6 +85,8 @@ builder.Services.AddSingleton<ILabelRepository, LabelRepository>();
 builder.Services.AddSingleton<ISupplierRepository, SupplierRepository>();
 builder.Services.AddSingleton<IFlashSaleRepository, FlashSaleRepository>();
 builder.Services.AddSingleton<IFlashSaleProductRepository, FlashSaleProductRepository>();
+builder.Services.AddSingleton<ProductDetailMongoAccess>();
+builder.Services.AddSingleton<ProductSpecificationMongoAccess>();
 // Đăng ký QueueService
 builder.Services.AddScoped<QueueService>();
 

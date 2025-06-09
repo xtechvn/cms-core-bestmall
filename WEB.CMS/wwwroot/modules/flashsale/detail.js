@@ -165,6 +165,20 @@ var flashsale_detail = {
             flashsale_detail.Upload()
 
         })
+        $('body').on('select2:select', '#supplier-id select', function () {
+            var element = $(this)
+            element.prop('disabled', true);
+            var model = {
+                supplier_id: element.find(':selected').val(),
+                flash_sale_id: $('#flashsale-detail').val()
+            }
+            flashsale_detail.POST('/FlashSale/GetActiveFlashSaleCampaignBySupplier', model, function (result) {
+                element.prop('disabled', false);
+                if (result.is_success && result.exists) {
+                    _msgalert.error(result.msg)
+                }
+            });
+        });
     },
     Upload: function () {
         flashsale_detail.Processing = true;
@@ -530,6 +544,19 @@ var flashsale_detail = {
 
             return false
         }
+
+        //--validate other active flashsale
+        var model = {
+            supplier_id: $('#supplier-id select').find(':selected').val(),
+            flash_sale_id: $('#flashsale-detail').val()
+        }
+        var result = flashsale_detail.POSTSynchorus('/FlashSale/GetActiveFlashSaleCampaignBySupplier', model)
+        if (result.is_success && result.exists) {
+            _msgalert.error(result.msg)
+            return false
+        }
+
+
         var name = $('#flashsale-name').val()
         if (name == undefined || name.trim() == '') {
             _msgalert.error("Tên chương trình không được để trống")

@@ -14,6 +14,7 @@ using Utilities.Contants;
 using WEB.CMS.Controllers.Bussiness;
 using WEB.CMS.Customize;
 using WEB.CMS.Models;
+using WEB.CMS.Models.Product;
 
 namespace WEB.CMS.Controllers
 {
@@ -34,7 +35,8 @@ namespace WEB.CMS.Controllers
         private readonly int db_index = 9;
 
         public SupplierController(IAllCodeRepository allCodeRepository, ISupplierRepository supplierRepository, IUserRepository userRepository,
-            ICommonRepository commonRepository, IConfiguration _configuration, IWebHostEnvironment webHostEnvironment, IAttachFileRepository attachFileRepository)
+            ICommonRepository commonRepository, IConfiguration _configuration, IWebHostEnvironment webHostEnvironment, IAttachFileRepository attachFileRepository
+            , ProductDetailMongoAccess productV2DetailMongoAccess)
         {
             _allCodeRepository = allCodeRepository;
             _supplierRepository = supplierRepository;
@@ -46,7 +48,7 @@ namespace WEB.CMS.Controllers
             _redisConn = new RedisConn(configuration);
             _redisConn.Connect();
             _userRepository = userRepository;
-            _supplierService = new SupplierService(configuration);
+            _supplierService = new SupplierService(configuration, productV2DetailMongoAccess);
             db_index = Convert.ToInt32(configuration["Redis:Database:db_search_result"]);
 
         }

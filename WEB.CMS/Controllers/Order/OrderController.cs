@@ -25,7 +25,8 @@ namespace WEB.CMS.Controllers
         private readonly ICommonRepository _commonRepository;
 
         public OrderController(IConfiguration configuration, IAllCodeRepository allCodeRepository, IOrderRepository orderRepository, IClientRepository clientRepository, 
-            IUserRepository userRepository, IContractPayRepository contractPayRepository, IPaymentRequestRepository paymentRequestRepository, ICommonRepository commonRepository)
+            IUserRepository userRepository, IContractPayRepository contractPayRepository, IPaymentRequestRepository paymentRequestRepository, ICommonRepository commonRepository
+            , ProductDetailMongoAccess productV2DetailMongoAccess)
         {
             _configuration = configuration;
             _allCodeRepository = allCodeRepository;
@@ -34,7 +35,7 @@ namespace WEB.CMS.Controllers
             _userRepository = userRepository;
             _contractPayRepository = contractPayRepository;
             _paymentRequestRepository = paymentRequestRepository;
-            _productV2DetailMongoAccess = new ProductDetailMongoAccess(configuration);
+            _productV2DetailMongoAccess = productV2DetailMongoAccess;
             _commonRepository = commonRepository;
         }
         public IActionResult Index()

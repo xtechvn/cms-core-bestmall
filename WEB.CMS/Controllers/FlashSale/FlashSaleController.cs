@@ -40,17 +40,18 @@ namespace WEB.CMS.Controllers.FlashSale
         private readonly IFlashSaleRepository _flashSaleRepository;
         private readonly IFlashSaleProductRepository _flashSaleProductRepository;
         public FlashSaleController(IConfiguration configuration, RedisConn redisConn, IGroupProductRepository groupProductRepository, ILabelRepository labelRepository,
-            ISupplierRepository supplierRepository, IAllCodeRepository allCodeRepository, IFlashSaleRepository flashSaleRepository, IFlashSaleProductRepository flashSaleProductRepository)
+            ISupplierRepository supplierRepository, IAllCodeRepository allCodeRepository, IFlashSaleRepository flashSaleRepository, IFlashSaleProductRepository flashSaleProductRepository
+            , ProductDetailMongoAccess productV2DetailMongoAccess, ProductSpecificationMongoAccess productSpecificationMongoAccess)
         {
-            _productV2DetailMongoAccess = new ProductDetailMongoAccess(configuration);
-            _productSpecificationMongoAccess = new ProductSpecificationMongoAccess(configuration);
+            _productV2DetailMongoAccess = productV2DetailMongoAccess;
+            _productSpecificationMongoAccess = productSpecificationMongoAccess;
             _staticAPIService = new StaticAPIService(configuration);
             _redisConn = redisConn;
             _redisConn.Connect();
             _groupProductRepository = groupProductRepository;
             db_index = Convert.ToInt32(configuration["Redis:Database:db_search_result"]);
             _configuration = configuration;
-            productDetailService = new ProductDetailService(configuration);
+            productDetailService = new ProductDetailService(configuration,productV2DetailMongoAccess,productSpecificationMongoAccess);
             _productESRepository = new ProductESRepository(_configuration["DataBaseConfig:Elastic:Host"], configuration);
             _flashSaleESRepository = new FlashSaleESRepository(_configuration["DataBaseConfig:Elastic:Host"], configuration);
             _flashSaleProductESRepository = new FlashSaleProductESRepository(_configuration["DataBaseConfig:Elastic:Host"], configuration);
@@ -115,7 +116,6 @@ namespace WEB.CMS.Controllers.FlashSale
             return View();
         }
         [HttpPost]
-
         public IActionResult ProductFlashSale(int id)
         {
             ViewBag.FlashSaleId = id;
@@ -139,7 +139,7 @@ namespace WEB.CMS.Controllers.FlashSale
             try
             {
                 // 1. Validate FlashSale
-                if (flashsale == null || !flashsale.SupplierId.HasValue|| flashsale.SupplierId<=0|| flashsale.FromDate == default(DateTime) || flashsale.ToDate == default(DateTime))
+                if (flashsale == null || !flashsale.SupplierId.HasValue|| flashsale.SupplierId==null|| flashsale.SupplierId<=0|| flashsale.FromDate == default(DateTime) || flashsale.ToDate == default(DateTime))
                 {
                     return Ok(new
                     {
@@ -155,7 +155,22 @@ namespace WEB.CMS.Controllers.FlashSale
                         msg = "Thời gian bắt đầu chiến dịch không được lớn hơn thời gian kết thúc",
                     });
                 }
-                var _UserLogin = 0;
+                var exists_active_flashsale = await _flashSaleESRepository.GetActiveFlashsaleBySupplierID((int)flashsale.SupplierId);
+                if (exists_active_flashsale != null && exists_active_flashsale.Count > 0)
+                {
+                    var id_compare = (flashsale.Id <= 0 ? 0 : flashsale.Id);
+                    exists_active_flashsale = exists_active_flashsale.Where(x => x.flashsale_id != id_compare).ToList();
+                    if (exists_active_flashsale != null && exists_active_flashsale.Count > 0)
+                    {
+                        return Ok(new
+                        {
+                            is_success = false,
+                            msg = "Nhà cung cấp này đã có chương trình FlashSale khác đang hoạt động, vui lòng chọn nhà cung cấp khác",
+                        });
+                    }
+                }
+
+                    var _UserLogin = 0;
                 if (HttpContext.User.FindFirst(ClaimTypes.NameIdentifier) != null)
                 {
                     _UserLogin = int.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
@@ -315,5 +330,63 @@ namespace WEB.CMS.Controllers.FlashSale
             }
            
         }
+        [HttpPost]
+        public async Task<IActionResult> GetActiveFlashSaleCampaignBySupplier(int supplier_id=-1,int flash_sale_id=0)
+        {
+            try
+            {
+                if (supplier_id <= 0)
+                {
+                    return Ok(new
+                    {
+                        is_success = false,
+                        msg = "NCC không tồn tại",
+                        exists=false
+                    });
+                }
+
+                var exists_active_flashsale = await _flashSaleESRepository.GetActiveFlashsaleBySupplierID(supplier_id);
+                if (exists_active_flashsale == null || exists_active_flashsale.Count<=0)
+                {
+                    return Ok(new
+                    {
+                        is_success = true,
+                        msg = "Không có chương trình nào hoạt động, được phép thêm chương trình cho NCC này",
+                        exists = false
+                    });
+                }
+                else
+                {
+                    exists_active_flashsale = exists_active_flashsale.Where(x => x.flashsale_id != flash_sale_id).ToList();
+                    if (exists_active_flashsale != null && exists_active_flashsale.Count > 0)
+                    {
+                        return Ok(new
+                        {
+                            is_success = true,
+                            msg = "Nhà cung cấp này đã có chương trình FlashSale khác đang hoạt động, vui lòng chọn nhà cung cấp khác",
+                            exists = true
+                        });
+                    }
+                       
+                }
+                return Ok(new
+                {
+                    is_success = true,
+                    msg = "Không có chương trình nào hoạt động, được phép thêm chương trình cho NCC này",
+                    exists = false
+                });
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("GetActiveFlashSaleCampaignBySupplier - FlashSaleController: " + ex.ToString());
+                return Ok(new
+                {
+                    is_success = false,
+                    msg = "Thêm mới / Cập nhật sản phẩm thất bại, vui lòng liên hệ bộ phận IT",
+                    err = ex.ToString(),
+                });
+            }
+        }
+
     }
 }

@@ -26,7 +26,7 @@ namespace WEB.CMS.Controllers
         private readonly ProductDetailMongoAccess _productV2DetailMongoAccess;
         private readonly LabelService labelService;
 
-        public LabelController(IConfiguration configuration, RedisConn redisService, ILabelRepository labelRepository)
+        public LabelController(IConfiguration configuration, RedisConn redisService, ILabelRepository labelRepository, ProductDetailMongoAccess productV2DetailMongoAccess)
         {
             _configuration = configuration;
             _redisService = new RedisConn(configuration);
@@ -35,8 +35,8 @@ namespace WEB.CMS.Controllers
             _redisConn = new RedisConn(configuration);
             _redisConn.Connect();
             db_index = Convert.ToInt32(configuration["Redis:Database:db_search_result"]);
-            _productV2DetailMongoAccess = new ProductDetailMongoAccess(configuration);
-            labelService = new LabelService(configuration);
+            _productV2DetailMongoAccess = productV2DetailMongoAccess;
+            labelService = new LabelService(configuration, productV2DetailMongoAccess);
         }
         [HttpPost]
         public async Task<IActionResult> SearchLabel(string txt_search)

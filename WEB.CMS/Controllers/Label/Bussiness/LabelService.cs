@@ -11,9 +11,9 @@ namespace WEB.CMS.Controllers.Bussiness
         private readonly ProductDetailMongoAccess _productV2DetailMongoAccess;
         private readonly StaticAPIService staticAPIService;
 
-        public LabelService(IConfiguration configuration) {
+        public LabelService(IConfiguration configuration, ProductDetailMongoAccess productV2DetailMongoAccess) {
             _configuration=configuration;
-            _productV2DetailMongoAccess=new ProductDetailMongoAccess(configuration);
+            _productV2DetailMongoAccess= productV2DetailMongoAccess;
             staticAPIService = new StaticAPIService(configuration);
         }
         public async Task<string> UploadLabelImage(string imagePath)

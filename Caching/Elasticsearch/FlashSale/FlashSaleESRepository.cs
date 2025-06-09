@@ -133,7 +133,36 @@ namespace Caching.Elasticsearch.FlashSale
 
 
         }
+        public async Task<List<FlashSaleESModel>> GetActiveFlashsaleBySupplierID(int supplier_id)
+        {
+            var now = DateTime.Now; // It's generally recommended to use UTC for date comparisons in databases/Elasticsearch
 
+            var response = await _client.SearchAsync<FlashSaleESModel>(s => s
+                .Query(q => q
+                    .Bool(b => b
+                        .Filter(
+                             bs => bs.Term(t => t
+                                .Field(f => f.supplierid)
+                                .Value(supplier_id)
+                            ),
+                            bs => bs.Term(t => t
+                                .Field(f => f.status)
+                                .Value(1)
+                            )
+                        )
+                    )
+                )
+            );
+
+            if (response.IsValid)
+            {
+                return response.Documents.ToList();
+            }
+            else
+            {
+                return new List<FlashSaleESModel>();
+            }
+        }
     }
 
 
