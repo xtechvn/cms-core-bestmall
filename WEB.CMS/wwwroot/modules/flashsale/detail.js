@@ -96,17 +96,16 @@ var flashsale_detail = {
             $('#flashsale-data-tr-product-body .flashsale-data-tr-product').each(function () {
                 const tr = $(this);
 
-                // Áp dụng giá trị VND
                 const $vndInput = tr.find('.flashsale-data-tr-vnd');
-                if ($vndInput.length > 0) {
+                const $percentInput = tr.find('.flashsale-data-tr-percent');
+
+                // Giá trị VND
+                if (applyAllPercent == null || applyAllPercent == undefined || applyAllPercent.trim() == '') {
                     $vndInput.val(applyAllVnd);
                     tr.find('.flashsale-data-tr-percent').val('').trigger('change')
-
                 }
-
-                // Áp dụng giá trị phần trăm
-                const $percentInput = tr.find('.flashsale-data-tr-percent');
-                if ($percentInput.length > 0) {
+                // Giá trị phần trăm
+                else if (applyAllVnd == null || applyAllVnd == undefined || applyAllVnd.trim() == '') {
                     $percentInput.val(applyAllPercent);
                     tr.find('.flashsale-data-tr-vnd').val('').trigger('change')
                 }
