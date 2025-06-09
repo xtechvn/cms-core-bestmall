@@ -147,6 +147,8 @@ namespace WEB.CMS.Controllers
                     && !updated_model.Icon.Contains(static_domain) && updated_model.Icon.Trim().StartsWith("\\"))
                 {
                     updated_model.Icon = await labelService.UploadLabelImage(updated_model.Icon);
+                    if (updated_model.Icon != null && updated_model.Icon.Trim() != ""
+                   && !updated_model.Icon.Contains(static_domain)) updated_model.Icon = static_domain + updated_model.Icon;
                 }
                 if (updated_model.Banner != null && updated_model.Banner.Trim() != ""
                    && !updated_model.Banner.Contains(static_domain) && updated_model.Banner.Trim().StartsWith("\\"))
