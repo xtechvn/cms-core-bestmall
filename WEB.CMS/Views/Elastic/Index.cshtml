@@ -1,0 +1,93 @@
+﻿@{
+    ViewData["Title"] = "Quản lý sản phẩm v2";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="container mt-5">
+    <h1 class="mb-4">Queue Pusher</h1>
+
+    <div class="form-group">
+        <label for="storeId">ID</label>
+        <input type="text" class="form-control" id="storeId" value="-1" placeholder="Nhập ID">
+    </div>
+
+    <div class="form-group">
+        <label for="storeSelect">Store Name</label>
+        <select class="form-control" id="storeSelect">
+            @* HuloToys *@
+            <option value="SP_GetAllArticle">SP_GetAllArticle</option>
+            <option value="SP_GetGroupProduct">SP_GetGroupProduct</option>
+            <option value="SP_GetAccountAccessApi">SP_GetAccountAccessApi</option>
+            <option value="SP_GetAccountClient">SP_GetAccountClient</option>
+            <option value="sp_GetClient">SP_GetClient</option>
+            <option value="SP_GetOrder">SP_GetOrder</option>
+            <option value="SP_GetArticle">SP_GetArticle</option>
+            <option value="SP_GetArticleCategory">SP_GetArticleCategory</option>
+            <option value="SP_GetArticleRelated">SP_GetArticleRelated</option>
+            <option value="SP_GetTag">SP_GetTag</option>
+            <option value="SP_GetLocationProduct">SP_GetLocationProduct</option>
+            <option value="SP_GetUser">SP_GetUser</option>
+            <option value="SP_GetAddressClient">SP_GetAddressClient</option>
+            <option value="SP_GetProvince">SP_GetProvince</option>
+            <option value="SP_GetDistrict">SP_GetDistrict</option>
+            <option value="SP_GetWard">SP_GetWard</option>
+            <option value="SP_GetOrderDetail">SP_GetOrderDetail</option>
+            <option value="SP_GetRating">SP_GetRating</option>
+            <option value="SP_GetAccountAccessAPIPermission">SP_GetAccountAccessAPIPermission</option>
+            <option value="sp_getOrderDetail">sp_getOrderDetail</option>
+            <option value="SP_GetArticleTagData">SP_GetArticleTagData</option>
+
+            @* Adavigo && Adavigo_phuquoc *@
+            @* <option value="sp_GetTour">sp_GetTour</option> *@
+            @* <option value="sp_GetPrograms">sp_GetPrograms</option> *@
+            @* <option value="sp_GetUser">sp_GetUser</option> *@
+            @* <option value="sp_GetClient">sp_GetClient</option> *@
+            @* <option value="sp_GetOrder">sp_GetOrder</option> *@
+            @* <option value="sp_GetHotel">sp_GetHotel</option> *@
+            @* <option value="sp_GetHotelBooking">sp_GetHotelBooking</option> *@
+            @* <option value="sp_GetNational">sp_GetNational</option> *@
+            @* <option value="SP_GetDetailFlyBookingDetail">SP_GetDetailFlyBookingDetail</option> *@
+            @* <option value="sp_GetArticle">sp_GetArticle</option> *@
+
+            @* <option value="sp_GetHotelBookingCode">sp_GetHotelBookingCode</option> *@
+            @* <option value="SP_GetContract">SP_GetContract</option> *@
+
+
+
+            @* <option value="sp_article">sp_article</option> *@
+            <!-- Thêm các tùy chọn khác nếu cần -->
+        </select>
+    </div>
+
+    <button class="btn btn-primary mt-2" onclick="pushToQueue()">Đồng bộ</button>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script>
+    function pushToQueue() {
+        var id = $('#storeId').val();
+        var storeName = $('#storeSelect').val();
+
+        if (id === '') {
+            alert('Vui lòng nhập ID');
+            return;
+        }
+
+        $.ajax({
+            url: '@Url.Action("PushToQueue", "Elastic")',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ storeName: storeName, id: id }),
+            success: function (response) {
+                if (response.isSuccess) {
+                    alert('Push queue thành công');
+                } else {
+                    alert('Push queue thất bại: ' + response.message);
+                }
+            },
+            error: function (xhr, status, error) {
+                alert('Có lỗi xảy ra: ' + error);
+            }
+        });
+    }
+</script>
