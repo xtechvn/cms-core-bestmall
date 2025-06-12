@@ -420,10 +420,11 @@ namespace WEB.CMS.Controllers
                         var user = await _UserRepository.GetById(login_model.id);
                         string enviroment = _configuration["Config:OTP_Enviroment"];
                         if (enviroment == null) enviroment = "";
-                        ViewBag.QRCodeUri = MFAService.GenerateQRCode(mfa_record, enviroment);
+                        ViewBag.QRCodeUri = MFAService.GenerateQRCode(mfa_record, enviroment, _configuration["Config:OTP_Provider"]);
                         ViewBag.SecretKey = MFAService.FormatKey(mfa_record.SecretKey);
-                        string label_name = "AdavigoCMS_" + enviroment + "-" + user.UserName;
+                        string label_name = "BestMall_" + enviroment + "-" + user.UserName;
                         ViewBag.Issurer = label_name;
+                        ViewBag.provider = _configuration["Config:OTP_Provider"];
                         ViewBag.Status = mfa_record.Status;
                         return View();
                     }

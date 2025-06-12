@@ -251,7 +251,7 @@ namespace Utilities
                 return null;
             }
         }
-        public static string GenerateQRCode(Mfauser result,string otpEnviroment) 
+        public static string GenerateQRCode(Mfauser result,string otpEnviroment,string provider) 
         {
             try
             {
@@ -259,10 +259,10 @@ namespace Utilities
                 {
                     string enviroment = otpEnviroment;
                     if (enviroment == null) enviroment = "";
-                    string label_name = "AdavigoCMS_" + enviroment + "-" + result.Username.Trim();
+                    string label_name = "BestMall_" + enviroment + "-" + result.Username.Trim();
                     //string label_name = "qc-be-Adavigo.com:" + enviroment + "-" + result.Username.Trim();
                     string secret_key = result.SecretKey.Trim();
-                    string issuer = "Adavigo";
+                    string issuer = provider;
                     string otp_auth_url = @"" + "otpauth://totp/" + issuer + ":" + label_name + "?secret=" + secret_key + "&issuer=" + issuer + "";
                     return otp_auth_url;
                 }

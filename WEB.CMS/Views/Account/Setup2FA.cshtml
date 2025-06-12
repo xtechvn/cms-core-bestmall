@@ -5,6 +5,7 @@
     string SecretKey = (string)ViewBag.SecretKey;
     string issurer = (string)ViewBag.Issurer;
     short status = (short)ViewBag.Status;
+    string provider = (string)ViewBag.provider;
 }
 <style>
     /* Chrome, Safari, Edge, Opera */
@@ -63,7 +64,7 @@
                             Hoặc nhập thông tin dưới đây vào ứng dụng <strong>Authenticator</strong> hoặc các trang Web, ứng dụng hỗ trợ tạo mã OTP: <br /><br />
                             Tên tài khoản:&nbsp; <strong>@issurer</strong><br />
                             Khoá của bạn:&nbsp; <strong>@SecretKey</strong><br />
-                            Nhà cung cấp:&nbsp; <strong>Adavigo</strong><br />
+                            Nhà cung cấp:&nbsp; <strong>@provider</strong><br />
                             Loại Khoá (Nếu có):&nbsp; <strong>Dựa theo thời gian</strong><br />
                         </p>
                     </div>
