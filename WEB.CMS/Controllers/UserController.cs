@@ -534,7 +534,7 @@ namespace WEB.CMS.Controllers
                 mfa_record.SecretKey = "";
                 ViewBag.manual_entry_key = "";
 
-                ViewBag.key = MFAService.GenerateQRCode(mfa_record, enviroment);
+                ViewBag.key = MFAService.GenerateQRCode(mfa_record, enviroment, _configuration["Config:OTP_Provider"]);
                 return PartialView();
             }
             catch (Exception ex)

@@ -26,6 +26,7 @@ using Newtonsoft.Json.Linq;
 using WEB.Adavigo.CMS.Service;
 using Microsoft.AspNetCore.Hosting;
 using Caching.RedisWorker;
+using Nest;
 
 namespace WEB.CMS.Controllers
 {
@@ -420,11 +421,11 @@ namespace WEB.CMS.Controllers
                         var user = await _UserRepository.GetById(login_model.id);
                         string enviroment = _configuration["Config:OTP_Enviroment"];
                         if (enviroment == null) enviroment = "";
-                        ViewBag.QRCodeUri = MFAService.GenerateQRCode(mfa_record, enviroment);
+                        ViewBag.QRCodeUri = MFAService.GenerateQRCode(mfa_record, enviroment, _configuration["Config:OTP_Provider"]);
                         ViewBag.SecretKey = MFAService.FormatKey(mfa_record.SecretKey);
-                        string label_name = "AdavigoCMS_" + enviroment + "-" + user.UserName;
-                        ViewBag.Issurer = label_name;
+                        ViewBag.Issurer =  MFAService.GetLabelName(mfa_record, enviroment, _configuration["Config:OTP_Provider"]);
                         ViewBag.Status = mfa_record.Status;
+                        ViewBag.Provider = _configuration["Config:OTP_Provider"];
                         return View();
                     }
                 }

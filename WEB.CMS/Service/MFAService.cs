@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using Entities.ViewModels.Login;
 using Newtonsoft.Json;
 using WEB.CMS.Models;
+using Microsoft.Extensions.Hosting;
 
 namespace Utilities
 {
@@ -251,7 +252,7 @@ namespace Utilities
                 return null;
             }
         }
-        public static string GenerateQRCode(Mfauser result,string otpEnviroment) 
+        public static string GenerateQRCode(Mfauser result,string otpEnviroment,string provider) 
         {
             try
             {
@@ -259,10 +260,10 @@ namespace Utilities
                 {
                     string enviroment = otpEnviroment;
                     if (enviroment == null) enviroment = "";
-                    string label_name = "AdavigoCMS_" + enviroment + "-" + result.Username.Trim();
+                    string label_name = GetLabelName(result,otpEnviroment,provider);
                     //string label_name = "qc-be-Adavigo.com:" + enviroment + "-" + result.Username.Trim();
                     string secret_key = result.SecretKey.Trim();
-                    string issuer = "Adavigo";
+                    string issuer = provider;
                     string otp_auth_url = @"" + "otpauth://totp/" + issuer + ":" + label_name + "?secret=" + secret_key + "&issuer=" + issuer + "";
                     return otp_auth_url;
                 }
@@ -317,6 +318,18 @@ namespace Utilities
         {
             var p= text.Replace("-", @"/").Replace("_", "+");
             return p;
+        }
+        public static string GetLabelName(Mfauser result, string otpEnviroment, string provider)
+        {
+            try
+            {
+                return provider + "_" + otpEnviroment + "-" + result.Username.Trim();
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("FormatKey - AccountController" + ex);
+                return null;
+            }
         }
     }
     
