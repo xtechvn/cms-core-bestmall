@@ -513,6 +513,7 @@ var flashsale_detail = {
         if (finalPrice < 0) {
             finalPrice = 0;
         }
+        finalPrice = flashsale_detail.roundDownToNearestFiveHundreds(finalPrice)
         element.find('.flashsale-data-tr-final-amount').text('đ ' + _global_function.Comma(finalPrice));
     },
     validateProducts: function () {
@@ -802,6 +803,10 @@ var flashsale_detail = {
                 flashsale_detail.ReindexFlashsaleProduct()
             }
         }).disableSelection(); // Prevents text selection during drag
+    },
+    roundDownToNearestFiveHundreds: function (amount) {
+        // Chia số tiền cho 500, làm tròn xuống bằng Math.floor, sau đó nhân lại với 500.
+        return Math.floor(amount / 500) * 500;
     }
 
 }

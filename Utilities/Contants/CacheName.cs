@@ -22,6 +22,7 @@ namespace Utilities.Contants
 
         public const string USER_ROLE = "USER_ROLE_";
         public const string ARTICLE = "ARTICLE_";
+        public const string ARTICLE_ID_TAGS = "ARTICLE_TAGS_";
 
         public const string PRODUCT_LISTING = "PRODUCT_LISTING_";
         public const string PRODUCT_DETAIL = "PRODUCT_DETAIL_";
