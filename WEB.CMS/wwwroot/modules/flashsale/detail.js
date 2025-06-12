@@ -807,6 +807,16 @@ var flashsale_detail = {
     roundDownToNearestFiveHundreds: function (amount) {
         // Chia số tiền cho 500, làm tròn xuống bằng Math.floor, sau đó nhân lại với 500.
         return Math.floor(amount / 500) * 500;
-    }
+    },
 
+    SyncES: function () {
+        flashsale_detail.POST('/flashsale/SyncES', {}, function (result) {
+            if (result.is_success) {
+                _msgalert.success('Sync ES Successfully')
+            }
+            else {
+                _msgalert.error('Sync ES Failed')
+            }
+        });
+    }
 }

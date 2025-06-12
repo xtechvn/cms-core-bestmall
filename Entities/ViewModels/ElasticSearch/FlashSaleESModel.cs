@@ -8,6 +8,7 @@ public class FlashSaleESModel
     public DateTime fromdate { get; set; }
 
     public DateTime todate { get; set; }
+    public DateTime? created_date { get; set; }
     public byte status { get; set; }
     public int? supplierid { get; set; }
     public string name { get; set; }

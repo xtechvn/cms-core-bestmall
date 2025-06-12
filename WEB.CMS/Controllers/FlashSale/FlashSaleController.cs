@@ -220,7 +220,8 @@ namespace WEB.CMS.Controllers.FlashSale
                     todate = flashsale.ToDate,
                     name=flashsale.Name,
                     banner=flashsale.Banner,
-                    supplier_name=supplier.FullName
+                    supplier_name=supplier.FullName,
+                    created_date= flashsale.CreateDate
                 };
                 await _flashSaleESRepository.InsertAsync(flashsale_es);
                 #endregion
@@ -386,6 +387,62 @@ namespace WEB.CMS.Controllers.FlashSale
                     err = ex.ToString(),
                 });
             }
+        }
+        [HttpPost]
+
+        public async Task<IActionResult> SyncES()
+        {
+            try
+            {
+                var fsl = await _flashSaleRepository.GetAll();
+                if (fsl != null && fsl.Count > 0)
+                {
+                    List<FlashSaleESModel> all_fsl_es = fsl.Select(x => new FlashSaleESModel()
+                    {
+                        id = _flashSaleESRepository.GenerateId(),
+                        flashsale_id = x.Id,
+                        fromdate = x.FromDate,
+                        status = x.Status,
+                        supplierid = x.SupplierId,
+                        todate = x.ToDate,
+                        name = x.Name,
+                        banner = x.Banner,
+                        created_date=x.CreateDate,
+                        supplier_name= _supplierRepository.GetSuplierById((int)x.SupplierId).FullName
+                    }).ToList();
+                    await _flashSaleESRepository.DeleteByIds(all_fsl_es.Select(x => x.flashsale_id).ToList());
+                    await _flashSaleESRepository.IndexMany(all_fsl_es);
+                }
+                var fspl = await _flashSaleProductRepository.GetAll();
+                if (fspl != null && fspl.Count > 0)
+                {
+                    List<FlashSaleProductESModel> all_fspl_es = fspl.Select(x => new FlashSaleProductESModel()
+                    {
+                        id = _flashSaleProductESRepository.GenerateId(),
+                        valuetype = x.ValueType,
+                        discountvalue = x.DiscountValue,
+                        flashsale_id = x.CampaignId,
+                        flashsale_productid = x.Id,
+                        position = x.Position,
+                        productid = x.ProductId,
+                        status = x.Status
+                    }).ToList();
+                    await _flashSaleProductESRepository.DeleteByIds(all_fspl_es.Select(x => x.flashsale_productid).ToList());
+                    await _flashSaleProductESRepository.IndexMany(all_fspl_es);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("SyncES - ProductController: " + ex.ToString());
+                return Ok(new
+                {
+                    is_success = false
+                });
+            }
+            return Ok(new
+            {
+                is_success = true
+            });
         }
 
     }
