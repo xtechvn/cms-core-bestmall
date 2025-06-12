@@ -1073,6 +1073,51 @@ namespace WEB.CMS.Controllers
                 data=list
             });
         }
+        [HttpPost]
+
+        public async Task<IActionResult> SyncES()
+        {
+            try
+            {
+                var products = await _productV2DetailMongoAccess.GetAllProducts();
+                if (products != null && products.Count > 0)
+                {
+                    products = products.Where(x => (x.parent_product_id == null || x.parent_product_id == "") && x.status == (int)ProductStatus.ACTIVE).ToList();
+                    products = products.GroupBy(x => x.name).Select(x => x.First()).ToList();
+                    foreach (var product in products)
+                    {
+                        await _productESRepository.DeleteByProductIdAsync(product._id);
+
+                        ProductESModel product_es = new ProductESModel()
+                        {
+                            id = _productESRepository.GenerateId(),
+                            amount = product.amount_min == null ? product.amount : (double)product.amount_min,
+                            description = product.description,
+                            name = product.name,
+                            product_code = product.code,
+                            product_id = product._id,
+                            product_name_no_tv = CommonHelper.RemoveSpecialCharacters(StringHelpers.RemoveUnicode(product.name).ToLower().Replace(" ", "").Trim()),
+                            avatar = product.avatar,
+                            status = product.status,
+                            supplier_status = product.supplier_status
+                        };
+                        await _productESRepository.InsertAsync(product_es);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("SyncES - ProductController: " + ex.ToString());
+                return Ok(new
+                {
+                    is_success = false
+                });
+            }
+            return Ok(new
+            {
+                is_success = true
+            });
+        }
     }
 
 }

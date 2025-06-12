@@ -1501,5 +1501,17 @@ var product_detail_new = {
         })
 
      
+    },
+    SyncES: function () {
+        _product_function.POST('/Product/SyncES', { }, function (result) {
+            if (result.is_success) {
+                _msgalert.success('Sync ES Successfully')
+            }
+            else {
+                _msgalert.error('Sync ES Failed')
+
+            }
+        });
+
     }
 }
