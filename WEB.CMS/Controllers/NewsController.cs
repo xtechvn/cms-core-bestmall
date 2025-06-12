@@ -345,6 +345,7 @@ namespace WEB.CMS.Controllers
             {
                 int db_index = Convert.ToInt32(_configuration["Redis:Database:db_common"]);
                 _redisConn.clear(CacheName.ARTICLE + articleId, db_index);
+                _redisConn.clear(CacheName.ARTICLE_ID_TAGS + articleId, db_index);
                 await articleCategoryESService.DeleteByArticleId(articleId);
                 // Xóa cache của bài viết sau khi cập nhật
                 if (category_ids != null && category_ids.Count > 0)

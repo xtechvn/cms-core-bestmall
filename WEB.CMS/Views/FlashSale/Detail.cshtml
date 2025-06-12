@@ -1,6 +1,7 @@
 ﻿@using Entities.Models
 @using Entities.ViewModels
 @using Entities.ViewModels.Products
+@using Utilities
 @{
     ViewData["Title"] = "Chi tiết chiến dịch FlashSale";
     FlashSale detail = (FlashSale)ViewBag.Detail;
@@ -276,6 +277,7 @@
                                                                     final_amount = amount - Math.Round((amount * (item.DiscountValue == null ? 0 : (double)item.DiscountValue) / 100), 0);
 
                                                                 }
+                                                                final_amount=NumberHelpers.RoundUpToHundredsDouble(final_amount);
                                                             }
                                                             @final_amount.ToString("N0") đ
                                                         </td>
