@@ -33,6 +33,7 @@ namespace Utilities.Contants
         public const string NINJAVAN_OAUTH = "NINJAVAN_OAUTH";
         public const string ARTICLE_CATEGORY = "ARTICLE_CATEGORY_";
         public const string LABEL = "LABEL_";
+        public const string ARTICLE_CATEGORY_MENU = "ARTICLE_CATEGORY_MENU_";
 
     }
 }
