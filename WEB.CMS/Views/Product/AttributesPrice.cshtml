@@ -126,7 +126,7 @@
                             </td>
                             <td class="td-profit">
                                 <div class="form-group mb-0 price">
-                                    <input type="text" class="form-control input-price" placeholder="Lợi nhuận" value="@(sub_selected != null && sub_selected.profit>0 ? sub_selected.profit.ToString("N0"):"")">
+                                    <input type="text" class="form-control input-price" placeholder="Lợi nhuận" value="@(sub_selected != null && sub_selected.profit>=0 ? sub_selected.profit.ToString("N0"):"")">
                                     <span class="note">đ</span>
                                 </div>
                             </td>
