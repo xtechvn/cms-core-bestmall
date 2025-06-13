@@ -789,7 +789,7 @@ namespace WEB.CMS.Controllers.Funding
             }
             catch (Exception ex)
             {
-                LogHelper.InsertLogTelegram("GetSuppliersSuggest - PaymentRequestController: " + ex + ". Đã có lỗi xảy ra");
+                LogHelper.InsertLogTelegram("GetSuppliersSuggest - ReceiptController: " + ex + ". Đã có lỗi xảy ra");
                 return null;
             }
         }
@@ -816,7 +816,7 @@ namespace WEB.CMS.Controllers.Funding
             }
             catch (Exception ex)
             {
-                LogHelper.InsertLogTelegram("GetUserSuggestionList - PaymentRequestController: " + ex + ". Đã có lỗi xảy ra");
+                LogHelper.InsertLogTelegram("GetUserSuggestionList - ReceiptController: " + ex + ". Đã có lỗi xảy ra");
                 return null;
             }
         }
@@ -835,7 +835,7 @@ namespace WEB.CMS.Controllers.Funding
             }
             catch (Exception ex)
             {
-                LogHelper.InsertLogTelegram("GetListBankAccountBySupplierId - PaymentRequestController: " + ex + ". Đã có lỗi xảy ra");
+                LogHelper.InsertLogTelegram("GetListBankAccountBySupplierId - ReceiptController: " + ex + ". Đã có lỗi xảy ra");
                 return Ok(new
                 {
                     isSuccess = false,
@@ -844,6 +844,30 @@ namespace WEB.CMS.Controllers.Funding
                 });
             }
         }
-       
+        [HttpPost]
+        public async Task<IActionResult> GetListBankAccountBySupplierId(int supplierId)
+        {
+            try
+            {
+                var listPayment = _supplierRepository.GetSupplierPaymentList(supplierId);
+                return Ok(new
+                {
+                    isSuccess = true,
+                    message = "Thành công",
+                    data = listPayment
+                });
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("GetListBankAccountBySupplierId - ReceiptController: " + ex + ". Đã có lỗi xảy ra");
+                return Ok(new
+                {
+                    isSuccess = false,
+                    message = "Thất bại",
+                    data = new List<SupplierPaymentViewModel>()
+                });
+            }
+        }
+
     }
 }

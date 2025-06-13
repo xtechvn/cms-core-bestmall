@@ -1681,7 +1681,7 @@ var _contract_pay_create_new = {
     GetListBankAccountBySupplierID: function (supplierId) {
         _global_function.AddLoading()
         $.ajax({
-            url: "/PaymentRequest/GetListBankAccountBySupplierId",
+            url: "/Receipt/GetListBankAccountBySupplierId",
             type: "Post",
             data: {
                 'supplierId': supplierId,
