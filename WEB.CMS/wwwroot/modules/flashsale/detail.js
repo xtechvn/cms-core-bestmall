@@ -343,7 +343,8 @@ var flashsale_detail = {
                                                                 <span class="checkmark"></span>
                                                             </label>
                                                         </td>
-                                                        <td colspan="9">
+                                                     
+                                                        <td colspan="7">
                                                             <div class="item-order">
                                                                 <div class="img">
                                                                 <img src="@img_src" alt="">
@@ -354,6 +355,16 @@ var flashsale_detail = {
                                                                         @item.name
                                                                     </h3>
                                                                 </div>
+                                                            </div>
+                                                        </td>
+                                                        <td colspan="2">
+                                                            <div class="flex gap10 flex-nowrap align-items-center ">
+                                                                <p class="name-product" style=" display: inline-flex; color:red;">
+                                                                    <label class="check-list mb20 mr25">
+                                                                        <input type="checkbox">
+                                                                        <span class="checkmark"></span>
+                                                                    </label>Siêu Sale
+                                                                </p>
                                                             </div>
                                                         </td>
                                                     </tr>
@@ -622,7 +633,7 @@ var flashsale_detail = {
 
             // Vị trí của sản phẩm (dựa trên index của dòng product)
             const position = index + 1; // Vị trí bắt đầu từ 1
-
+            let supersale = $productRow.find('.flashsale-data-supersale').is(':checked');
             // Thêm thông tin sản phẩm vào mảng
             productData.push({
                 Id: id,
@@ -630,7 +641,8 @@ var flashsale_detail = {
                 DiscountValue: discountValue,
                 ValueType: valueType,
                 Status: status,
-                Position: position
+                Position: position,
+                SuperSale: supersale
             });
         });
         return productData; // Trả về mảng dữ liệu sản phẩm
@@ -648,6 +660,7 @@ var flashsale_detail = {
                 SupplierId: $('#supplier-id select').find(':selected').val(),
                 Status: $('#status input').is(':checked') ? 1 : 0,
                 Name: $('#flashsale-name').val(),
+
             }
         }
         model.flashsale.Banner = ''

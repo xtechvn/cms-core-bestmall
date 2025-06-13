@@ -221,7 +221,8 @@ namespace WEB.CMS.Controllers.FlashSale
                     name=flashsale.Name,
                     banner=flashsale.Banner,
                     supplier_name=supplier.FullName,
-                    created_date= flashsale.CreateDate
+                    created_date= flashsale.CreateDate,
+
                 };
                 await _flashSaleESRepository.InsertAsync(flashsale_es);
                 #endregion
@@ -267,7 +268,9 @@ namespace WEB.CMS.Controllers.FlashSale
                             id=_flashSaleProductESRepository.GenerateId(),
                             position=product.Position,
                             productid=product.ProductId,
-                            status=product.Status
+                            status=product.Status,
+                            supersale = product.SuperSale
+
                         });
                         _redisConn.clear(CacheName.PRODUCT_DETAIL + product.ProductId, db_index);
 
@@ -408,7 +411,7 @@ namespace WEB.CMS.Controllers.FlashSale
                         name = x.Name,
                         banner = x.Banner,
                         created_date=x.CreateDate,
-                        supplier_name= _supplierRepository.GetSuplierById((int)x.SupplierId).FullName
+                        supplier_name= _supplierRepository.GetSuplierById((int)x.SupplierId).FullName,
                     }).ToList();
                     await _flashSaleESRepository.DeleteByIds(all_fsl_es.Select(x => x.flashsale_id).ToList());
                     await _flashSaleESRepository.IndexMany(all_fsl_es);
@@ -425,7 +428,9 @@ namespace WEB.CMS.Controllers.FlashSale
                         flashsale_productid = x.Id,
                         position = x.Position,
                         productid = x.ProductId,
-                        status = x.Status
+                        status = x.Status,
+                        supersale = x.SuperSale
+
                     }).ToList();
                     await _flashSaleProductESRepository.DeleteByIds(all_fspl_es.Select(x => x.flashsale_productid).ToList());
                     await _flashSaleProductESRepository.IndexMany(all_fspl_es);
