@@ -215,6 +215,18 @@ var _orderDetail = {
             _orderDetail.SendToCarrier()
 
         });
+        $('body').on('click', '#orderdetail-delivered', function () {
+            _orderDetail.ReceiverPackage()
+
+        });
+        $('body').on('click', '#orderdetail-finished', function () {
+            _orderDetail.FinishedOrder()
+
+        });
+        $('body').on('click', '#orderdetail-cancel', function () {
+            _orderDetail.CancelOrder()
+
+        });
     },
     SendToCarrier: function () {
         var title = 'Chuyển đơn hàng sang cho ĐVVC';
@@ -228,13 +240,89 @@ var _orderDetail = {
                 success: function (result) {
                     if (result.is_success) {
                         _msgalert.success(result.msg);
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 1500);
                     } else {
                         _msgalert.error(result.msg);
                     }
+                   
                 }
             });
         });
        
+    },
+    ReceiverPackage: function () {
+        var title = 'Xác nhận khách hàng đã nhận được đơn hàng?';
+        var description = 'Thực hiện thao tác này sẽ xác nhận rằng khách hàng đã nhận được đơn hàng, bạn có chắc chắn không?';
+        _msgconfirm.openDialog(title, description, function () {
+            var id = $('#order_Id').val()
+            $.ajax({
+                url: "/OrderManual/OrderReceivedPackage",
+                type: "Post",
+                data: { id: id },
+                success: function (result) {
+                    if (result.is_success) {
+                        _msgalert.success(result.msg);
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 1500);
+                    } else {
+                        _msgalert.error(result.msg);
+                    }
+                   
+                }
+            });
+        });
+
+    },
+    FinishedOrder: function () {
+        var title = 'Xác nhận hoàn thành đơn hàng?';
+        var description = 'Thực hiện thao tác này sẽ xác nhận hoàn thành đơn hàng, bạn có chắc chắn không?';
+        _msgconfirm.openDialog(title, description, function () {
+            var id = $('#order_Id').val()
+            $.ajax({
+                url: "/OrderManual/OrderFinished",
+                type: "Post",
+                data: { id: id },
+                success: function (result) {
+                    if (result.is_success) {
+                        _msgalert.success(result.msg);
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 1500);
+                    } else {
+                        _msgalert.error(result.msg);
+                    }
+                  
+                }
+            });
+        });
+
+    },
+    CancelOrder: function () {
+        var title = 'Xác nhận hủy đơn hàng?';
+        var description = 'Thực hiện thao tác này sẽ xác nhận hủy đơn hàng, đơn hàng sẽ không được thực hiện tiếp, bạn có chắc chắn không?';
+        _msgconfirm.openDialog(title, description, function () {
+            var id = $('#order_Id').val()
+            $.ajax({
+                url: "/OrderManual/OrderCancel",
+                type: "Post",
+                data: { id: id },
+                success: function (result) {
+                    if (result.is_success) {
+                        _msgalert.success(result.msg);
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 1500);
+                    } else {
+                        _msgalert.error(result.msg);
+                    }
+                  
+                }
+            });
+        });
+
     }
     
 }

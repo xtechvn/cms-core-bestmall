@@ -45,7 +45,7 @@ namespace WEB.CMS.Controllers
         private readonly ArticleCategoryESService articleCategoryESService;
 
         public NewsController(IConfiguration configuration, IArticleRepository articleRepository, IUserRepository userRepository, ICommonRepository commonRepository, IWebHostEnvironment hostEnvironment, QueueService queueService,
-            IGroupProductRepository groupProductRepository)
+            IGroupProductRepository groupProductRepository, ArticleCategoryESService _articleCategoryESService)
         {
             _ArticleRepository = articleRepository;
             _CommonRepository = commonRepository;
@@ -57,7 +57,7 @@ namespace WEB.CMS.Controllers
             _queueService = queueService;
             _redisConn = new RedisConn(configuration);
             _redisConn.Connect();
-            articleCategoryESService = new ArticleCategoryESService(_configuration["DataBaseConfig:Elastic:Host"], configuration);
+            articleCategoryESService = _articleCategoryESService;
         }
 
         public async Task<IActionResult> Index()

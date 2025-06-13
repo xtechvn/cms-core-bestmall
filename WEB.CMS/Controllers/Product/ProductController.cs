@@ -43,7 +43,8 @@ namespace WEB.CMS.Controllers
         private readonly IAllCodeRepository _allCodeRepository;
 
         public ProductController(IConfiguration configuration, RedisConn redisConn, IGroupProductRepository groupProductRepository, ILabelRepository labelRepository,
-            ISupplierRepository supplierRepository, IAllCodeRepository allCodeRepository, ProductDetailMongoAccess productV2DetailMongoAccess, ProductSpecificationMongoAccess productSpecificationMongoAccess)
+            ISupplierRepository supplierRepository, IAllCodeRepository allCodeRepository, ProductDetailMongoAccess productV2DetailMongoAccess, 
+            ProductSpecificationMongoAccess productSpecificationMongoAccess, ProductESRepository productESRepository)
         {
             _productV2DetailMongoAccess = productV2DetailMongoAccess;
             _productSpecificationMongoAccess = productSpecificationMongoAccess;
@@ -54,7 +55,7 @@ namespace WEB.CMS.Controllers
             db_index = Convert.ToInt32(configuration["Redis:Database:db_search_result"]);
             _configuration = configuration;
             productDetailService = new ProductDetailService(configuration,productV2DetailMongoAccess,productSpecificationMongoAccess);
-            _productESRepository = new ProductESRepository(_configuration["DataBaseConfig:Elastic:Host"], configuration);
+            _productESRepository = productESRepository;
             _labelRepository = labelRepository;
             _supplierRepository = supplierRepository;
             _allCodeRepository = allCodeRepository;

@@ -11,22 +11,26 @@ namespace Utilities.Contants
         [Description("Chờ thanh toán")]
         CREATED_ORDER = 0,
 
+        [Description("Đã thanh toán")]
+        PAID = 6,
+
         [Description("Đang xử lý")]
-        CONFIRMED_SALE = 1,
+        PROCESSING = 1,
 
 
         [Description("Đang giao hàng")]
-        WAITING_FOR_OPERATOR = 2,
+        DELIVERY = 2,
 
- 
+        [Description("Giao thành công")]
+        FINISHED_DELIVERY = 5,
+
         [Description("Hoàn thành")]
         FINISHED = 3,
       
         [Description("Đã hủy")]
         CANCEL = 4, 
-        [Description("Giao thành công")]
-        FINISHED_DELIVERY = 5,
-       
+        
+        
 
     }
 

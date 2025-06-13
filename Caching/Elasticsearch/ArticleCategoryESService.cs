@@ -12,19 +12,17 @@ using Utilities;
 
 namespace HuloToys_Service.ElasticSearch
 {
-    public class ArticleCategoryESService : ESRepository<ArticleCategoryESModel>
+    public class ArticleCategoryESService 
     {
         public string index = "hulotoys_mongodb_product";
-        private static string _ElasticHost;
         private static IConfiguration configuration;
         private readonly ElasticClient _client;
 
-        public ArticleCategoryESService(string Host, IConfiguration _configuration) : base(Host)
+        public ArticleCategoryESService(IConfiguration _configuration) 
         {
-            _ElasticHost = Host;
             configuration = _configuration;
             index = _configuration["DataBaseConfig:Elastic:Index:ArticleCategory"];
-            var settings = new ConnectionSettings(new Uri(_ElasticHost))
+            var settings = new ConnectionSettings(new Uri(configuration["DataBaseConfig:Elastic:Host"]))
                 .DefaultIndex(index);
             _client = new ElasticClient(settings);
         }

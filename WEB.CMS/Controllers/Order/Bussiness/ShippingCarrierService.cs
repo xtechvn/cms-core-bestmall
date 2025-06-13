@@ -15,11 +15,11 @@ namespace WEB.CMS.Controllers.Order.Bussiness
         private readonly NinjaVanCarrierService ninjaVanCarrierService;
         private readonly OrderMongodbService orderMongodbService;
 
-        public ShippingCarrierService(IConfiguration configuration, RedisConn redisConn)
+        public ShippingCarrierService(IConfiguration configuration, RedisConn redisConn, LocationESService locationESService)
         {
             _configuration = configuration;
             _redisConn = redisConn;
-            ninjaVanCarrierService=new NinjaVanCarrierService(configuration, _redisConn);
+            ninjaVanCarrierService=new NinjaVanCarrierService(configuration, _redisConn, locationESService);
             orderMongodbService = new OrderMongodbService(configuration);
         }
         public async Task<string> PushOrderToCarrier(Entities.Models.Order order,Client client)

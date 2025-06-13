@@ -14,6 +14,9 @@ using WEB.Adavigo.CMS.Service;
 using WEB.CMS.Customize;
 using WEB.CMS.Models;
 using Newtonsoft.Json;
+using Entities.ViewModels.SupplierConfig;
+using Caching.Elasticsearch;
+using Entities.ViewModels.ElasticSearch;
 
 namespace WEB.CMS.Controllers.Funding
 {
@@ -33,11 +36,14 @@ namespace WEB.CMS.Controllers.Funding
         private readonly WEB.CMS.Models.AppSettings config;
         private readonly IConfiguration _configuration;
         private readonly IPaymentRequestRepository _paymentRequestRepository;
+        private readonly ISupplierRepository _supplierRepository;
+        private readonly IBankingAccountRepository _bankingAccountRepository;
+        private readonly ClientESRepository clientESRepository;
 
         public ReceiptController(IContractPayRepository contractPayRepository, IAllCodeRepository allCodeRepository, IWebHostEnvironment hostEnvironment,
           IClientRepository clientRepository, IDepositHistoryRepository depositHistoryRepository, IOrderRepository orderRepository, ManagementUser ManagementUser,
            IUserRepository userRepository, IIdentifierServiceRepository _identifierServiceRepository, IPaymentRequestRepository paymentRequestRepository,
-           IConfiguration configuration)
+           IConfiguration configuration, ISupplierRepository supplierRepository, IBankingAccountRepository bankingAccountRepository, ClientESRepository _clientESRepository)
         {
 
             _WebHostEnvironment = hostEnvironment;
@@ -53,6 +59,9 @@ namespace WEB.CMS.Controllers.Funding
             _paymentRequestRepository = paymentRequestRepository;
 
             _configuration = configuration;
+            _supplierRepository = supplierRepository;
+            _bankingAccountRepository = bankingAccountRepository;
+            clientESRepository = _clientESRepository;
             config = ReadFile.LoadConfig();
         }
         public IActionResult Index()
@@ -579,31 +588,30 @@ namespace WEB.CMS.Controllers.Funding
             }
         }
 
-        //[HttpPost]
-        //public async Task<IActionResult> GetListBankAccountAdavigo()
-        //{
-        //    try
-        //    {
-        //        var supplierAdavigoId = _supplierRepository.GetByIDOrName(0, "adavigo");
-        //        var listBankAccount = _allCodeRepository.GetBankingAccountsBySupplierId(supplierAdavigoId);
-        //        return Ok(new
-        //        {
-        //            isSuccess = true,
-        //            message = "Thành công",
-        //            data = listBankAccount
-        //        });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        LogHelper.InsertLogTelegram("GetListBankAccountAdavigo - ReceiptController: " + ex);
-        //        return Ok(new
-        //        {
-        //            isSuccess = false,
-        //            message = "Thất bại",
-        //            data = new List<BankingAccount>()
-        //        });
-        //    }
-        //}
+        [HttpPost]
+        public async Task<IActionResult> GetListBankAccountCurrentProvider()
+        {
+            try
+            {
+                var listBankAccount = _allCodeRepository.GetBankingAccountsBySupplierId(0);
+                return Ok(new
+                {
+                    isSuccess = true,
+                    message = "Thành công",
+                    data = listBankAccount
+                });
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("GetListBankAccountAdavigo - ReceiptController: " + ex);
+                return Ok(new
+                {
+                    isSuccess = false,
+                    message = "Thất bại",
+                    data = new List<BankingAccount>()
+                });
+            }
+        }
 
         [HttpPost]
         public async Task<IActionResult> GetListServiceFilter(string jsonData, string text = null)
@@ -765,5 +773,77 @@ namespace WEB.CMS.Controllers.Funding
                 });
             }
         }
+        public async Task<string> GetSuppliersSuggest(string name)
+        {
+            try
+            {
+                var supplierList = await _supplierRepository.GetSuggestionList(name);
+                var suggestionlist = supplierList.Select(s => new SupplierViewModel
+                {
+                    id = s.SupplierId,
+                    fullname = s.FullName,
+                    Email = s.Email,
+                    Phone = s.Phone,
+                }).ToList();
+                return JsonConvert.SerializeObject(suggestionlist);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("GetSuppliersSuggest - PaymentRequestController: " + ex + ". Đã có lỗi xảy ra");
+                return null;
+            }
+        }
+        public async Task<string> GetUserSuggestionList(string name)
+        {
+            try
+            {
+                var userlist = await _userRepository.GetUserSuggestionList(name);
+                var current_user = _ManagementUser.GetCurrentUser();
+                if (current_user != null && !string.IsNullOrEmpty(current_user.UserUnderList))
+                {
+                    var listUserId = current_user.UserUnderList.Split(',').Select(n => int.Parse(n)).ToList();
+                    if (listUserId.Count > 0)
+                        userlist = userlist.Where(n => listUserId.Contains(n.Id)).ToList();
+                }
+                var suggestionlist = userlist.Select(s => new
+                {
+                    id = s.Id,
+                    name = s.UserName,
+                    fullname = s.FullName,
+                    email = s.Email
+                }).ToList();
+                return JsonConvert.SerializeObject(suggestionlist);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("GetUserSuggestionList - PaymentRequestController: " + ex + ". Đã có lỗi xảy ra");
+                return null;
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> GetListBankAccountByClientID(int clientId)
+        {
+            try
+            {
+                var listPayment = _bankingAccountRepository.GetBankAccountByClientId(clientId);
+                return Ok(new
+                {
+                    isSuccess = true,
+                    message = "Thành công",
+                    data = listPayment
+                });
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("GetListBankAccountBySupplierId - PaymentRequestController: " + ex + ". Đã có lỗi xảy ra");
+                return Ok(new
+                {
+                    isSuccess = false,
+                    message = "Thất bại",
+                    data = new List<SupplierPaymentViewModel>()
+                });
+            }
+        }
+       
     }
 }

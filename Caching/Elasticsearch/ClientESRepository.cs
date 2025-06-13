@@ -14,46 +14,51 @@ using Utilities;
 
 namespace Caching.Elasticsearch
 {
-    public class ClientESRepository : ESRepository<CustomerESViewModel>
+    public class ClientESRepository 
     {
-        public ClientESRepository(string Host) : base(Host) { }
+        public string index = "hulotoys_sp_getclient";
+        private readonly ElasticClient _client;
+
+        public ClientESRepository(IConfiguration configuration)  {
+
+            index = configuration["DataBaseConfig:Elastic:Index:Client"];
+            var settings = new ConnectionSettings(new Uri(configuration["DataBaseConfig:Elastic:Host"]))
+                 .DefaultIndex(index);
+            _client = new ElasticClient(settings);
+        }
 
 
-        public async Task<List<CustomerESViewModel>> GetClientSuggesstion(string txt_search, string index_name = "client_hulotoys_store")
+        public async Task<List<CustomerESViewModel>> GetClientSuggesstion(string txt_search)
         {
             List<CustomerESViewModel> result = new List<CustomerESViewModel>();
             try
             {
                 int top = 4000;
-                var nodes = new Uri[] { new Uri(_ElasticHost) };
-                var connectionPool = new StaticConnectionPool(nodes);
-                var connectionSettings = new ConnectionSettings(connectionPool).DisableDirectStreaming().DefaultIndex(index_name);
-                var elasticClient = new ElasticClient(connectionSettings);
+               
                 if (txt_search == null)
                 {
-                    var result_all = elasticClient.Search<CustomerESViewModel>(s => s
-                          .Index(index_name + (_company_type.Trim() == "0" ? "" : "_" + _company_type.Trim()))
+                    var result_all = _client.Search<object>(s => s
                           .Size(30)
                           .Query(q => q.MatchAll()
 
                            ));
-                    result = result_all.Documents as List<CustomerESViewModel>;
+                    var json = JsonConvert.SerializeObject(result_all.Documents);
+                    result = JsonConvert.DeserializeObject<List<CustomerESViewModel>>(json) ;
                     return result;
                 }
-                var search_response = elasticClient.Search<CustomerESViewModel>(s => s
-                          .Index(index_name)
+                var search_response = _client.Search<object>(s => s
                           .Size(top)
                           .Query(q =>
                             q.Bool(
                                 qb => qb.Should(
                                     sh => sh.QueryString(m => m
-                                    .DefaultField(f => f.phone)
+                                    .DefaultField("Phone")
                                     .Query("*" + txt_search + "*")),
                                     sh => sh.QueryString(m => m
-                                    .DefaultField(f => f.email)
+                                    .DefaultField("Email")
                                     .Query("*" + txt_search + "*")),
                                     sh => sh.QueryString(m => m
-                                    .DefaultField(f => f.clientname)
+                                    .DefaultField("ClientName")
                                     .Query("*" + txt_search + "*"))
 
                                 ))
@@ -65,7 +70,8 @@ namespace Caching.Elasticsearch
                 }
                 else
                 {
-                    result = search_response.Documents as List<CustomerESViewModel>;
+                    var json = JsonConvert.SerializeObject(search_response.Documents);
+                    result = JsonConvert.DeserializeObject<List<CustomerESViewModel>>(json);
                     return result;
                 }
             }
@@ -76,15 +82,12 @@ namespace Caching.Elasticsearch
 
         }
     
-        public int UpSert(ClientESViewModel entity, string index_name = "customer")
+        public int UpSert(ClientESViewModel entity)
         {
             try
             {
-                var nodes = new Uri[] { new Uri(_ElasticHost) };
-                var connectionPool = new StaticConnectionPool(nodes);
-                var connectionSettings = new ConnectionSettings(connectionPool).DisableDirectStreaming().DefaultIndex(index_name);
-                var elasticClient = new ElasticClient(connectionSettings);
-                var indexResponse = elasticClient.Index(new IndexRequest<ClientESViewModel>(entity, index_name + (_company_type.Trim() == "0" ? "" : "_" + _company_type.Trim())));
+
+                var indexResponse = _client.Index(new IndexRequest<ClientESViewModel>(entity,index));
 
                 if (!indexResponse.IsValid)
                 {

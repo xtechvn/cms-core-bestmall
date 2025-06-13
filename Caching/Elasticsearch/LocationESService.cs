@@ -6,22 +6,22 @@ using Entities.Models;
 using System.Collections.Generic;
 using System;
 using System.Linq;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Caching.Elasticsearch
 {
-    public class LocationESService : ESRepository<Province>
+    public class LocationESService
     {
         public string index_province = "provinces_store";
         public string index_district = "districts_store";
         public string index_wards = "wards_store";
+        public string _ElasticHost ;
         private readonly IConfiguration configuration;
-        private static string _ElasticHost;
 
-        public LocationESService(string Host, IConfiguration _configuration) : base(Host)
+        public LocationESService(IConfiguration _configuration)
         {
-            _ElasticHost = Host;
             configuration = _configuration;
-
+            _ElasticHost = configuration["DataBaseConfig:Elastic:Host"];
         }
         public List<Province> GetAllProvinces()
         {

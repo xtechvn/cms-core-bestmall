@@ -28,7 +28,6 @@ namespace Repositories.Repositories
         private readonly UserAgentDAL _UserAgentDAL;
         private readonly AccountClientDAL _AccountClientDAL;
         private readonly UserDAL _UserDAL;
-        private ClientESRepository _clientESRepository;
         private readonly IConfiguration _configuration;
         public CustomerManagerRepository(IConfiguration configuration, IOptions<DataBaseConfig> dataBaseConfig, IAllCodeRepository allCodeRepository)
         {
@@ -39,7 +38,6 @@ namespace Repositories.Repositories
             _UserAgentDAL = new UserAgentDAL(dataBaseConfig.Value.SqlServer.ConnectionString);
             _AccountClientDAL = new AccountClientDAL(dataBaseConfig.Value.SqlServer.ConnectionString);
             _UserDAL = new UserDAL(dataBaseConfig.Value.SqlServer.ConnectionString);
-            _clientESRepository = new ClientESRepository(_configuration["DataBaseConfig:Elastic:Host"]);
         }
 
         public int SetUpClient(CustomerManagerView model)

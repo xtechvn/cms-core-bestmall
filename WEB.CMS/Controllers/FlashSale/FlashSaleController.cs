@@ -41,7 +41,8 @@ namespace WEB.CMS.Controllers.FlashSale
         private readonly IFlashSaleProductRepository _flashSaleProductRepository;
         public FlashSaleController(IConfiguration configuration, RedisConn redisConn, IGroupProductRepository groupProductRepository, ILabelRepository labelRepository,
             ISupplierRepository supplierRepository, IAllCodeRepository allCodeRepository, IFlashSaleRepository flashSaleRepository, IFlashSaleProductRepository flashSaleProductRepository
-            , ProductDetailMongoAccess productV2DetailMongoAccess, ProductSpecificationMongoAccess productSpecificationMongoAccess)
+            , ProductDetailMongoAccess productV2DetailMongoAccess, ProductSpecificationMongoAccess productSpecificationMongoAccess,
+            ProductESRepository productESRepository, FlashSaleESRepository flashSaleESRepository, FlashSaleProductESRepository flashSaleProductESRepository)
         {
             _productV2DetailMongoAccess = productV2DetailMongoAccess;
             _productSpecificationMongoAccess = productSpecificationMongoAccess;
@@ -52,9 +53,9 @@ namespace WEB.CMS.Controllers.FlashSale
             db_index = Convert.ToInt32(configuration["Redis:Database:db_search_result"]);
             _configuration = configuration;
             productDetailService = new ProductDetailService(configuration,productV2DetailMongoAccess,productSpecificationMongoAccess);
-            _productESRepository = new ProductESRepository(_configuration["DataBaseConfig:Elastic:Host"], configuration);
-            _flashSaleESRepository = new FlashSaleESRepository(_configuration["DataBaseConfig:Elastic:Host"], configuration);
-            _flashSaleProductESRepository = new FlashSaleProductESRepository(_configuration["DataBaseConfig:Elastic:Host"], configuration);
+            _productESRepository = productESRepository;
+            _flashSaleESRepository = flashSaleESRepository;
+            _flashSaleProductESRepository = flashSaleProductESRepository;
             _labelRepository = labelRepository;
             _supplierRepository = supplierRepository;
             _allCodeRepository = allCodeRepository;

@@ -17,19 +17,17 @@ using Utilities.Contants;
 namespace Caching.Elasticsearch
 {
     
-    public class AttachFileESModelESRepository : ESRepository<AttachFileESModel>
+    public class AttachFileESModelESRepository
     {
         public string index = "hulotoys_sp_getattachfile";
-        private static string _ElasticHost;
         private static IConfiguration configuration;
         private readonly ElasticClient _client;
 
-        public AttachFileESModelESRepository(string Host, IConfiguration _configuration) : base(Host)
+        public AttachFileESModelESRepository(IConfiguration _configuration)
         {
-            _ElasticHost = Host;
             configuration = _configuration;
             index = _configuration["DataBaseConfig:Elastic:Index:AttachFile"];
-            var settings = new ConnectionSettings(new Uri(_ElasticHost))
+            var settings = new ConnectionSettings(new Uri(configuration["DataBaseConfig:Elastic:Host"]))
                 .DefaultIndex(index);
             _client = new ElasticClient(settings);
         }

@@ -516,10 +516,9 @@ namespace DAL
                             return -1;
                         }
                         //nếu thanh toán đủ thì cập nhật trạng thái của đơn hàng - Đơn hàng đã thanh toán
-                        var status = (int)OrderStatus.WAITING_FOR_OPERATOR;
+                        var status = (int)OrderStatus.PAID;
                         var orderInfo = orderDAL.GetDetailOrderByOrderId(item.OrderId).Result;
-                        if (orderInfo != null && orderInfo.OrderStatus != (int)OrderStatus.CREATED_ORDER
-                             && orderInfo.OrderStatus != (int)OrderStatus.CONFIRMED_SALE)
+                        if (orderInfo != null && orderInfo.OrderStatus != (int)OrderStatus.CREATED_ORDER)
                         {
                             status = orderInfo.OrderStatus.Value;
                         }
@@ -726,10 +725,9 @@ namespace DAL
                     }
 
                     //nếu thanh toán đủ thì cập nhật trạng thái của đơn hàng - Đơn hàng đã thanh toán
-                    var status = (int)OrderStatus.WAITING_FOR_OPERATOR;
+                    var status = (int)OrderStatus.PAID;
                     var orderInfo = orderDAL.GetDetailOrderByOrderId(item.OrderId).Result;
-                    if (orderInfo != null && orderInfo.OrderStatus != (int)OrderStatus.CREATED_ORDER
-                         && orderInfo.OrderStatus != (int)OrderStatus.CONFIRMED_SALE)
+                    if (orderInfo != null && orderInfo.OrderStatus != (int)OrderStatus.CREATED_ORDER)
                     {
                         status = orderInfo.OrderStatus.Value;
                     }
@@ -977,7 +975,7 @@ namespace DAL
                     objParam_updateFinishPayment[2] = new SqlParameter("@PaymentStatus", paymentStatus);
                     objParam_updateFinishPayment[3] = new SqlParameter("@DebtStatus", Convert.ToInt32(debtStatus));
                     objParam_updateFinishPayment[4] = new SqlParameter("@Status", orderInfo.OrderStatus == (int)OrderStatus.CREATED_ORDER ?
-                        (int)OrderStatus.WAITING_FOR_OPERATOR : Convert.ToInt32(orderInfo.OrderStatus));
+                        (int)OrderStatus.PAID : Convert.ToInt32(orderInfo.OrderStatus));
                     _DbWorker.ExecuteNonQuery(StoreProcedureConstant.SP_UpdateOrderFinishPayment, objParam_updateFinishPayment);
 
                     SqlParameter[] objParam_UpdateContractPayDebtStatus = new SqlParameter[3];

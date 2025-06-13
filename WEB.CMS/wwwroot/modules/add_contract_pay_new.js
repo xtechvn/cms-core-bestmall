@@ -35,7 +35,7 @@ var _contract_pay_create_new = {
             searchingText: "Đang tìm kiếm...",
             maximumSelectionLength: 1,
             ajax: {
-                url: "/CustomerManager/ClientSuggestion",
+                url: "/client/ClientSuggestion",
                 type: "post",
                 dataType: 'json',
                 delay: 250,
@@ -49,7 +49,7 @@ var _contract_pay_create_new = {
                     return {
                         results: $.map(response.data, function (item) {
                             return {
-                                text: item.clientname + ' - ' + item.email + ' - ' + item.phone,
+                                text: item.clientName + ' - ' + item.email + ' - ' + item.phone,
                                 id: item.id,
                             }
                         })
@@ -144,7 +144,7 @@ var _contract_pay_create_new = {
                     return {
                         results: $.map(response.data, function (item) {
                             return {
-                                text: item.orderCode,
+                                text: item.orderNo,
                                 id: item.orderId,
                             }
                         })
@@ -217,6 +217,12 @@ var _contract_pay_create_new = {
                 cache: true
             }
         });
+        if (is_admin == true) {
+            $("#client-select").on('change', function () {
+                _contract_pay_create_new.GetDataByClientId()
+            })
+        }
+    
     },
     FormatNumber: function () {
         var amount = $('#amount').val()
@@ -246,19 +252,19 @@ var _contract_pay_create_new = {
         var totalAmount = 0
         for (var i = 0; i < listContractPayDetail.length; i++) {
             if (listContractPayDetail[i].orderId == orderId) {
-                var amount_input = parseFloat($('#amount_order_' + listContractPayDetail[i].orderCode).val().replaceAll('.', '').replaceAll(',', ''))
+                var amount_input = parseFloat($('#amount_order_' + listContractPayDetail[i].orderNo).val().replaceAll('.', '').replaceAll(',', ''))
                 listContractPayDetail[i].amount = amount_input
                 if (amount_input > listContractPayDetail[i].totalNeedPayment)
                     listContractPayDetail[i].amount = listContractPayDetail[i].totalNeedPayment
             }
             if (listContractPayDetail[i].amount !== undefined && listContractPayDetail[i].amount !== null
                 && listContractPayDetail[i].amount) {
-                var checked = $('#order_ckb_' + listContractPayDetail[i].orderCode).is(":checked")
+                var checked = $('#order_ckb_' + listContractPayDetail[i].orderNo).is(":checked")
                 if (checked) {
                     totalAmount += listContractPayDetail[i].amount
                 }
                 if (i == index) {
-                    $('#amount_order_' + listContractPayDetail[i].orderCode).val(_contract_pay_create_new.FormatNumberStr(listContractPayDetail[i].amount))
+                    $('#amount_order_' + listContractPayDetail[i].orderNo).val(_contract_pay_create_new.FormatNumberStr(listContractPayDetail[i].amount))
                 }
             }
         }
@@ -286,12 +292,12 @@ var _contract_pay_create_new = {
         var contract_type = $('#contract-type').val()
         if (contract_type !== null && contract_type !== '' && parseInt(contract_type) == contractpay_type_other) return
         if (clientId == null || clientId == undefined || clientId == '') {
-            var clientId = $('#client-select').val()[0]
+            var clientId = $('#client-select').val() != null ? $('#client-select').val()[0]:0
             //if (client !== null && client !== undefined && client !== '') {
             //    clientId = client[0]
             //}
         }
-        /*_contract_pay_create_new.GetListBankAccountAdavigo()*/
+        _contract_pay_create_new.GetListBankAccountCurrentProvider()
         if (contract_type === '1') {
             _contract_pay_create_new.GetOrderListByClientId(clientId, isEdit);
         }
@@ -307,9 +313,10 @@ var _contract_pay_create_new = {
                 supplierId = supplier[0]
             }
         }
-        _contract_pay_create_new.GetListBankAccountAdavigo(supplierId)
+        _contract_pay_create_new.GetListBankAccountCurrentProvider(supplierId)
         if (contract_type !== null && contract_type !== '' && parseInt(contract_type) == contractpay_type_other) return
         if (parseInt(contract_type) === 3) {
+
             _contract_pay_create_new.GetServiceListBySupplierId(supplierId, isEdit);
         }
         if (parseInt(contract_type) === 4) {
@@ -422,6 +429,7 @@ var _contract_pay_create_new = {
                 _contract_pay_create_new.OnCheckBoxService();
             }, 1000)
         }
+        _contract_pay_create_new.AddItemToInputserviceCodeCommissionFilter(result.data);
     },
     GenderSupplierCommissionTable: function (result, isEdit) {
         var totalAmount = 0
@@ -447,7 +455,7 @@ var _contract_pay_create_new = {
                 "<tr id='service_" + i + "'>" +
                 "<td>" +
                 "<label class='check-list number'>" +
-                " <input type='checkbox' id='service_ckb_" + result.data[i].serviceCode + "' name='service_ckb' onclick='_contract_pay_create_new.OnCheckBoxService(" + i + ");'>" +
+                " <input type='checkbox' id='service_ckb_" + result.data[i].serviceCode + "' name='service_ckb' onclick='_contract_pay_create_new.OnCheckBoxService(" + i + ");scroll(0, 0);'>" +
                 " <span class='checkmark'></span>" + (i + 1) +
                 "  </label>" +
                 "<td>" +
@@ -530,20 +538,20 @@ var _contract_pay_create_new = {
                         "<tr id='order_" + i + "'>" +
                         "<td>" +
                         "<label class='check-list number'>" +
-                        " <input type='checkbox'  id='order_ckb_" + result.data[i].orderCode + "' name='order_ckb' onclick='_contract_pay_create_new.OnCheckBox(" + i + ");_contract_pay_create_new.AddToListDetail(" + i + ")'>" +
+                        " <input type='checkbox' id='order_ckb_" + result.data[i].orderNo + "' name='order_ckb' onclick='_contract_pay_create_new.OnCheckBox(" + i + ");_contract_pay_create_new.AddToListDetail(" + i + ")'>" +
                         " <span class='checkmark'></span>" + (i + 1) +
                         "  </label>" +
                         "<td>" +
-                        " <a class='blue' href='/Order/Orderdetails?id=" + result.data[i].orderId + "'> " + result.data[i].orderCode + " </a>"
+                        " <a class='blue' href='/Order/Orderdetails?id=" + result.data[i].orderId + "'> " + result.data[i].orderNo + " </a>"
                         + "</td>" +
-           
+                        //"<td>" + result.data[i].startDate + " - " + result.data[i].endDate + "</td>" +
                         "<td style='color:#FF9900;'>" + result.data[i].orderStatus + "</td>" +
                         "<td  >" + result.data[i].salerName + "</td>" +
-                        "<td >" + _global_function.DateTimeDotNetToString( result.data[i].createdDate)+ "</td>" +
+                        "<td >" + _global_function.GetDayText(new Date(result.data[i].createdDate)) + "</td>" +
                         "<td class='text-right' >" + _contract_pay_create_new.FormatNumberStr(result.data[i].totalAmount) + "</td>" +
                         "<td class='text-right' >" + _contract_pay_create_new.FormatNumberStr(result.data[i].totalDisarmed) + "</td>" +
                         "<td class='text-right'>" + _contract_pay_create_new.FormatNumberStr(result.data[i].totalNeedPayment) + "</td>" +
-                        "<td class='text-right' >" + "<input type='text' class='form-control' id='amount_order_" + result.data[i].orderCode + "' class='background-disabled text-right' maxlength='15'  autocomplete='off' style='min-width: 100px;' disabled  onkeyup='_contract_pay_create_new.FormatNumberOrder(" + result.data[i].orderCode + ");' onchange='_contract_pay_create_new.UpdateAmount(" + i + "," + result.data[i].orderId + ")' >" + "</td>" +
+                        "<td class='text-right' >" + "<input type='text' id='amount_order_" + result.data[i].orderNo + "' class='form-control background-disabled text-right' maxlength='15'  autocomplete='off' style='min-width: 100px;' disabled  onkeyup='_contract_pay_create_new.FormatNumberOrder(" + result.data[i].orderNo + ");' onchange='_contract_pay_create_new.UpdateAmount(" + i + "," + result.data[i].orderId + ")' >" + "</td>" +
                         "</tr>"
                     );
                     totalAmount += result.data[i].totalAmount
@@ -551,20 +559,20 @@ var _contract_pay_create_new = {
                     totalNeedPayment += result.data[i].totalNeedPayment
                     if (isEdit) {
                         totalPayment += result.data[i].payment
-                        let index = result.data[i].orderCode
+                        let index = result.data[i].orderNo
                         let payment = result.data[i].payment
                         setTimeout(function () {
                             $('#amount_order_' + index).val(_contract_pay_create_new.FormatNumberStr(payment))
                         }, 1000)
                     }
                     if (result.data[i].isChecked) {
-                        let index = result.data[i].orderCode
+                        let index = result.data[i].orderNo
                         setTimeout(function () {
                             $('#order_ckb_' + index).prop('checked', true)
                         }, 1000)
                     }
                     if (result.data[i].isDisabled) {
-                        let index = result.data[i].orderCode
+                        let index = result.data[i].orderNo
                         setTimeout(function () {
                             $('#order_ckb_' + index).attr('disabled', true)
                             $('#amount_order_' + index).attr('disabled', true)
@@ -599,7 +607,7 @@ var _contract_pay_create_new = {
             $('#amount_order_' + orderCodeInput).attr('disabled', false)
             $('#amount_order_' + orderCodeInput).removeClass('background-disabled')
             for (var i = 0; i < listContractPayDetail.length; i++) {
-                if (listContractPayDetail[i].orderCode === orderCodeInput) {
+                if (listContractPayDetail[i].orderNo === orderCodeInput) {
                     $('#amount_order_' + orderCodeInput).val(_contract_pay_create_new.FormatNumberStr(listContractPayDetail[i].totalNeedPayment))
                     $('#amount').val(_contract_pay_create_new.FormatNumberStr(listContractPayDetail[i].totalNeedPayment))
                     $('#total_amount_need_pay').html(_contract_pay_create_new.FormatNumberStr(listContractPayDetail[i].totalNeedPayment))
@@ -705,11 +713,11 @@ var _contract_pay_create_new = {
         if (contract_type !== null && contract_type !== '' && parseInt(contract_type) == contractpay_type_order) { // thu tiền đơn hàng
             var totalInputAmount = 0
             for (var i = 0; i < listContractPayDetail.length; i++) {
-                var checked = $('#order_ckb_' + listContractPayDetail[i].orderCode).is(":checked")
+                var checked = $('#order_ckb_' + listContractPayDetail[i].orderNo).is(":checked")
                 if (checked) {
                     totalInputAmount += listContractPayDetail[i].amount
                     if (listContractPayDetail[i].amount === 0 && listContractPayDetail[i].totalNeedPayment > 0 && !is_admin) {
-                        _msgalert.error('Vui lòng nhập số tiền giải trừ lớn hơn 0 cho đơn hàng: ' + listContractPayDetail[i].orderCode);
+                        _msgalert.error('Vui lòng nhập số tiền giải trừ lớn hơn 0 cho đơn hàng: ' + listContractPayDetail[i].orderNo);
                         return false;
                     }
                     flag = true
@@ -810,7 +818,7 @@ var _contract_pay_create_new = {
         if (contract_type !== null && contract_type !== '' && parseInt(contract_type) == contractpay_type_order) { // thu tiền đơn hàng
             contractPayDetails = []
             for (var i = 0; i < listContractPayDetail.length; i++) {
-                var checked = $('#order_ckb_' + listContractPayDetail[i].orderCode).is(":checked")
+                var checked = $('#order_ckb_' + listContractPayDetail[i].orderNo).is(":checked")
 
                 if (checked) {
                     if (listContractPayDetail[i].amount == null || isNaN(listContractPayDetail[i].amount))
@@ -1051,7 +1059,7 @@ var _contract_pay_create_new = {
             if (client_id !== null && client_id !== undefined && client_id !== '') {
                 _contract_pay_create_new.GetDataByClientId(client_id, true)
             }
-            _contract_pay_create_new.GetListBankAccountAdavigo()
+            _contract_pay_create_new.GetListBankAccountCurrentProvider()
         }
         if (contract_type !== null && contract_type !== '' && parseInt(contract_type) == contractpay_type_deposit) {//thu tiền ký quỹ
             setTimeout(function () {
@@ -1075,7 +1083,7 @@ var _contract_pay_create_new = {
             if (client_id !== null && client_id !== undefined && client_id !== '') {
                 _contract_pay_create_new.GetDataByClientId(client_id, true)
             }
-            _contract_pay_create_new.GetListBankAccountAdavigo()
+            _contract_pay_create_new.GetListBankAccountCurrentProvider()
         }
         if (contract_type !== null && contract_type !== '' && parseInt(contract_type) == contractpay_type_supplier_refund) {//thu tiền NCC hoàn trả
             $('#divSupplier').show()
@@ -1096,10 +1104,12 @@ var _contract_pay_create_new = {
                 var newOption = new Option($('#supplier_name_hide').val(), supplierId, true, true);
                 $('#supplier-select').append(newOption).trigger('change');
             }, 500)
-            _contract_pay_create_new.GetListBankAccountAdavigo(supplierId)
+            _contract_pay_create_new.GetListBankAccountCurrentProvider(supplierId)
             if (supplierId !== null && supplierId !== undefined && supplierId !== '') {
                 _contract_pay_create_new.GetServiceListBySupplierId(supplierId, true)
             }
+            $('#amount').attr('disabled', false)
+            $('#amount').removeClass('background-disabled')
         }
         if (contract_type !== null && contract_type !== '' && parseInt(contract_type) == contractpay_type_supplier_commision) {//thu tiền hoa hồng NCC
             $('#divSupplier').show()
@@ -1120,10 +1130,12 @@ var _contract_pay_create_new = {
                 var newOption = new Option($('#supplier_name_hide').val(), supplierId, true, true);
                 $('#supplier-select').append(newOption).trigger('change');
             }, 500)
-            _contract_pay_create_new.GetListBankAccountAdavigo(supplierId)
+            _contract_pay_create_new.GetListBankAccountCurrentProvider(supplierId)
             if (supplierId !== null && supplierId !== undefined && supplierId !== '') {
                 _contract_pay_create_new.GetServiceListBySupplierId(supplierId, true, true)
             }
+            $('#amount').attr('disabled', false)
+            $('#amount').removeClass('background-disabled')
         }
         if (contract_type !== null && contract_type !== '' && parseInt(contract_type) == contractpay_type_other) {//thu tiền khác
             $('#order-relate').hide()
@@ -1153,7 +1165,7 @@ var _contract_pay_create_new = {
                     var newOption = new Option($('#client_name_hide').val(), client_id, true, true);
                     $('#client-select').append(newOption).trigger('change');
                 }, 500)
-                _contract_pay_create_new.GetListBankAccountAdavigo(client_id)
+                _contract_pay_create_new.GetListBankAccountCurrentProvider(client_id)
             }
             if (objectType == 2) {
                 $('#divSupplier').show()
@@ -1163,7 +1175,7 @@ var _contract_pay_create_new = {
                     var newOption = new Option($('#supplier_name_hide').val(), supplierId, true, true);
                     $('#supplier-select').append(newOption).trigger('change');
                 }, 500)
-                _contract_pay_create_new.GetListBankAccountAdavigo(supplierId)
+                _contract_pay_create_new.GetListBankAccountCurrentProvider(supplierId)
             }
             if (objectType == 3) {
                 $('#divEmployee').show()
@@ -1173,7 +1185,7 @@ var _contract_pay_create_new = {
                     var newOption = new Option($('#employee_name_hide').val(), employeeId, true, true);
                     $('#createdBy').append(newOption).trigger('change');
                 }, 500)
-                _contract_pay_create_new.GetListBankAccountAdavigo()
+                _contract_pay_create_new.GetListBankAccountCurrentProvider()
             }
 
         }
@@ -1194,7 +1206,7 @@ var _contract_pay_create_new = {
         if (contract_type !== null && contract_type !== '' && parseInt(contract_type) == contractpay_type_order) { // thu tiền đơn hàng
             contractPayDetails = []
             for (var i = 0; i < listContractPayDetail.length; i++) {
-                var checked = $('#order_ckb_' + listContractPayDetail[i].orderCode).is(":checked")
+                var checked = $('#order_ckb_' + listContractPayDetail[i].orderNo).is(":checked")
                 if (checked) {
                     if (listContractPayDetail[i].amount == null || isNaN(listContractPayDetail[i].amount))
                         listContractPayDetail[i].amount = 0
@@ -1279,7 +1291,7 @@ var _contract_pay_create_new = {
             var contract_type = $('#contract-type').val()
             if (contract_type !== null && contract_type !== '' && (parseInt(contract_type) == contractpay_type_order
                 || parseInt(contract_type) == contractpay_type_deposit)) {
-                _contract_pay_create_new.GetListBankAccountAdavigo()
+                _contract_pay_create_new.GetListBankAccountCurrentProvider()
             }
             //if (contract_type !== null && contract_type !== '' && (parseInt(contract_type) == contractpay_type_supplier_commision
             //    || parseInt(contract_type) == contractpay_type_supplier_refund)) {
@@ -1309,7 +1321,7 @@ var _contract_pay_create_new = {
             for (var i = 0; i < listContractPayDetail.length; i++) {
                 if (listContractPayDetail[i].isDisabled)
                     continue
-                var checked = $('#order_ckb_' + listContractPayDetail[i].orderCode).is(":checked")
+                var checked = $('#order_ckb_' + listContractPayDetail[i].orderNo).is(":checked")
                 if (checked) {
                     totalNeedPaymentOrder += listContractPayDetail[i].totalNeedPayment
                 }
@@ -1324,10 +1336,10 @@ var _contract_pay_create_new = {
                         _msgalert.error('Vui lòng nhập số tiền');
                         $("#orderCodeFilter").empty()
                         for (var i = 0; i < listContractPayDetail.length; i++) {
-                            $('#order_ckb_' + listContractPayDetail[i].orderCode).attr("checked", false)
-                            $('#amount_order_' + listContractPayDetail[i].orderCode).attr('disabled', true)
-                            $('#amount_order_' + listContractPayDetail[i].orderCode).addClass('background-disabled')
-                            $('#amount_order_' + listContractPayDetail[i].orderCode).val('')
+                            $('#order_ckb_' + listContractPayDetail[i].orderNo).attr("checked", false)
+                            $('#amount_order_' + listContractPayDetail[i].orderNo).attr('disabled', true)
+                            $('#amount_order_' + listContractPayDetail[i].orderNo).addClass('background-disabled')
+                            $('#amount_order_' + listContractPayDetail[i].orderNo).val('')
                         }
                         return
                     }
@@ -1337,10 +1349,10 @@ var _contract_pay_create_new = {
             for (var i = 0; i < listContractPayDetail.length; i++) {
                 if (listContractPayDetail[i].amount !== undefined && listContractPayDetail[i].amount !== null
                     && listContractPayDetail[i].amount) {
-                    var checked = $('#order_ckb_' + listContractPayDetail[i].orderCode).is(":checked")
-                    if (checked && $('#amount_order_' + listContractPayDetail[i].orderCode).val() !== undefined && $('#amount_order_' + listContractPayDetail[i].orderCode).val() !== null
-                        && $('#amount_order_' + listContractPayDetail[i].orderCode).val() !== '') {
-                        totalAmount += parseFloat($('#amount_order_' + listContractPayDetail[i].orderCode).val().replaceAll('.', '').replaceAll(',', ''))
+                    var checked = $('#order_ckb_' + listContractPayDetail[i].orderNo).is(":checked")
+                    if (checked && $('#amount_order_' + listContractPayDetail[i].orderNo).val() !== undefined && $('#amount_order_' + listContractPayDetail[i].orderNo).val() !== null
+                        && $('#amount_order_' + listContractPayDetail[i].orderNo).val() !== '') {
+                        totalAmount += parseFloat($('#amount_order_' + listContractPayDetail[i].orderNo).val().replaceAll('.', '').replaceAll(',', ''))
                     }
                 }
             }
@@ -1349,34 +1361,34 @@ var _contract_pay_create_new = {
             for (var i = 0; i < listContractPayDetail.length; i++) {
                 if (listContractPayDetail[i].isDisabled)
                     continue
-                var checked = $('#order_ckb_' + listContractPayDetail[i].orderCode).is(":checked")
+                var checked = $('#order_ckb_' + listContractPayDetail[i].orderNo).is(":checked")
                 if (checked) {
                     let isSuccess = true
-                    $('#amount_order_' + listContractPayDetail[i].orderCode).attr('disabled', false)
-                    $('#amount_order_' + listContractPayDetail[i].orderCode).removeClass('background-disabled')
-                    var amount = $('#amount_order_' + listContractPayDetail[i].orderCode).val()
+                    $('#amount_order_' + listContractPayDetail[i].orderNo).attr('disabled', false)
+                    $('#amount_order_' + listContractPayDetail[i].orderNo).removeClass('background-disabled')
+                    var amount = $('#amount_order_' + listContractPayDetail[i].orderNo).val()
                     if (amount === null || amount === undefined || amount === '' || parseInt(amount) === 0) {
                         var totalNeedPayment = Math.min((amount_contract - totalAmount), listContractPayDetail[i].totalNeedPayment)
                         if (totalNeedPayment <= 0) {
-                            $('#order_ckb_' + listContractPayDetail[i].orderCode).attr("checked", false)
-                            $('#amount_order_' + listContractPayDetail[i].orderCode).attr('disabled', true)
-                            $('#amount_order_' + listContractPayDetail[i].orderCode).addClass('background-disabled')
-                            $('#amount_order_' + listContractPayDetail[i].orderCode).val('')
+                            $('#order_ckb_' + listContractPayDetail[i].orderNo).attr("checked", false)
+                            $('#amount_order_' + listContractPayDetail[i].orderNo).attr('disabled', true)
+                            $('#amount_order_' + listContractPayDetail[i].orderNo).addClass('background-disabled')
+                            $('#amount_order_' + listContractPayDetail[i].orderNo).val('')
                             if (!is_admin) {
                                 _msgalert.error('Tổng tiền cần giải trừ đã bằng số tiền phiếu thu');
                             }
                             isSuccess = false
                         } else {
-                            $('#amount_order_' + listContractPayDetail[i].orderCode).val(_contract_pay_create_new.FormatNumberStr(totalNeedPayment))
+                            $('#amount_order_' + listContractPayDetail[i].orderNo).val(_contract_pay_create_new.FormatNumberStr(totalNeedPayment))
                             _contract_pay_create_new.UpdateAmount(i, listContractPayDetail[i].orderId)
                         }
                     }
                     if (isSuccess)
                         listContractPayDetail[i].isChecked = true
                 } else {
-                    $('#amount_order_' + listContractPayDetail[i].orderCode).attr('disabled', true)
-                    $('#amount_order_' + listContractPayDetail[i].orderCode).addClass('background-disabled')
-                    $('#amount_order_' + listContractPayDetail[i].orderCode).val('')
+                    $('#amount_order_' + listContractPayDetail[i].orderNo).attr('disabled', true)
+                    $('#amount_order_' + listContractPayDetail[i].orderNo).addClass('background-disabled')
+                    $('#amount_order_' + listContractPayDetail[i].orderNo).val('')
                 }
             }
         }
@@ -1393,7 +1405,9 @@ var _contract_pay_create_new = {
                 if (listServiceRefundDetail[i].isDisabled)
                     continue
                 var checked = $('#service_ckb_' + listServiceRefundDetail[i].serviceCode).is(":checked")
-                if (checked) {
+                if (checked || listServiceRefundDetail[i].isChecked) {
+
+                    listServiceRefundDetail[i].isChecked = true
                     $('#amount_service_' + listServiceRefundDetail[i].serviceCode).attr('disabled', false)
                     $('#amount_service_' + listServiceRefundDetail[i].serviceCode).removeClass('background-disabled')
                     var amount = $('#amount_service_' + listServiceRefundDetail[i].serviceCode).val().replaceAll('.', '').replaceAll(',', '')
@@ -1406,6 +1420,7 @@ var _contract_pay_create_new = {
                         listServiceRefundDetail[i].amount = parseFloat(amount)
                     }
                 } else {
+                    listServiceRefundDetail[i].isChecked = false
                     $('#amount_service_' + listServiceRefundDetail[i].serviceCode).attr('disabled', true)
                     $('#amount_service_' + listServiceRefundDetail[i].serviceCode).addClass('background-disabled')
                     $('#amount_service_' + listServiceRefundDetail[i].serviceCode).val('')
@@ -1414,6 +1429,8 @@ var _contract_pay_create_new = {
         }
         $('#amount').val(_contract_pay_create_new.FormatNumberStr(totalAmountServiceInput))
         $('#total_amount_need_pay').html(_contract_pay_create_new.FormatNumberStr(totalAmountServiceInput))
+        _contract_pay_create_new.AddItemToInputserviceCodeCommissionFilter(listServiceRefundDetail)
+        _contract_pay_create_new.GenderSupplierCommissionTable2(listServiceRefundDetail, isEdit, true)
     },
     OnRadioButton: function (index) {
         var contract_type = $('#contract-type').val()
@@ -1421,16 +1438,16 @@ var _contract_pay_create_new = {
             for (var i = 0; i < listContractPayDetail.length; i++) {
                 var checked = $('#order_radio_' + i).is(":checked")
                 if (checked) {
-                    $('#amount_order_' + listContractPayDetail[i].orderCode).attr('disabled', false)
-                    $('#amount_order_' + listContractPayDetail[i].orderCode).removeClass('background-disabled')
-                    var amount = $('#amount_order_' + listContractPayDetail[i].orderCode).val()
+                    $('#amount_order_' + listContractPayDetail[i].orderNo).attr('disabled', false)
+                    $('#amount_order_' + listContractPayDetail[i].orderNo).removeClass('background-disabled')
+                    var amount = $('#amount_order_' + listContractPayDetail[i].orderNo).val()
                     if (amount === null || amount === undefined || amount === '' || parseInt(amount) === 0) {
-                        $('#amount_order_' + listContractPayDetail[i].orderCode).val(_contract_pay_create_new.FormatNumberStr(listContractPayDetail[i].totalNeedPayment))
+                        $('#amount_order_' + listContractPayDetail[i].orderNo).val(_contract_pay_create_new.FormatNumberStr(listContractPayDetail[i].totalNeedPayment))
                     }
                 } else {
-                    $('#amount_order_' + listContractPayDetail[i].orderCode).attr('disabled', true)
-                    $('#amount_order_' + listContractPayDetail[i].orderCode).addClass('background-disabled')
-                    $('#amount_order_' + listContractPayDetail[i].orderCode).val('')
+                    $('#amount_order_' + listContractPayDetail[i].orderNo).attr('disabled', true)
+                    $('#amount_order_' + listContractPayDetail[i].orderNo).addClass('background-disabled')
+                    $('#amount_order_' + listContractPayDetail[i].orderNo).val('')
                 }
             }
         }
@@ -1441,9 +1458,9 @@ var _contract_pay_create_new = {
         for (var i = 0; i < listContractPayDetail.length; i++) {
             if (listContractPayDetail[i].amount !== undefined && listContractPayDetail[i].amount !== null
                 && listContractPayDetail[i].amount) {
-                var checked = $('#order_ckb_' + listContractPayDetail[i].orderCode).is(":checked")
+                var checked = $('#order_ckb_' + listContractPayDetail[i].orderNo).is(":checked")
                 if (checked) {
-                    totalAmount += parseFloat($('#amount_order_' + listContractPayDetail[i].orderCode).val().replaceAll('.', '').replaceAll(',', ''))
+                    totalAmount += parseFloat($('#amount_order_' + listContractPayDetail[i].orderNo).val().replaceAll('.', '').replaceAll(',', ''))
                 }
             }
         }
@@ -1497,10 +1514,10 @@ var _contract_pay_create_new = {
             if ((requestChoose !== undefined && requestChoose !== null && requestChoose !== '' && requestChoose.includes(listContractPayDetail[i].orderId + ''))
                 || (listDate.includes(listContractPayDetail[i].createDate))) {
                 listContractPayDetail[i].isChecked = true
-                $('#order_ckb_' + listContractPayDetail[i].orderCode).prop('checked', true)
+                $('#order_ckb_' + listContractPayDetail[i].orderNo).prop('checked', true)
             } else {
                 listContractPayDetail[i].isChecked = false
-                $('#order_ckb_' + listContractPayDetail[i].orderCode).prop('checked', false)
+                $('#order_ckb_' + listContractPayDetail[i].orderNo).prop('checked', false)
             }
         }
         setTimeout(_contract_pay_create_new.OnCheckBox(), 300)
@@ -1520,11 +1537,11 @@ var _contract_pay_create_new = {
                 "<tr id='order_" + index + "'>" +
                 "<td>" +
                 "<label class='check-list number'>" +
-                " <input type='checkbox' id='order_ckb_" + listChecked[i].orderCode + "' name='order_ckb' onclick='_contract_pay_create_new.OnCheckBox(" + i + ");_contract_pay_create_new.AddToListDetail(" + i + ")'>" +
+                " <input type='checkbox' id='order_ckb_" + listChecked[i].orderNo + "' name='order_ckb' onclick='_contract_pay_create_new.OnCheckBox(" + i + ");_contract_pay_create_new.AddToListDetail(" + i + ")'>" +
                 " <span class='checkmark'></span>" + (index) +
                 "  </label>" +
                 "<td>" +
-                " <a class='blue' href='/Order/Orderdetails?id=" + listChecked[i].orderId + "'> " + listChecked[i].orderCode + " </a>"
+                " <a class='blue' href='/Order/Orderdetails?id=" + listChecked[i].orderId + "'> " + listChecked[i].orderNo + " </a>"
                 + "</td>" +
                 "<td>" + listChecked[i].startDate + " - " + listChecked[i].endDate + "</td>" +
                 "<td style='color:#FF9900;'>" + listChecked[i].status + "</td>" +
@@ -1533,14 +1550,14 @@ var _contract_pay_create_new = {
                 "<td class='text-right' >" + _contract_pay_create_new.FormatNumberStr(listChecked[i].totalAmount) + "</td>" +
                 "<td class='text-right' >" + _contract_pay_create_new.FormatNumberStr(listChecked[i].totalDisarmed) + "</td>" +
                 "<td class='text-right'>" + _contract_pay_create_new.FormatNumberStr(listChecked[i].totalNeedPayment) + "</td>" +
-                "<td class='text-right' >" + "<input type='text' id='amount_order_" + listChecked[i].orderCode + "' class='background-disabled text-right' maxlength='15'  autocomplete='off' style='min-width: 100px;' disabled  onkeyup='_contract_pay_create_new.FormatNumberOrder(" + listChecked[i].orderCode + ");' onchange='_contract_pay_create_new.UpdateAmount(" + i + "," + listChecked[i].orderId + ")' >" + "</td>" +
+                "<td class='text-right' >" + "<input type='text' id='amount_order_" + listChecked[i].orderNo + "' class='background-disabled text-right' maxlength='15'  autocomplete='off' style='min-width: 100px;' disabled  onkeyup='_contract_pay_create_new.FormatNumberOrder(" + listChecked[i].orderNo + ");' onchange='_contract_pay_create_new.UpdateAmount(" + i + "," + listChecked[i].orderId + ")' >" + "</td>" +
                 "</tr>"
             );
             totalAmount += listChecked[i].totalAmount
             totalDisarmed += listChecked[i].totalDisarmed
             totalNeedPayment += listChecked[i].totalNeedPayment
             if (listChecked[i].isChecked) {
-                let code = listChecked[i].orderCode
+                let code = listChecked[i].orderNo
                 setTimeout(function () {
                     $('#order_ckb_' + code).prop('checked', true)
                 }, 300)
@@ -1552,11 +1569,11 @@ var _contract_pay_create_new = {
                 "<tr id='order_" + index + "'>" +
                 "<td>" +
                 "<label class='check-list number'>" +
-                " <input type='checkbox' id='order_ckb_" + listUnChecked[i].orderCode + "' name='order_ckb' onclick='_contract_pay_create_new.OnCheckBox(" + i + ");_contract_pay_create_new.AddToListDetail(" + i + ")'>" +
+                " <input type='checkbox' id='order_ckb_" + listUnChecked[i].orderNo + "' name='order_ckb' onclick='_contract_pay_create_new.OnCheckBox(" + i + ");_contract_pay_create_new.AddToListDetail(" + i + ")'>" +
                 " <span class='checkmark'></span>" + (index) +
                 "  </label>" +
                 "<td>" +
-                " <a class='blue' href='/Order/Orderdetails?id=" + listUnChecked[i].orderId + "'> " + listUnChecked[i].orderCode + " </a>"
+                " <a class='blue' href='/Order/Orderdetails?id=" + listUnChecked[i].orderId + "'> " + listUnChecked[i].orderNo + " </a>"
                 + "</td>" +
                 "<td>" + listUnChecked[i].startDate + " - " + listUnChecked[i].endDate + "</td>" +
                 "<td style='color:#FF9900;'>" + listUnChecked[i].status + "</td>" +
@@ -1565,7 +1582,7 @@ var _contract_pay_create_new = {
                 "<td class='text-right' >" + _contract_pay_create_new.FormatNumberStr(listUnChecked[i].totalAmount) + "</td>" +
                 "<td class='text-right' >" + _contract_pay_create_new.FormatNumberStr(listUnChecked[i].totalDisarmed) + "</td>" +
                 "<td class='text-right'>" + _contract_pay_create_new.FormatNumberStr(listUnChecked[i].totalNeedPayment) + "</td>" +
-                "<td class='text-right' >" + "<input type='text' id='amount_order_" + listUnChecked[i].orderCode + "' class='background-disabled text-right' maxlength='15'  autocomplete='off' style='min-width: 100px;' disabled  onkeyup='_contract_pay_create_new.FormatNumberOrder(" + listUnChecked[i].orderCode + ");' onchange='_contract_pay_create_new.UpdateAmount(" + i + "," + listUnChecked[i].orderId + ")' >" + "</td>" +
+                "<td class='text-right' >" + "<input type='text' id='amount_order_" + listUnChecked[i].orderNo + "' class='background-disabled text-right' maxlength='15'  autocomplete='off' style='min-width: 100px;' disabled  onkeyup='_contract_pay_create_new.FormatNumberOrder(" + listUnChecked[i].orderNo + ");' onchange='_contract_pay_create_new.UpdateAmount(" + i + "," + listUnChecked[i].orderId + ")' >" + "</td>" +
                 "</tr>"
             );
             index++
@@ -1582,7 +1599,7 @@ var _contract_pay_create_new = {
         $("#orderCodeFilter").empty()
         for (var i = 0; i < listContractPayDetail.length; i++) {
             if (listContractPayDetail[i].isChecked) {
-                var newOption = new Option(listContractPayDetail[i].orderCode, listContractPayDetail[i].orderId, true, true);
+                var newOption = new Option(listContractPayDetail[i].orderNo, listContractPayDetail[i].orderId, true, true);
                 $('#orderCodeFilter').append(newOption)
             }
         }
@@ -1691,10 +1708,12 @@ var _contract_pay_create_new = {
             }
         });
     },
-    GetListBankAccountAdavigo: function (supplierId) {
+    GetListBankAccountCurrentProvider: function (supplierId) {
         _global_function.AddLoading()
+        bankingAccountId = $("#bankingAccount").val();
+      
         $.ajax({
-            url: "/Receipt/GetListBankAccountAdavigo",
+            url: "/Receipt/GetListBankAccountCurrentProvider",
             type: "Post",
             data: {
                 'supplierId': supplierId,
@@ -1706,11 +1725,6 @@ var _contract_pay_create_new = {
                     "<option value='0'>Chọn</option>"
                 );
                 listBankAccount = result.data
-                for (var i = 0; i < result.data.length; i++) {
-                    $('#bankingAccount').append(
-                        "<option value='" + result.data[i].id + "'> " + result.data[i].bankId + " - " + result.data[i].accountNumber + "</option>"
-                    );
-                }
                 if (bankingAccountId !== undefined && bankingAccountId !== null && bankingAccountId !== 0) {
                     $("#bankingAccount").val(bankingAccountId);
                     for (var i = 0; i < listBankAccount.length; i++) {
@@ -1718,6 +1732,19 @@ var _contract_pay_create_new = {
                             $('#bankName').val(listBankAccount[i].accountName)
                     }
                 }
+                for (var i = 0; i < result.data.length; i++) {
+                    if (result.data[i].id == bankingAccountId) {
+                        $('#bankingAccount').append(
+                            "<option selected value='" + result.data[i].id + "'> " + result.data[i].bankId + " - " + result.data[i].accountNumber + "</option>"
+                        );
+                    } else {
+                        $('#bankingAccount').append(
+                            "<option value='" + result.data[i].id + "'> " + result.data[i].bankId + " - " + result.data[i].accountNumber + "</option>"
+                        );
+                    }
+                   
+                }
+               
             }
         });
     },
@@ -1751,5 +1778,113 @@ var _contract_pay_create_new = {
             }
         });
     },
+    OnCheckedSupplier: function (isClearDate = false) {
 
+        if (listServiceRefundDetail.length == 0) return
+
+        var requestChoose = $('#serviceCodeFilter').val()
+
+        for (var i = 0; i < listServiceRefundDetail.length; i++) {
+            if ((requestChoose !== undefined && requestChoose !== null && requestChoose !== '' && requestChoose.includes(listServiceRefundDetail[i].serviceId + ''))) {
+                listServiceRefundDetail[i].isChecked = true
+                $('#service_ckb_' + listServiceRefundDetail[i].serviceCode).prop('checked', true)
+            } else {
+                listServiceRefundDetail[i].isChecked = false
+                $('#service_ckb_' + listServiceRefundDetail[i].serviceCode).prop('checked', false)
+            }
+        }
+        _contract_pay_create_new.GenderSupplierCommissionTable2(listServiceRefundDetail, isEdit, true)
+        setTimeout(_contract_pay_create_new.OnCheckBoxService(), 1000)
+    },
+    AddItemToInputserviceCodeCommissionFilter: function (data) {
+        $("#serviceCodeFilter").empty()
+        for (var i = 0; i < data.length; i++) {
+            if (data[i].isChecked) {
+                var newOption = new Option(data[i].serviceCode, data[i].serviceId, true, true);
+                $('#serviceCodeFilter').append(newOption)
+            }
+        }
+        /*   $('#serviceCodeFilter').trigger('change');*/
+    },
+    GenderSupplierCommissionTable2: function (result, isEdit) {
+        var totalAmount = 0
+        var totalDisarmed = 0
+        var totalNeedPayment = 0
+        var totalPayment = 0
+        var order = { true: 1, null: 2, false: 3 };
+        result = result.sort((a, b) => order[a.isChecked] - order[b.isChecked])
+
+        $("#body_supplier_refund_list").empty();
+        for (var i = 0; i < result.length; i++) {
+            var urlService = ''
+            if (result[i].serviceType == 1) { //Khách sạn
+                urlService = "/SetService/VerifyHotelServiceDetai/" + result[i].serviceId
+            }
+            if (result[i].serviceType == 3) { // vé máy bay
+                urlService = "/SetService/fly/detail/" + result[i].groupBookingId
+            }
+            if (result[i].serviceType == 5) { //tour
+                urlService = "/SetService/Tour/Detail/" + result[i].serviceId
+            }
+            if (result[i].serviceType == 9) { //other
+                urlService = "/SetService/Others/Detail/" + result[i].serviceId
+            }
+            $('#supplier-refund-relate-table').find('tbody').append(
+                "<tr id='service_" + i + "'>" +
+                "<td>" +
+                "<label class='check-list number'>" +
+                " <input type='checkbox' id='service_ckb_" + result[i].serviceCode + "' name='service_ckb' onclick='_contract_pay_create_new.OnCheckBoxService(" + i + ")'>" +
+                " <span class='checkmark'></span>" + (i + 1) +
+                "  </label>" +
+                "<td>" +
+                " <a class='blue' href='" + urlService + "'> " + result[i].serviceCode + " </a>"
+                + "</td>" +
+                "<td>" + result[i].startDateStr + " - " + result[i].endDateStr + "</td>" +
+                "<td>" +
+                " <a class='blue' href='/Order/Orderdetails?id=" + result[i].orderId + "'> " + result[i].orderNo + " </a>"
+                + "</td>" +
+                "<td  >" + result[i].salerName + "</td>" +
+                "<td class='text-right' >" + _contract_pay_create_new.FormatNumberStr(result[i].totalAmount) + "</td>" +
+                "<td class='text-right' >" + _contract_pay_create_new.FormatNumberStr(result[i].totalDisarmed) + "</td>" +
+                "<td class='text-right'>" + _contract_pay_create_new.FormatNumberStr(result[i].totalNeedPayment) + "</td>" +
+                "<td class='text-right' >" + "<input type='text' id='amount_service_" + result[i].serviceCode + "' class='background-disabled text-right' maxlength='15'  autocomplete='off' style='min-width: 100px;' disabled  onkeyup='_contract_pay_create_new.FormatNumberService(this);' onchange='_contract_pay_create_new.UpdateAmountService(" + result[i].serviceId + ")' >" + "</td>" +
+                "</tr>"
+            );
+            totalAmount += result[i].totalAmount
+            totalDisarmed += result[i].totalDisarmed
+            totalNeedPayment += result[i].totalNeedPayment
+            if (result[i].isChecked) {
+                totalPayment += result[i].payment
+                let index = result[i].serviceCode
+                let payment = result[i].payment
+
+                $('#amount_service_' + index).val(_contract_pay_create_new.FormatNumberStr(payment))
+                $('#amount_service_' + index).attr('disabled', false)
+                $('#amount_service_' + index).removeClass('background-disabled')
+                $('#service_ckb_' + index).prop('checked', true)
+            }
+            if (result[i].isDisabled) {
+                let index = result[i].serviceCode
+                setTimeout(function () {
+                    $('#service_ckb_' + index).attr('disabled', true)
+                    $('#amount_service_' + index).attr('disabled', true)
+                    $('#amount_service_' + index).addClass('background-disabled')
+                    $('#service_' + index).addClass('background-disabled')
+                }, 1000)
+            }
+        }
+        $('#supplier-refund-relate-table').find('tbody').append(
+            "<tr style='font-weight:bold !important;'>" +
+            "<td class='text-right' colspan='5'> Tổng </td>" +
+            "<td class='text-right' >" + _contract_pay_create_new.FormatNumberStr(totalAmount) + "</td>" +
+            "<td class='text-right'>" + _contract_pay_create_new.FormatNumberStr(totalDisarmed) + "</td>" +
+            "<td class='text-right' >" + _contract_pay_create_new.FormatNumberStr(totalNeedPayment) + "</td>" +
+            "<td class='text-right' id='total_amount_need_pay'>0</td>" +
+            "</tr>"
+        );
+        setTimeout(function () {
+            $('#total_amount_need_pay').html(_contract_pay_create_new.FormatNumberStr(totalPayment))
+
+        }, 1000)
+    },
 }
