@@ -111,8 +111,8 @@ namespace WEB.CMS.Controllers.Order
                 {
                data = await _orderESRepository.GetOrderNoSuggesstion(txt_search);
                     var result = data.Select(o => new {
-                        id = o.orderid,  // assuming OrderId is the ID you want
-                        orderno = o.orderno
+                        id = o.Id,  // assuming OrderId is the ID you want
+                        orderno = o.OrderNo
                     }).ToList();
                     return Ok(new
                     {

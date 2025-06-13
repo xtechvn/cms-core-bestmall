@@ -53,8 +53,8 @@
                         foreach (var a2 in attr_2)
                         {
 
-                            var sub_selected = sub_product.Where(x => x.variation_detail != null).FirstOrDefault(x => x.variation_detail.Any(v => v.name.ToLower().Trim() == a1.name.ToLower().Trim())
-                            && x.variation_detail.Any(v => v.name.ToLower().Trim() == a2.name.ToLower().Trim()));
+                            var sub_selected = sub_product.Where(x => x.variation_detail != null).FirstOrDefault(x => x.variation_detail.Any(v => v.name != null && v.name.ToLower().Trim() == a1.name.ToLower().Trim())
+                            && x.variation_detail.Any(v => v.name != null && v.name.ToLower().Trim() == a2.name.ToLower().Trim()));
                             <tr class="@(is_first==false?"tr-main":"tr-sub")" data-attribute-0="@a1.name" data-attribute-1="@a2.name" data-id="@(sub_selected != null && sub_selected._id!=null ? sub_selected._id:"")">
                                 <td rowspan="@attr_2.Count()" style="@(is_first==false?"":"display:none;")">@a1.name</td>
                                 <td>@a2.name</td>
@@ -115,7 +115,7 @@
                     }
                     else
                     {
-                        var sub_selected = sub_product.FirstOrDefault(x => x.variation_detail.Any(v => v.name.Contains(a1.name)));
+                        var sub_selected = sub_product.FirstOrDefault(x => x.variation_detail.Any(v => v.name!=null && v.name.Contains(a1.name)));
                         <tr class="@(is_first==false?"tr-main":"tr-sub")" data-attribute-0="@a1.name" data-id="@(sub_selected != null && sub_selected._id != null ? sub_selected._id : "")">
                             <td>@a1.name</td>
                             <td class="td-price">
