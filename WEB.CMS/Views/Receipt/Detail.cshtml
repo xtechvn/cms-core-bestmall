@@ -48,18 +48,20 @@
                                 <div class="col-5 mb10">Số tiền</div>
                                 @if (Model.Type == (int)DepositHistoryConstant.CONTRACT_PAY_TYPE.THU_TIEN_DON_HANG)
                                 {
+                                    var total_pay_amount = Model.ContractPayDetail.Sum(n => n.AmountPayDetail);
+
                                     <div class="col-7 mb10">
                                         @if (Model.AmountPayDetail >= Model.Amount)
                                         {
                                             <div>
-                                                : <span class=" green">  @Model.AmountPayDetail.ToString("N0")</span>
+                                                : <span class=" green">  @total_pay_amount.ToString("N0")</span>
                                                 /@Model.Amount.ToString("N0")
                                             </div>
                                         }
                                         else
                                         {
                                             <div class=" ">
-                                                :  <span class=" red">  @Model.AmountPayDetail.ToString("N0")</span>
+                                                :  <span class=" red"> @total_pay_amount.ToString("N0")</span>
                                                 / @Model.Amount.ToString("N0")
                                             </div>
                                         }
