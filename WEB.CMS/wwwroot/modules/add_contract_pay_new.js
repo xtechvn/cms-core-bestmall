@@ -1716,7 +1716,7 @@ var _contract_pay_create_new = {
             url: "/Receipt/GetListBankAccountCurrentProvider",
             type: "Post",
             data: {
-                'supplierId': supplierId,
+                'supplierId': 0,
             },
             success: function (result) {
                 _global_function.RemoveLoading()
