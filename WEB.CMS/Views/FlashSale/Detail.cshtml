@@ -203,7 +203,7 @@
                                                                 <span class="checkmark"></span>
                                                             </label>
                                                         </td>
-                                                        <td colspan="9">
+                                                        <td colspan="7">
                                                             <div class="item-order">
                                                                 <div class="img">
                                                                     @{
@@ -225,6 +225,16 @@
                                                                         @(selected != null && selected._id != null && selected.name != null ? selected.name : "")
                                                                     </h3>
                                                                 </div>
+                                                            </div>
+                                                        </td>
+														<td colspan="2">
+                                                            <div class="flex gap10 flex-nowrap align-items-center ">
+                                                                <p class="name-product" style=" display: inline-flex; color:red;">
+                                                                    <label class="check-list mb20 mr25">
+                                                                        <input type="checkbox" class="flashsale-data-supersale" @(item.SuperSale != null && item.SuperSale == true ? "checked" : "")>
+                                                                        <span class="checkmark"></span>
+                                                                    </label>Siêu Sale
+                                                                </p>
                                                             </div>
                                                         </td>
                                                     </tr>
