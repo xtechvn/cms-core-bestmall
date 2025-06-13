@@ -39,13 +39,13 @@ $(document).ready(function () {
             _receipt_service.OnChangeAccountClientId($(this).val());
         }
     });
-
+  
     $("#token-input-client").select2({
         theme: 'bootstrap4',
         placeholder: "Tên KH, Điện Thoại, Email",
         maximumSelectionLength: 1,
         ajax: {
-            url: "/Contract/ClientSuggestion",
+            url: "/Client/ClientSuggestion",
             type: "post",
             dataType: 'json',
             delay: 250,

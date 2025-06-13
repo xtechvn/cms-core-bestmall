@@ -65,20 +65,38 @@
             <div class="border mb20">
                 <div class="lb-form">Thông tin bổ sung</div>
                 <div class="pd10">
-
                     <div class="form-group">
                         <label class="lbl">Ảnh đại diện thương hiệu <sup class="red">*</sup></label>
                         <div class="wrap_input">
                             <div class="manage-color  w-100" style="max-height:200px;">
                                 <div class="flex list align-items-center w-100">
                                     <div class="items import magnific_popup" style=" min-width: 130px; min-height: 130px;max-width: 200px; max-height: 200px; ">
-                                        <a id="update-icon-import" href="javascript:;" class="thumb_img thumb_1x1 magnific_thumb" >
+                                        <a id="update-icon-import" href="javascript:;" class="thumb_img thumb_1x1 magnific_thumb">
                                             <img src="@(data.Icon==null?"/images/upload.png":data.Icon)" style="@(data.Icon==null?"top:40%;object-fit:scale-down;":"") ">
                                         </a>
                                         <input type="file" id="update-icon-input" style="display:none;" class="form-control" />
                                     </div>
-                                    <div class="import magnific_popup" > 
-                                        <span>(Click vào hình ảnh để @(data.Id > 0 && data.Icon!=null && data.Icon.Trim()!=""? "thay đổi":"thêm"))</span>
+                                    <div class="import magnific_popup">
+                                        <span>(Click vào hình ảnh để @(data.Id > 0 && data.Icon != null && data.Icon.Trim() != "" ? "thay đổi" : "thêm"))</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <input type="text" id="update-icon" class="form-control" disabled value="@(data.Icon==null?"":data.Icon)" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="lbl">Logo thương hiệu <sup class="red">*</sup></label>
+                        <div class="wrap_input">
+                            <div class="manage-color  w-100" style="max-height:200px;">
+                                <div class="flex list align-items-center w-100">
+                                    <div class="items import magnific_popup" style=" min-width: 130px; min-height: 130px;max-width: 200px; max-height: 200px; ">
+                                        <a id="update-icon-import" href="javascript:;" class="thumb_img thumb_1x1 magnific_thumb">
+                                            <img src="@(data.Icon==null?"/images/upload.png":data.Icon)" style="@(data.Icon==null?"top:40%;object-fit:scale-down;":"") ">
+                                        </a>
+                                        <input type="file" id="update-icon-input" style="display:none;" class="form-control" />
+                                    </div>
+                                    <div class="import magnific_popup">
+                                        <span>(Click vào hình ảnh để @(data.Id > 0 && data.Icon != null && data.Icon.Trim() != "" ? "thay đổi" : "thêm"))</span>
                                     </div>
                                 </div>
                             </div>

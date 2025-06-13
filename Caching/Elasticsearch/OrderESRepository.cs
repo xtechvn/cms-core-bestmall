@@ -2,8 +2,10 @@
 using Entities.Models;
 using Entities.ViewModels.ElasticSearch;
 using ENTITIES.ViewModels.ElasticSearch;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Configuration;
 using Nest;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,21 +14,18 @@ using Utilities;
 
 namespace Caching.Elasticsearch
 {
-    public class OrderESRepository : ESRepository<OrderElasticsearchViewModel>
+    public class OrderESRepository
     {
         public string index_name = "hulotoys_sp_getorder";
         private readonly IConfiguration configuration;
-        private static string _ElasticHost;
         private static ElasticClient _elasticClient;
-        public OrderESRepository(string Host, IConfiguration _configuration) : base(Host)
+        public OrderESRepository( IConfiguration _configuration) 
         {
-            _ElasticHost = Host;
             configuration = _configuration;
             index_name = _configuration["DataBaseConfig:Elastic:Index:Order"];
-            var nodes = new Uri[] { new Uri(_ElasticHost) };
-            var connectionPool = new StaticConnectionPool(nodes);
-            var connectionSettings = new ConnectionSettings(connectionPool).DisableDirectStreaming().DefaultIndex(index_name);
-            _elasticClient = new ElasticClient(connectionSettings);
+            var settings = new ConnectionSettings(new Uri(configuration["DataBaseConfig:Elastic:Host"]))
+               .DefaultIndex(index_name);
+            _elasticClient = new ElasticClient(settings);
         }
         public async Task<List<OrderElasticsearchViewModel>> GetOrderNoSuggesstion(string txt_search)
         {
@@ -35,13 +34,13 @@ namespace Caching.Elasticsearch
             {
                 
                 var query_param = "*" + txt_search.Trim().ToUpper() + "*";
-                var searchDescriptor = new SearchDescriptor<OrderElasticsearchViewModel>()
+                var searchDescriptor = new SearchDescriptor<object>()
             .Index(index_name)
             .Query(q => q
                 .Bool(b => b
                     .Must(m => m
                         .MatchPhrasePrefix(mp => mp
-                            .Field(f => f.OrderNo)
+                            .Field("OrderNo")
                             .Query(txt_search.Trim()) // No wildcards here, let the analyzer handle it
                         )
                     )
@@ -50,7 +49,7 @@ namespace Caching.Elasticsearch
             .From(0)
             .Size(10);
 
-                var search_response = await _elasticClient.SearchAsync<OrderElasticsearchViewModel>(searchDescriptor);
+                var search_response = await _elasticClient.SearchAsync<object>(searchDescriptor);
 
                 //var search_response = elasticClient.Search<OrderElasticsearchViewModel>(s => s
                 //    .Index(index_name)
@@ -69,7 +68,9 @@ namespace Caching.Elasticsearch
 
                 if (search_response.IsValid)
                 {
-                    result = search_response.Documents as List<OrderElasticsearchViewModel>;
+                    var json = JsonConvert.SerializeObject(search_response.Documents);
+                    result = JsonConvert.DeserializeObject<List<OrderElasticsearchViewModel>>(json);
+                   // result = search_response.Documents as List<OrderElasticsearchViewModel>;
                 }
             }
             catch (Exception ex)
@@ -88,7 +89,7 @@ namespace Caching.Elasticsearch
                 int top = 30;
 
                 var search_response = _elasticClient.Search<OrderElasticsearchViewModel>(s => s
-                          .Index(index_name + (_company_type.Trim() == "0" ? "" : "_" + _company_type.Trim()))
+                          .Index(index_name)
                           .Size(top)
                           .Query(q =>
                            q.Bool(

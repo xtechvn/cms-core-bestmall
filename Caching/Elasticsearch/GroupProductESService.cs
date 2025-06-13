@@ -13,29 +13,25 @@ using Utilities.Contants;
 
 namespace HuloToys_Service.ElasticSearch.NewEs
 {
-    public class GroupProductESService : ESRepository<GroupProduct>
+    public class GroupProductESService
     {
         public string index = "group_product_hulotoys_store";
         private readonly IConfiguration configuration;
-        private static string _ElasticHost;
+        private readonly ElasticClient _client;
 
-        public GroupProductESService(string Host, IConfiguration _configuration) : base(Host)
+        public GroupProductESService(IConfiguration _configuration)
         {
-            _ElasticHost = Host;
             configuration = _configuration;
             index = _configuration["DataBaseConfig:Elastic:Index:GroupProduct"];
-
+            var settings = new ConnectionSettings(new Uri(configuration["DataBaseConfig:Elastic:Host"]))
+                .DefaultIndex(index);
+            _client = new ElasticClient(settings);
         }
         public List<GroupProduct> GetListGroupProductByParentId(long parent_id)
         {
             try
             {
-                var nodes = new Uri[] { new Uri(_ElasticHost) };
-                var connectionPool = new StaticConnectionPool(nodes);
-                var connectionSettings = new ConnectionSettings(connectionPool).DisableDirectStreaming().DefaultIndex("people");
-                var elasticClient = new ElasticClient(connectionSettings);
-
-                var query = elasticClient.Search<GroupProductESModel>(sd => sd
+                var query = _client.Search<GroupProductESModel>(sd => sd
                                .Index(index)
                                .Size(4000)
                           .Query(q =>
@@ -79,12 +75,7 @@ namespace HuloToys_Service.ElasticSearch.NewEs
         {
             try
             {
-                var nodes = new Uri[] { new Uri(_ElasticHost) };
-                var connectionPool = new StaticConnectionPool(nodes);
-                var connectionSettings = new ConnectionSettings(connectionPool).DisableDirectStreaming().DefaultIndex("people");
-                var elasticClient = new ElasticClient(connectionSettings);
-
-                var query = elasticClient.Search<GroupProductESModel>(sd => sd
+                var query = _client.Search<GroupProductESModel>(sd => sd
                                .Index(index)
                           .Query(q =>
                            q.Bool(

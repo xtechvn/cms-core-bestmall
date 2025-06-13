@@ -42,7 +42,6 @@ namespace WEB.Adavigo.CMS.Controllers
         private IAccountClientRepository _accountClientRepository;
         private LogCacheFilterMongoService _logCacheFilterMongoService;
         private IUserAgentRepository _userAgentRepository;
-        private UserESRepository _userESRepository;
         private IIdentifierServiceRepository _identifierServiceRepository;
         private readonly IOrderRepository _orderRepository;
         public CustomerManagerController(IConfiguration configuration, ICustomerManagerRepository customerManagerRepositories, ManagementUser ManagementUser, IWebHostEnvironment WebHostEnvironment, IAccountClientRepository accountClientRepository,
@@ -60,7 +59,6 @@ namespace WEB.Adavigo.CMS.Controllers
             _accountClientRepository = accountClientRepository;
             _logCacheFilterMongoService = new LogCacheFilterMongoService(configuration);
             _userAgentRepository = userAgentRepository;
-            _userESRepository = new UserESRepository(configuration["DataBaseConfig:Elastic:Host"], configuration);
             _identifierServiceRepository = identifierServiceRepository;
             _orderRepository = orderRepository;
         }
@@ -717,23 +715,28 @@ namespace WEB.Adavigo.CMS.Controllers
                     _UserId = Convert.ToInt64(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
                 }
                 if (txt_search == null) txt_search = "";
-                var data = await _userESRepository.GetUserSuggesstion(txt_search);
-                return Ok(new
+                var data = await _userRepository.GetUserSuggesstion(txt_search);
+                if (data != null && data.Count > 0)
                 {
-                    status = (int)ResponseType.SUCCESS,
-                    data = data,
-                });
+                    return Ok(new
+                    {
+                        status = (int)ResponseType.SUCCESS,
+                        data = data.Select(x => new UserESViewModel() { email = x.Email, fullname = x.FullName, id = x.Id, phone = x.Phone, username = x.UserName, _id = x.Id }),
+                        selected = _UserId
+                    });
+                }
 
             }
             catch (Exception ex)
             {
                 LogHelper.InsertLogTelegram("UserSuggestion - CustomerManagerController: " + ex.ToString());
-                return Ok(new
-                {
-                    status = (int)ResponseType.SUCCESS,
-                    data = new List<CustomerESViewModel>()
-                });
+               
             }
+            return Ok(new
+            {
+                status = (int)ResponseType.FAILED,
+                data = new List<CustomerESViewModel>()
+            });
 
         }
         public async Task<IActionResult> ClientSuggestion(string txt_search)

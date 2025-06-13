@@ -15,16 +15,19 @@ using Utilities;
 
 namespace Caching.Elasticsearch
 {
-    public class ClientESService : ESRepository<Client>
+    public class ClientESService 
     {
         public string index = "client_hulotoys_store";
         private readonly IConfiguration configuration;
-        private static string _ElasticHost;
-        public ClientESService(string Host, IConfiguration _configuration) : base(Host)
+        private readonly ElasticClient elasticClient;
+
+        public ClientESService(IConfiguration _configuration) 
         {
-            _ElasticHost = Host;
             configuration = _configuration;
             index = _configuration["DataBaseConfig:Elastic:Index:Client"];
+            var settings = new ConnectionSettings(new Uri(configuration["DataBaseConfig:Elastic:Host"]))
+                 .DefaultIndex(index);
+            elasticClient = new ElasticClient(settings);
         }
 
         public List<ClientSeachESViewModel> GetClientByNameOrPhone(string phoneOrName) 
@@ -32,11 +35,6 @@ namespace Caching.Elasticsearch
             try 
             {
                 bool check = Regex.IsMatch(phoneOrName, @"^\d+$");
-                var nodes = new Uri[] { new Uri(_ElasticHost) };
-                var connectionPool = new StaticConnectionPool(nodes);
-                var connectionSettings = new ConnectionSettings(connectionPool).DisableDirectStreaming().DefaultIndex("people");
-                var elasticClient = new ElasticClient(connectionSettings);
-
                 var query = elasticClient.Search<ClientSeachESViewModel>(sd => sd
                 .Index(index)
                 .Query(q =>

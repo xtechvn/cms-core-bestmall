@@ -1,10 +1,15 @@
-﻿using Caching.RedisWorker;
+﻿using Caching.Elasticsearch;
+using Caching.Elasticsearch.FlashSale;
+using Caching.RedisWorker;
 using Entities.ConfigModels;
+using HuloToys_Service.ElasticSearch;
+using HuloToys_Service.ElasticSearch.NewEs;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Configuration;
 using Repositories.IRepositories;
 using Repositories.Repositories;
+using WEB.CMS.Controllers.Elastic.Bussiness;
 using WEB.CMS.Customize;
 using WEB.CMS.Models.Product;
 using WEB.CMS.RabitMQ;
@@ -43,6 +48,8 @@ builder.Services.Configure<MailConfig>(Configuration.GetSection("MailConfig"));
 builder.Services.Configure<DomainConfig>(Configuration.GetSection("DomainConfig"));
 
 // Register services
+
+//-- Service:
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 builder.Services.AddSingleton<IAllCodeRepository, AllCodeRepository>();
@@ -85,12 +92,28 @@ builder.Services.AddSingleton<ILabelRepository, LabelRepository>();
 builder.Services.AddSingleton<ISupplierRepository, SupplierRepository>();
 builder.Services.AddSingleton<IFlashSaleRepository, FlashSaleRepository>();
 builder.Services.AddSingleton<IFlashSaleProductRepository, FlashSaleProductRepository>();
-builder.Services.AddSingleton<ProductDetailMongoAccess>();
-builder.Services.AddSingleton<ProductSpecificationMongoAccess>();
+builder.Services.AddSingleton<ICustomerManagerRepository, CustomerManagerRepository>();
+
 // Đăng ký QueueService
 builder.Services.AddScoped<QueueService>();
+//-- Mongodb:
+builder.Services.AddSingleton<ProductDetailMongoAccess>();
+builder.Services.AddSingleton<ProductSpecificationMongoAccess>();
 
-
+//-- ES:
+builder.Services.AddSingleton<ArticleCategoryESService>();
+builder.Services.AddSingleton<AttachFileESModelESRepository>();
+builder.Services.AddSingleton<FlashSaleProductESRepository>();
+builder.Services.AddSingleton<FlashSaleESRepository>();
+builder.Services.AddSingleton<ProductESRepository>();
+builder.Services.AddSingleton<ArticleCategoryESService>();
+builder.Services.AddSingleton<AttachFileESModelESRepository>();
+builder.Services.AddSingleton<ClientESRepository>();
+builder.Services.AddSingleton<ClientESService>();
+builder.Services.AddSingleton<GroupProductESService>();
+builder.Services.AddSingleton<LocationESService>();
+builder.Services.AddSingleton<OrderESRepository>();
+builder.Services.AddSingleton<ElasticService>();
 
 // Setting Redis                     
 builder.Services.AddSingleton<RedisConn>();

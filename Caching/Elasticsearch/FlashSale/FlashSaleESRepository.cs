@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using IdGen;
+using Microsoft.Extensions.Configuration;
 using Nest;
 using System;
 using System.Collections.Generic;
@@ -9,19 +10,17 @@ using Utilities;
 namespace Caching.Elasticsearch.FlashSale
 {
     
-    public class FlashSaleESRepository : ESRepository<FlashSaleESModel>
+    public class FlashSaleESRepository
     {
         public string index = "hulotoys_sp_getflashsale";
-        private static string _ElasticHost;
         private static IConfiguration configuration;
         private readonly ElasticClient _client;
-
-        public FlashSaleESRepository(string Host, IConfiguration _configuration) : base(Host)
+       
+        public FlashSaleESRepository(IConfiguration _configuration)
         {
-            _ElasticHost = Host;
             configuration = _configuration;
             index = _configuration["DataBaseConfig:Elastic:Index:FlashSale"];
-            var settings = new ConnectionSettings(new Uri(_ElasticHost))
+            var settings = new ConnectionSettings(new Uri(configuration["DataBaseConfig:Elastic:Host"]))
                 .DefaultIndex(index);
             _client = new ElasticClient(settings);
         }
@@ -162,6 +161,11 @@ namespace Caching.Elasticsearch.FlashSale
             {
                 return new List<FlashSaleESModel>();
             }
+        }
+        public long GenerateId()
+        {
+            IdGenerator _generator = new(0); // Machine ID = 0
+            return _generator.CreateId();
         }
     }
 

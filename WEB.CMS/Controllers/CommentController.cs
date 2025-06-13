@@ -13,10 +13,10 @@ namespace WEB.CMS.Controllers
     {
         private readonly ICommentRepository _IcommentRepository;
         private readonly ClientESService _ClientESService;
-        public CommentController(ICommentRepository icommentRepository,IConfiguration configuration)
+        public CommentController(ICommentRepository icommentRepository,IConfiguration configuration, ClientESService ClientESService)
         {
             _IcommentRepository = icommentRepository;
-            _ClientESService = new ClientESService(configuration["DataBaseConfig:Elastic:Host"], configuration);
+            _ClientESService = ClientESService;
 
         }
         public IActionResult Index()

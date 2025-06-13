@@ -23,17 +23,18 @@ namespace WEB.Adavigo.CMS.Controllers
         private IUserRepository _userRepository;
 
         public ClientController(IConfiguration configuration, IAllCodeRepository allCodeRepository,  IUserRepository userRepository,
-            IClientRepository clientRepository, IUserAgentRepository userAgentRepository)
+            IClientRepository clientRepository, IUserAgentRepository userAgentRepository, ClientESRepository _clientESRepository)
         {
 
             _configuration = configuration;
             _allCodeRepository = allCodeRepository;
-            clientESRepository = new ClientESRepository(_configuration["DataBaseConfig:Elastic:Host"]);
+            clientESRepository = _clientESRepository;
             _clientRepository = clientRepository;
             _userAgentRepository = userAgentRepository;
             _userRepository = userRepository;
 
         }
+        [HttpPost]
         public async Task<IActionResult> ClientSuggestion(string txt_search)
         {
 

@@ -41,7 +41,7 @@
                                         <div class="name">@(client.ClientName)</div>
                                         <div>@client.Phone - @client.Email</div>
                                         <div>@(ViewBag.Address != ""?"Địa chỉ giao hàng: "+ ViewBag.Address:"")
-                                            @if (Model.OrderStatus == (int)OrderStatus.CREATED_ORDER || Model.OrderStatus == (int)OrderStatus.CONFIRMED_SALE || Model.OrderStatus == (int)OrderStatus.WAITING_FOR_OPERATOR)
+                                            @if (Model.OrderStatus == (int)OrderStatus.CREATED_ORDER  || Model.OrderStatus == (int)OrderStatus.PAID)
                                             {
                                                 <a onclick="_orderDetail.EditAddress(@ViewBag.OrderId)"><i class="fa fa-edit"></i></a>
                                             }
@@ -103,19 +103,14 @@
                                 @switch ((int)Model.OrderStatus)
                                 {
                                     case (int)(OrderStatus.CREATED_ORDER):
-                                    case (int)(OrderStatus.CONFIRMED_SALE):
                                         {
                                             <span class="status-oranger">@Model.OrderStatusName </span>
                                         }
                                         break;
-                                    case (int)(OrderStatus.WAITING_FOR_OPERATOR):
-                                        {
-
-                                            <div class="status-green">@Model.OrderStatusName</div>
-
-                                        }
-                                        break;
-
+                                    case (int)(OrderStatus.PAID):
+                                    case (int)(OrderStatus.DELIVERY):
+                                    case (int)(OrderStatus.PROCESSING):
+                                    case (int)(OrderStatus.FINISHED_DELIVERY):
                                     case (int)(OrderStatus.FINISHED):
                                         {
                                             <span class="status-green">@Model.OrderStatusName </span>
@@ -250,13 +245,30 @@
 
                     <div class="form-group align-right mt20 block pin-btn-bottom ">
                         <button type="button" class="btn btn-default cancel ml-1" onclick="history.back()">Quay lại</button>
-                        @if (ViewBag.editsale == true)
+                       
+                        
+                        @if (ViewBag.editsale == true && Model.OrderStatus == (int)OrderStatus.PAID)
                         {
                             <button type="button" class="btn btn-default ml-1" onclick="_orderDetail.ChangeOrderSaler(@ViewBag.OrderId,'@ViewBag.OrderNo')">Nhận xử lý đơn hàng</button>
                         }
-                        @if (Model.PaymentStatus != null && (Model.ShippingCode == null || Model.ShippingCode.Trim() == ""))
+                        @if (Model.PaymentStatus != null && Model.OrderStatus == (int)OrderStatus.PROCESSING)
                         {
-                            <button id="send-order-to-carrier" type="button" class="btn btn-default ml-1 ">Gửi ĐVVC</button>
+                            <button id="send-order-to-carrier" type="button" class="btn btn-default ml-1 ">Gửi ĐVVC Giao hàng</button>
+
+                        }
+                        @if (Model.PaymentStatus != null && Model.OrderStatus == (int)OrderStatus.DELIVERY)
+                        {
+                            <button id="orderdetail-delivered" type="button" class="btn btn-default ml-1 ">Đã nhận được hàng</button>
+
+                        }
+                        @if (Model.PaymentStatus != null && Model.OrderStatus == (int)OrderStatus.FINISHED_DELIVERY)
+                        {
+                            <button id="orderdetail-finished" type="button" class="btn btn-default ml-1 ">Hoàn thành</button>
+
+                        }
+                        @if (Model.OrderStatus != (int)OrderStatus.CANCEL && Model.OrderStatus != (int)OrderStatus.FINISHED)
+                        {
+                            <button id="orderdetail-cancel" type="button" class="btn btn-default ml-1 " style="background-color:darkred;">Hủy đơn</button>
 
                         }
                     </div>

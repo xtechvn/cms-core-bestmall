@@ -25,7 +25,8 @@ namespace WEB.CMS.Controllers
         private readonly WorkQueueClient work_queue;
         private readonly QueueService _queueService;
         private readonly AttachFileESModelESRepository attachFileESRepository;
-        public AttachFileController(IAttachFileRepository attachFileRepository, IWebHostEnvironment hostEnvironment, IConfiguration configuration, QueueService queueService)
+        public AttachFileController(IAttachFileRepository attachFileRepository, IWebHostEnvironment hostEnvironment, IConfiguration configuration, QueueService queueService,
+            AttachFileESModelESRepository _attachFileESRepository)
         {
             _AttachFileRepository = attachFileRepository;
             _WebHostEnvironment = hostEnvironment;
@@ -35,7 +36,7 @@ namespace WEB.CMS.Controllers
             static_domain = configuration["DomainConfig:ImageStatic"];
             work_queue = new WorkQueueClient(configuration);
             _queueService = queueService;
-            attachFileESRepository = new AttachFileESModelESRepository(_configuration["DataBaseConfig:Elastic:Host"], configuration);
+            attachFileESRepository = _attachFileESRepository;
 
         }
 

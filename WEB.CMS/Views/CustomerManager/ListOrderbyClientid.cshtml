@@ -49,19 +49,16 @@
                                     @switch (item.StatusCode)
                                     {
                                         case (int)(OrderStatus.CREATED_ORDER):
-                                        case (int)(OrderStatus.CONFIRMED_SALE):
                                             {
                                                 <span class="status-oranger">@item.Status</span>
                                             }
                                             break;
-                                        case (int)(OrderStatus.WAITING_FOR_OPERATOR):
-
-                                            {
-                                                <span class="status-green">@item.Status</span>
-
-                                            }
-                                            break;
+                                        case (int)(OrderStatus.PAID):
+                                        case (int)(OrderStatus.DELIVERY):
+                                        case (int)(OrderStatus.PROCESSING):
+                                        case (int)(OrderStatus.FINISHED_DELIVERY):
                                         case (int)(OrderStatus.FINISHED):
+
                                             {
                                                 <span class="status-green">@item.Status</span>
                                             }

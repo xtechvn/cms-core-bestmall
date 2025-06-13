@@ -1,12 +1,14 @@
 ﻿using Entities.Models;
 using Entities.ViewModels;
 using Entities.ViewModels.Mongo;
+using ENTITIES.ViewModels.ElasticSearch;
 using Microsoft.AspNetCore.Mvc;
 using Repositories.IRepositories;
 using StackExchange.Redis;
 using System.Security.Claims;
 using Utilities;
 using Utilities.Contants;
+using WEB.CMS.Controllers.Elastic.Bussiness;
 using WEB.CMS.Models.Product;
 
 namespace WEB.CMS.Controllers
@@ -23,10 +25,11 @@ namespace WEB.CMS.Controllers
         private readonly IPaymentRequestRepository _paymentRequestRepository;
         private readonly ProductDetailMongoAccess _productV2DetailMongoAccess;
         private readonly ICommonRepository _commonRepository;
+        private ElasticService _elasticService;
 
         public OrderController(IConfiguration configuration, IAllCodeRepository allCodeRepository, IOrderRepository orderRepository, IClientRepository clientRepository, 
             IUserRepository userRepository, IContractPayRepository contractPayRepository, IPaymentRequestRepository paymentRequestRepository, ICommonRepository commonRepository
-            , ProductDetailMongoAccess productV2DetailMongoAccess)
+            , ProductDetailMongoAccess productV2DetailMongoAccess, ElasticService elasticService)
         {
             _configuration = configuration;
             _allCodeRepository = allCodeRepository;
@@ -37,6 +40,7 @@ namespace WEB.CMS.Controllers
             _paymentRequestRepository = paymentRequestRepository;
             _productV2DetailMongoAccess = productV2DetailMongoAccess;
             _commonRepository = commonRepository;
+            _elasticService = elasticService;
         }
         public IActionResult Index()
         {
@@ -110,18 +114,23 @@ namespace WEB.CMS.Controllers
         }
         public async Task<IActionResult> OrderDetail(long orderId)
         {
+            ViewBag.orderId = orderId;
+            ViewBag.editsale = false;
             try
             {
-       
+                int _UserId = 0;
+                var data = new List<OrderElasticsearchViewModel>();
+                if (HttpContext.User.FindFirst(ClaimTypes.NameIdentifier) != null)
+                {
+                    _UserId = Convert.ToInt32(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+                }
                 if (orderId != 0)
                 {
-                    ViewBag.orderId = orderId;
-                    ViewBag.editsale = false;
                     var dataOrder = await _orderRepository.GetOrderDetailByOrderId(orderId);
                     if (dataOrder != null)
                     {
                           ViewBag.ReceiverName = dataOrder.ReceiverName+" SDT: "+ dataOrder.PhoneOrder;
-                        if( dataOrder.SalerId == 1)
+                        if( dataOrder.SalerId != _UserId && dataOrder.OrderStatus == (int)OrderStatus.PAID)
                         {
                             ViewBag.editsale = true; 
                         }
@@ -316,13 +325,23 @@ namespace WEB.CMS.Controllers
                 {
                     _UserId = Convert.ToInt32(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
                 }
-                var orderDetail =await _orderRepository.GetOrderByOrderNo(OrderNo);
-                if (saleid != 0) _UserId = _UserId = saleid;
-                //var order = new Entities.Models.Order();
-                //order.OrderId = (long)order_id;
-                orderDetail.UserId = _UserId;
-                orderDetail.UserUpdateId = _UserId;
-                var success = await _orderRepository.UpdateOrder(orderDetail);
+                var order = await _orderRepository.GetByOrderId((long)order_id);
+                if (order != null && order.OrderId > 0 && order.PaymentStatus >= 0 && order.OrderStatus == (int)OrderStatus.PAID)
+                {
+                    order.UpdateLast = DateTime.Now;
+                    order.UserId = saleid>0? saleid:_UserId;
+                    order.UserUpdateId = _UserId;
+                    order.OrderStatus = (order.OrderStatus == (int)OrderStatus.PAID) ? (int)OrderStatus.PROCESSING: order.OrderStatus;
+                    var updated = await _orderRepository.UpdateOrder(order);
+                    _elasticService.PushToQueue("SP_GetOrder", order.OrderId);
+                }
+                //var orderDetail =await _orderRepository.GetOrderByOrderNo(OrderNo);
+                //if (saleid != 0) _UserId = _UserId = saleid;
+                ////var order = new Entities.Models.Order();
+                ////order.OrderId = (long)order_id;
+                //orderDetail.UserId = _UserId;
+                //orderDetail.UserUpdateId = _UserId;
+                //var success = await _orderRepository.UpdateOrder(orderDetail);
               
                 return Ok(new
                 {
