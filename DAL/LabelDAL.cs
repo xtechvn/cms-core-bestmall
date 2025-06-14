@@ -67,6 +67,7 @@ namespace DAL
                     new SqlParameter("@CreatedBy", model.CreatedBy),
                     new SqlParameter("@UserSupplierId", model.UserSupplierId),
                     new SqlParameter("@Banner", model.Banner),
+                    new SqlParameter("@Avatar ", model.Avatar),
                 ];
                 var id = _DbWorker.ExecuteNonQuery(StoreProcedureConstant.InsertLabel, objParam);
                 model.Id = id;
@@ -98,6 +99,7 @@ namespace DAL
                     new SqlParameter("@Id ", model.Id),
                     new SqlParameter("@UserSupplierId ", model.UserSupplierId),
                     new SqlParameter("@Banner ", model.Banner),
+                    new SqlParameter("@Avatar ", model.Avatar),
                 ];
                 var id = _DbWorker.ExecuteNonQuery(StoreProcedureConstant.UpdateLabel, objParam);
                 model.Id = id;

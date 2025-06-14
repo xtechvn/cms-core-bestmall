@@ -157,6 +157,13 @@ namespace WEB.CMS.Controllers
                     if (updated_model.Banner != null && updated_model.Banner.Trim() != ""
                    && !updated_model.Banner.Contains(static_domain)) updated_model.Banner = static_domain + updated_model.Banner;
                 }
+                if (updated_model.Avatar != null && updated_model.Avatar.Trim() != ""
+                   && !updated_model.Avatar.Contains(static_domain) && updated_model.Avatar.Trim().StartsWith("\\"))
+                {
+                    updated_model.Avatar = await labelService.UploadLabelImage(updated_model.Avatar);
+                    if (updated_model.Avatar != null && updated_model.Avatar.Trim() != ""
+                   && !updated_model.Avatar.Contains(static_domain)) updated_model.Avatar = static_domain + updated_model.Avatar;
+                }
                 updated_model.UpdatedBy = _UserLogin;
                 updated_model.UpdateTime = DateTime.Now;
                 if (updated_model.Id > 0)

@@ -29,7 +29,16 @@ var label_detail = {
                 label_detail.Upload()
             }
         })
-       
+        $('body').on('click', '#update-avatar-import', function () {
+            var element = $(this)
+            $('#update-avatar-input').click()
+
+        });
+        $('body').on('change', '#update-avatar-input', function () {
+            if ($(this)[0].files[0] && label_detail.Data.Processing == false) {
+                label_detail.UploadAvatar()
+            }
+        })
     },
     Upload: function () {
         label_detail.Data.Processing = true;
@@ -52,6 +61,32 @@ var label_detail = {
                 $('#update-icon-input').val(null).trigger('change')
                 $('#update-icon-import img').css('top','0')
                 $('#update-icon-import img').css('object-fit','cover')
+                label_detail.Data.Processing = false
+
+            }
+        });
+    },
+    UploadAvatar: function () {
+        label_detail.Data.Processing = true;
+        var element = $('#update-avatar-input')
+        var formData = new FormData()
+        $(element[0].files).each(function (index, item) {
+            formData.append("files", item);
+        });
+
+        $.ajax({
+            url: "/AttachFile/Upload",
+            data: formData,
+            processData: false,
+            contentType: false,
+            type: "POST",
+            success: function (result) {
+                var url = result.data[0]
+                $('#update-avatar-import img').attr('src', url)
+                $('#update-avatar').val(url).trigger('change')
+                $('#update-avatar-input').val(null).trigger('change')
+                $('#update-avatar-import img').css('top', '0')
+                $('#update-avatar-import img').css('object-fit', 'cover')
                 label_detail.Data.Processing = false
 
             }
@@ -96,6 +131,7 @@ var label_detail = {
         var level = $("#update-level").val(); 
         var userSupplierId = $("#update-userSupplierId").val();
         var banner = $("#update-banner-import img") == undefined ? '' : $("#update-banner-import img").attr('src'); 
+        var avt = $("#update-avatar-import img") == undefined ? '' : $("#update-avatar-import img").attr('src'); 
 
 
         // 2.  Validation
@@ -137,6 +173,7 @@ var label_detail = {
         formData.append("Level", level);
         formData.append("UserSupplierId", userSupplierId);
         formData.append("Banner", banner == undefined ? '' : banner);
+        formData.append("Avatar", avt == undefined ? '' : avt);
 
 
         // 4. AJAX request
