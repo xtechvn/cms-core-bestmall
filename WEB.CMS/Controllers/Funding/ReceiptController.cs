@@ -17,6 +17,9 @@ using Newtonsoft.Json;
 using Entities.ViewModels.SupplierConfig;
 using Caching.Elasticsearch;
 using Entities.ViewModels.ElasticSearch;
+using WEB.CMS.Controllers.Elastic.Bussiness;
+using StackExchange.Redis;
+using Nest;
 
 namespace WEB.CMS.Controllers.Funding
 {
@@ -39,11 +42,13 @@ namespace WEB.CMS.Controllers.Funding
         private readonly ISupplierRepository _supplierRepository;
         private readonly IBankingAccountRepository _bankingAccountRepository;
         private readonly ClientESRepository clientESRepository;
+        private ElasticService _elasticService;
 
         public ReceiptController(IContractPayRepository contractPayRepository, IAllCodeRepository allCodeRepository, IWebHostEnvironment hostEnvironment,
           IClientRepository clientRepository, IDepositHistoryRepository depositHistoryRepository, IOrderRepository orderRepository, ManagementUser ManagementUser,
            IUserRepository userRepository, IIdentifierServiceRepository _identifierServiceRepository, IPaymentRequestRepository paymentRequestRepository,
-           IConfiguration configuration, ISupplierRepository supplierRepository, IBankingAccountRepository bankingAccountRepository, ClientESRepository _clientESRepository)
+           IConfiguration configuration, ISupplierRepository supplierRepository, IBankingAccountRepository bankingAccountRepository, ClientESRepository _clientESRepository,
+           ElasticService elasticService)
         {
 
             _WebHostEnvironment = hostEnvironment;
@@ -63,6 +68,7 @@ namespace WEB.CMS.Controllers.Funding
             _bankingAccountRepository = bankingAccountRepository;
             clientESRepository = _clientESRepository;
             config = ReadFile.LoadConfig();
+            _elasticService = elasticService;
         }
         public IActionResult Index()
         {
@@ -293,6 +299,12 @@ namespace WEB.CMS.Controllers.Funding
                     //{
                     //    _emailService.SendEmail(modelEmail, attach_file);
                     //}
+                    if (item.OrderId > 0)
+                    {
+                        _elasticService.PushToQueue("SP_GetOrder", item.OrderId);
+
+                    }
+
                 }
                 return Ok(new
                 {
@@ -377,7 +389,15 @@ namespace WEB.CMS.Controllers.Funding
                 //        _emailService.SendEmail(modelEmail, attach_file);
                 //    }
                 //}
+                foreach (var item in model.ContractPayDetails)
+                {
+                    if (item.OrderId > 0)
+                    {
+                        _elasticService.PushToQueue("SP_GetOrder", item.OrderId);
 
+                    }
+                }
+                   
                 return Ok(new
                 {
                     isSuccess = true,
@@ -405,7 +425,7 @@ namespace WEB.CMS.Controllers.Funding
             {
                 var listRole = current_user.Role.Split(',').Select(n => Convert.ToInt64(n)).ToList();
                 var checkRolePermission = await _userRepository.CheckRolePermissionByUserAndRole(current_user.Id, listRole,
-                    (int)SortOrder.SUA, (int)MenuId.PHIEU_THU);
+                    (int)Utilities.Contants.SortOrder.SUA, (int)MenuId.PHIEU_THU);
                 ViewBag.CHINH_SUA_PHIEU_THU = checkRolePermission ? 1 : 0;
             }
 
@@ -424,7 +444,7 @@ namespace WEB.CMS.Controllers.Funding
             {
                 var listRole = current_user.Role.Split(',').Select(n => Convert.ToInt64(n)).ToList();
                 var checkRolePermission = await _userRepository.CheckRolePermissionByUserAndRole(current_user.Id, listRole,
-                    (int)SortOrder.SUA, (int)MenuId.PHIEU_THU);
+                    (int)Utilities.Contants.SortOrder.SUA, (int)MenuId.PHIEU_THU);
                 ViewBag.CHINH_SUA_PHIEU_THU = checkRolePermission ? 1 : 0;
             }
             bool isAdmin = _userRepository.IsAdmin(current_user.Id);
