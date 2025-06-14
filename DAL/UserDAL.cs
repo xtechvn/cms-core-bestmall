@@ -553,82 +553,84 @@ namespace DAL
                 return new List<User>();
             }
         }
-        public int InsertUser(User model)
+        public int InsertUser(User user)
         {
             try
             {
                 SqlParameter[] objParam = new SqlParameter[]
                 {
-                new SqlParameter("@UserMapId", model.UserMapId ?? (object)DBNull.Value),
-                new SqlParameter("@UserName", model.UserName),
-                new SqlParameter("@FullName", model.FullName ?? (object)DBNull.Value),
-                new SqlParameter("@Password", model.Password),
-                new SqlParameter("@ResetPassword", model.ResetPassword ?? (object)DBNull.Value),
-                new SqlParameter("@Phone", model.Phone ?? (object)DBNull.Value),
-                new SqlParameter("@BirthDay", model.BirthDay ?? (object)DBNull.Value),
-                new SqlParameter("@Gender", model.Gender ?? (object)DBNull.Value),
-                new SqlParameter("@Email", model.Email ?? (object)DBNull.Value),
-                new SqlParameter("@Avata", model.Avata ?? (object)DBNull.Value),
-                new SqlParameter("@Address", model.Address ?? (object)DBNull.Value),
-                new SqlParameter("@Status", model.Status),
-                new SqlParameter("@Note", model.Note ?? (object)DBNull.Value),
-                new SqlParameter("@CreatedBy", model.CreatedBy ?? (object)DBNull.Value),
-                new SqlParameter("@CreatedOn", model.CreatedOn ?? (object)DBNull.Value),
-                new SqlParameter("@ModifiedBy", model.ModifiedBy ?? (object)DBNull.Value),
-                new SqlParameter("@ModifiedOn", model.ModifiedOn ?? (object)DBNull.Value),
-                new SqlParameter("@Manager", model.Manager ?? (object)DBNull.Value),
-                new SqlParameter("@DepartmentId", model.DepartmentId ?? (object)DBNull.Value),
-                new SqlParameter("@Level", model.Level ?? (object)DBNull.Value),
-                new SqlParameter("@UserPositionId", model.UserPositionId ?? (object)DBNull.Value),
-                new SqlParameter("@CompanyType", model.CompanyType ?? (object)DBNull.Value),
-                new SqlParameter("@SupplierId", model.SupplierId ?? (object)DBNull.Value),
+            new SqlParameter("@UserMapId", (object)user.UserMapId ?? DBNull.Value),
+            new SqlParameter("@UserName", user.UserName),
+            new SqlParameter("@FullName", (object)user.FullName ?? DBNull.Value),
+            new SqlParameter("@Password", user.Password),
+            new SqlParameter("@ResetPassword", user.ResetPassword),
+            new SqlParameter("@Phone", (object)user.Phone ?? DBNull.Value),
+            new SqlParameter("@BirthDay", (object)user.BirthDay ?? DBNull.Value),
+            new SqlParameter("@Gender", (object)user.Gender ?? DBNull.Value),
+            new SqlParameter("@Email", (object)user.Email ?? DBNull.Value),
+            new SqlParameter("@Avata", (object)user.Avata ?? DBNull.Value),
+            new SqlParameter("@Address", (object)user.Address ?? DBNull.Value),
+            new SqlParameter("@Status", user.Status),
+            new SqlParameter("@Note", (object)user.Note ?? DBNull.Value),
+            new SqlParameter("@CreatedBy", (object)user.CreatedBy ?? DBNull.Value),
+            new SqlParameter("@CreatedOn", (object)user.CreatedOn ?? DBNull.Value),
+            new SqlParameter("@ModifiedBy", (object)user.ModifiedBy ?? DBNull.Value),
+            new SqlParameter("@ModifiedOn", (object)user.ModifiedOn ?? DBNull.Value),
+            new SqlParameter("@Manager", (object)user.Manager ?? DBNull.Value),
+            new SqlParameter("@DepartmentId", (object)user.DepartmentId ?? DBNull.Value),
+            new SqlParameter("@Level", (object)user.Level ?? DBNull.Value),
+            new SqlParameter("@UserPositionId", (object)user.UserPositionId ?? DBNull.Value),
+            new SqlParameter("@CompanyType", (object)user.CompanyType ?? DBNull.Value),
+            new SqlParameter("@SupplierId", (object)user.SupplierId ?? DBNull.Value),
                 };
 
-                return _DbWorker.ExecuteNonQuery(StoreProcedureConstant.SP_InsertUser, objParam);
+
+                return _DbWorker.ExecuteNonQuery("SP_InsertUser", objParam); ;
             }
             catch (Exception ex)
             {
-                 LogHelper.InsertLogTelegram("InsertUser - UserDAL. " + ex); // Bỏ comment nếu bạn có LogHelper
+                LogHelper.InsertLogTelegram("InsertUser - UserDAL: " + ex.ToString());
                 return -1;
             }
         }
-        public int UpdateUser(User model)
+        public int UpdateUser(User user)
         {
             try
             {
                 SqlParameter[] objParam = new SqlParameter[]
                 {
-                new SqlParameter("@Id", model.Id), // Tham số Id cần thiết cho Update [cite: 7]
-                new SqlParameter("@UserMapId", model.UserMapId ?? (object)DBNull.Value),
-                new SqlParameter("@UserName", model.UserName),
-                new SqlParameter("@FullName", model.FullName ?? (object)DBNull.Value),
-                new SqlParameter("@Password", model.Password),
-                new SqlParameter("@ResetPassword", model.ResetPassword ??(object) DBNull.Value),
-                new SqlParameter("@Phone", model.Phone ?? (object)DBNull.Value),
-                new SqlParameter("@BirthDay", model.BirthDay ?? (object)DBNull.Value),
-                new SqlParameter("@Gender", model.Gender ?? (object)DBNull.Value),
-                new SqlParameter("@Email", model.Email ?? (object)DBNull.Value),
-                new SqlParameter("@Avata", model.Avata ?? (object)DBNull.Value),
-                new SqlParameter("@Address", model.Address ?? (object)DBNull.Value),
-                new SqlParameter("@Status", model.Status),
-                new SqlParameter("@Note", model.Note ?? (object)DBNull.Value),
-                new SqlParameter("@CreatedBy", model.CreatedBy ?? (object)DBNull.Value),
-                new SqlParameter("@CreatedOn", model.CreatedOn ?? (object)DBNull.Value),
-                new SqlParameter("@ModifiedBy", model.ModifiedBy ?? (object)DBNull.Value),
-                new SqlParameter("@ModifiedOn", model.ModifiedOn ?? (object)DBNull.Value),
-                new SqlParameter("@Manager", model.Manager ?? (object)DBNull.Value),
-                new SqlParameter("@DepartmentId", model.DepartmentId ?? (object)DBNull.Value),
-                new SqlParameter("@Level", model.Level ?? (object)DBNull.Value),
-                new SqlParameter("@UserPositionId", model.UserPositionId ?? (object)DBNull.Value),
-                new SqlParameter("@CompanyType", model.CompanyType ?? (object)DBNull.Value),
-                new SqlParameter("@SupplierId", model.SupplierId ?? (object)DBNull.Value),
+            new SqlParameter("@Id", user.Id), // Đảm bảo User.Id có giá trị khi update
+            new SqlParameter("@UserMapId", (object)user.UserMapId ?? DBNull.Value),
+            new SqlParameter("@UserName", user.UserName),
+            new SqlParameter("@FullName", (object)user.FullName ?? DBNull.Value),
+            new SqlParameter("@Password", user.Password),
+            new SqlParameter("@ResetPassword", user.ResetPassword),
+            new SqlParameter("@Phone", (object)user.Phone ?? DBNull.Value),
+            new SqlParameter("@BirthDay", (object)user.BirthDay ?? DBNull.Value),
+            new SqlParameter("@Gender", (object)user.Gender ?? DBNull.Value),
+            new SqlParameter("@Email", (object)user.Email ?? DBNull.Value),
+            new SqlParameter("@Avata", (object)user.Avata ?? DBNull.Value),
+            new SqlParameter("@Address", (object)user.Address ?? DBNull.Value),
+            new SqlParameter("@Status", user.Status),
+            new SqlParameter("@Note", (object)user.Note ?? DBNull.Value),
+            new SqlParameter("@CreatedBy", (object)user.CreatedBy ?? DBNull.Value),
+            new SqlParameter("@CreatedOn", (object)user.CreatedOn ?? DBNull.Value),
+            new SqlParameter("@ModifiedBy", (object)user.ModifiedBy ?? DBNull.Value),
+            new SqlParameter("@ModifiedOn", (object)user.ModifiedOn ?? DBNull.Value),
+            new SqlParameter("@Manager", (object)user.Manager ?? DBNull.Value),
+            new SqlParameter("@DepartmentId", (object)user.DepartmentId ?? DBNull.Value),
+            new SqlParameter("@Level", (object)user.Level ?? DBNull.Value),
+            new SqlParameter("@UserPositionId", (object)user.UserPositionId ?? DBNull.Value),
+            new SqlParameter("@CompanyType", (object)user.CompanyType ?? DBNull.Value),
+            new SqlParameter("@SupplierId", (object)user.SupplierId ?? DBNull.Value),
                 };
 
-                return _DbWorker.ExecuteNonQuery(StoreProcedureConstant.SP_UpdateUser, objParam);
+                return _DbWorker.ExecuteNonQuery("SP_UpdateUser", objParam);
+
             }
             catch (Exception ex)
             {
-                 LogHelper.InsertLogTelegram("UpdateUser - UserDAL. " + ex); // Bỏ comment nếu bạn có LogHelper
+                LogHelper.InsertLogTelegram("UpdateUser - UserDAL: " + ex.ToString());
                 return -1;
             }
         }

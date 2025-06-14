@@ -207,7 +207,7 @@ namespace Repositories.Repositories
                     return -1;
                 }
 
-                var userId = (int)await _UserDAL.CreateAsync(entity);
+                var userId =  _UserDAL.InsertUser(entity);
 
                 if (!string.IsNullOrEmpty(model.RoleId))
                 {
@@ -253,7 +253,7 @@ namespace Repositories.Repositories
                 {
                     model.Status = 0;
                 }
-                await _UserDAL.UpdateAsync(model);
+                 _UserDAL.UpdateUser(model);
                 return model.Status;
             }
             catch (Exception ex)
