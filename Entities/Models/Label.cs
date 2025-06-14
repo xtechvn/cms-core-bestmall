@@ -34,4 +34,6 @@ public partial class Label
     public int? UpdatedBy { get; set; }
 
     public string Banner { get; set; }
+
+    public string Avatar { get; set; }
 }
