@@ -85,7 +85,7 @@
                     <ul class="w-100 my-3">
                         <li class="flex justify-content-between mb-2">
                             <div class="">Tổng giá trị đơn hàng</div>
-                            <h6 class="text-right text-danger">@(dataOrder.Amount.ToString("N0") + Convert.ToDouble(dataOrder.Discount)) đ</h6>
+                            <h6 class="text-right text-danger">@((dataOrder.Amount + Convert.ToDouble(dataOrder.Discount)).ToString("N0")) đ</h6>
                         </li>
                         <li class="flex justify-content-between mb-2">
                             <div class="">Voucher</div>
