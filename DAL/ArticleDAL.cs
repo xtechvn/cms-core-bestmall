@@ -76,6 +76,68 @@ namespace DAL
             }
             return null;
         }
+        public async Task SaveFanpageImagesAsync(long articleId, List<string> images)
+        {
+            try
+            {
+                using (var _DbContext = new EntityDataContext(_connection))
+                {
+                    using (var transaction = _DbContext.Database.BeginTransaction())
+                    {
+                        try
+                        {
+                            // Xóa ảnh cũ
+                            var oldImages = _DbContext.FanpageArticleImages.Where(x => x.ArticleId == articleId);
+                            _DbContext.FanpageArticleImages.RemoveRange(oldImages);
+
+                            // Thêm ảnh mới
+                            var newImageEntities = images.Distinct().Select(url => new FanpageArticleImage
+                            {
+                                ArticleId = articleId,
+                                ImageUrl = url,
+                                CreatedDate = DateTime.UtcNow
+                            }).ToList();
+
+                            await _DbContext.FanpageArticleImages.AddRangeAsync(newImageEntities);
+                            await _DbContext.SaveChangesAsync();
+                            transaction.Commit();
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+                            LogHelper.InsertLogTelegram($"SaveFanpageImagesAsync - Rollback: {ex.Message}");
+                            throw;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram($"SaveFanpageImagesAsync: {ex.Message}");
+                throw;
+            }
+        }
+
+
+        public async Task<List<string>> GetFanpageImagesAsync(long articleId)
+        {
+            try
+            {
+                using (var _DbContext = new EntityDataContext(_connection))
+                {
+                    return await _DbContext.FanpageArticleImages
+                        .Where(x => x.ArticleId == articleId)
+                        .OrderBy(x => x.CreatedDate)
+                        .Select(x => x.ImageUrl)
+                        .ToListAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram($"GetFanpageImagesAsync: {ex.Message}");
+                return new List<string>();
+            }
+        }
 
         public async Task<long> SaveArticle(ArticleModel model)
         {
@@ -100,6 +162,11 @@ namespace DAL
                     entity.UpTime = model.PublishDate == DateTime.MinValue ? (DateTime?)null : model.PublishDate;
                     entity.DownTime = model.DownTime == DateTime.MinValue ? (DateTime?)null : model.DownTime;
                     entity.Position = (short?)model.Position;
+                    entity.PlatForm = model.PlatForm;
+                    entity.AimodelType = model.AimodelType;
+                    entity.CampaignName = model.CampaignName;
+                    entity.AiContent = model.AiContent;
+                    entity.IsPostedToFanpage = model.IsPostedToFanpage;
                     await UpdateAsync(entity);
                 }
                 else
@@ -120,7 +187,12 @@ namespace DAL
                         PublishDate = model.PublishDate == DateTime.MinValue ? DateTime.Now : model.PublishDate,
                         UpTime = model.PublishDate == DateTime.MinValue ? DateTime.Now : model.PublishDate,
                         DownTime = model.DownTime == DateTime.MinValue ? (DateTime?)null : model.DownTime,
-                        Position = (short?)model.Position
+                        Position = (short?)model.Position,
+                        PlatForm = model.PlatForm,
+                        AimodelType = model.AimodelType,
+                        CampaignName = model.CampaignName,
+                        AiContent = model.AiContent,
+                        IsPostedToFanpage = model.IsPostedToFanpage
                     };
                     articleId = await CreateAsync(entity);
                 }
@@ -158,7 +230,12 @@ namespace DAL
                                 Image169 = article.Image169,
                                 PublishDate = article.PublishDate ?? DateTime.MinValue,
                                 DownTime = article.DownTime ?? DateTime.MinValue,
-                                Position = article.Position ?? 0
+                                Position = article.Position ?? 0,
+                                PlatForm = article.PlatForm,
+                                AimodelType = article.AimodelType,
+                                CampaignName = article.CampaignName,
+                                AiContent = article.AiContent,
+                                IsPostedToFanpage = article.IsPostedToFanpage
                             };
 
                             var TagIds = await _DbContext.ArticleTags.Where(s => s.ArticleId == article.Id).Select(s => s.TagId).ToListAsync();
@@ -181,6 +258,12 @@ namespace DAL
                                                                   }).ToListAsync();
                             }
 
+                            // ✅ Bổ sung đoạn này để load ảnh từ FanpageArticleImages
+                            model.FanpageImages = await _DbContext.FanpageArticleImages
+                                .Where(x => x.ArticleId == article.Id)
+                                .OrderBy(x => x.CreatedDate)
+                                .Select(x => x.ImageUrl)
+                                .ToListAsync();
                             transaction.Commit();
                         }
                         catch (Exception ex)

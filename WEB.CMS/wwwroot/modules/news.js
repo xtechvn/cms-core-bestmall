@@ -50,9 +50,95 @@ var _news = {
             currentPage: 1,
             pageSize: 20
         };
+        //Ai
+        this.modal_element = $('#global_modal_popup');
 
         this.SearchParam = objSearch;
         this.Search(objSearch);
+    },
+
+    ShowAddOrUpdate: function (id, parent_id = 0) {
+        debugger
+        let title = `${id > 0 ? "Cập nhật" : "Thêm mới"} Bài Viết AI`;
+        let url = '/news/AddOrUpdate';
+        _news.modal_element.find('.modal-title').html(title);
+        _news.modal_element.find('.modal-dialog').css('max-width', '680px');
+        _ajax_caller.get(url, { id: id, parent_id: parent_id }, function (result) {
+            _news.modal_element.find('.modal-body').html(result);
+            _news.modal_element.modal('show');
+        });
+    },
+
+    OnSave: function () {
+        debugger
+
+        const data = {
+            Id: parseInt($('#Id').val()) || 0, // vẫn lấy Id từ view chính
+            CampaignName: $('#modal-CampaignName').val(),
+            PlatForm: parseInt($('input[name="PlatForm"]:checked', _news.modal_element).val()),
+            AiContent: $('#modal-AiContent').val(),
+            AimodelType: 1
+        };
+        if (!data.AiContent) {
+            alert("Bạn cần nhập nội dung để gửi lên AI.");
+            return;
+        }
+        const platformText = data.PlatForm === 1 ? "facebook" : "web";
+        // 🔥 Bắn lên N8n
+        const payload = {
+            chatInput: data.AiContent,
+            platform: platformText,
+        };
+        // ✨ Show loading
+        $('#loadingOverlay').show();
+
+
+
+        $.ajax({
+            url: "https://n8n.adavigo.com/webhook/send-message",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(payload),
+            success: function (res) {
+                debugger
+                // ✅ Gán kết quả AI trả về
+                $('#loadingOverlay').hide(); // ✅ Hide loading
+                data.AiResult = res.content;
+                data.Title = res.title || "";            // Nếu có tiêu đề từ AI
+                data.Lead = res.lead || "";              // Nếu có mô tả từ AI
+                // 🔥 Chỉ lấy tối đa 5 ảnh đầu tiên nếu có
+                data.Images = (res.img_lst || []).slice(0, 10);
+                data.Keywords = res.keyword || [];       // Từ khóa AI sinh ra
+                console.log("✅ Phản hồi từ N8n:", res);
+
+                // ✅ Lưu vào localStorage
+                let aiArticles = JSON.parse(localStorage.getItem('aiArticles') || '[]');
+
+                // Xoá bài trùng theo Id nếu có
+                aiArticles = aiArticles.filter(item => item.Id !== data.Id);
+
+                // Thêm bài mới vào cuối
+                aiArticles.push(data);
+
+                // Ghi lại
+                localStorage.setItem('aiArticles', JSON.stringify(aiArticles));
+
+
+
+                // ✅ Điều hướng sang trang khác để render nội dung
+                if (data.PlatForm === 0) {
+                    window.location.href = "/news/detail/0?fromAI=true&platform=" + data.PlatForm + "&AimodelType=1";
+                } else if (data.PlatForm === 1) {
+                    window.location.href = "/news/detail/0?fromAI=true&platform=" + data.PlatForm + "&AimodelType=1";
+                }
+
+            },
+            error: function (xhr, status, err) {
+                $('#loadingOverlay').hide(); // ❌ Hide on error
+                console.error("❌ Gửi thất bại:", err);
+                alert("❌ Lỗi khi gửi lên AI. Kiểm tra console để xem chi tiết.");
+            }
+        });
     },
 
     Search: function (input) {

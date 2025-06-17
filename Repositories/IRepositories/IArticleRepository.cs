@@ -13,6 +13,8 @@ namespace Repositories.IRepositories
         Task<long> SaveArticle(ArticleModel model);
         string SeverVieo(ArticleModel model);
         Task<ArticleModel> GetArticleDetail(long Id);
+        Task<List<string>> GetFanpageImagesAsync(long articleId);
+        Task SaveFanpageImagesAsync(long articleId, List<string> images);
         Task<long> ChangeArticleStatus(long Id, int Status);
         Task<List<string>> GetSuggestionTag(string name);
         Task<List<ArticleViewModel>> getArticleListByCategoryId(int cate_id);
