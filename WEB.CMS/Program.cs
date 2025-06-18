@@ -4,6 +4,7 @@ using Caching.RedisWorker;
 using Entities.ConfigModels;
 using HuloToys_Service.ElasticSearch;
 using HuloToys_Service.ElasticSearch.NewEs;
+using HuloToys_Service.MongoDb;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Configuration;
@@ -114,6 +115,7 @@ builder.Services.AddSingleton<GroupProductESService>();
 builder.Services.AddSingleton<LocationESService>();
 builder.Services.AddSingleton<OrderESRepository>();
 builder.Services.AddSingleton<ElasticService>();
+builder.Services.AddSingleton<ClientContactMongodbService>();
 
 // Setting Redis                     
 builder.Services.AddSingleton<RedisConn>();

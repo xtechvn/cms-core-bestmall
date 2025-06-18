@@ -1,0 +1,33 @@
+﻿@using Entities.ViewModels.Products
+@using Models.MongoDb
+@using Utilities.Contants
+@using Utilities.Contants.ProductV2
+@{
+    Layout = null;
+    List<ClientContactMongoDbModel> main_products = (List<ClientContactMongoDbModel>)ViewBag.Main;
+}
+@if(main_products!=null && main_products.Count > 0)
+{
+    foreach(var main in main_products)
+    {
+      
+        <tr data-id="@main._id">
+            <td style="width: 0;">
+                <label class="check-list mb-3">
+                    <input type="checkbox">
+                    <span class="checkmark"></span>
+                </label>
+            </td>
+            <td>
+               @main.email
+            </td>
+            <td>
+                @main.phone
+            </td>
+            <td>
+                @main.message
+            </td>
+        </tr>
+    }
+    <div id="search-count" style="display:none;">@main_products.Count</div>
+}
