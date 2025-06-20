@@ -533,7 +533,7 @@ namespace WEB.CMS.Models.Product
                 return null;
             }
         }
-        public async Task<int> CountByGroupId(int group_id)
+        public async Task<long> CountByGroupId(int group_id)
         {
             try
             {
@@ -549,7 +549,7 @@ namespace WEB.CMS.Models.Product
                     filter &= Builders<ProductMongoDbModel>.Filter.Regex(x => x.group_product_id, group_id.ToString());
                 }
                 
-                var count= await _productDetailCollection.CountDocumentsAsync(filter);
+                return await _productDetailCollection.CountDocumentsAsync(filter);
 
             }
             catch (Exception ex)
