@@ -66,7 +66,6 @@ public partial class DataMSContext : DbContext
 
     public virtual DbSet<District> Districts { get; set; }
 
-    public virtual DbSet<FanpageArticleImage> FanpageArticleImages { get; set; }
 
     public virtual DbSet<FlashSale> FlashSales { get; set; }
 
