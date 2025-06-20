@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 using Utilities;
 using Utilities.Contants;
 using WEB.CMS.Customize;
+using WEB.CMS.Models.Product;
 using WEB.CMS.RabitMQ;
 
 namespace WEB.CMS.Controllers
@@ -32,8 +33,9 @@ namespace WEB.CMS.Controllers
         private readonly IConfiguration _configuration;
         private readonly WorkQueueClient work_queue;
         private readonly RedisConn _redisService;
+        private readonly ProductDetailMongoAccess _productV2DetailMongoAccess;
 
-        public GroupProductController(IGroupProductRepository groupProductRepository,
+        public GroupProductController(IGroupProductRepository groupProductRepository, ProductDetailMongoAccess productV2DetailMongoAccess,
                IWebHostEnvironment hostEnvironment, IPositionRepository positionRepository,
                RedisConn redisService, IAllCodeRepository allCodeRepository, IOptions<DomainConfig> domainConfig, IConfiguration configuration)
         {
@@ -47,6 +49,7 @@ namespace WEB.CMS.Controllers
             _configuration = configuration;
             _redisService = redisService;
             _redisService.Connect();
+            _productV2DetailMongoAccess = productV2DetailMongoAccess;
         }
 
         public IActionResult Index()
@@ -137,8 +140,9 @@ namespace WEB.CMS.Controllers
                     IsShowHeader = model.IsShowHeader,
                     IsShowFooter = model.IsShowFooter,
                     ModifiedOn = DateTime.Now,
-                    Code = model.Code
-
+                    Code = model.Code,
+                    ProductCount=(model.Id>0? await _productV2DetailMongoAccess.CountByGroupId(model.Id):0)
+                    
                 };
                 var rs = await _GroupProductRepository.UpSert(upsertModel);
                 if (rs > 0)
