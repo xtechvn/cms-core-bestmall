@@ -22,6 +22,7 @@ using WEB.CMS.Controllers.Product.Bussiness;
 using WEB.CMS.Customize;
 using WEB.CMS.Models;
 using WEB.CMS.Models.Product;
+using WEB.CMS.RabitMQ;
 
 namespace WEB.CMS.Controllers
 {
@@ -41,6 +42,7 @@ namespace WEB.CMS.Controllers
         private readonly ProductESRepository _productESRepository;
         private readonly ISupplierRepository _supplierRepository;
         private readonly IAllCodeRepository _allCodeRepository;
+        private readonly WorkQueueClient work_queue;
 
         public ProductController(IConfiguration configuration, RedisConn redisConn, IGroupProductRepository groupProductRepository, ILabelRepository labelRepository,
             ISupplierRepository supplierRepository, IAllCodeRepository allCodeRepository, ProductDetailMongoAccess productV2DetailMongoAccess, 
@@ -59,6 +61,8 @@ namespace WEB.CMS.Controllers
             _labelRepository = labelRepository;
             _supplierRepository = supplierRepository;
             _allCodeRepository = allCodeRepository;
+            work_queue = new WorkQueueClient(configuration);
+
         }
         public IActionResult Index()
         {
@@ -356,6 +360,24 @@ namespace WEB.CMS.Controllers
               
                 await _redisConn.DeleteCacheByKeyword(CacheName.PRODUCT_LISTING, db_index);
                 _redisConn.clear(CacheName.PRODUCT_DETAIL + product_main._id, db_index);
+                if(product_main.group_product_id!=null && product_main.group_product_id.Trim() != "")
+                {
+                    try
+                    {
+                        var split = product_main.group_product_id.Split(",");
+                        if(split!=null && split.Count() > 0)
+                        {
+                            foreach(var id in split)
+                            {
+                                _redisConn.clear("ARTICLE_B2C_CATEGORY_MENU_FOOTER" + id, Convert.ToInt32(_configuration["Redis:Database:db_common"]));
+                            }
+                        }
+                    }
+                    catch
+                    {
+
+                    }
+                }
                 if (rs != null)
                 {
                     return Ok(new
