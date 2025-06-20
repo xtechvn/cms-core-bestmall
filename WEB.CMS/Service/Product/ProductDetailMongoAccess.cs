@@ -533,6 +533,30 @@ namespace WEB.CMS.Models.Product
                 return null;
             }
         }
+        public async Task<int> CountByGroupId(int group_id)
+        {
+            try
+            {
+                var  filterDefinition = Builders<ProductMongoDbModel>.Filter;
+                var filter = filterDefinition.Empty;
+                filter &= Builders<ProductMongoDbModel>.Filter.Or(
+                    Builders<ProductMongoDbModel>.Filter.Eq(p => p.parent_product_id, null),
+                    Builders<ProductMongoDbModel>.Filter.Eq(p => p.parent_product_id, "")
+                );
+                filter &= Builders<ProductMongoDbModel>.Filter.Where(s => s.status != (int)ProductStatus.REMOVE);
+                if (group_id > 0)
+                {
+                    filter &= Builders<ProductMongoDbModel>.Filter.Regex(x => x.group_product_id, group_id.ToString());
+                }
+                
+                var count= await _productDetailCollection.CountDocumentsAsync(filter);
 
+            }
+            catch (Exception ex)
+            {
+                Utilities.LogHelper.InsertLogTelegram("ProductDetailMongoAccess - CountByGroupId Error: " + ex);
+            }
+            return 0;
+        }
     }
 }

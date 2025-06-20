@@ -65,6 +65,8 @@ public partial class DataMSContext : DbContext
 
     public virtual DbSet<District> Districts { get; set; }
 
+    public virtual DbSet<FanpageArticleImage> FanpageArticleImages { get; set; }
+
     public virtual DbSet<FlashSale> FlashSales { get; set; }
 
     public virtual DbSet<FlashSaleProduct> FlashSaleProducts { get; set; }
@@ -609,6 +611,14 @@ public partial class DataMSContext : DbContext
             entity.Property(e => e.Type)
                 .IsRequired()
                 .HasMaxLength(30);
+        });
+
+        modelBuilder.Entity<FanpageArticleImage>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__FanpageA__3214EC07D314954A");
+
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.Property(e => e.ImageUrl).IsRequired();
         });
 
         modelBuilder.Entity<FlashSale>(entity =>
