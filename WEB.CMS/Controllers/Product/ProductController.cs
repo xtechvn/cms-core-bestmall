@@ -356,6 +356,24 @@ namespace WEB.CMS.Controllers
               
                 await _redisConn.DeleteCacheByKeyword(CacheName.PRODUCT_LISTING, db_index);
                 _redisConn.clear(CacheName.PRODUCT_DETAIL + product_main._id, db_index);
+                if (product_main.group_product_id != null && product_main.group_product_id.Trim() != "")
+                {
+                    try
+                    {
+                        var split = product_main.group_product_id.Split(",");
+                        if (split != null && split.Count() > 0)
+                        {
+                            foreach (var id in split)
+                            {
+                                _redisConn.clear("ARTICLE_B2C_CATEGORY_MENU_FOOTER" + id, Convert.ToInt32(_configuration["Redis:Database:db_common"]));
+                            }
+                        }
+                    }
+                    catch
+                    {
+
+                    }
+                }
                 if (rs != null)
                 {
                     return Ok(new
