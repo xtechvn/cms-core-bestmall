@@ -9,6 +9,25 @@
 @model ArticleModel
 @{
     var _StrTreeViewCate = (string)ViewBag.StringTreeViewCate;
+    var fromAI = Context.Request.Query["fromAI"] == "true";
+    var platformQuery = Context.Request.Query["platform"];
+    var aimodelTypeQuery = Context.Request.Query["AimodelType"];
+
+    byte platFormVal = 255;
+    byte aimodelTypeVal = 255;
+
+    // ✅ Ưu tiên query nếu fromAI = true
+    if (fromAI && byte.TryParse(platformQuery, out var pf)) platFormVal = pf;
+    if (fromAI && byte.TryParse(aimodelTypeQuery, out var ai)) aimodelTypeVal = ai;
+
+    // ✅ Nếu vẫn chưa xác định → fallback từ DB
+    if (platFormVal == 255 && Model.PlatForm != null) platFormVal = Model.PlatForm.Value;
+    if (aimodelTypeVal == 255 && Model.AimodelType != null) aimodelTypeVal = Model.AimodelType.Value;
+
+    // ✅ Cuối cùng xác định loại bài viết
+    bool isFanpage = (platFormVal == 1 && aimodelTypeVal == 1);
+    bool isWebsiteAI = (platFormVal == 0 && aimodelTypeVal == 1);
+    bool isWebsiteManual = (platFormVal == 255 && aimodelTypeVal == 255 || platFormVal == 0 && aimodelTypeVal == 0);
 
 }
 
@@ -17,39 +36,57 @@
 
 <style>
     .bootstrap-tagsinput .tag {
-        display: inline-block;
-        margin: 5px 2px 5px 0px;
-        color: #000;
-        background: #D9D9D9;
-        padding: 5px 5px 5px 10px;
+    display: inline-block;
+    margin: 5px 2px 5px 0px;
+    color: #000;
+    background: #D9D9D9;
+    padding: 5px 5px 5px 10px;
     }
 
     .bootstrap-tagsinput {
-        width: 100%;
+    width: 100%;
     }
 
     .user-hierarchy-tag ul .lever2 {
-        padding-left: 15px;
+    padding-left: 15px;
     }
 
     .loading {
-        position: absolute;
-        z-index: 1;
-        width: 100%;
-        height: 100%;
-        display: none;
-        align-items: center;
-        justify-content: center;
-        background: rgba(0, 0, 0, 0.479);
+    position: absolute;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.479);
     }
 
-        .loading img {
-            width: 2rem;
-        }
+    .loading img {
+    width: 2rem;
+    }
 
-    .check-list {
-        display:inline-block !important;
-     }
+    .fanpage-img-option.selected {
+    border-color: #007bff !important;
+    box-shadow: 0 0 5px #007bff;
+    }
+
+    #loadingPostFanpage {
+    display: none; /* ✅ Trạng thái mặc định */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    background: rgba(0, 0, 0, 0.5);
+    align-items: center;
+    justify-content: center;
+    }
+
+    #loadingPostFanpage.show {
+    display: flex; /* ✅ Khi cần hiển thị thì thêm class show */
+    }
 </style>
 <div class="row-main container" style="max-width: 1180px;">
     <input value="@Model.Status" id="News_Status" style="display:none;" />
@@ -57,47 +94,81 @@
     <div class="flex row-main-head">
         <h2 class="title_page">ĐĂNG BÀI VIẾT</h2>
         <div class="btn-right text-right">
-            @if (Model.Status == ArticleStatus.PUBLISH)
+            @if (Model.Id > 0 && Model.Status == ArticleStatus.REMOVE)
             {
-                <a href="javascripts:;" class="btn" onclick="_newsDetail.EditNewDetail('@Model.Id','@ArticleStatus.REMOVE')">
-                    Sửa bài viết
-                </a>
+                <button type="button" class="btn btn-default mr-2" style="margin-bottom:10px;" onclick="_news.ShowAddOrUpdateFromAI()">
+                    <i class="fa fa-pencil"></i> Sửa bài viết AI
+                </button>
+            }
+
+
+            @if (isFanpage)
+            {
+                // Nếu đã đăng thì disable
+                if (Model.IsPostedToFanpage == 1)
+                {
+                    <button class="btn btn-success" disabled>Đã đăng lên Fanpage</button>
+                }
+                else
+                {
+
+
+                    <button type="button" id="btn-post-fanpage" class="btn btn-primary"
+                    onclick="_news.postToFanpage(@Model.Id)">
+                        <i class="fa fa-share"></i> Đăng bài lên Fanpage
+                    </button>
+                }
             }
         </div>
 
     </div>
+    <input type="hidden" id="PlatForm" value="@Model.PlatForm" />
+    <input type="hidden" id="Id" name="Id" value="@Model.Id" />
+    <input type="hidden" id="AimodelType" value="@Model.AimodelType" />
+    <input type="hidden" id="CampaignName" value="@Model.CampaignName" />
+    <input type="hidden" id="AiContent" value="@Model.AiContent" />
+    <input type="hidden" id="IsPostedToFanpage" value="@Model.IsPostedToFanpage" />
+
     <div class="wrap_bg mb20">
 
         <form id="form-news">
-            <div class="form-default2">
-                <div class="form-group none-flex">
-                    <label><strong>Tiêu đề</strong> <sup class="red">*</sup></label>
-                    <input type="hidden" asp-for="@Model.Id" />
-                    <input type="text" class="form-control" asp-for="@Model.Title" placeholder="Nhập tiêu đề bài viết giới hạn 300 ký tự...">
+            @if (isWebsiteAI || isWebsiteManual)
+            {
+                <div class="form-default2">
+                    <div class="form-group none-flex">
+                        <label><strong>Tiêu đề</strong> <sup class="red">*</sup></label>
+                        <input type="hidden" asp-for="@Model.Id" />
+                        <input type="text" class="form-control" asp-for="@Model.Title" placeholder="Nhập tiêu đề bài viết giới hạn 300 ký tự...">
+                    </div>
                 </div>
-            </div>
-            <div class="form-default2">
-                <div class="form-group none-flex">
-                    <label><strong>Mô tả</strong> <sup class="red">*</sup></label>
-                    <textarea class="form-control" asp-for="@Model.Lead" placeholder="Nhập mô tả bài viết giới hạn 400 ký tự..."
-                              style="height: 105px;"></textarea>
+                <div class="form-default2">
+                    <div class="form-group none-flex">
+                        <label><strong>Mô tả</strong> <sup class="red">*</sup></label>
+                        <textarea class="form-control" asp-for="@Model.Lead" placeholder="Nhập mô tả bài viết giới hạn 400 ký tự..."
+                        style="height: 105px;"></textarea>
+                    </div>
                 </div>
-            </div>
+            }
+
 
             <div class="row form-default2" style="margin: 0 -5px">
                 <div class="col-sm-9" style="padding: 0 5px">
                     <div class="flex">
                         <label><strong>Nội dung</strong> <sup class="red">*</sup></label>
-                        <div class="list-radio flex mb10" style="margin-left: 20px">
-                            <label class="radio-inline">
-                                <input onclick="_newsDetail.Onchen('0')" type="radio" asp-for="@Model.ArticleType" value="0">
-                                Bài thường
-                            </label>
-                            <label class="radio-inline">
-                                <input onclick="_newsDetail.Onchen('1')" type="radio" asp-for="@Model.ArticleType" value="1">
-                                Bài video
-                            </label>
-                        </div>
+                        @if (!isFanpage)
+                        {
+                            <div class="list-radio flex mb10" style="margin-left: 20px">
+                                <label class="radio-inline">
+                                    <input onclick="_newsDetail.Onchen('0')" type="radio" asp-for="@Model.ArticleType" value="0">
+                                    Bài thường
+                                </label>
+                                <label class="radio-inline">
+                                    <input onclick="_newsDetail.Onchen('1')" type="radio" asp-for="@Model.ArticleType" value="1">
+                                    Bài video
+                                </label>
+                            </div>
+                        }
+                       
                         @if (Model.Status == ArticleStatus.PUBLISH)
                         {
                             <div class="mb10 text-right" style="margin-left: auto;">
@@ -111,6 +182,8 @@
                     <div id="normal_post" class="mb20">
                         <textarea id="text-editor" asp-for="@Model.Body" style="resize:none;height: 1000px;"></textarea>
                     </div>
+                    @if (isWebsiteAI || isWebsiteManual)
+                 {
                     <!-- Dạng bài video -->
                     <div id="video_post" class="mb20" style="display:none">
                         <div class="border pd10">
@@ -137,7 +210,6 @@
 
                                         </label>
                                         <div id="video-content">
-
                                         </div>
                                         <div>
                                             @if (Model.Body != null)
@@ -190,6 +262,7 @@
                             }
                         </div>
                     </div>
+             }
                     <div class="action-btn">
                         <div class="flex">
                             <div class="btn-left">
@@ -301,6 +374,33 @@
                             </div>
                         </div>
                     </div>
+                    @if (isFanpage)
+                    {
+                        <div class="mb20">
+                            <label id="label-fanpage-select" class="@(Model.FanpageImages != null && Model.FanpageImages.Count > 0 ? "d-none" : "")">
+                                <strong>Chọn ảnh hiển thị khi đăng lên Fanpage:</strong>
+                            </label>
+                            <div class="list-images" id="fanpage-image-list" style="display: flex; overflow-x: auto; gap: 10px; padding: 10px 0;">
+                                <!-- ảnh sẽ được JS render vào -->
+                            </div>
+                            <input type="hidden" id="selectedImagesForFanpage" value="" />
+
+                            @* ✅ Ảnh đã lưu từ DB *@
+                            <div class="mb10 @(Model.FanpageImages == null || Model.FanpageImages.Count == 0 ? "d-none" : "")" id="fanpage-db-wrapper">
+                                <label id="label-fanpage-db"><strong>Ảnh đã lưu từ lần đăng trước:</strong></label>
+                                <div id="fanpage-image-list-from-db" style="display: flex; overflow-x: auto; gap: 10px;">
+                                    @foreach (var img in Model.FanpageImages)
+                                    {
+                                        <img src="@img"
+                                             class="fanpage-img-option selected"
+                                             style="width: 120px; height: 90px; object-fit: cover; border: 2px solid #007bff;" />
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                     @if (isWebsiteAI || isWebsiteManual)
+                    {
                     <div class="mb20 form-default2">
                         <div class="form-group none-flex" style="border: 1px solid #CCCCCC;padding:15px">
                             <label class="mb10"><strong>Giờ lên bài</strong></label>
@@ -335,14 +435,135 @@
                             </div>
                         </div>
                     </div>
+                    }
                 </div>
             </div>
         </form>
     </div>
 
 </div>
+<!-- ✅ Overlay -->
+<div id="loadingPostFanpage">
+    <div style="text-align: center; color: white;">
+        <img src="/images/graphics/loading.gif" style="width: 60px;" />
+        <p>Đang đăng bài lên Fanpage...</p>
+    </div>
+</div>
 
 @section scripts {
+    <script>
+        function formatAIContentToHTML(content) {
+            if (!content) return '';
+            return marked.parse(content); // Chuyển markdown → HTML
+        }
+            $(document).ready(function () {
+                debugger
+            const query = new URLSearchParams(window.location.search);
+            const fromAI = query.get("fromAI") === "true";
+
+            let selectedImages = [];
+
+            if (fromAI) {
+                const aiArticles = JSON.parse(localStorage.getItem('aiArticles') || '[]');
+                if (aiArticles.length > 0) {
+                    const lastAI = aiArticles[aiArticles.length - 1];
+
+                    // ✅ Ghi đè lại input field từ localStorage
+                    $('#Title').val(lastAI.Title || '');
+                    $('#Lead').val(lastAI.Lead || '');
+                    $('#CampaignName').val(lastAI.CampaignName || '');
+                    $('#AiContent').val(lastAI.AiContent || '');
+                    $('#PlatForm').val(lastAI.PlatForm ?? '');
+                    $('#AimodelType').val(lastAI.AimodelType ?? '');
+
+                    // ✅ Ghi đè tags từ Keywords
+                    const tagInput = $('#news-tag');
+                    if (!tagInput.data('tagsinput')) {
+                        tagInput.tagsinput();
+                    }
+                    tagInput.tagsinput('removeAll');
+                    (lastAI.Keywords || []).forEach(tag => tagInput.tagsinput('add', tag));
+
+                    // ✅ Ghi đè nội dung body
+                    const markdownContent = lastAI.AiResult || lastAI.AiContent || '';
+                    const htmlContent = formatAIContentToHTML(markdownContent);
+                    let finalContent = htmlContent;
+
+                    if (lastAI.PlatForm == 0 && Array.isArray(lastAI.Images)) {
+                        finalContent += lastAI.Images
+                            .slice(0, 5)
+                            .map(img => `<p><img src="${img}" style="max-width:100%;margin-bottom:10px;" /></p>`)
+                            .join('');
+                    }
+
+                    if (tinymce.get('text-editor')) {
+                        tinymce.get('text-editor').setContent(finalContent);
+                    } else {
+                        $('#text-editor').val(finalContent);
+                    }
+
+                    // ✅ Gán ảnh đại diện 16:9
+                    if (Array.isArray(lastAI.Images) && lastAI.Images.length > 0) {
+                        const defaultImg = lastAI.Images[0];
+                        $('#img_16x9').attr('src', defaultImg);
+                        $('#img_16x9').closest('.image-croped').removeClass('mfp-hide');
+
+                        if (!$('#img_1x1').attr('src')) {
+                            $('#img_1x1').closest('.image-croped').addClass('mfp-hide');
+                        }
+                        if (!$('#img_4x3').attr('src')) {
+                            $('#img_4x3').closest('.image-croped').addClass('mfp-hide');
+                        }
+                    }
+
+                    // ✅ Render ảnh danh sách nếu là bài Fanpage
+                    if (lastAI.PlatForm == 1 && $('#fanpage-image-list').length > 0) {
+                        const container = $('#fanpage-image-list');
+                        container.empty(); // clear cũ
+                        selectedImages = [];
+
+                        (lastAI.Images || []).forEach((url) => {
+                            const img = $('<img/>', {
+                                src: url,
+                                class: 'fanpage-img-option',
+                                style: 'width: 120px; height: 90px; object-fit: cover; cursor: pointer; border: 2px solid transparent;',
+                                click: function () {
+                                    $(this).toggleClass('selected');
+                                    if ($(this).hasClass('selected')) {
+                                        $(this).css('border-color', '#007bff');
+                                        selectedImages.push(url);
+                                    } else {
+                                        $(this).css('border-color', 'transparent');
+                                        const idx = selectedImages.indexOf(url);
+                                        if (idx !== -1) selectedImages.splice(idx, 1);
+                                    }
+                                    $('#selectedImagesForFanpage').val(JSON.stringify([...new Set(selectedImages)]));
+                                }
+                            });
+                            container.append(img);
+                        });
+                             // ✅ Ẩn phần ảnh cũ từ DB, hiện phần chọn ảnh mới
+                        $('#label-fanpage-db').hide();
+                        $('#fanpage-db-wrapper').hide();
+                        $('#label-fanpage-select').removeClass('d-none');
+                    }
+                }
+            }
+
+            // ✅ Nếu đang edit bài đã có ID từ local → clear localStorage
+            const isDetail = window.location.pathname.includes("/news/detail");
+            const isEditingSavedItem = isDetail && !window.location.pathname.endsWith("/0");
+            if (fromAI && isEditingSavedItem) {
+                setTimeout(() => {
+                    localStorage.removeItem('aiArticles');
+                }, 1000);
+            }
+        });
+
+
+    </script>
+    <!-- ✅ Thư viện Markdown parser -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="~/lib/tags-input/bootstrap-tagsinput.js"></script>
     <script src="~/lib/tags-input/typeahead.js"></script>
     <script src="~/modules/news_detail.js?v=8"></script>

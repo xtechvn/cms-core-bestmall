@@ -353,31 +353,7 @@ namespace WEB.CMS.Controllers
                     supplier_status = product_main.supplier_status
                 };
                 await _productESRepository.InsertAsync(product_es);
-                //var products = await _productV2DetailMongoAccess.GetAllProducts();
-                //if (products != null && products.Count > 0)
-                //{
-                //    products = products.Where(x => (x.parent_product_id == null || x.parent_product_id == "") && x.status == (int)ProductStatus.ACTIVE).ToList();
-                //    products = products.GroupBy(x => x.name).Select(x => x.First()).ToList();
-                //    foreach (var product in products)
-                //    {
-                //        await _productESRepository.DeleteByProductIdAsync(product._id);
-
-                //        ProductESModel product_es = new ProductESModel()
-                //        {
-                //            id = _productESRepository.GenerateId(),
-                //            amount = product.amount_min == null ? product.amount : (double)product.amount_min,
-                //            description = product.description,
-                //            name = product.name,
-                //            product_code = product.code,
-                //            product_id = product._id,
-                //            product_name_no_tv = CommonHelper.RemoveSpecialCharacters(StringHelpers.RemoveUnicode(product.name).ToLower().Replace(" ", "").Trim()),
-                //            avatar = product.avatar,
-                //            status = product.status,
-                //            supplier_status = product.supplier_status
-                //        };
-                //        await _productESRepository.InsertAsync(product_es);
-                //    }
-                //}
+              
                 await _redisConn.DeleteCacheByKeyword(CacheName.PRODUCT_LISTING, db_index);
                 _redisConn.clear(CacheName.PRODUCT_DETAIL + product_main._id, db_index);
                 if (rs != null)
@@ -1073,13 +1049,12 @@ namespace WEB.CMS.Controllers
                 is_success=list!=null && list.Count>0,
                 data=list
             });
-        }
+        }  
         [HttpPost]
 
         public async Task<IActionResult> SyncES()
         {
-            try
-            {
+            try{
                 var products = await _productV2DetailMongoAccess.GetAllProducts();
                 if (products != null && products.Count > 0)
                 {
@@ -1116,7 +1091,7 @@ namespace WEB.CMS.Controllers
             }
             return Ok(new
             {
-                is_success = true
+                is_success=true
             });
         }
     }

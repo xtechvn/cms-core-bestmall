@@ -22,7 +22,6 @@ namespace Utilities.Contants
 
         public const string USER_ROLE = "USER_ROLE_";
         public const string ARTICLE = "ARTICLE_";
-        public const string ARTICLE_ID_TAGS = "ARTICLE_TAGS_";
 
         public const string PRODUCT_LISTING = "PRODUCT_LISTING_";
         public const string PRODUCT_DETAIL = "PRODUCT_DETAIL_";
@@ -33,6 +32,7 @@ namespace Utilities.Contants
         public const string NINJAVAN_OAUTH = "NINJAVAN_OAUTH";
         public const string ARTICLE_CATEGORY = "ARTICLE_CATEGORY_";
         public const string LABEL = "LABEL_";
+        public const string ARTICLE_ID_TAGS = "ARTICLE_TAGS_";
         public const string ARTICLE_CATEGORY_MENU = "ARTICLE_CATEGORY_MENU_";
 
     }

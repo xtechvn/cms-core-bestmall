@@ -130,6 +130,34 @@ namespace Repositories.Repositories
         {
             return _TagDAL.GetSuggestionTag(name);
         }
+        public async Task SaveFanpageImagesAsync(long articleId, List<string> images)
+        {
+
+            var processedImages = new List<string>();
+
+            foreach (var image in images)
+            {
+                var url = await UpLoadHelper.UploadBase64Src(image, _UrlStaticImage);
+                // ✅ Nếu URL trả về KHÔNG chứa static domain thì gắn vào
+                if (!string.IsNullOrEmpty(url) && !url.Contains(_UrlStaticImage))
+                {
+                    url = _UrlStaticImage + url;
+                }
+                if (!string.IsNullOrEmpty(url))
+                {
+                    processedImages.Add(url);
+                }
+            }
+
+            await _ArticleDAL.SaveFanpageImagesAsync(articleId, processedImages);
+        }
+
+
+        public async Task<List<string>> GetFanpageImagesAsync(long articleId)
+        {
+            return await _ArticleDAL.GetFanpageImagesAsync(articleId);
+        }
+
 
         public async Task<long> SaveArticle(ArticleModel model)
         {

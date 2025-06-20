@@ -26,7 +26,6 @@ using Newtonsoft.Json.Linq;
 using WEB.Adavigo.CMS.Service;
 using Microsoft.AspNetCore.Hosting;
 using Caching.RedisWorker;
-using Nest;
 
 namespace WEB.CMS.Controllers
 {
@@ -423,9 +422,10 @@ namespace WEB.CMS.Controllers
                         if (enviroment == null) enviroment = "";
                         ViewBag.QRCodeUri = MFAService.GenerateQRCode(mfa_record, enviroment, _configuration["Config:OTP_Provider"]);
                         ViewBag.SecretKey = MFAService.FormatKey(mfa_record.SecretKey);
-                        ViewBag.Issurer =  MFAService.GetLabelName(mfa_record, enviroment, _configuration["Config:OTP_Provider"]);
+                        string label_name = "BestMall_" + enviroment + "-" + user.UserName;
+                        ViewBag.Issurer = label_name;
+                        ViewBag.provider = _configuration["Config:OTP_Provider"];
                         ViewBag.Status = mfa_record.Status;
-                        ViewBag.Provider = _configuration["Config:OTP_Provider"];
                         return View();
                     }
                 }

@@ -154,6 +154,7 @@ namespace WEB.CMS.Controllers
                     await _redisService.DeleteCacheByKeyword(CacheName.ARTICLE_CATEGORY_MENU, Convert.ToInt32(_configuration["Redis:Database:db_common"]));
 
 
+
                     var j_param = new Dictionary<string, object>
                                 {
                                      { "store_name", "SP_GetGroupProduct" },

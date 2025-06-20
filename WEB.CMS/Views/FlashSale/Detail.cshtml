@@ -58,7 +58,7 @@
                 <div id="status" class="flex gap10 align-items-center" style="min-width:400px;">
                     <td>
                         <label class="switch no-text">
-                            <input type="checkbox" @(detail != null && detail.Status ==1 ? "checked" : "")>
+                            <input type="checkbox" @(detail != null && detail.Status == 1 ? "checked" : "")>
                             <span class="slider round"></span>
                         </label>
                     </td>
@@ -87,11 +87,11 @@
                                 </a>
                                 <input type="file" id="update-icon-input" style="display:none;" class="form-control" />
                             </div>
-                           
+
                         </div>
                     </div>
                 </div>
-               
+
             </div>
             @*  <div class="flex flex-md-nowrap gap10 mb-3">
             <div class="w-200px">Tiêu chí sản phẩm</div>
@@ -146,7 +146,7 @@
                                     </div>
                                 </td>
                                 <td></td>
-         
+
                                 <td>
                                     <label class="switch no-text">
                                         <input class="flashsale-applyall-tr-status" type="checkbox" checked>
@@ -227,7 +227,7 @@
                                                                 </div>
                                                             </div>
                                                         </td>
-														<td colspan="2">
+                                                        <td colspan="2">
                                                             <div class="flex gap10 flex-nowrap align-items-center ">
                                                                 <p class="name-product" style=" display: inline-flex; color:red;">
                                                                     <label class="check-list mb20 mr25">
@@ -289,7 +289,6 @@
                                                                 }
                                                                 final_amount = NumberHelpers.RoundUpToHundredsDouble(final_amount);
                                                             }
-                                                            
                                                             @final_amount.ToString("N0") đ
                                                         </td>
                                                         <td class="tr-index">@item.Position</td>

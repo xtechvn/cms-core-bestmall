@@ -30,6 +30,7 @@ public partial class DataMSContext : DbContext
     public virtual DbSet<AllCode> AllCodes { get; set; }
 
     public virtual DbSet<Article> Articles { get; set; }
+    public virtual DbSet<FanpageArticleImage> FanpageArticleImages { get; set; }
 
     public virtual DbSet<ArticleCategory> ArticleCategories { get; set; }
 

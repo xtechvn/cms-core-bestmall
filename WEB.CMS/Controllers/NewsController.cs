@@ -1,5 +1,7 @@
 ﻿using Amazon.Runtime.Internal.Transform;
 using Caching.RedisWorker;
+using Entities.ConfigModels;
+using Entities.Models;
 using Entities.ViewModels;
 using Entities.ViewModels.News;
 using HuloToys_Service.ElasticSearch;
@@ -7,6 +9,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Nest;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -43,9 +46,10 @@ namespace WEB.CMS.Controllers
         private readonly QueueService _queueService;
         private readonly RedisConn _redisConn;
         private readonly ArticleCategoryESService articleCategoryESService;
+        private readonly string _UrlStaticImage;
 
         public NewsController(IConfiguration configuration, IArticleRepository articleRepository, IUserRepository userRepository, ICommonRepository commonRepository, IWebHostEnvironment hostEnvironment, QueueService queueService,
-            IGroupProductRepository groupProductRepository, ArticleCategoryESService _articleCategoryESService)
+            IGroupProductRepository groupProductRepository, ArticleCategoryESService _articleCategoryESService, IOptions<DomainConfig> domainConfig)
         {
             _ArticleRepository = articleRepository;
             _CommonRepository = commonRepository;
@@ -58,6 +62,7 @@ namespace WEB.CMS.Controllers
             _redisConn = new RedisConn(configuration);
             _redisConn.Connect();
             articleCategoryESService = _articleCategoryESService;
+            _UrlStaticImage = domainConfig.Value.ImageStatic;
         }
 
         public async Task<IActionResult> Index()
@@ -145,6 +150,71 @@ namespace WEB.CMS.Controllers
             }
             return PartialView(model);
         }
+        public async Task<IActionResult> AddOrUpdate(int id, int parent_id)
+        {
+            var model = new ArticleViewModel
+            {
+
+                Status = 0
+            };
+
+            if (id > 0)
+            {
+                var article = await _ArticleRepository.GetArticleDetail(id);
+                model = new ArticleViewModel
+                {
+                    Id = article.Id,
+                    Status = article.Status,
+                    CampaignName = article.CampaignName,
+                    AiContent = article.AiContent,
+                    PlatForm = article.PlatForm,
+                    AimodelType = article.AimodelType
+                };
+            }
+            return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetFanpageImages(long articleId)
+        {
+            var images = await _ArticleRepository.GetFanpageImagesAsync(articleId);
+            return Json(images);
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> SaveFanpageImages([FromBody] FanpageImageSaveModel model)
+        {
+            if (model.ArticleId <= 0 || model.Images == null || !model.Images.Any())
+            {
+                return Json(new { success = false, message = "Dữ liệu không hợp lệ" });
+            }
+
+            await _ArticleRepository.SaveFanpageImagesAsync(model.ArticleId, model.Images);
+
+            return Json(new { success = true });
+        }
+        [HttpPost]
+        public async Task<IActionResult> ConvertImagesBeforePost([FromBody] List<string> images)
+        {
+            var processedImages = new List<string>();
+
+            foreach (var image in images)
+            {
+                var url = await UpLoadHelper.UploadBase64Src(image, _UrlStaticImage);
+                // ✅ Nếu URL trả về KHÔNG chứa static domain thì gắn vào
+                if (!string.IsNullOrEmpty(url) && !url.Contains(_UrlStaticImage))
+                {
+                    url = _UrlStaticImage + url;
+                }
+                if (!string.IsNullOrEmpty(url))
+                {
+                    processedImages.Add(url);
+                }
+            }
+
+            return Ok(processedImages);
+        }
 
         [HttpPost]
         public async Task<IActionResult> UpSert([FromBody] object data)
@@ -160,6 +230,8 @@ namespace WEB.CMS.Controllers
 
                 // Deserialize dữ liệu từ request body
                 var model = JsonConvert.DeserializeObject<ArticleModel>(data.ToString(), settings);
+                // Nếu là bài viết tạo từ AI để đăng Fanpage thì chỉ cần nội dung (Body)
+                bool isFanpageAi = model.AimodelType == 1 && model.PlatForm == 1;
 
                 // Lấy giá trị mặc định của NEWS_CATEGORY_ID từ cấu hình
                 var NEWS_CATEGORY_ID = Convert.ToInt32(_configuration["Config:default_news_root_group"]);
@@ -178,23 +250,42 @@ namespace WEB.CMS.Controllers
 
                 // Kiểm tra xem nội dung bài viết có trống không
                 model.Body = ArticleHelper.HighLightLinkTag(model.Body);
-                if (string.IsNullOrWhiteSpace(model.Body) || string.IsNullOrWhiteSpace(model.Title) || string.IsNullOrWhiteSpace(model.Lead))
+                // Nếu là AI Fanpage, gán mặc định cho Title và Lead nếu bị null
+                if (isFanpageAi)
                 {
-                    return new JsonResult(new
+                    model.Categories = null;
+                    model.Title = model.CampaignName;
+                    model.Lead = model.AiContent;
+                }
+                // ✅ Kiểm tra điều kiện bắt buộc
+                if (string.IsNullOrWhiteSpace(model.Body))
+                {
+                    return Json(new
                     {
                         isSuccess = false,
-                        message = "Phần Tiêu đề, Mô tả và Nội dung bài viết không được để trống"
+                        message = "Phần nội dung bài viết không được để trống"
                     });
                 }
-
-                // Kiểm tra giới hạn độ dài của phần Lead
-                if (model.Lead.Length >= 400)
+                // ✅ Nếu KHÔNG phải Fanpage-AI → kiểm tra thêm tiêu đề và mô tả
+                if (!isFanpageAi)
                 {
-                    return new JsonResult(new
+                    if (string.IsNullOrWhiteSpace(model.Title) || string.IsNullOrWhiteSpace(model.Lead))
                     {
-                        isSuccess = false,
-                        message = "Phần Mô tả không được vượt quá 400 ký tự"
-                    });
+                        return Json(new
+                        {
+                            isSuccess = false,
+                            message = "Phần Tiêu đề và Mô tả không được để trống"
+                        });
+                    }
+
+                    if (model.Lead.Length > 400)
+                    {
+                        return Json(new
+                        {
+                            isSuccess = false,
+                            message = "Phần Mô tả không được vượt quá 400 ký tự"
+                        });
+                    }
                 }
 
                 // Lưu bài viết và lấy ID của bài viết đã được lưu
