@@ -294,7 +294,7 @@ namespace WEB.CMS.Controllers
                 // Kiểm tra xem quá trình lưu bài viết có thành công không
                 if (articleId > 0)
                 {
-                    ClearCacheArticle(articleId, model.Categories);
+                   await ClearCacheArticle(articleId, model.Categories);
 
                     // Trả về kết quả thành công với ID của bài viết
                     return new JsonResult(new
@@ -444,11 +444,11 @@ namespace WEB.CMS.Controllers
 
                     foreach (var category in category_ids)
                     {
-                        _redisConn.DeleteCacheByKeyword(CacheName.ARTICLE_CATEGORY + category, db_index);
+                        await  _redisConn.DeleteCacheByKeyword(CacheName.ARTICLE_CATEGORY + category, db_index);
                         var exists = await _ArticleRepository.FindCategoryByArticleIdAndCategoryId(articleId, category);
                         if (exists != null && exists.Id > 0)
                         {
-                            articleCategoryESService.Insert(new HuloToys_Service.Models.Article.ArticleCategoryESModel()
+                           await articleCategoryESService.Insert(new HuloToys_Service.Models.Article.ArticleCategoryESModel()
                             {
                                 articleid = articleId,
                                 categoryid = category,
