@@ -49,4 +49,12 @@ namespace Utilities.Contants
         PAID_NOT_ENOUGH = 2,
 
     }
+    public enum OrderRefundStatus
+    {
+        REQUESTED = 1,
+        CONFIRM = 2,
+        DONE = 4,
+        CANCEL=3
+
+    }
 }
