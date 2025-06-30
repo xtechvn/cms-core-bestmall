@@ -227,6 +227,10 @@ var _orderDetail = {
             _orderDetail.CancelOrder()
 
         });
+        $('body').on('click', '#orderdetail-confirm-refund', function () {
+            _orderDetail.ConfirmRefund()
+
+        });
     },
     SendToCarrier: function () {
         var title = 'Chuyển đơn hàng sang cho ĐVVC';
@@ -319,6 +323,30 @@ var _orderDetail = {
                         _msgalert.error(result.msg);
                     }
                   
+                }
+            });
+        });
+
+    },
+    ConfirmRefund: function () {
+        var title = 'Xác nhận trả hàng hoàn tiền?';
+        var description = 'Thực hiện thao tác này sẽ xác nhận quá trình trả hàng hoàn tiền, đơn hàng sẽ không được thực hiện tiếp và chuyển về trạng thái hủy, bạn có chắc chắn không?';
+        _msgconfirm.openDialog(title, description, function () {
+            var id = $('#order_Id').val()
+            $.ajax({
+                url: "/OrderManual/Refund",
+                type: "Post",
+                data: { id: id },
+                success: function (result) {
+                    if (result.is_success) {
+                        _msgalert.success(result.msg);
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 1500);
+                    } else {
+                        _msgalert.error(result.msg);
+                    }
+
                 }
             });
         });
