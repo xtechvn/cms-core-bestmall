@@ -348,5 +348,56 @@ namespace WEB.CMS.Controllers.Order
             });
 
         }
+        [HttpPost]
+        public async Task<IActionResult> Refund(long id)
+        {
+
+            try
+            {
+                int _UserId = 0;
+                var data = new List<OrderElasticsearchViewModel>();
+                if (HttpContext.User.FindFirst(ClaimTypes.NameIdentifier) != null)
+                {
+                    _UserId = Convert.ToInt32(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+                }
+                if (id <= 0 || _UserId <= 0)
+                {
+                    return Ok(new
+                    {
+                        is_success = false,
+                        msg = "ID đơn không chính xác / Người dùng chưa được xác thực, vui lòng thử lại / liên hệ bộ phận IT"
+                    });
+                }
+
+                var order = await _orderRepository.GetByOrderId(id);
+                if (order != null && order.OrderId > 0 && order.PaymentStatus >= 0 && order.OrderStatus != (int)OrderStatus.CANCEL && order.OrderStatus != (int)OrderStatus.FINISHED)
+                {
+
+                    order.UpdateLast = DateTime.Now;
+                    order.UserUpdateId = _UserId;
+                    order.OrderStatus = (int)OrderStatus.CANCEL;
+                    order.RefundStatus = (int)OrderRefundStatus.CONFIRM;
+                    var updated = await _orderRepository.UpdateOrder(order);
+                    _elasticService.PushToQueue("SP_GetOrder", order.OrderId);
+                    return Ok(new
+                    {
+                        is_success = true,
+                        msg = "Cập nhật đơn hàng thành công"
+                    });
+                }
+
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("OrderNoSuggestion - Refund: " + ex.ToString());
+
+            }
+            return Ok(new
+            {
+                is_success = true,
+                msg = "Xử lý đơn hàng không thành công, vui lòng liên hệ bộ phận IT"
+            });
+
+        }
     }
 }
