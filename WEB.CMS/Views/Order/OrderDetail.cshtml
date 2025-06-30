@@ -188,6 +188,41 @@
                                         <div class="">Mã vận đơn</div>
                                         <div class="text-right">@Model.ShippingCode </div>
                                     </li>
+                                    @if (Model.RefundStatus != null && Model.RefundStatus >0)
+                                    {
+                                        <li class="flex justify-content-between mb-2">
+                                            <div class="">Trả hàng hoàn tiền</div>
+                                            <div class="text-right">
+                                                @switch (Model.RefundStatus)
+                                                {
+                                                    case (int)(OrderRefundStatus.REQUESTED):
+                                                        {
+                                                            <span class="status-oranger">Yêu cầu Trả hàng/Hoàn tiền </span>
+                                                        }
+                                                        break;
+                                                    case (int)(OrderRefundStatus.CONFIRM):
+                                                        {
+                                                            <span class="status-green">Xác nhận Trả hàng/Hoàn tiền </span>
+                                                        }
+                                                        break;
+                                                    case (int)(OrderRefundStatus.DONE):
+                                                        {
+                                                            <span class="status-green">Hoàn tiền thành công </span>
+                                                        }
+                                                        break;
+                                                    case (int)(OrderRefundStatus.CANCEL):
+                                                        {
+                                                            <span class="status-red">Từ chối Trả hàng/Hoàn tiền </span>
+                                                        }
+                                                        break;
+                                                }
+                                            </div>
+                                        </li>
+                                        <li class="flex justify-content-between mb-2">
+                                            <div class="">Lý do hoàn tiền</div>
+                                            <textarea rows="3" class="form-control">@Model.RefundReason</textarea>
+                                        </li>
+                                    }
                                     <li>
                                         <div class="form-group">
                                             <label class="lbl">Ghi chú</label>
@@ -269,6 +304,12 @@
                         @if (Model.OrderStatus != (int)OrderStatus.CANCEL && Model.OrderStatus != (int)OrderStatus.FINISHED)
                         {
                             <button id="orderdetail-cancel" type="button" class="btn btn-default ml-1 " style="background-color:darkred;">Hủy đơn</button>
+
+                        }
+
+                        @if (Model.RefundStatus != null && Model.RefundStatus != (int)OrderRefundStatus.REQUESTED)
+                        {
+                            <button id="orderdetail-confirm-refund" type="button" class="btn btn-default ml-1 " style="background-color:darkred;">Xác nhận trả hàng/ Hoàn tiền</button>
 
                         }
                     </div>

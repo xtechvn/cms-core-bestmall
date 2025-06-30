@@ -238,6 +238,9 @@ namespace Entities.ViewModels
         public string CarrierTypeName { get; set; }
         public string ReceiverName { get; set; }
         public string PhoneOrder { get; set; }
+        public int? RefundStatus { get; set; }
+        public string RefundReason { get; set; }
+        public DateTime? RefundDate { get; set; }
     }
     public class OrderServiceViewModel
     {
