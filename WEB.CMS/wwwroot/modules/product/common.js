@@ -460,7 +460,7 @@ var _product_constants = {
         ProductDetail_GroupProduct_colmd4_Li: ` <li data-id="{id}" data-name="{name}"><a href="javascript:;">{name}<i class="{icofont-thin-right}"></i></a></li>`,
         ProductDetail_GroupProduct_colmd4: `<div class="col-md-4" data-level="{level}">
                         <div class="list-toys">
-                            <h6><a href="">{name}<i class="icofont-thin-right"></i></a></h6>
+                            <h6><a href="javascript:;" style="cursor:none;">{name}<i class="icofont-thin-right"></i></a></h6>
                             <ul>
                                {li}
                                 

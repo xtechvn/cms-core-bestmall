@@ -398,6 +398,16 @@ $(document).ready(function () {
             }
         })
     })
+
+    $('body').on('click', '.order-search-tab', function () {
+        var element = $(this)
+        $('.order-search-tab').removeClass('active')
+        element.addClass('active')
+        PageIndex = 1;
+        listStatus = element.attr('data-status').split(',')
+        _ordersCMS.SearchData();
+    });
+
 });
 
 var _ordersCMS = {
@@ -551,7 +561,7 @@ var _ordersCMS = {
                     }
                 });
                 _ordersCMS.checkCheckBox();
-                _ordersCMS.SetActive(tabActive);
+                //_ordersCMS.SetActive(tabActive);
                 $('#select2-selectPaggingOptions-container').html(input.searchModel.pageSize + " kết quả/trang");
                 $('#select2-selectPaggingOptions-container').prop('title', input.searchModel.pageSize + " kết quả/trang");
                 $('#selectPaggingOptions option[value=' + input.searchModel.pageSize+']').prop("selected", true);
@@ -1058,27 +1068,27 @@ var _ordersCMS = {
         this.SearchData();
 
     },
-    SetActive: function (status) {
-        $('#countSttAll').removeClass('active')
-        $('#countSttCheck').removeClass('active')
-        $('#countSttNotDone').removeClass('active')
-        $('#countSttDone').removeClass('active')
-        $('#countSttErr').removeClass('active')
-        $('#countSttErr').removeClass('active')
-        $('#countSttNews').removeClass('active')
-        if (status == 99)
-            $('#countSttAll').addClass('active')
-        if (status == 1)
-            $('#countSttCheck').addClass('active')
-        if (status == 2)
-            $('#countSttNotDone').addClass('active')
-        if (status == 3)
-            $('#countSttDone').addClass('active')
-        if (status == 4)
-            $('#countSttErr').addClass('active')
-        if (status == 0)
-            $('#countSttNews').addClass('active')
-    },
+    //SetActive: function (status) {
+    //    $('#countSttAll').removeClass('active')
+    //    $('#countSttCheck').removeClass('active')
+    //    $('#countSttNotDone').removeClass('active')
+    //    $('#countSttDone').removeClass('active')
+    //    $('#countSttErr').removeClass('active')
+    //    $('#countSttErr').removeClass('active')
+    //    $('#countSttNews').removeClass('active')
+    //    if (status == 99)
+    //        $('#countSttAll').addClass('active')
+    //    if (status == 1)
+    //        $('#countSttCheck').addClass('active')
+    //    if (status == 2)
+    //        $('#countSttNotDone').addClass('active')
+    //    if (status == 3)
+    //        $('#countSttDone').addClass('active')
+    //    if (status == 4)
+    //        $('#countSttErr').addClass('active')
+    //    if (status == 0)
+    //        $('#countSttNews').addClass('active')
+    //},
 
     ReCreateOrder: function (id) {
         _global_function.AddLoading()
@@ -1211,7 +1221,7 @@ var _ordersCMS = {
                         _msgalert.success(result.msg);
                         $.magnificPopup.close();
                         _ordersCMS.OnSearchStatus(0)
-                        _ordersCMS.SetActive(0);
+                        //_ordersCMS.SetActive(0);
                     }
                     else {
                         _msgalert.error(result.msg);

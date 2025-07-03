@@ -4,6 +4,7 @@ using Caching.RedisWorker;
 using Entities.Models;
 using Entities.ViewModels.Products;
 using HuloToys_Service.ElasticSearch.NewEs;
+using IdGen;
 using Microsoft.AspNetCore.Mvc;
 using Nest;
 using Newtonsoft.Json;
@@ -365,6 +366,7 @@ namespace WEB.CMS.Controllers
                         {
                             foreach (var id in split)
                             {
+                                _redisConn.clear(CacheName.ARTICLE_CATEGORY_MENU + "_" + id, Convert.ToInt32(_configuration["Redis:Database:db_common"]));
                                 _redisConn.clear("ARTICLE_B2C_CATEGORY_MENU_FOOTER" + id, Convert.ToInt32(_configuration["Redis:Database:db_common"]));
                             }
                         }
