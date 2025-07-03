@@ -326,6 +326,7 @@ var product_detail_new = {
                     element_input.val('')
                     element_input.attr('readonly', 'readonly')
                 })
+                $('#product-attributes-table').focus();
 
             } else {
                 $('.th-weight').hide()
@@ -337,6 +338,7 @@ var product_detail_new = {
                     element_input.val(element_input.attr('data-old'))
                     element_input.removeAttr('readonly')
                 })
+                $('#single-weight').focus();
             }
         });
         //--global click event:
@@ -1148,6 +1150,12 @@ var product_detail_new = {
             || $('#group-id .namesp input').attr('data-id').trim() == '') {
             _msgalert.error('Vui lòng chọn ngành hàng cho sản phẩm')
             success = false
+        } else {
+            var group_list = $('#group-id .namesp input').attr('data-id')
+            if (group_list.split(',').length < 3) {
+                _msgalert.error('Ngành hàng sản phẩm phải đủ 3 cấp')
+                success = false
+            }
         }
         if (!success) return success
         if ($('#product-attributes-price').closest('.item-edit').is(':hidden')) {

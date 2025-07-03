@@ -17,12 +17,15 @@
         <div class="row" style=" width: 100%; ">
             <input id="countOrder" value="@Model.TotalRecord" style="display:none" />
             <div class="tab-default col-md-9 mb0 mt10">
-                <a href="javascript:;" onclick="_ordersCMS.OnSearchStatus(99)" id="countSttAll" class="active">Tất cả đơn hàng (@Model.TotalRecord) </a>
-                <a href="javascript:;" onclick="_ordersCMS.OnSearchStatus(1)" id="countSttCheck">Đang tư vấn </a>
-                <a href="javascript:;" onclick="_ordersCMS.OnSearchStatus(2)" id="countSttNotDone">Chưa khởi hành </a>
-                <a href="javascript:;" onclick="_ordersCMS.OnSearchStatus(3)" id="countSttDone">Đã khởi hành </a>
-                <a href="javascript:;" onclick="_ordersCMS.OnSearchStatus(4)" id="countSttErr">Đơn hàng lỗi </a>
-                <a href="javascript:;" onclick="_ordersCMS.OnSearchStatus(0)" id="countSttNews">Đơn chờ nhận triển khai</a>
+                <a href="javascript:;" @*id="countSttErr" onclick="_ordersCMS.OnSearchStatus(99)" *@ id="countSttAll" class="order-search-tab active">Tất cả đơn hàng (@Model.TotalRecord) </a>
+                <a href="javascript:;" data-status="0"   class="order-search-tab">Tạo mới </a>
+                <a href="javascript:;" data-status="6" class="order-search-tab">Đã thanh toán </a>
+                <a href="javascript:;" data-status="1" class="order-search-tab">Đang xử lý </a>
+                <a href="javascript:;" data-status="2" class="order-search-tab">Đang giao hàng </a>
+                <a href="javascript:;" data-status="5" class="order-search-tab">Giao hàng thành công </a>
+                <a href="javascript:;" data-status="3" class="order-search-tab">Hoàn thành</a>
+                <a href="javascript:;" data-status="4" class="order-search-tab">Hủy </a>
+                <a href="javascript:;" data-status="-1" class="order-search-tab">Đơn hàng lỗi hệ thống</a>
             </div>
             <div class="col-md-3 text-right mt10">
                 <button type="submit" class="btn btn-default" style="" onclick="_order_manual.CreateOrderManual()">Tạo đơn hàng</button>
