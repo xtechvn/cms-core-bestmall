@@ -405,6 +405,7 @@ $(document).ready(function () {
         element.addClass('active')
         PageIndex = 1;
         listStatus = element.attr('data-status').split(',')
+        tabActive = element.attr('data-status-tab')
         _ordersCMS.SearchData();
     });
 

@@ -9,7 +9,7 @@
 @{
     var data = Model.ListData;
     var Total = (TotalValueOrder)ViewBag.TotalValueOrder;
-
+    OrderViewSearchModel request = (OrderViewSearchModel)ViewBag.Request;
 
 }
 <div class="bg-white pd-16 radius10">
@@ -17,15 +17,15 @@
         <div class="row" style=" width: 100%; ">
             <input id="countOrder" value="@Model.TotalRecord" style="display:none" />
             <div class="tab-default col-md-9 mb0 mt10">
-                <a href="javascript:;" @*id="countSttErr" onclick="_ordersCMS.OnSearchStatus(99)" *@ id="countSttAll" class="order-search-tab active">Tất cả đơn hàng (@Model.TotalRecord) </a>
-                <a href="javascript:;" data-status="0"   class="order-search-tab">Tạo mới </a>
-                <a href="javascript:;" data-status="6" class="order-search-tab">Đã thanh toán </a>
-                <a href="javascript:;" data-status="1" class="order-search-tab">Đang xử lý </a>
-                <a href="javascript:;" data-status="2" class="order-search-tab">Đang giao hàng </a>
-                <a href="javascript:;" data-status="5" class="order-search-tab">Giao hàng thành công </a>
-                <a href="javascript:;" data-status="3" class="order-search-tab">Hoàn thành</a>
-                <a href="javascript:;" data-status="4" class="order-search-tab">Hủy </a>
-                <a href="javascript:;" data-status="-1" class="order-search-tab">Đơn hàng lỗi hệ thống</a>
+                <a href="javascript:;" data-status="" data-status-tab="99" class="order-search-tab @(request.Status.Count<=0?"active":"")">Tất cả đơn hàng @(request.Status.Count <= 0 ? "(" + @Model.TotalRecord + ")" : "")  </a>
+                <a href="javascript:;" data-status="0" data-status-tab="99" class="order-search-tab @(request.Status.Contains(0)?"active":"")">Tạo mới @(request.Status.Contains(0) ? "(" + @Model.TotalRecord + ")" : "")</a>
+                <a href="javascript:;" data-status="6" data-status-tab="99" class="order-search-tab @(request.Status.Contains(6)?"active":"")">Đã thanh toán @(request.Status.Contains(6) ? "(" + @Model.TotalRecord + ")" : "")</a>
+                <a href="javascript:;" data-status="1" data-status-tab="99" class="order-search-tab @(request.Status.Contains(1)?"active":"")">Đang xử lý @(request.Status.Contains(1) ? "(" + @Model.TotalRecord + ")" : "")</a>
+                <a href="javascript:;" data-status="2" data-status-tab="99" class="order-search-tab @(request.Status.Contains(2)?"active":"")">Đang giao hàng @(request.Status.Contains(2) ? "(" + @Model.TotalRecord + ")" : "")</a>
+                <a href="javascript:;" data-status="5" data-status-tab="99" class="order-search-tab @(request.Status.Contains(5)?"active":"")">Giao hàng thành công @(request.Status.Contains(5) ? "(" + @Model.TotalRecord + ")" : "")</a>
+                <a href="javascript:;" data-status="3" data-status-tab="99" class="order-search-tab @(request.Status.Contains(3)?"active":"")">Hoàn thành@(request.Status.Contains(3) ? "(" + @Model.TotalRecord + ")" : "")</a>
+                <a href="javascript:;" data-status="4" data-status-tab="99" class="order-search-tab @(request.Status.Contains(4)?"active":"")">Hủy @(request.Status.Contains(4) ? "(" + @Model.TotalRecord + ")" : "")</a>
+                <a href="javascript:;" data-status="-1" data-status-tab="4" class="order-search-tab @(request.Status.Contains(-1)?"active":"")">Đơn hàng lỗi hệ thống @(request.Status.Contains(-1) ? "(" + @Model.TotalRecord + ")" : "")</a>
             </div>
             <div class="col-md-3 text-right mt10">
                 <button type="submit" class="btn btn-default" style="" onclick="_order_manual.CreateOrderManual()">Tạo đơn hàng</button>
