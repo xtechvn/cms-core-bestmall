@@ -85,6 +85,10 @@ namespace WEB.CMS.Controllers
                 searchModel.PageIndex = (int)currentPage;
                 var model = new GenericViewModel<OrderViewModel>();
                 var model2 = new TotalCountSumOrder();
+                if (searchModel.Status!=null && searchModel.Status.Contains(-1))
+                {
+                    searchModel.Status = new List<int>();
+                }
                 model = await _orderRepository.GetList(searchModel);
                 if(model != null && model.ListData != null && model.ListData.Count>0)
                 {
@@ -103,6 +107,7 @@ namespace WEB.CMS.Controllers
                     TotalProfit = model2.Profit.ToString("N0")
 
                 };
+                ViewBag.Request = searchModel;
                 return PartialView(model);
             }
             catch (Exception ex)
