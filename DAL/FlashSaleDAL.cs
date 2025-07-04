@@ -160,6 +160,7 @@ namespace DAL
                     new SqlParameter("@Status", (object)model.Status ?? DBNull.Value),
                     new SqlParameter("@Position", (object)model.Position ?? DBNull.Value),
                     new SqlParameter("@SuperSale", (object)model.SuperSale ?? DBNull.Value),
+                    new SqlParameter("@BadgeType", (object)model.BadgeType ?? DBNull.Value),
                 ];
 
 
@@ -192,6 +193,8 @@ namespace DAL
                     new SqlParameter("@Status", (object)model.Status ?? DBNull.Value),
                     new SqlParameter("@Position", (object)model.Position ?? DBNull.Value),
                     new SqlParameter("@SuperSale", (object)model.SuperSale ?? DBNull.Value),
+                   new SqlParameter("@BadgeType", (object)model.BadgeType ?? DBNull.Value),
+
                 ];
 
                 long updatedId = Convert.ToInt64(_DbWorker.ExecuteNonQuery(StoreProcedureConstant.SP_UpdateFlashSaleProduct, objParam));
