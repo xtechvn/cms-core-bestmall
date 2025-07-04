@@ -367,13 +367,12 @@ var flashsale_detail = {
 
                                                                                                                                           <option value="2"> Thương hiệu nổi bật </option>
 
+
                                                                                                                                            <option value="3"> Best Choice </option>
+                                                                        <option value="4"> Được yêu thích </option>
+                                                                        <option value="5"> Premium </option>
 
-                                                                                                                                           <option value="4"> Best Choice </option>
-                                                                        <option value="5"> Được yêu thích </option>
-                                                                        <option value="6"> Premium </option>
-
-                                                                                                                                           <option value="7"> Siêu Sale </option>
+                                                                                                                                           <option value="6"> Siêu Sale </option>
 
 
                                                                 </select>
