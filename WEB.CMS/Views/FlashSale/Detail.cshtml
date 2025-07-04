@@ -203,7 +203,7 @@
                                                                 <span class="checkmark"></span>
                                                             </label>
                                                         </td>
-                                                        <td colspan="7">
+                                                        <td colspan="10">
                                                             <div class="item-order">
                                                                 <div class="img">
                                                                     @{
@@ -229,19 +229,82 @@
                                                         </td>
                                                         <td colspan="2">
                                                             <div class="flex gap10 flex-nowrap align-items-center ">
-                                                                <p class="name-product" style=" display: inline-flex; color:red;">
-                                                                    <label class="check-list mb20 mr25">
-                                                                        <input type="checkbox" class="flashsale-data-supersale" @(item.SuperSale != null && item.SuperSale == true ? "checked" : "")>
-                                                                        <span class="checkmark"></span>
-                                                                    </label>Siêu Sale
-                                                                </p>
+                                                                <nw>Tag:</nw>
+
+                                                                <select class="select2 w-100 flashsale-data-badge-type" style="width:180px !important;">
+                                                                    @if (item.BadgeType == null || item.BadgeType <= 0)
+                                                                    {
+                                                                        <option value="-1" selected> Sản phẩm Flashsale</option>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <option value="-1" > Sản phẩm Flashsale</option>
+                                                                    }
+                                                                    @if (item.BadgeType == 1)
+                                                                    {
+                                                                        <option value="1" selected> Sản phẩm nổi bật  </option>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <option value="1" >  Sản phẩm nổi bật </option>
+                                                                    }
+                                                                    @if (item.BadgeType == 2)
+                                                                    {
+                                                                        <option value="2" selected> Thương hiệu nổi bật </option>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <option value="2" > Thương hiệu nổi bật </option>
+                                                                    }
+                                                                    @if (item.BadgeType == 3)
+                                                                    {
+                                                                        <option value="3" selected> Best Choice </option>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <option value="3" > Best Choice </option>
+                                                                    }
+                                                                    @if (item.BadgeType == 4)
+                                                                    {
+                                                                        <option value="4" selected> Best Choice </option>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <option value="4" > Best Choice </option>
+                                                                    }
+                                                                    @if (item.BadgeType == 5)
+                                                                    {
+                                                                        <option value="5" selected> Được yêu thích </option>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <option value="5" > Được yêu thích </option>
+                                                                    }
+                                                                    @if (item.BadgeType == 6)
+                                                                    {
+                                                                        <option value="6" selected> Premium </option>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <option value="6" > Premium </option>
+                                                                    }
+                                                                    @if (item.BadgeType == 7)
+                                                                    {
+                                                                        <option value="7" selected> Siêu Sale </option>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <option value="7" >  Siêu Sale </option>
+                                                                    }
+
+                                                                </select>
                                                             </div>
                                                         </td>
                                                     </tr>
                                                     <tr>
                                                         <td colspan="2"></td>
                                                         <td class="text-right" style="min-width: 180px;">@amount.ToString("N0")</td>
-                                                        <td colspan="2">
+                                                        <td colspan="6">
                                                             <div class="flex gap10 flex-nowrap align-items-center " style="justify-self: anchor-center;">
                                                                 <div class="form-group mb-0 price">
                                                                     @{
@@ -293,13 +356,13 @@
                                                         </td>
                                                         <td class="tr-index">@item.Position</td>
 
-                                                        <td>
+                                                        <td style=" max-width: 210px !important; width: 180px; ">
                                                             <label class="switch no-text">
                                                                 <input class="flashsale-data-tr-status" type="checkbox" @(item != null && item.Status != null && item.Status == 1 ? "checked" : "")>
                                                                 <span class="slider round"></span>
                                                             </label>
                                                         </td>
-                                                        <td>
+                                                        <td style=" width: 100px !important; ">
                                                             <div class="flex gap10 align-items-center justify-content-center">
                                                                 <a class="icon-action  delete-row" href="javascript:;"><i class="icofont-trash"></i></a>
                                                                 <a class="icon-action flashsale-drag" href="javascript:;"><i class="icofont-drag"></i></a>
