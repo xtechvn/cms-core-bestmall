@@ -270,8 +270,8 @@ namespace WEB.CMS.Controllers.FlashSale
                             position=product.Position,
                             productid=product.ProductId,
                             status=product.Status,
-                            supersale = product.SuperSale
-
+                            supersale = product.SuperSale,
+                            badgetype=product.BadgeType
                         });
                         _redisConn.clear(CacheName.PRODUCT_DETAIL + product.ProductId, db_index);
 

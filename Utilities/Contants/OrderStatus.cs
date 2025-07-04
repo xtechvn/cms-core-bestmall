@@ -57,4 +57,14 @@ namespace Utilities.Contants
         CANCEL=3
 
     }
+    public enum ProductFlashSaleBadgeStatus
+    {
+        NORMAL = -1,
+        FEATURED_PRODUCT=2,
+        FEATURED_BRAND=3,
+        BESTCHOICE=4,
+        FAVOURITES=5,
+        PREMIUM=6,
+        SUPERSALE=7
+    }
 }

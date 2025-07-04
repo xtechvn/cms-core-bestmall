@@ -344,7 +344,7 @@ var flashsale_detail = {
                                                             </label>
                                                         </td>
                                                      
-                                                        <td colspan="7">
+                                                        <td colspan="10">
                                                             <div class="item-order">
                                                                 <div class="img">
                                                                 <img src="@img_src" alt="">
@@ -359,19 +359,31 @@ var flashsale_detail = {
                                                         </td>
                                                         <td colspan="2">
                                                             <div class="flex gap10 flex-nowrap align-items-center ">
-                                                                <p class="name-product" style=" display: inline-flex; color:red;">
-                                                                    <label class="check-list mb20 mr25">
-                                                                        <input type="checkbox">
-                                                                        <span class="checkmark"></span>
-                                                                    </label>Siêu Sale
-                                                                </p>
+
+                                                                <select class="select2 w-100 flashsale-data-badge-type" style="width:180px !important;">
+                                                                    <option value="-1"> Sản phẩm Flashsale</option>
+
+                                                                                                                                           <option value="1"> Sản phẩm nổi bật  </option>
+
+                                                                                                                                          <option value="2"> Thương hiệu nổi bật </option>
+
+                                                                                                                                           <option value="3"> Best Choice </option>
+
+                                                                                                                                           <option value="4"> Best Choice </option>
+                                                                        <option value="5"> Được yêu thích </option>
+                                                                        <option value="6"> Premium </option>
+
+                                                                                                                                           <option value="7"> Siêu Sale </option>
+
+
+                                                                </select>
                                                             </div>
                                                         </td>
                                                     </tr>
                                                     <tr>
                                                         <td colspan="2"></td>
                                                         <td class="text-right" style="min-width: 180px;">@amount_text</td>
-                                                        <td colspan="2">
+                                                        <td colspan="6">
                                                             <div class="flex gap10 flex-nowrap align-items-center "style="justify-self: anchor-center;">
                                                                 <div class="form-group mb-0 price">
                                                                     <input type="text" class="form-control flashsale-data-tr-vnd" placeholder="Nhập số">
@@ -388,13 +400,13 @@ var flashsale_detail = {
                                                             @amount_text 
                                                         </td>
                                                         <td class="tr-index"> @item.Position</td>
-                                                        <td>
+                                                        <td style=" max-width: 210px !important; width: 180px; ">
                                                             <label class="switch no-text">
                                                                 <input class="flashsale-data-tr-status" type="checkbox"checked>
                                                                 <span class="slider round"></span>
                                                             </label>
                                                         </td>
-                                                        <td>
+                                                        <td style=" width: 100px !important; ">
                                                             <div class="flex gap10 align-items-center justify-content-center">
                                                                 <a class="icon-action  delete-row" href="javascript:;"><i class="icofont-trash"></i></a>
                                                                 <a class="icon-action flashsale-drag" href="javascript:;"><i class="icofont-drag"></i></a>
@@ -441,7 +453,11 @@ var flashsale_detail = {
                 )
             }
         })
+        try {
+            $('.flashsale-data-badge-type').select2()
+        } catch {
 
+        }
 
     },
     CountFlashSaleProduct: function () {
@@ -620,9 +636,9 @@ var flashsale_detail = {
 
             // Kiểm tra input VND có giá trị không
             if ($vndInput.val() != undefined && $vndInput.val().trim() !== '') {
-                discountValue = parseFloat($vndInput.val().trim().replaceAll(',','')); // Chuyển đổi sang số thực
+                discountValue = parseFloat($vndInput.val().trim().replaceAll(',', '')); // Chuyển đổi sang số thực
                 valueType = 0; // Loại VND
-            } else if ($percentInput.val() != undefined &&$percentInput.val().trim() !== '') {
+            } else if ($percentInput.val() != undefined && $percentInput.val().trim() !== '') {
                 // Nếu input VND không có giá trị, kiểm tra input Percent
                 discountValue = parseFloat($percentInput.val().trim().replaceAll(',', '')); // Chuyển đổi sang số thực
                 valueType = 1; // Loại Phần trăm
@@ -633,7 +649,8 @@ var flashsale_detail = {
 
             // Vị trí của sản phẩm (dựa trên index của dòng product)
             const position = index + 1; // Vị trí bắt đầu từ 1
-            let supersale = $productRow.find('.flashsale-data-supersale').is(':checked');
+            let supersale = true;
+            let badge_type = $productRow.find('.flashsale-data-badge-type').find(':selected').val()
             // Thêm thông tin sản phẩm vào mảng
             productData.push({
                 Id: id,
@@ -642,7 +659,8 @@ var flashsale_detail = {
                 ValueType: valueType,
                 Status: status,
                 Position: position,
-                SuperSale: supersale
+                SuperSale: supersale,
+                BadgeType: badge_type
             });
         });
         return productData; // Trả về mảng dữ liệu sản phẩm
