@@ -60,11 +60,11 @@ namespace Utilities.Contants
     public enum ProductFlashSaleBadgeStatus
     {
         NORMAL = -1,
-        FEATURED_PRODUCT=2,
-        FEATURED_BRAND=3,
-        BESTCHOICE=4,
-        FAVOURITES=5,
-        PREMIUM=6,
-        SUPERSALE=7
+        FEATURED_PRODUCT=1,
+        FEATURED_BRAND=2,
+        BESTCHOICE=3,
+        FAVOURITES=4,
+        PREMIUM=5,
+        SUPERSALE=6
     }
 }
