@@ -863,7 +863,7 @@ var flashsale_detail = {
         if (selected == undefined) selected = '-1'
         var template = '<option value="{value}" {selected}> {des} </option>'
         var html=''
-        flashsale_detail.GroupFlashSaleType.each(function (index, item) {
+        $(flashsale_detail.GroupFlashSaleType).each(function (index, item) {
             html += template
                 .replaceAll('{value}', item.id)
                 .replaceAll('{value}', item.name)
