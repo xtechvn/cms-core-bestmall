@@ -78,9 +78,9 @@
                     Footer
                 </label>
                 <label class="check-list inline">
-                    @Html.CheckBoxFor(s => (s.IsFlashSale == null) ? false : (bool)(s.IsFlashSale))
+                    <input data-val="true" data-val-required="The IsFlashSale field is required." id="IsFlashSale" name="IsFlashSale" type="checkbox" value="@(Model.IsFlashSale==null||Model.IsFlashSale==false?"false":"true") ">
                     <span class="checkmark"></span>
-                    Footer
+                    FlashSale
                 </label>
             </div>
         </div>
