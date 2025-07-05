@@ -1,5 +1,6 @@
 ﻿using Azure.Core;
 using Caching.Elasticsearch;
+using Caching.Elasticsearch.FlashSale;
 using Caching.RedisWorker;
 using Entities.Models;
 using Entities.ViewModels.Products;
@@ -44,10 +45,11 @@ namespace WEB.CMS.Controllers
         private readonly ISupplierRepository _supplierRepository;
         private readonly IAllCodeRepository _allCodeRepository;
         private readonly WorkQueueClient work_queue;
+        private readonly FlashSaleProductESRepository _flashSaleProductESRepository;
 
         public ProductController(IConfiguration configuration, RedisConn redisConn, IGroupProductRepository groupProductRepository, ILabelRepository labelRepository,
             ISupplierRepository supplierRepository, IAllCodeRepository allCodeRepository, ProductDetailMongoAccess productV2DetailMongoAccess, 
-            ProductSpecificationMongoAccess productSpecificationMongoAccess, ProductESRepository productESRepository)
+            ProductSpecificationMongoAccess productSpecificationMongoAccess, ProductESRepository productESRepository, FlashSaleProductESRepository flashSaleProductRepository)
         {
             _productV2DetailMongoAccess = productV2DetailMongoAccess;
             _productSpecificationMongoAccess = productSpecificationMongoAccess;
@@ -63,7 +65,7 @@ namespace WEB.CMS.Controllers
             _supplierRepository = supplierRepository;
             _allCodeRepository = allCodeRepository;
             work_queue = new WorkQueueClient(configuration);
-
+            _flashSaleProductESRepository = flashSaleProductRepository;
         }
         public IActionResult Index()
         {
@@ -355,10 +357,13 @@ namespace WEB.CMS.Controllers
                     product_name_no_tv = CommonHelper.RemoveSpecialCharacters(StringHelpers.RemoveUnicode(product_main.name).ToLower().Replace(" ", "").Trim()),
                     avatar = product_main.avatar,
                     status = product_main.status,
-                    supplier_status = product_main.supplier_status
+                    supplier_status = product_main.supplier_status,
+                    group_id=product_main.group_product_id
                 };
                 await _productESRepository.InsertAsync(product_es);
-              
+                //-- ES FlashsalePRoduct:
+                await _flashSaleProductESRepository.UpdateFlashSaleGroup(product_main._id, product_main.group_product_id);
+
                 await _redisConn.DeleteCacheByKeyword(CacheName.PRODUCT_LISTING, db_index);
                 _redisConn.clear(CacheName.PRODUCT_DETAIL + product_main._id, db_index);
                 if(product_main.group_product_id!=null && product_main.group_product_id.Trim() != "")
@@ -1099,9 +1104,12 @@ namespace WEB.CMS.Controllers
                             product_name_no_tv = CommonHelper.RemoveSpecialCharacters(StringHelpers.RemoveUnicode(product.name).ToLower().Replace(" ", "").Trim()),
                             avatar = product.avatar,
                             status = product.status,
-                            supplier_status = product.supplier_status
+                            supplier_status = product.supplier_status,
+                            group_id=product.group_product_id
                         };
                         await _productESRepository.InsertAsync(product_es);
+                        //-- ES FlashsalePRoduct:
+                        await _flashSaleProductESRepository.UpdateFlashSaleGroup(product._id, product.group_product_id);
                     }
                 }
             }

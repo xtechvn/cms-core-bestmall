@@ -176,7 +176,26 @@ namespace DAL
             }
             return new List<GroupProduct>();
         }
+        public List<GroupProduct> GetByParentIdOrder(long parent_id)
+        {
+            try
+            {
+                using (var _DbContext = new EntityDataContext(_connection))
+                {
+                    var data= _DbContext.GroupProducts.Where(s => s.ParentId == parent_id).ToList();
+                    if(data!=null && data.Count > 0)
+                    {
+                        return data.OrderBy(x=>x.OrderNo).ToList();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("GetByParentIdOrder - GroupProductDAL: " + ex);
 
+            }
+            return null;
+        }
 
     }
 }

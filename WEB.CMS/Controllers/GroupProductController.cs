@@ -476,5 +476,28 @@ namespace WEB.CMS.Controllers
                 });
             }
         }
+        [HttpPost]
+        public async Task<IActionResult> GetByParendId(int parent_id)
+        {
+            try
+            {
+                var listGroup = await _GroupProductRepository.getCategoryByParentId(parent_id);
+                return new JsonResult(new
+                {
+                   is_success=true,
+                   data=listGroup
+                });
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("GetByParendId: " + ex);
+                return new JsonResult(new
+                {
+                    is_success = false,
+                    data = new List<GroupProduct>()
+                }); ;
+            }
+        }
+
     }
 }

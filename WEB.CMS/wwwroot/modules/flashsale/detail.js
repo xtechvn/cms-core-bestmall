@@ -4,6 +4,8 @@ $(document).ready(function () {
 })
 var flashsale_detail = {
     Processing: false,
+    GroupFlashSaleType: 109,
+    GroupType: [],
     Initialization: function () {
         flashsale_detail.DynamicBind()
         flashsale_detail.RenderFlashsale()
@@ -11,7 +13,11 @@ var flashsale_detail = {
         flashsale_detail.SingleDateTimePicker($('#flashsale-search-fromdate'))
         flashsale_detail.SingleDateTimePicker($('#flashsale-search-todate'))
         flashsale_detail.Select2Supplier($('#supplier-id select'))
-
+        flashsale_detail.RenderGroupFlashSaleType()
+        $('.flashsale-data-badge-type').each(function () {
+            var element = $(this)
+            flashsale_detail.Select2FlashSaleType(element)
+        })
     },
     DynamicBind: function () {
         $('body').on('keyup', '.flashsale-data-tr-vnd, .flashsale-data-tr-percent,.flashsale-applyall-tr-vnd,.flashsale-applyall-tr-percent', function () {
@@ -360,7 +366,7 @@ var flashsale_detail = {
                                                         <td colspan="2">
                                                             <div class="flex gap10 flex-nowrap align-items-center ">
 
-                                                                <select class="select2 w-100 flashsale-data-badge-type" style="width:180px !important;">
+                                                                <select class="select2 w-100 flashsale-data-badge-type flashsale-data-badge-type-new" style="width:180px !important;">
                                                                     <option value="-1"> Sản phẩm Flashsale</option>
 
                                                                                                                                            <option value="1"> Sản phẩm nổi bật  </option>
@@ -452,11 +458,8 @@ var flashsale_detail = {
                 )
             }
         })
-        try {
-            $('.flashsale-data-badge-type').select2()
-        } catch {
-
-        }
+        flashsale_detail.Select2FlashSaleType($('.flashsale-data-badge-type-new'))
+        $('.flashsale-data-badge-type-new').removeClass('flashsale-data-badge-type-new')
 
     },
     CountFlashSaleProduct: function () {
@@ -848,5 +851,27 @@ var flashsale_detail = {
                 _msgalert.error('Sync ES Failed')
             }
         });
+    },
+    RenderGroupFlashSaleType: function () {
+        var result = flashsale_detail.POSTSynchorus('/groupproduct/GetByParendId', { parent_id: flashsale_detail.GroupFlashSaleType })
+        if (result.is_success && result.data != undefined) {
+            flashsale_detail.GroupFlashSaleType = result.data
+        }
+    },
+    Select2FlashSaleType: function (element) {
+        var selected = element.attr('data-group-selected')
+        if (selected == undefined) selected = '-1'
+        var template = '<option value="{value}" {selected}> {des} </option>'
+        var html=''
+        flashsale_detail.GroupFlashSaleType.each(function (index, item) {
+            html += template
+                .replaceAll('{value}', item.id)
+                .replaceAll('{value}', item.name)
+                .replaceAll('{selected}', item.id == selected? 'selected':'')
+        })
+        element.html(html)
+        try {
+            element.select2()
+        } catch { }
     }
 }
