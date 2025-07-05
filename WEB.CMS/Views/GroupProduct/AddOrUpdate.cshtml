@@ -4,7 +4,7 @@
 @using Entities.Models
 @using Entities.ViewModels
 
-@model GroupProductDetailModel
+@model GroupProduct
 
 @{
     var PositionList = (List<Position>)ViewBag.PositionList;
@@ -77,7 +77,11 @@
                     <span class="checkmark"></span>
                     Footer
                 </label>
-
+                <label class="check-list inline">
+                    @Html.CheckBoxFor(s => (s.IsFlashSale == null) ? false : (bool)(s.IsFlashSale))
+                    <span class="checkmark"></span>
+                    Footer
+                </label>
             </div>
         </div>
 

@@ -14,9 +14,6 @@ namespace Entities.ViewModels
         public int order_no { get; set; } // vi tri sap xep
     }
 
-    public class GroupProductDetailModel : GroupProduct
-    {
-    }
 
     public class GroupProductUpsertModel : GroupProduct
     {

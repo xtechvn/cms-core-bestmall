@@ -32,6 +32,7 @@ public partial class GroupProduct
     public bool IsShowHeader { get; set; }
 
     public bool IsShowFooter { get; set; }
+    public bool? IsFlashSale { get; set; }
 
     public string Code { get; set; }
 

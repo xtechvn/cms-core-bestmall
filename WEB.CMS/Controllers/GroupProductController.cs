@@ -73,39 +73,20 @@ namespace WEB.CMS.Controllers
         /// <returns></returns>
         public async Task<IActionResult> AddOrUpdate(int id, int type)
         {
-            var model = new GroupProductDetailModel();
+            var model =  new GroupProduct()
+            {
+                Id = 0,
+                Status = 0,
+                OrderNo = 0,
+                ParentId = id
+            };
             try
             {
-                if (type == 0)
+                if (type != 0)
                 {
-                    model = new GroupProductDetailModel()
-                    {
-                        Id = 0,
-                        Status = 0,
-                        OrderNo = 0,
-                        ParentId = id
-                    };
-                }
-                else
-                {
-                    var entity = await _GroupProductRepository.GetById(id);
-                    model = new GroupProductDetailModel()
-                    {
-                        Id = entity.Id,
-                        Name = entity.Name,
-                        ImagePath = !string.IsNullOrEmpty(entity.ImagePath) ? _UrlStaticImage + entity.ImagePath : entity.ImagePath,
-                        OrderNo = entity.OrderNo,
-                        ParentId = entity.ParentId,
-                        Status = entity.Status,
+                    model = await _GroupProductRepository.GetById(id);
 
-                        PositionId = entity.PositionId,
-                        Description = entity.Description,
-                        IsShowFooter = entity.IsShowFooter,
-                        IsShowHeader = entity.IsShowHeader,
-                        Code = entity.Code
-                    };
                 }
-                _redisService.clear(CacheName.ARTICLE_B2C_CATEGORY_MENU, Convert.ToInt32(_configuration["Redis:Database:db_common"]));
             }
             catch
             {
