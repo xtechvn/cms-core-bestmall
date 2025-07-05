@@ -866,7 +866,7 @@ var flashsale_detail = {
         $(flashsale_detail.GroupFlashSaleType).each(function (index, item) {
             html += template
                 .replaceAll('{value}', item.id)
-                .replaceAll('{value}', item.name)
+                .replaceAll('{des}', item.name)
                 .replaceAll('{selected}', item.id == selected? 'selected':'')
         })
         element.html(html)
