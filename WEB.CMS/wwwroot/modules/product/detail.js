@@ -512,6 +512,9 @@ var product_detail_new = {
                     html_item += _product_constants.HTML.ProductDetail_GroupProduct_colmd4_Li
                         .replaceAll('{id}', item.id).replaceAll('{name}', item.name)
                 })
+                //-- Best Choice
+                html_item += _product_constants.HTML.ProductDetail_GroupProduct_colmd4_Li
+                    .replaceAll('{id}', '114').replaceAll('{name}', 'Best Choice')
                 html = html.replace('{li}', html_item).replaceAll('{name}', _product_constants_2.Values.GroupProductName).replaceAll('{level}', '0')
                 $('#them-nganhhang .bg-box .row').html(html)
                 let _group_name = $('#them-nganhhang li[data-id="' + group_product_id.split(',')[0] + '"]').attr('data-name')
