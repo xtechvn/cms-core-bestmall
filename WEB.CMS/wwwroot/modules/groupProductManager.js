@@ -287,12 +287,14 @@ var _groupProduct = {
                     });
                 });
             } else {
+                const model = Object.fromEntries(formData.entries());
+
                 $.ajax({
                     url: '/groupproduct/upsert',
                     type: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
+                    data: { model: model },
+                    //processData: false,
+                   // contentType: false,
                     success: function (result) {
                         if (result.isSuccess) {
                             _msgalert.success(result.message);
