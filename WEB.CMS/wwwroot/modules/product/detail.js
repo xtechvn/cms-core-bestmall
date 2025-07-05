@@ -1153,9 +1153,9 @@ var product_detail_new = {
             || $('#group-id .namesp input').attr('data-id').trim() == '') {
             _msgalert.error('Vui lòng chọn ngành hàng cho sản phẩm')
             success = false
-        } else if (!group_list.includes('114')) {
+        } else  {
             var group_list = $('#group-id .namesp input').attr('data-id')
-            if (group_list.split(',').length < 3) {
+            if (!group_list.includes('114') && group_list.split(',').length < 3) {
                 _msgalert.error('Ngành hàng sản phẩm phải đủ 3 cấp')
                 success = false
             }
