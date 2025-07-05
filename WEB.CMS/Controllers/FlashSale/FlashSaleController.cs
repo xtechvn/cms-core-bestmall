@@ -274,8 +274,9 @@ namespace WEB.CMS.Controllers.FlashSale
                             status=product.Status,
                             supersale = product.SuperSale,
                             badgetype=product.BadgeType,
-                            group_id=product_mongo?.group_product_id
+                            group_id=(product_mongo == null|| product_mongo.group_product_id == null) ?"":product_mongo.group_product_id
                         });
+                        LogHelper.InsertLogTelegram("Summit - FlashSaleController [group_id]: " + ((product_mongo == null || product_mongo.group_product_id == null) ? "" : product_mongo.group_product_id));
                         _redisConn.clear(CacheName.PRODUCT_DETAIL + product.ProductId, db_index);
 
                     }
@@ -416,6 +417,7 @@ namespace WEB.CMS.Controllers.FlashSale
                         banner = x.Banner,
                         created_date=x.CreateDate,
                         supplier_name= _supplierRepository.GetSuplierById((int)x.SupplierId).FullName,
+
                     }).ToList();
                     await _flashSaleESRepository.DeleteByIds(all_fsl_es.Select(x => x.flashsale_id).ToList());
                     await _flashSaleESRepository.IndexMany(all_fsl_es);
@@ -436,6 +438,15 @@ namespace WEB.CMS.Controllers.FlashSale
                         supersale = x.SuperSale
 
                     }).ToList();
+                    if (all_fspl_es.Count > 0)
+                    {
+                        foreach(var product in all_fspl_es)
+                        {
+                            var product_mongo = await _productV2DetailMongoAccess.GetByID(product.productid);
+                            product.group_id = (product_mongo == null || product_mongo.group_product_id == null) ? "" : product_mongo.group_product_id;
+
+                        }
+                    }
                     await _flashSaleProductESRepository.DeleteByIds(all_fspl_es.Select(x => x.flashsale_productid).ToList());
                     await _flashSaleProductESRepository.IndexMany(all_fspl_es);
                 }
