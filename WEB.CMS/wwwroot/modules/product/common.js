@@ -500,7 +500,7 @@ var _product_constants = {
 var _product_constants_2 = {
     Values: {
         GroupProduct: 1,
-        GroupProductName: 'Hulotoy',
+        GroupProductName: 'Danh mục sản phẩm',
 
     },
     Attributes: {
