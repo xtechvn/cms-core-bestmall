@@ -78,7 +78,13 @@
                     Footer
                 </label>
                 <label class="check-list inline">
-                    <input data-val="true" data-val-required="The IsFlashSale field is required." id="IsFlashSale" name="IsFlashSale" type="checkbox" value="@(Model.IsFlashSale==null||Model.IsFlashSale==false?"false":"true") ">
+                    @if(Model!=null && Model.IsFlashSale!=null && Model.IsFlashSale == true)
+                    {
+                        <input data-val="true" data-val-required="The IsFlashSale field is required." id="IsFlashSale" name="IsFlashSale" type="checkbox" checked>
+                    }else{
+                        <input data-val="true" data-val-required="The IsFlashSale field is required." id="IsFlashSale" name="IsFlashSale" type="checkbox">
+
+                    }
                     <span class="checkmark"></span>
                     FlashSale
                 </label>
