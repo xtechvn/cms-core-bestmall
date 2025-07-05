@@ -125,6 +125,43 @@ namespace Caching.Elasticsearch.FlashSale
             IdGenerator _generator = new(0); // Machine ID = 0
             return _generator.CreateId();
         }
+        public async Task<List<FlashSaleProductESModel>> GetByProductId(string product_id)
+        {
+            var now = DateTime.Now;
+
+            var response = await _client.SearchAsync<FlashSaleProductESModel>(s => s
+                .Query(q => q
+                    .Term(t => t
+                                .Field(f => f.productid)
+                                .Value(product_id)
+                                )
+                )
+            );
+
+            if (response.IsValid)
+            {
+                return response.Documents.ToList();
+            }
+            else
+            {
+                return new List<FlashSaleProductESModel>();
+            }
+        }
+        public async Task<bool> UpdateFlashSaleGroup(string productId, string newGroupId)
+        {
+            if (string.IsNullOrEmpty(productId))
+            {
+                return false;
+            }
+
+            var updateResponse = await _client.UpdateAsync<FlashSaleProductESModel, object>(
+                productId, 
+                u => u.Doc(new { group_id = newGroupId }) 
+                      .DocAsUpsert(false)
+            );
+
+            return updateResponse.IsValid;
+        }
     }
 
 

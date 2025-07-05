@@ -347,9 +347,8 @@ namespace Repositories.Repositories
         {
             try
             {
-                List<GroupProduct> cate_list = await _GroupProductDAL.GetAllAsync();
-                var _parentModel = cate_list.Where(s => s.ParentId == parent_id).OrderBy(x => x.OrderNo).ToList();
-                return _parentModel;
+                List<GroupProduct> cate_list =  _GroupProductDAL.GetByParentIdOrder(parent_id);
+                return cate_list;
             }
             catch (Exception ex)
             {

@@ -260,6 +260,8 @@ namespace WEB.CMS.Controllers.FlashSale
                         {
                             _flashSaleProductRepository.UpdateFlashSaleProduct(product);
                         }
+                        var product_mongo = await _productV2DetailMongoAccess.GetByID(product.ProductId);
+
                         new_items.Add(new FlashSaleProductESModel()
                         {
                             valuetype=product.ValueType,
@@ -271,7 +273,8 @@ namespace WEB.CMS.Controllers.FlashSale
                             productid=product.ProductId,
                             status=product.Status,
                             supersale = product.SuperSale,
-                            badgetype=product.BadgeType
+                            badgetype=product.BadgeType,
+                            group_id=product_mongo?.group_product_id
                         });
                         _redisConn.clear(CacheName.PRODUCT_DETAIL + product.ProductId, db_index);
 
