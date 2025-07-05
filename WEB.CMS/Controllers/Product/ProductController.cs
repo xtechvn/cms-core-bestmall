@@ -1,19 +1,12 @@
-﻿using Azure.Core;
-using Caching.Elasticsearch;
+﻿using Caching.Elasticsearch;
 using Caching.Elasticsearch.FlashSale;
 using Caching.RedisWorker;
 using Entities.Models;
 using Entities.ViewModels.Products;
-using HuloToys_Service.ElasticSearch.NewEs;
-using IdGen;
 using Microsoft.AspNetCore.Mvc;
-using Nest;
 using Newtonsoft.Json;
 using OfficeOpenXml;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
 using Repositories.IRepositories;
-using Repositories.Repositories;
-using System.Security.Claims;
 using System.Text;
 using Utilities;
 using Utilities.Common;
@@ -22,7 +15,6 @@ using Utilities.Contants.ProductV2;
 using WEB.Adavigo.CMS.Service;
 using WEB.CMS.Controllers.Product.Bussiness;
 using WEB.CMS.Customize;
-using WEB.CMS.Models;
 using WEB.CMS.Models.Product;
 
 namespace WEB.CMS.Controllers
