@@ -16,6 +16,7 @@ using WEB.Adavigo.CMS.Service;
 using WEB.CMS.Controllers.Product.Bussiness;
 using WEB.CMS.Customize;
 using WEB.CMS.Models.Product;
+using WEB.CMS.RabitMQ;
 
 namespace WEB.CMS.Controllers
 {
