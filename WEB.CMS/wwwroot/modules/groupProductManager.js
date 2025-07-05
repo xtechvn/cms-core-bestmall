@@ -253,6 +253,7 @@ var _groupProduct = {
 
             formData.append('ImageBase64', imagedata);
             formData.append('imageSize', $('.sl-image-size option:selected').attr('size'));
+            formData.append('IsFlashSale', $('#IsFlashSale').is(':checked'));
 
             var _modelId = formData.get("Id");
             var _modelName = formData.get("Name");
