@@ -63,7 +63,8 @@ namespace Repositories.Repositories
                     entity.IsShowHeader = model.IsShowHeader;
                     entity.IsShowFooter = model.IsShowFooter;
                     entity.Code = model.Code;
-                    entity.ProductCount = model.ProductCount;
+					entity.ProductCount = model.ProductCount;
+                    entity.IsFlashSale = model.IsFlashSale;
                     await _GroupProductDAL.UpdateAsync(entity);
 
                     // Update children status

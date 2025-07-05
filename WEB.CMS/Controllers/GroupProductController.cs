@@ -122,7 +122,10 @@ namespace WEB.CMS.Controllers
                     IsShowFooter = model.IsShowFooter,
                     ModifiedOn = DateTime.Now,
                     Code = model.Code,
-                    ProductCount=(model.Id>0? await _productV2DetailMongoAccess.CountByGroupId(model.Id):0)
+                    ProductCount=(model.Id>0? await _productV2DetailMongoAccess.CountByGroupId(model.Id):0),
+                    IsFlashSale=model.IsFlashSale,
+                    CreatedOn=DateTime.Now,
+                    
                     
                 };
                 var rs = await _GroupProductRepository.UpSert(upsertModel);
