@@ -276,7 +276,7 @@ namespace WEB.CMS.Controllers.FlashSale
                             badgetype=product.BadgeType,
                             group_id=(product_mongo == null|| product_mongo.group_product_id == null) ?"":product_mongo.group_product_id
                         });
-                        LogHelper.InsertLogTelegram("Summit - FlashSaleController [group_id]: " + ((product_mongo == null || product_mongo.group_product_id == null) ? "" : product_mongo.group_product_id));
+                       // LogHelper.InsertLogTelegram("Summit - FlashSaleController [group_id]: " + ((product_mongo == null || product_mongo.group_product_id == null) ? "" : product_mongo.group_product_id));
                         _redisConn.clear(CacheName.PRODUCT_DETAIL + product.ProductId, db_index);
 
                     }
