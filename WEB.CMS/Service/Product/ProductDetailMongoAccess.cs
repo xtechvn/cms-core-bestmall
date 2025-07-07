@@ -550,7 +550,6 @@ namespace WEB.CMS.Models.Product
                 }
 
                 return await _productDetailCollection.CountDocumentsAsync(filter);
-
             }
             catch (Exception ex)
             {

@@ -15,8 +15,13 @@ namespace WEB.CMS.Service.News
         public NewsMongoService(IConfiguration _Configuration)
         {
             configuration = _Configuration;
+            string url = "mongodb://" + configuration["DataBaseConfig:MongoServer:user"] +
+               ":" + configuration["DataBaseConfig:MongoServer:pwd"] +
+               "@" + configuration["DataBaseConfig:MongoServer:Host"] +
+               ":" + configuration["DataBaseConfig:MongoServer:Port"] +
+               "/?authSource=" + configuration["DataBaseConfig:MongoServer:catalog"] + "";
 
-            var client = new MongoClient("mongodb://" + configuration["DataBaseConfig:MongoServer:Host"] + "");
+            var client = new MongoClient(url);
             IMongoDatabase db = client.GetDatabase(configuration["DataBaseConfig:MongoServer:catalog"]);
             this.newsmongoCollection = db.GetCollection<NewsViewCount>("ArticlePageView");
 
