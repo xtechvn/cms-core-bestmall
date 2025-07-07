@@ -82,6 +82,8 @@ namespace WEB.CMS.Controllers
             };
             try
             {
+                string static_domain = _configuration["DomainConfig:ImageStatic"];
+                ViewBag.StaticDomain = static_domain != null && static_domain.EndsWith("/") ? static_domain : static_domain + "/";
                 if (type != 0)
                 {
                     model = await _GroupProductRepository.GetById(id);
