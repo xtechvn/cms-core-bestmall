@@ -557,5 +557,20 @@ namespace WEB.CMS.Models.Product
             }
             return 0;
         }
+        public async Task<int> GetCountProducts()
+        {
+            try
+            {
+                var allProducts = await _productDetailCollection
+                    .Find(_ => true)
+                    .ToListAsync();
+                return allProducts.Count();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error getting products: {ex.Message}");
+                return 0;
+            }
+        }
     }
 }

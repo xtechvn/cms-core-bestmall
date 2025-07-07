@@ -207,6 +207,7 @@ var product_index = {
         product_index.Model.page_index = 1;
         product_index.Model.on_excuting = false;
         product_index.Model.reached_end = false;
+        if ($('.count').attr('data-value') == undefined || $('.count').attr('data-value') <= 0) 
         $('.count').attr('data-value', '0')
         $('.count').text('0')
         $('#product_list').closest('.table-responsive').addClass('placeholder')
