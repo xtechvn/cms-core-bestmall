@@ -1153,13 +1153,39 @@ var product_detail_new = {
             || $('#group-id .namesp input').attr('data-id').trim() == '') {
             _msgalert.error('Vui lòng chọn ngành hàng cho sản phẩm')
             success = false
-        } else  {
+        }
+        else {
             var group_list = $('#group-id .namesp input').attr('data-id')
             if (!group_list.includes('114') && group_list.split(',').length < 3) {
                 _msgalert.error('Ngành hàng sản phẩm phải đủ 3 cấp')
                 success = false
             }
         }
+        if (!success) return success
+        //Mô tả chung 
+        if (tinymce.get('description-textarea').getContent() == undefined || tinymce.get('description-textarea').getContent().trim() == ''           ) {
+            _msgalert.error('Vui lòng nhập Mô tả chung')
+            success = false
+        }
+        if (!success) return success
+        //Thành phần
+        if (tinymce.get('description-ingredients-textarea').getContent() == undefined || tinymce.get('description-ingredients-textarea').getContent().trim() == '') {
+            _msgalert.error('Vui lòng nhập Thành phần')
+            success = false
+        }
+        if (!success) return success
+        //Công dụng
+        if (tinymce.get('description-effect-textarea').getContent() == undefined || tinymce.get('description-effect-textarea').getContent().trim() == '') {
+            _msgalert.error('Vui lòng nhập Công dụng')
+            success = false
+        }
+        if (!success) return success
+        //Cách dùng
+        if (tinymce.get('description-usepolicy-textarea').getContent() == undefined || tinymce.get('description-usepolicy-textarea').getContent().trim() == '') {
+            _msgalert.error('Vui lòng nhập Cách dùng')
+            success = false
+        }
+
         if (!success) return success
         if ($('#product-attributes-price').closest('.item-edit').is(':hidden')) {
             if ($('#main-price input').val() == undefined || $('#main-price input').val().trim() == '') {
