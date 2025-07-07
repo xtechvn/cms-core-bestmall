@@ -8,6 +8,8 @@
 
 @{
     var PositionList = (List<Position>)ViewBag.PositionList;
+    string static_url = (string)ViewBag.StaticDomain;
+
 }
 
 <style>
@@ -125,9 +127,28 @@
                     <button type="button" class="btn btn-default cancel" style="display:none;" id="btn-cancel-crop">Cancel</button>
                 </div>
                 <div class="wrap-image-preview" style="width: 150px;text-align: center;">
-                    <img class="image-preview mb10"
-                         src="@(!string.IsNullOrEmpty(Model.ImagePath) ? Model.ImagePath : "/images/icons/noimage.png")"
-                         onerror="_imageError(this)" />
+                    @{
+                        if (Model!=null && Model.ImagePath != null)
+                        {
+                            string url_fixed = Model.ImagePath;
+                            if (!url_fixed.Contains(static_url)
+                            && !url_fixed.Contains("base64")
+                            && !url_fixed.Contains("data:image"))
+                            {
+                                url_fixed = static_url + Model.ImagePath;
+                            }
+                            <img class="image-preview mb10"
+                                 src="@url_fixed"
+                            onerror="_imageError(this)" />
+                        }
+                        else
+                        {
+                            <img class="image-preview mb10"
+                                 src="/images/icons/noimage.png"
+                                 onerror="_imageError(this)" />
+                        }
+                    }
+                    
                     <input type="file" id="image_file" style="display:none;" />
                     <input type="hidden" asp-for="@Model.ImagePath" />
                     <button type="button" class="btn btn-primary" style="margin-left: 0px!important;" id="btn-upload-image" onclick="$('#image_file').trigger('click');"><i class="fa fa-image"></i>Upload</button>
