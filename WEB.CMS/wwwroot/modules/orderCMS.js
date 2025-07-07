@@ -145,7 +145,7 @@ $(document).ready(function () {
         placeholder: "Thông tin khách hàng",
         maximumSelectionLength: 1,
         ajax: {
-            url: "/CustomerManager/ClientSuggestion",
+            url: "/client/ClientSuggestion",
             type: "post",
             dataType: 'json',
             delay: 250,

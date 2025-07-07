@@ -18,6 +18,7 @@
     var Customers = (List<AllCode>)ViewBag.FilterOrder.Customers;
     var Status = (List<AllCode>)ViewBag.Order_Status;
     var PAYMENT_STATUS = (List<AllCode>)ViewBag.PAYMENT_STATUS;
+    var PAYMENT_TYPE = (List<AllCode>)ViewBag.PAYMENT_TYPE;
     var PERMISION_TYPE = (List<AllCode>)ViewBag.PERMISION_TYPE;
     var SHIPPING_CARRIER = (List<AllCode>)ViewBag.SHIPPING_CARRIER;
     var SuggestOrder = (string[])ViewBag.FilterOrder.SuggestOrder;
@@ -286,7 +287,7 @@
                                         <span class="checkbox" id="checkbox_service_type_@item.CodeValue">
                                             <i class="fa fa-check"></i>
                                         </span>
-                                        <span class="item-text" id="service_text_@item.CodeValue">n</span>
+                                        <span class="item-text" id="service_text_@item.CodeValue">@item.Description</span>
                                     </li>
                                 }
                             </ul>
@@ -309,7 +310,7 @@
                                         <span class="checkbox" id="checkbox_status_@item.CodeValue">
                                             <i class="fa fa-check"></i>
                                         </span>
-                                        <span class="item-text" id="status_text_@item.CodeValue">n</span>
+                                        <span class="item-text" id="status_text_@item.CodeValue">@item.Description</span>
                                     </li>
                                 }
                             </ul>
@@ -326,21 +327,16 @@
 
                             <ul class="list-items list-item-HINHTHUCTT" id="list-item-HINHTHUCTT">
 
-                                @foreach (var item in PERMISION_TYPE)
+                                @foreach (var item2 in PAYMENT_TYPE)
                                 {
+                                    <li class="item item-HINHTHUCTT" id="HINHTHUCTT_data_@(item2.CodeValue)">
+                                        <span class="checkbox" id="checkbox_HINHTHUCTT_@(item2.CodeValue)">
+                                            <i class="fa fa-check"></i>
+                                        </span>
+                                        <span class="item-text" id="HINHTHUCTT_text_@item2.Description">@item2.Description</span>
+                                    </li>
 
-                                    @foreach (var item2 in PAYMENT_STATUS)
-                                    {
-                                        <li class="item item-HINHTHUCTT" id="HINHTHUCTT_data_@(item.CodeValue +" _"+ item2.CodeValue)">
-                                            <span class="checkbox" id="checkbox_HINHTHUCTT_@(item.CodeValue+" _"+ item2.CodeValue)">
-                                                <i class="fa fa-check"></i>
-                                            </span>
-                                            <span class="item-text" id="HINHTHUCTT_text_@item.Description - @item2.Description">n - @item2.Description</span>
-                                        </li>
-
-                                    }
                                 }
-
                             </ul>
                         </div>
                     </div>
@@ -350,19 +346,12 @@
                         </select>
 
                     </div>
-                    <div class="form-group">
-                        <select class="select2 client-select main-staff-select" id="BoongKingCode" multiple="multiple" style="width:100% !important">
+                    <div class="form-group" style="display:none;">
+                        <select class="select2 client-select main-staff-select" id="BoongKingCode" multiple="multiple" style="width:100% !important;">
                         </select>
 
                     </div>
-                    <div class="form-group mb10 mr-2" style="display:none">
-                        <select class="select2" name="" style="width: 150px;">
-                            <option value="">Tất cả bộ phận phụ</option>
-                            <option value="">Đại lý</option>
-                            <option value="">Cộng tác viên</option>
-                            <option value="">Mice/Corp/Doanh nghiệp</option>
-                        </select>
-                    </div>
+                    
                     <div class="form-group mb10 mr-2">
                         <input type="text" style="display:none" class="form-control" id="" placeholder="Nhân viên phụ">
                     </div>
