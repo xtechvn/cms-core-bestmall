@@ -1,5 +1,8 @@
 ﻿using Newtonsoft.Json;
 using System.Net;
+using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
 using Telegram.Bot;
 
 namespace Utilities
@@ -54,6 +57,7 @@ namespace Utilities
             var rs = 1;
             try
             {
+                InsertLogSlack(message);
                 LoadConfig();
                 TelegramBotClient alertMsgBot = new TelegramBotClient(botToken);
                 var rs_push = alertMsgBot.SendMessage(group_Id, "[" + enviromment + "-" + CompanyType + "] - " + message).Result;
@@ -125,6 +129,31 @@ namespace Utilities
                     sLogFile.Close();
                 }
             }
+        }
+        private static async Task InsertLogSlack(string message)
+        {
+            try
+            {
+                using (StreamReader r = new StreamReader("appsettings.json"))
+                {
+                    AppSettings _appconfig = new AppSettings();
+                    string json = r.ReadToEnd();
+                    _appconfig = JsonConvert.DeserializeObject<AppSettings>(json);
+                    var url= _appconfig.BotSetting.slack_n8n;
+                    var contentObj = new logSlackmodel();
+                    contentObj.environment = _appconfig.BotSetting.environment;
+                    contentObj.project_name = _appconfig.BotSetting.project_name;
+                    contentObj.log_content = message;
+                    HttpClient httpClient = new HttpClient();
+                    var content = new StringContent(JsonConvert.SerializeObject(contentObj), Encoding.UTF8, "application/json");
+                   await httpClient.PostAsync(url, content);
+                }
+            }
+            catch(Exception ex)
+            {
+                WriteLogActivity("D://", ex.ToString());
+            }
+          
         }
         /*
         /*
@@ -246,6 +275,8 @@ namespace Utilities
         public string bot_token { get; set; }
         public string bot_group_id { get; set; }
         public string environment { get; set; }
+        public string slack_n8n { get; set; }
+        public string project_name { get; set; }
     }
     public class SystemLog
     {
@@ -258,6 +289,11 @@ namespace Utilities
         public string Log { get; set; } // nội dung log
         public DateTime CreatedTime { get; set; } // thời gian tạo
     }
-
+    public class logSlackmodel
+    {
+        public string project_name { get; set; }
+        public string log_content { get; set; }
+        public string environment { get; set; }
+    }
 }
 
