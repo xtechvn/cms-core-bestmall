@@ -36,7 +36,7 @@ namespace WEB.CMS.Controllers
         private readonly ProductESRepository _productESRepository;
         private readonly ISupplierRepository _supplierRepository;
         private readonly IAllCodeRepository _allCodeRepository;
-		private readonly WorkQueueClient work_queue;
+        private readonly WorkQueueClient work_queue;
         private readonly FlashSaleProductESRepository _flashSaleProductESRepository;
 
         public ProductController(IConfiguration configuration, RedisConn redisConn, IGroupProductRepository groupProductRepository, ILabelRepository labelRepository,
@@ -56,7 +56,7 @@ namespace WEB.CMS.Controllers
             _labelRepository = labelRepository;
             _supplierRepository = supplierRepository;
             _allCodeRepository = allCodeRepository;
-			 work_queue = new WorkQueueClient(configuration);
+			      work_queue = new WorkQueueClient(configuration);
             _flashSaleProductESRepository = flashSaleProductRepository;
         }
         public IActionResult Index()
@@ -358,11 +358,13 @@ namespace WEB.CMS.Controllers
 
                 await _redisConn.DeleteCacheByKeyword(CacheName.PRODUCT_LISTING, db_index);
                 _redisConn.clear(CacheName.PRODUCT_DETAIL + product_main._id, db_index);
+
                 if (product_main.group_product_id != null && product_main.group_product_id.Trim() != "")
                 {
                     try
                     {
                         var split = product_main.group_product_id.Split(",");
+
                         if (split != null && split.Count() > 0)
                         {
                             foreach (var id in split)

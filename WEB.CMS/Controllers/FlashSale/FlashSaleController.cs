@@ -417,7 +417,6 @@ namespace WEB.CMS.Controllers.FlashSale
                         banner = x.Banner,
                         created_date=x.CreateDate,
                         supplier_name= _supplierRepository.GetSuplierById((int)x.SupplierId).FullName,
-
                     }).ToList();
                     await _flashSaleESRepository.DeleteByIds(all_fsl_es.Select(x => x.flashsale_id).ToList());
                     await _flashSaleESRepository.IndexMany(all_fsl_es);
@@ -438,6 +437,7 @@ namespace WEB.CMS.Controllers.FlashSale
                         supersale = x.SuperSale
 
                     }).ToList();
+
                     if (all_fspl_es.Count > 0)
                     {
                         foreach(var product in all_fspl_es)

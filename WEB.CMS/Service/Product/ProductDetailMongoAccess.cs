@@ -548,9 +548,8 @@ namespace WEB.CMS.Models.Product
                 {
                     filter &= Builders<ProductMongoDbModel>.Filter.Regex(x => x.group_product_id, group_id.ToString());
                 }
-                
-                return await _productDetailCollection.CountDocumentsAsync(filter);
 
+                return await _productDetailCollection.CountDocumentsAsync(filter);
             }
             catch (Exception ex)
             {

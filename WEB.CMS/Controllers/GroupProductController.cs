@@ -136,7 +136,6 @@ namespace WEB.CMS.Controllers
                     _redisService.clear(CacheName.ARTICLE_B2C_CATEGORY_MENU + 1, Convert.ToInt32(_configuration["Redis:Database:db_common"]));
                     _redisService.clear(CacheName.ARTICLE_B2C_CATEGORY_MENU_FOOTER + 1, Convert.ToInt32(_configuration["Redis:Database:db_common"]));
                     _redisService.clear("GROUP_PRODUCT_FLASHSALE_" + model.ParentId, Convert.ToInt32(_configuration["Redis:Database:db_common"]));
-                    _redisService.clear("GROUP_PRODUCT_FLASHSALE_" + model.Id, Convert.ToInt32(_configuration["Redis:Database:db_common"]));
                     await _redisService.DeleteCacheByKeyword(CacheName.ARTICLE_CATEGORY_MENU, Convert.ToInt32(_configuration["Redis:Database:db_common"]));
 
 

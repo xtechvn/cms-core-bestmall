@@ -45,7 +45,6 @@ public partial class Article
     public string? AiContent { get; set; }
     public byte? IsPostedToFanpage { get; set; }
 
-   
 
     public virtual ICollection<ArticleRelated> ArticleRelateds { get; set; } = new List<ArticleRelated>();
 
