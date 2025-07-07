@@ -1185,19 +1185,19 @@ var product_detail_new = {
             _msgalert.error('Vui lòng nhập Cách dùng')
             success = false
         }
-
         if (!success) return success
-        if ($('#product-attributes-price').closest('.item-edit').is(':hidden')) {
-            if ($('#main-price input').val() == undefined || $('#main-price input').val().trim() == '') {
-                _msgalert.error('Vui lòng nhập giá nhập sản phẩm')
+       
+        if ($('#product-attributes-prices').closest('.item-edit').is(':hidden')) {
+            if ($('#main-price input').val() == undefined || $('#main-price input').val().trim() == '' || $('#main-price input').val().trim() == '0') {
+                _msgalert.error('Vui lòng nhập giá nhập tại form thông tin bán hàng')
                 success = false
             }
-            else if ($('#main-profit input').val() == undefined || $('#main-profit input').val().trim() == '') {
-                _msgalert.error('Vui lòng nhập lợi nhuận sản phẩm')
+            else if ($('#main-profit input').val() == undefined || $('#main-profit input').val().trim() == '' || $('#main-profit input').val().trim() == '0') {
+                _msgalert.error('Vui lòng nhập lợi nhuận tại form thông tin bán hàng')
                 success = false
             }
-            else if ($('#main-amount input').val() == undefined || $('#main-amount input').val().trim() == '') {
-                _msgalert.error('Vui lòng nhập giá bán sản phẩm')
+            else if ($('#main-amount input').val() == undefined || $('#main-amount input').val().trim() == '' || $('#main-amount input').val().trim() == '0') {
+                _msgalert.error('Vui lòng nhập giá bán tại form thông tin bán hàng')
                 success = false
             }
            
