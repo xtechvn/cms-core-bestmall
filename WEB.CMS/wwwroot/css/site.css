@@ -44,7 +44,3 @@ tr.flashsale-placeholder {
     tr.flashsale-placeholder td {
         border: none !important;
     }
-
-.wrap_input .thumb_img img{
-    object-fit:contain !important;
-}

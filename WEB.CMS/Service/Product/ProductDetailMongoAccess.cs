@@ -557,5 +557,26 @@ namespace WEB.CMS.Models.Product
             }
             return 0;
         }
+		public async Task<long> GetCountProducts()
+        {
+            try
+            {
+                var filterDefinition = Builders<ProductMongoDbModel>.Filter;
+                var filter = filterDefinition.Empty;
+                filter &= Builders<ProductMongoDbModel>.Filter.Or(
+                    Builders<ProductMongoDbModel>.Filter.Eq(p => p.parent_product_id, null),
+                    Builders<ProductMongoDbModel>.Filter.Eq(p => p.parent_product_id, "")
+                );
+                filter &= Builders<ProductMongoDbModel>.Filter.Where(s => s.status != (int)ProductStatus.REMOVE);
+   
+
+                return await _productDetailCollection.CountDocumentsAsync(filter);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error getting products: {ex.Message}");
+                return 0;
+            }
+        }
     }
 }

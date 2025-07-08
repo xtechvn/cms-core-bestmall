@@ -193,7 +193,7 @@ var product_detail_new = {
             $.magnificPopup.close()
 
         });
-        $('body').on('click', '.action .btn-round', function () {
+        $('body').on('click', '#them-nganhhang-confirm', function () {
             var selected_count = $('#them-nganhhang .col-md-4 .active').length
             var group_list = $('#group-product-selection').attr('data-id')
             if (!group_list.includes('114') && selected_count < 3) {
