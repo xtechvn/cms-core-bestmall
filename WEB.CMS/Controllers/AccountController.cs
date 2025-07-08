@@ -6,25 +6,13 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using OtpNet;
 using Repositories.IRepositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Utilities;
-using Utilities.Common;
 using Utilities.Contants;
 using WEB.CMS.Models;
-using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json.Linq;
-using WEB.Adavigo.CMS.Service;
-using Microsoft.AspNetCore.Hosting;
 using Caching.RedisWorker;
 
 namespace WEB.CMS.Controllers
