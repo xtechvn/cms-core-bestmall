@@ -190,6 +190,12 @@ var product_detail_new = {
 
         });
         $('body').on('click', '.action .btn-round', function () {
+            var selected_count = $('#them-nganhhang .col-md-4 .active').length
+            var group_list = $('#group-product-selection').attr('data-id')
+            if (!group_list.includes('114') && selected_count.length < 3) {
+                _msgalert.error('Ngành hàng sản phẩm phải đủ 3 cấp')
+                return
+            }
             product_detail_new.RenderSelectedGroupProduct()
             $.magnificPopup.close()
         });
@@ -503,6 +509,7 @@ var product_detail_new = {
         });
         //-- Group Product
         var group_product_id = $('#group-id input').attr('data-id')
+        $('#group-product-selection').attr('data-id', group_product_id)
         _product_function.POST('/Product/GroupProduct', { group_id: _product_constants_2.Values.GroupProduct }, function (result) {
             if (result.is_success && result.data) {
                 $('#them-nganhhang .bg-box .row').html('')
@@ -743,6 +750,7 @@ var product_detail_new = {
         var lastest_group_id = 0
         var level = 0
         var lastest_group_name = ''
+        var group_selected=''
         var selected_md4_level = parseInt(element_selected.closest('.col-md-4').attr('data-level'))
         $('#them-nganhhang .col-md-4').each(function (index, item) {
             var element = $(this)
@@ -755,7 +763,10 @@ var product_detail_new = {
             var selected = element.find('ul').find('.active').attr('data-name')
             if (index >= ($('#them-nganhhang .col-md-4').length - 1)) {
                 html_selected_popup += _product_constants.HTML.ProductDetail_GroupProduct_ResultSelected.replaceAll('{name}', element.find('ul').find('.active').attr('data-name'))
+                group_selected += element.find('ul').find('.active').attr('data-id')
+
             } else {
+                group_selected += element.find('ul').find('.active').attr('data-id') + ','
 
                 html_selected_popup += _product_constants.HTML.ProductDetail_GroupProduct_ResultDirection.replaceAll('{name}', selected)
             }
@@ -765,6 +776,7 @@ var product_detail_new = {
             lastest_group_name = element.find('ul').find('.active').attr('data-name')
         })
         $('#group-product-selection').html(html_selected_popup)
+        $('#group-product-selection').attr('data-id', group_selected)
 
         _product_function.POST('/Product/GroupProduct', { group_id: parseInt(lastest_group_id) }, function (result) {
             if (result.is_success && result.data && result.data.length > 0) {
@@ -1160,13 +1172,7 @@ var product_detail_new = {
                 success = false
             }
         }
-        else {
-            var group_list = $('#group-id .namesp input').attr('data-id')
-            if (!group_list.includes('114') && group_list.split(',').length < 3) {
-                _msgalert.error('Ngành hàng sản phẩm phải đủ 3 cấp')
-                success = false
-            }
-        }
+        
         if (!success) return success
         //Mô tả chung 
         if (tinymce.get('description-textarea').getContent() == undefined || tinymce.get('description-textarea').getContent().trim() == ''           ) {
@@ -1271,6 +1277,8 @@ var product_detail_new = {
     RenderSelectedGroupProduct: function () {
         var html_selected_input = ''
         var group_selected = ''
+        var old_group_product_selected_text = $('#group-id input').val()
+        var old_group_product_selected_id = $('#group-id input').attr('data-id')
         $('#them-nganhhang .col-md-4').each(function (index, item) {
             var element = $(this)
             var selected = element.find('ul').find('.active').attr('data-name')
@@ -1287,6 +1295,8 @@ var product_detail_new = {
         })
         $('#group-id input').val(html_selected_input)
         $('#group-id input').attr('data-id', group_selected)
+        $('#group-id input').attr('data-old-text', old_group_product_selected_text)
+        $('#group-id input').attr('data-old-id', old_group_product_selected_id)
 
     },
     Select2Supplier: function (element) {
