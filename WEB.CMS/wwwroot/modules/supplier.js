@@ -136,17 +136,30 @@ var _supplier_service = {
 
     OnAdd: function () {
         let Form = $('#form_supplier');
+        // 1. Thêm phương thức validation tùy chỉnh
+        $.validator.addMethod("noSpecialChars", function (value, element) {
+            // Regex cho phép chữ cái tiếng Việt có dấu, chữ số, và dấu cách
+            // Thay đổi Regex này tùy theo nhu cầu của bạn
+            const regex = /^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚÝĐàáâãèéêìíòóôõùúýđẢẠẮẶẤẬẦẨẪẬẺẸẼỀẾỆỈỊỎỌỒỔỖỘƠỜỚỞỠỢƯỪỨỬỮỰỲỴỶỸ\s0-9]+$/;
+
+            // this.optional(element) cho phép trường rỗng nếu nó không phải là required
+            return this.optional(element) || regex.test(value);
+        }, "Tên nhà cung cấp không được chứa ký tự đặc biệt.");
         Form.validate({
             rules: {
-                FullName: "required",
-                Email: {
+                "FullName": {
+                    required: true,
+                    noSpecialChars: true
+                },
+                "Email": {
+                    required: true,
                     email: true
                 },
-                Phone: {
+                "Phone": {
                     minlength: 10,
                     maxlength: 11,
                     digits: true
-                }
+                },
                 //ContactName: "required",
                 //ContactPhone: {
                 //    required: true,
@@ -154,6 +167,7 @@ var _supplier_service = {
                 //    digits: true
                 //},
                 //ContactEmail: {
+                //    required: true,
                 //    email: true
                 //},
                 //BankAccountName: "required",
@@ -165,12 +179,18 @@ var _supplier_service = {
                 //BankId: "required"
             },
             messages: {
-                FullName: "Vui lòng nhập tên nhà cung cấp",
-                Email: {
+                "FullName": {
+                    required: "Vui lòng nhập tên nhà cung cấp",
+                    noSpecialChars: "Tên nhà cung cấp không được chứa ký tự đặc biệt"
+                },
+                "Email": {
+                    required: "Vui lòng nhập Email",
                     email: 'Email không đúng định dạng'
                 },
-                Phone: {
+                "Phone": {
                     exactlength: "Số điện thoại phải nhập đúng 10 / 11 kí tự dạng số",
+                    maxlength: "Số điện thoại phải nhập đúng 10 / 11 kí tự dạng số",
+                    minlength: "Số điện thoại phải nhập đúng 10 / 11 kí tự dạng số",
                     digits: "Số điện thoại phải là kí tự dạng số"
                 }
                 //ContactName: "Vui lòng nhập tên liên hệ",
@@ -193,7 +213,40 @@ var _supplier_service = {
         });
 
         if (!Form.valid()) { return; }
-
+        var status_attachment = 0;
+        $('.form-group-attachment').each(function (index, item) {
+            var element = $(this)
+            var model = {
+                files: [],
+                data_id: 0,
+                type: element.attr('data-type-id')
+            }
+            var attachment_files = element.find('.attachment-file-gallery').find('.file').length;
+            if (index == 0 && (element.find('.attachment-file-gallery').find('.file') == undefined || element.find('.attachment-file-gallery').find('.file').length == undefined || element.find('.attachment-file-gallery').find('.file').length <= 0)) {
+                _msgalert.error("Chưa Upload file giấy tờ thương hiệu gốc");
+                status_attachment = 1;
+                return false;;
+                
+            }
+            if (index == 1 && (element.find('.attachment-file-gallery').find('.file') == undefined || element.find('.attachment-file-gallery').find('.file').length == undefined || element.find('.attachment-file-gallery').find('.file').length <= 0)) {
+                _msgalert.error("Chưa Upload file giấy tờ hàng hóa");
+                status_attachment = 1;
+                return false;;
+              
+            }
+            if (index == 2 && (element.find('.attachment-file-gallery').find('.file') == undefined || element.find('.attachment-file-gallery').find('.file').length == undefined || element.find('.attachment-file-gallery').find('.file').length <= 0)) {
+                _msgalert.error("Chưa Upload file giấy tờ nhà phân phối");
+                status_attachment = 1;
+                return false;;
+               
+            }
+            if (index == 3 && (element.find('.attachment-file-gallery').find('.file') == undefined || element.find('.attachment-file-gallery').find('.file').length == undefined || element.find('.attachment-file-gallery').find('.file').length <= 0)) {
+                _msgalert.error("Chưa Upload file giấy tờ xác nhận");
+                status_attachment = 1;
+                return false; 
+            }
+        });
+        if (status_attachment == 1) { return; }
         let formData = this.GetFormData(Form);
 
         formData['SupplierCode'] = 'SUPPLIER_CODE';
@@ -407,7 +460,7 @@ var _supplier_service = {
                 break;
             default:
         }
-        
+
     },
 
     setCookie: function (name, value, days) {
@@ -463,10 +516,10 @@ var _supplier_service = {
                 }
             });
         });
-       
+
 
     },
-    ValidateSupplier: function (id,status) {
+    ValidateSupplier: function (id, status) {
         var title = "Xác nhận duyệt nhà cung cấp";
         var description = "Nhà cung cấp này sẽ được duyệt, bạn có chắc chắn không?"
         switch (status) {
@@ -503,7 +556,7 @@ var _supplier_service = {
                         _msgalert.success(result.message);
                         setTimeout(function () {
                             window.location.reload();
-                            
+
                         }, 1500)
                     } else {
                         _msgalert.error(result.message);

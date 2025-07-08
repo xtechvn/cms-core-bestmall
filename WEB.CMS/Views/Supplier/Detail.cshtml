@@ -213,10 +213,10 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @if(users!=null && users.Count > 0)
+                                        @if (users != null && users.Count > 0)
                                         {
                                             int count = 0;
-                                            foreach(var u in users)
+                                            foreach (var u in users)
                                             {
                                                 <tr class="tab-users-tr" data-id="@u.Id">
                                                     <td class="count">
@@ -262,7 +262,9 @@
                                                                     @if (u.Status == (int)Status.HOAT_DONG)
                                                                     {
                                                                         <option value="0" selected>Hoạt động</option>
-                                                                    }else{
+                                                                    }
+                                                                    else
+                                                                    {
                                                                         <option value="0">Hoạt động</option>
                                                                     }
                                                                     @if (u.Status == (int)Status.KHONG_HOAT_DONG)
@@ -298,6 +300,9 @@
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="form-group align-right mt20 block pin-btn-bottom " bis_skin_checked="1">
+            <a type="button" class="btn btn-default cancel ml-1" href="/supplier">Quay lại</a>
         </div>
     </div>
 </section>
