@@ -612,7 +612,7 @@ $(document).ready(function () {
         multiple: true,
         maximumSelectionLength: 3,
         ajax: {
-            url: "/Order/UserSuggestion",
+            url: "/OrderManual/UserSuggestion",
             type: "post",
             dataType: 'json',
             delay: 250,
