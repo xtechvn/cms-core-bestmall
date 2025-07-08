@@ -1100,10 +1100,10 @@
     <div id="single-weight" class="box-info bg-white p-3 mb-3">
         <h5 class="title-box mb-2 text-uppercase">Vận chuyển</h5>
         <div class="item flex flex-lg-nowrap gap10 mb-2 w-100">
-            <label class="label">Thiết lập cân nặng & kích thước cho từng phân loại</label>
+            <label class="label">Sản phẩm có chung cân nặg và kích thước</label>
             <div class="wrap_input">
                 <label class="switch no-text switch-active">
-                    <input type="checkbox" class="switch-weight" @(product != null && product.is_one_weight == false ? "checked" : "")>
+                    <input type="checkbox" class="switch-weight" @(product != null && product.is_one_weight == true ? "checked" : "")>
                     <span class="slider round"></span>
                 </label>
 
@@ -1111,7 +1111,7 @@
         </div>
         <div class="box-input-ship">
             <div class="item flex flex-lg-nowrap gap10 mb-2 w-100">
-                <label class="label">Cân nặng*</label>
+                <label class="label">Cân nặng</label>
                 <div class="wrap_input">
                     <div class="row">
                         <div class="col-lg-4 col-md-6">
