@@ -82,7 +82,7 @@
 
                             }
 
-                            <div class="items import">
+                            <div class="items import @(product != null && product.images != null && product.images.Count >=9 ? "display:none;" : "")">
                                 <label class="choose choose-wrap">
                                     <input type="file" name="myFile" multiple>
                                     <div class="choose-content">
@@ -121,7 +121,7 @@
                                 </div>
 
                             }
-                            <div class="items import">
+                            <div class="items import @(product != null && product.avatar != null && product.avatar.Trim() != "" ? "display:none;" : "")">
                                 <label class="choose choose-wrap">
                                     <input type="file" name="myFile">
                                     <div class="choose-content">
@@ -171,7 +171,7 @@
 
                             }
 
-                            <div class="items import">
+                            <div class="items import @(product != null && product.videos != null && product.videos.Count >0 ? "display:none;" : "")">
                                 <label class="choose choose-wrap">
                                     <input type="file" name="myFile">
                                     <div class="choose-content">
@@ -1440,8 +1440,8 @@
 
 
 @section Scripts {
-    <script src="/js/Sortable.min.js"></script>
+    <script src="/js/Sortable.min.js"asp-append-version="true"></script>
 
-    <script src="/modules/product/common.js"></script>
-    <script src="/modules/product/detail.js"></script>
+    <script src="/modules/product/common.js" asp-append-version="true"></script>
+    <script src="/modules/product/detail.js" asp-append-version="true"></script>
 }
