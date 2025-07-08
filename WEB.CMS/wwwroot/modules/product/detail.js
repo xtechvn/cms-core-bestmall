@@ -336,7 +336,7 @@ var product_detail_new = {
                     element_input.val('')
                     element_input.attr('readonly', 'readonly')
                 })
-                $('#product-attributes-table')[0].scrollIntoView(true);
+                $('#product-attributes-apply')[0].scrollIntoView(true);
 
             } else {
                 $('.th-weight').hide()
@@ -348,7 +348,7 @@ var product_detail_new = {
                     element_input.val(element_input.attr('data-old'))
                     element_input.removeAttr('readonly')
                 })
-                $('#single-weight input')[0].scrollIntoView(true);
+                $('#single-weight')[0].scrollIntoView(true);
             }
         });
         //--global click event:
