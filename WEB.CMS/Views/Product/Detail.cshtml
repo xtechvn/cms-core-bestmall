@@ -39,7 +39,7 @@
         color: black !important;
     }
     .action-form{
-        z-index:999999999;
+        z-index:999;
     }
 </style>
 <section id="product_detail" class="add-product" data-id="@product_id">
@@ -934,15 +934,15 @@
                                     <td class="td-dismenssion" style="@(product!=null && (product.is_one_weight==false ||product.is_one_weight==null)?"display:none;":"")">
                                         <div class="flex gap10 flex-nowrap align-items-center">
                                             <div class="td-dismenssion-height form-group mb-0 price">
-                                                <input type="text" class="form-control" placeholder="nhập chiều rộng" value="">
+                                                <input type="text" class="form-control input-price" placeholder="nhập chiều rộng" maxlength="10" value="">
                                                 <span class="note">R (cm)</span>
                                             </div>
                                             <div class=" td-dismenssion-width form-group mb-0 price">
-                                                <input type="text" class="form-control" placeholder="nhập chiều dài" value="">
+                                                <input type="text" class="form-control input-price" placeholder="nhập chiều dài" maxlength="10" value="">
                                                 <span class="note">D (cm)</span>
                                             </div>
                                             <div class="td-dismenssion-depth form-group mb-0 price">
-                                                <input type="text" class="form-control" placeholder="nhập chiều cao" value="">
+                                                <input type="text" class="form-control input-price" placeholder="nhập chiều cao" maxlength="10" value="">
                                                 <span class="note">C (cm)</span>
                                             </div>
                                         </div>
