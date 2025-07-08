@@ -223,25 +223,25 @@ var _supplier_service = {
             }
             var attachment_files = element.find('.attachment-file-gallery').find('.file').length;
             if (index == 0 && (element.find('.attachment-file-gallery').find('.file') == undefined || element.find('.attachment-file-gallery').find('.file').length == undefined || element.find('.attachment-file-gallery').find('.file').length <= 0)) {
-                _msgalert.error("Chưa Upload file giấy tờ thương hiệu gốc");
+                _msgalert.error("Vui lòng thêm giấy tờ thương hiệu");
                 status_attachment = 1;
                 return false;;
                 
             }
             if (index == 1 && (element.find('.attachment-file-gallery').find('.file') == undefined || element.find('.attachment-file-gallery').find('.file').length == undefined || element.find('.attachment-file-gallery').find('.file').length <= 0)) {
-                _msgalert.error("Chưa Upload file giấy tờ hàng hóa");
+                _msgalert.error("Vui lòng thêm giấy tờ hàng hóa");
                 status_attachment = 1;
                 return false;;
               
             }
             if (index == 2 && (element.find('.attachment-file-gallery').find('.file') == undefined || element.find('.attachment-file-gallery').find('.file').length == undefined || element.find('.attachment-file-gallery').find('.file').length <= 0)) {
-                _msgalert.error("Chưa Upload file giấy tờ nhà phân phối");
+                _msgalert.error("Vui lòng thêm giấy tờ nhà phân phối");
                 status_attachment = 1;
                 return false;;
                
             }
             if (index == 3 && (element.find('.attachment-file-gallery').find('.file') == undefined || element.find('.attachment-file-gallery').find('.file').length == undefined || element.find('.attachment-file-gallery').find('.file').length <= 0)) {
-                _msgalert.error("Chưa Upload file giấy tờ xác nhận");
+                _msgalert.error("Vui lòng thêm giấy tờ xác nhận");
                 status_attachment = 1;
                 return false; 
             }
