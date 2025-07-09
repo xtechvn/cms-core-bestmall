@@ -576,7 +576,7 @@ var product_detail_new = {
         if ($('#product-attributes-prices tr').length <= 0) {
             var request = {
                 "product_id": $('#product_detail').attr('data-id'),
-                "is_one_weight": !$('#single-weight').find('input[type=checkbox]').is(":checked"),
+                "is_one_weight": $('#single-weight').find('input[type=checkbox]').is(":checked"),
                 "attributes": [],
                 "attributes_detail": [],
                 "sub_product": []
@@ -725,7 +725,7 @@ var product_detail_new = {
                 }
                 var reader = new FileReader();
                 reader.onload = function (e) {
-                    element.closest('.choose').find('.choose-content').html(_product_constants.HTML.ProductDetail_Images_Item.replaceAll('{src}', e.target.result).replaceAll('{id}', '-1'))
+                    element.closest('.choose').find('.choose-content').html(_product_constants.HTML.ProductDetail_Images_Row_Item.replaceAll('{src}', e.target.result).replaceAll('{id}', '-1'))
                 }
                 reader.readAsDataURL(element[0].files[0]);
                 element.val(null)
@@ -1191,6 +1191,21 @@ var product_detail_new = {
                 success = false
             }
         }
+        var element = $('#label-id select')
+        if (element == null || element == undefined || element.find(':selected') == null || element.find(':selected') == undefined
+            || element.find(':selected').val() == '' || element.find(':selected').val() == undefined) {
+            _msgalert.error('Vui lòng chọn nhãn hiệu')
+            success = false
+            return false
+        }
+
+        element = $('#supplier-id select').find(':selected')
+        if (element == null || element == undefined || element.find(':selected') == null || element.find(':selected') == undefined
+            || element.find(':selected').val() == '' || element.find(':selected').val() == undefined) {
+            _msgalert.error('Vui lòng chọn nhà cung cấp')
+            success = false
+            return false
+        }
         if (!success) return success
         //Mô tả chung 
         if (tinymce.get('description-textarea').getContent() == undefined || tinymce.get('description-textarea').getContent().trim() == '') {
@@ -1258,7 +1273,7 @@ var product_detail_new = {
             })
         }
         if (!success) return success
-        if ($('#discount-groupbuy tbody tr').length > 0) {
+		if ($('#discount-groupbuy tbody tr').length > 0) {
             $('#discount-groupbuy tbody tr').each(function (index, item) {
                 var element = $(this)
                 var from = parseFloat(element.find('.td-from').find('input').val().replaceAll(',', ''))
@@ -1560,7 +1575,7 @@ var product_detail_new = {
                                         </td>
                                         <td style="max-width: 50%;">
                                             <div class="item-order text-left" style=" display: flex; ">
-                                                <div class="img" style=" margin-right: 5px; ">
+                                                <div class="img" style=" margin-right: 5px; width:80px;">
                                                     <img src="@img_src" alt="" style=" width: 80px; ">
                                                 </div>
                                                 <div class="info">

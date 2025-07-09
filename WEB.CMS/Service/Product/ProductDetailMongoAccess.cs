@@ -1,4 +1,5 @@
 ﻿using Azure.Core;
+using Elasticsearch.Net;
 using Entities.ViewModels.Products;
 using IdGen;
 using MongoDB.Bson;
@@ -19,7 +20,7 @@ namespace WEB.CMS.Models.Product
     {
         private readonly IConfiguration _configuration;
         private IMongoCollection<ProductMongoDbModel> _productDetailCollection;
-        List<int> status_sub = new List<int>() { (int)ProductStatus.ACTIVE,(int)ProductStatus.DEACTIVE, (int)ProductStatus.ON_WAITING_CONFIRM };
+        List<int> status_sub = new List<int>() { (int)ProductStatus.ACTIVE, (int)ProductStatus.DEACTIVE, (int)ProductStatus.ON_WAITING_CONFIRM };
 
         public ProductDetailMongoAccess(IConfiguration configuration)
         {
@@ -109,7 +110,7 @@ namespace WEB.CMS.Models.Product
             }
         }
 
-        public async Task<List<ProductMongoDbModel>> Listing(string keyword = "", int group_id = -1, int page_index = 1, int page_size = 10)
+        public async Task<List<ProductMongoDbModel>> Listing(string keyword = "", int group_id = -1,int status=-1, int page_index = 1, int page_size = 10)
         {
             try
             {
@@ -126,12 +127,18 @@ namespace WEB.CMS.Models.Product
                 filter &= Builders<ProductMongoDbModel>.Filter.Where(s => s.status != (int)ProductStatus.REMOVE);
                 if (group_id > 0)
                 {
-                    filter &= Builders<ProductMongoDbModel>.Filter.Regex(x => x.group_product_id, group_id.ToString());
+                    filter &= Builders<ProductMongoDbModel>.Filter.Regex(x => x.group_product_id, new BsonRegularExpression($@"\b{group_id}\b"));
+
+                }
+                if (status > 0)
+                {
+                    filter &= Builders<ProductMongoDbModel>.Filter.Eq(x => x.status, status);
+
                 }
                 var sort_filter = Builders<ProductMongoDbModel>.Sort;
                 var sort_filter_definition = sort_filter.Descending(x => x.updated_last);
                 var model = _productDetailCollection.Find(filter).Sort(sort_filter_definition);
-                if (page_size > 0 && page_index>0)
+                if (page_size > 0 && page_index > 0)
                 {
                     model.Options.Skip = page_index < 1 ? 0 : (page_index - 1) * page_size;
                     model.Options.Limit = page_size;
@@ -243,7 +250,7 @@ namespace WEB.CMS.Models.Product
             return null;
 
         }
-        public async Task<string> RemoveSubProductByParentId (string id)
+        public async Task<string> RemoveSubProductByParentId(string id)
         {
             try
             {
@@ -431,7 +438,7 @@ namespace WEB.CMS.Models.Product
                                     Builders<ProductMongoDbModel>.Filter.Regex(p => p.code, new MongoDB.Bson.BsonRegularExpression(keyword.Trim().ToLower(), "i"))
 
                                     );
-              
+
                 filter &= Builders<ProductMongoDbModel>.Filter.Where(s => s.status != (int)ProductStatus.REMOVE);
                 if (group_id > 0)
                 {
@@ -464,7 +471,7 @@ namespace WEB.CMS.Models.Product
                 );
 
                 // Trường hợp có variation_detail (không null và không rỗng)
-                var condition2_HasVariationDetail = Builders<ProductMongoDbModel>.Filter.ElemMatch(p => p.variation_detail, Builders<ProductDetailVariationAttributesMongoDbModel>.Filter.Exists(x=>x.name));
+                var condition2_HasVariationDetail = Builders<ProductMongoDbModel>.Filter.ElemMatch(p => p.variation_detail, Builders<ProductDetailVariationAttributesMongoDbModel>.Filter.Exists(x => x.name));
 
                 // Hoặc cách này:
                 // var condition2_HasVariationDetail = Builders<ProductMongoDbModel>.Filter.Where(p => p.variation_detail != null && p.variation_detail.Any());
@@ -481,7 +488,7 @@ namespace WEB.CMS.Models.Product
                     case2Filter
                 );
                 filter &= Builders<ProductMongoDbModel>.Filter.Gt(p => p.amount, 0);
-                if(current_id!=null && current_id.Count > 0)
+                if (current_id != null && current_id.Count > 0)
                 {
                     filter &= Builders<ProductMongoDbModel>.Filter.Nin(p => p._id, current_id);
                     filter &= Builders<ProductMongoDbModel>.Filter.Nin(p => p.parent_product_id, current_id);
@@ -502,7 +509,7 @@ namespace WEB.CMS.Models.Product
             }
         }
 
-        public async Task<List<ProductMongoDbModel>> ListingProductFlashSale(string keyword = "", int group_id = -1,int supplier_id=-1)
+        public async Task<List<ProductMongoDbModel>> ListingProductFlashSale(string keyword = "", int group_id = -1, int supplier_id = -1)
         {
             try
             {
@@ -545,7 +552,7 @@ namespace WEB.CMS.Models.Product
         {
             try
             {
-                var  filterDefinition = Builders<ProductMongoDbModel>.Filter;
+                var filterDefinition = Builders<ProductMongoDbModel>.Filter;
                 var filter = filterDefinition.Empty;
                 filter &= Builders<ProductMongoDbModel>.Filter.Or(
                     Builders<ProductMongoDbModel>.Filter.Eq(p => p.parent_product_id, null),
@@ -576,7 +583,7 @@ namespace WEB.CMS.Models.Product
                     Builders<ProductMongoDbModel>.Filter.Eq(p => p.parent_product_id, "")
                 );
                 filter &= Builders<ProductMongoDbModel>.Filter.Where(s => s.status != (int)ProductStatus.REMOVE);
-   
+
 
                 return await _productDetailCollection.CountDocumentsAsync(filter);
             }

@@ -207,6 +207,13 @@ var product_index = {
         //        product_index.Listing();
         //    }
         //});
+        $('body').on('click', '.product-search-tab', function () {
+            var element = $(this)
+            $('.product-search-tab').removeClass('active')
+            element.addClass('active')
+            product_index.ResetSearch()
+            product_index.Listing();
+        });
 
     },
     ResetSearch: function () {
@@ -234,11 +241,18 @@ var product_index = {
                 .replace(/\s+/g, ' ')             // Xóa khoảng trắng thừa
                 .trim();
         }
+        var active_tab = $('#product-search-tab-container .active');
+        var status = -1;
+
+        if (active_tab != null && active_tab != undefined) {
+            status = active_tab.attr('data-status')
+        }
         var request = {
             keyword: normalizeText($('#input-search-product-name').val()), // Làm sạch từ khóa
             group_id: $('#search-group').find(':selected').val(),
             page_index: product_index.Model.page_index,
-            page_size: parseInt($('#item-per-page').find(':selected').val())
+            page_size: parseInt($('#item-per-page').find(':selected').val()),
+            status: status
         }
         _product_function.POST('/Product/Search', request, function (result) {
 
