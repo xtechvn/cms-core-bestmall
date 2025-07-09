@@ -381,6 +381,14 @@ var _user = {
 
     OnUpdateUser: function () {
         let FromCreate = $('#form-create-user');
+        $.validator.addMethod("noSpecialChars", function (value, element) {
+            // Regex cho phép chữ cái tiếng Việt có dấu, chữ số, và dấu cách
+            // Thay đổi Regex này tùy theo nhu cầu của bạn
+            const regex = /^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚÝĐàáâãèéêìíòóôõùúýđẢẠẮẶẤẬẦẨẪẬẺẸẼỀẾỆỈỊỎỌỒỔỖỘƠỜỚỞỠỢƯỪỨỬỮỰỲỴỶỸ\s0-9]+$/;
+
+            // this.optional(element) cho phép trường rỗng nếu nó không phải là required
+            return this.optional(element) || regex.test(value);
+        }, "Họ Tên không được chứa ký tự đặc biệt.");
         FromCreate.validate({
             rules: {
                 UserName: "required",
@@ -395,6 +403,9 @@ var _user = {
                 RePassword: {
                     required: true,
                     equalTo: "#Password"
+                },
+                FullName: {
+                    noSpecialChars: true
                 }
             },
             messages: {
@@ -419,6 +430,9 @@ var _user = {
                 },
                 Level: {
                     required: 'Vui lòng chọn chức vụ của người dùng',
+                },
+                FullName: {
+                    noSpecialChars: "Họ Tên không được chứa ký tự đặc biệt"
                 }
             }
         });
