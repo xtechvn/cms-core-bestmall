@@ -214,6 +214,15 @@ var product_index = {
             product_index.ResetSearch()
             product_index.Listing();
         });
+        $('body').on('click', '#btn-search-product-clear-search', function () {
+            _msgconfirm.openDialog('Xác nhận xóa bộ lọc', 'Thanh tìm kiếm tên sản phẩm và bộ lọc chọn ngành hàng sẽ được đặt về giá trị mặc định, bạn chắc chắn không?', function () {
+                $('#search-group').val('0').trigger('change')
+                $('#input-search-product-name').val('').trigger('change')
+                product_index.ResetSearch()
+                product_index.Listing();
+            })
+           
+        });
 
     },
     ResetSearch: function () {
@@ -248,9 +257,15 @@ var product_index = {
         if (active_tab != null && active_tab != undefined) {
             status = active_tab.attr('data-status')
         }
+        var group_id = $('#search-group').find(':selected');
+        var group_id_value = '-1';
+        if (group_id != null && group_id != undefined) {
+            group_id_value = group_id.val()
+        }
+
         var request = {
             keyword: normalizeText($('#input-search-product-name').val()), // Làm sạch từ khóa
-            group_id: $('#search-group').find(':selected').val(),
+            group_id: group_id_value,
             page_index: product_index.Model.page_index,
             page_size: parseInt($('#item-per-page').find(':selected').val()),
             status: status
