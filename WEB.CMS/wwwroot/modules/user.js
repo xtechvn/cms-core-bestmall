@@ -406,7 +406,11 @@ var _user = {
                 },
                 FullName: {
                     noSpecialChars: true
-                }
+                },
+                "Phone": {
+                    required: true,
+                    number: true,
+                },
             },
             messages: {
                 UserName: "Vui lòng nhập tên đăng nhập",
@@ -433,6 +437,10 @@ var _user = {
                 },
                 FullName: {
                     noSpecialChars: "Họ Tên không được chứa ký tự đặc biệt"
+                },
+                "Phone": {
+                    required: 'Vui lòng nhập số điện thoại',
+                    number: "Nhập đúng định dạng số",
                 }
             }
         });
