@@ -1186,8 +1186,11 @@ var product_detail_new = {
             success = false
         } else {
             var group_list = $('#group-id .namesp input').attr('data-id')
-            if (!group_list.includes('114') && group_list.split(',').length < 3) {
-                _msgalert.error('Ngành hàng sản phẩm phải đủ 3 cấp')
+            var max_group_count = $('#group-id input').attr('data-group-count')
+            var max_group_count_value =( max_group_count == undefined || max_group_count.trim() == '' || isNaN(parseInt(max_group_count)) || parseInt(max_group_count) <= 0) ? 3 : parseInt(max_group_count)
+            
+            if (!group_list.includes('114') && group_list.split(',').length < max_group_count_value) {
+                _msgalert.error('Ngành hàng sản phẩm phải đủ ' + max_group_count_value +' cấp')
                 success = false
             }
         }
@@ -1365,6 +1368,7 @@ var product_detail_new = {
         })
         $('#group-id input').val(html_selected_input)
         $('#group-id input').attr('data-id', group_selected)
+        $('#group-id input').attr('data-group-count', $('#them-nganhhang .col-md-4').length)
         $('#group-id input').attr('data-old-text', old_group_product_selected_text)
         $('#group-id input').attr('data-old-id', old_group_product_selected_id)
 
