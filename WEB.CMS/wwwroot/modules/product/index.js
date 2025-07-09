@@ -271,6 +271,11 @@ var product_index = {
             }
             $('.count').text(result.total_count || (parseFloat(recent_count) + parseFloat(current_count)));
             $('.hanmuc').closest('.flex-lg-nowrap').find('.count').html(parseFloat(recent_count))
+            var product_count = $('#search-count').text()
+            if (product_count != null && product_count != undefined && product_count.trim() != '') {
+                $('#count-product').attr('data-value', $('#search-count').text())
+                $('#count-product').html($('#search-count').text())
+            }
             $('#search-count').remove()
         })
         //_product_function.POST('/Product/ProductListing', request, function (result) {

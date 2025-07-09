@@ -91,6 +91,7 @@ namespace WEB.CMS.Controllers
             ViewBag.Sub = sub_products;
             string static_domain = _configuration["DomainConfig:ImageStatic"];
             ViewBag.StaticDomain = static_domain!=null && static_domain.EndsWith("/") ? static_domain : static_domain + "/";
+            ViewBag.CountProduct = await _productV2DetailMongoAccess.CountListing(keyword, group_id, status);
             return View();
         }
 
