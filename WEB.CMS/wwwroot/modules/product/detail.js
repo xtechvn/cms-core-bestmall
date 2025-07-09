@@ -211,7 +211,7 @@ var product_detail_new = {
         $('body').on('keyup', '.attributes-detail .form-control', function () {
             var element = $(this)
             setTimeout(function () {
-                product_detail_new.RenderAddNewAttribute(element.closest('.attributes-list'), element)
+                product_detail_new.RenderAddNewAttribute(element.closest('.attributes-list'), element,false)
                 product_detail_new.RenderAttributesPrice()
 
             }, 1000);
@@ -821,21 +821,23 @@ var product_detail_new = {
         element.closest('.col-md-6').find('.namesp').find('input').attr('data-value', value)
         element.closest('.col-md-6').find('.namesp').find('input').val(html)
     },
-    RenderAddNewAttribute: function (parent, element) {
+    RenderAddNewAttribute: function (parent, element, need_validate=true) {
         var exists = false
         var name = element.val()
 
         parent.find('.form-control').each(function (index, item) {
             var compare = $(this)
             if (compare.is(element)) return true
-            if (name != undefined && name.toLowerCase().trim() == compare.val().toLowerCase().trim()) {
-                _msgalert.error("Tên phân loại " + name + "  đã có ")
-                exists = true
-                return false
-            }
-            else if (compare.val() == undefined || compare.val() == null || compare.val().trim() == '') {
-                exists = true
-                return false
+            if (need_validate == true) {
+                if (name != undefined && name.toLowerCase().trim() == compare.val().toLowerCase().trim()) {
+                    _msgalert.error("Tên phân loại " + name + "  đã có ")
+                    exists = true
+                    return false
+                }
+                else if (compare.val() == undefined || compare.val() == null || compare.val().trim() == '') {
+                    exists = true
+                    return false
+                }
             }
         })
         if (exists == true) {

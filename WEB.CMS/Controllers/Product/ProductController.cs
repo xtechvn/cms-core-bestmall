@@ -71,7 +71,6 @@ namespace WEB.CMS.Controllers
         public async Task<IActionResult> Search(string keyword = "", int group_id = -1, int page_index = 1, int page_size = 10)
         {
 
-            if (page_size <= 0) page_size = 10;
             if (page_index < 1) page_index = 1;
             Console.WriteLine($"Controller received keyword: '{keyword}'");
 
