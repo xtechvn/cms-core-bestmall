@@ -60,7 +60,7 @@ var _supplier_detail = {
             var fileType = item.name.split('.').pop();
             if (!_validFileExtensions.includes(fileType)) {
                 _msgalert.error('File upload phải thuộc các định dạng : jpg, jpeg, bmp, gif, png');
-                return true;
+                return false;
             }
 
             formData.append("files", item);
@@ -68,13 +68,13 @@ var _supplier_detail = {
             if (fileSize > _supplier_detail.Data.ImageMaxSize) {
                 validate = false
                 _msgalert.error('File được chọn đang vượt quá dung lượng giới hạn (5MB). Tên file: '+item.name);
-                return true; 
+                return false; 
             }
         });
-        if (!validate) {
-            element.val(null).trigger('change')
-            return
-        }
+        //if (!validate) {
+        //    element.val(null).trigger('change')
+        //    return
+        //}
         $.ajax({
             url: "/AttachFile/Upload",
             data: formData,
