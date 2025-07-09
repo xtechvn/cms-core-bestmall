@@ -282,14 +282,17 @@ label.radio {
 
 .main-products,
 .add-product {
-  .tab-default a {
-    text-transform: uppercase;
-    padding: 0 10px;
+  .tab-default{
+     padding: 10px 0;
+     a {
+        text-transform: uppercase;
+        padding: 10px;
 
-    &.active {
-      border-bottom: 1px solid #fd5023;
-      color: #fd5023;
-      font-weight: bold;
+        &.active {
+          border-bottom: 1px solid #fd5023;
+          color: #fd5023;
+          font-weight: bold;
+        }
     }
   }
 
@@ -435,10 +438,25 @@ label.radio {
         width: 80px;
         margin-bottom: 0;
         padding: 0;
-
-        .delete {
+        position: relative;
+        .delete{
           background: #c2c2c2;
           top: -8px;
+          right: -8px;
+        }
+        .crop{
+          background: #c2c2c2;
+            color: #fff;
+            position: absolute;
+            right: -8px;
+            top: 20px;
+            z-index: 2;
+            border: 0;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            outline: 0;
+            cursor: pointer;
         }
       }
     }
@@ -579,13 +597,34 @@ label.radio {
         top: 10px;
         font-size: 20px;
       }
+      .crop{
+         position: absolute;
+          right: 10px;
+          cursor: pointer;
+          top: 40px;
+          font-size: 20px;
+      }
     }
 
     .form-group {
       .choose {
         width: 40px;
         height: 40px;
+        flex-shrink: 0;
         padding-bottom: 0;
+      }
+      .thumb_img {
+         width: 40px;
+          height: 40px;
+          flex-shrink: 0;
+          img{
+          width: 40px;
+          height: 40px;
+          flex-shrink: 0;
+          cursor: pointer;
+          border: 1px dashed #dfdfdf;
+          border-radius: 8px;
+        }
       }
     }
 
@@ -593,6 +632,7 @@ label.radio {
       display: flex;
       flex-wrap: nowrap;
       gap: 10px;
+      align-items: start;
       position: static;
       margin-bottom: 0;
 
@@ -1278,4 +1318,48 @@ label.switch {
   font-weight: normal;
   text-align: center;
   text-transform: none;
+}
+.delete{
+  top: -8px;
+   background: #c2c2c2;
+  color: #fff;
+  position: absolute;
+  right: -8px;
+  z-index: 2;
+  border: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  outline: 0;
+  text-align: center;
+  cursor: pointer;
+}
+.crop{
+  background: #c2c2c2;
+    color: #fff;
+    position: absolute;
+    right: -8px;
+    top: 20px;
+    z-index: 2;
+    text-align: center;
+    border: 0;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    outline: 0;
+    cursor: pointer;
+}
+.add-banner{
+  .items{
+    position: relative;
+  }
+  .icofont-image{
+    color: #FF4169;
+  }
+}
+.bg-item {
+    background: #F1F5F9;
+}
+.thumb_img img{
+  object-position: center;
 }

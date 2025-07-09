@@ -56,3 +56,8 @@ tr.flashsale-placeholder {
     place-content: center;
     margin-bottom: 0px;
 }
+#images .thumb_img img,
+#avatar .thumb_img img,
+#videos .thumb_img img {
+    object-fit: contain !important;
+}

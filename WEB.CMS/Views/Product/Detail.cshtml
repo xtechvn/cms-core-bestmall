@@ -811,8 +811,8 @@
                                                                 @if (attr_detail != null && attr_detail.img != null && attr_detail.img.Trim() != "")
                                                                 {
                                                                     <div class="items magnific_popup" data-id="-1">
-                                                                        <button type="button" class="delete"><i class="icofont-close-line"></i></button>
-                                                                        <a class="thumb_img thumb_1x1 magnific_thumb">
+@*                                                                         <button type="button" class="delete"><i class="icofont-close-line"></i></button>
+ *@                                                                        <a class="thumb_img thumb_1x1 magnific_thumb">
                                                                             <img src="@attr_detail.img">
                                                                         </a>
                                                                     </div>
@@ -931,16 +931,16 @@
                                     <td class="td-dismenssion" style="@(product!=null && (product.is_one_weight==false ||product.is_one_weight==null)?"display:none;":"")">
                                         <div class="flex gap10 flex-nowrap align-items-center">
                                             <div class="td-dismenssion-height form-group mb-0 price">
-                                                <input type="text" class="form-control" placeholder="nhập chiều rộng" value="">
-                                                <span class="note">R (cm)</span>
+                                                <input type="text" class="form-control" placeholder="nhập chiều rộng" value="" style="padding-right:56px !important;">
+                                                <span class="note"style=" width: 38px !important; padding: 0; ">R (cm)</span>
                                             </div>
                                             <div class=" td-dismenssion-width form-group mb-0 price">
-                                                <input type="text" class="form-control" placeholder="nhập chiều dài" value="">
-                                                <span class="note">D (cm)</span>
+                                                <input type="text" class="form-control" placeholder="nhập chiều dài" value=""style="padding-right:56px !important;">
+                                                <span class="note"style=" width: 38px; padding: 0; ">D (cm)</span>
                                             </div>
                                             <div class="td-dismenssion-depth form-group mb-0 price">
-                                                <input type="text" class="form-control" placeholder="nhập chiều cao" value="">
-                                                <span class="note">C (cm)</span>
+                                                <input type="text" class="form-control" placeholder="nhập chiều cao" value="" style="padding-right:56px !important;">
+                                                <span class="note" style=" width: 38px; padding: 0; ">C (cm)</span>
                                             </div>
                                         </div>
                                     </td>
@@ -1100,7 +1100,7 @@
             <label class="label">Sản phẩm có chung cân nặg và kích thước</label>
             <div class="wrap_input">
                 <label class="switch no-text switch-active">
-                    <input type="checkbox" class="switch-weight" @(product != null && product.is_one_weight == true ? "checked" : "")>
+                    <input type="checkbox" class="switch-weight" @(product != null && product.is_one_weight == true ? "checked" : (product==null || product._id==null?"checked":""))>
                     <span class="slider round"></span>
                 </label>
 

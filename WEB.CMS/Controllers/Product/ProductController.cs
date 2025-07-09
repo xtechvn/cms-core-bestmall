@@ -66,7 +66,7 @@ namespace WEB.CMS.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Search(string keyword = "", int group_id = -1, int page_index = 1, int page_size = 10)
+        public async Task<IActionResult> Search(string keyword = "", int group_id = -1, int page_index = 1, int page_size = 10,int status=-1)
         {
 
             if (page_index < 1) page_index = 1;
@@ -79,7 +79,7 @@ namespace WEB.CMS.Controllers
             var normalizedKeyword = keyword.Normalize(NormalizationForm.FormC);
             Console.WriteLine($"Normalized keyword: '{normalizedKeyword}'");
 
-            var main_products = await _productV2DetailMongoAccess.Listing(keyword, group_id, page_index, page_size);
+            var main_products = await _productV2DetailMongoAccess.Listing(keyword, group_id, status, page_index, page_size);
             List<ProductMongoDbModel> sub_products = new List<ProductMongoDbModel>();
             if (main_products!=null && main_products.Count > 0)
             {

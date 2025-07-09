@@ -4,32 +4,13 @@
 }
 <section class="main-container main-products">
     <div class="row-main container bg-white" style="padding-top:5px;">
-        <div class="line-bottom" style="padding-bottom: 0;">
-            <div class="tab-default mb0" data-tab-container="tab-container-1">
-                <a href="#" class="active text-uppercase" data-lbl="danh-sach-phong">
-                    Quản lý sản
-                    phẩm
-                </a>
-                @*<a href="#" class="text-uppercase" data-lbl="chuong-trinh">Quản lý danh mục</a>*@
+        <div class="line-bottom"  style="padding-bottom: 0;height: 35px;margin-top: 10px !important;">
+            <div id="product-search-tab-container" class="tab-default mb0" data-tab-container="tab-container-1" style="height:25px;">
+                <a href="javascript:;" data-status="-1" class="product-search-tab text-uppercase active">Tất cả sản phẩm  </a>
+                <a href="javascript:;" data-status="4" class="product-search-tab text-uppercase">Chờ duyệt</a>
+                <a href="javascript:;" data-status="1" class="product-search-tab text-uppercase">Đã duyệt / Hoạt động </a>
+                <a href="javascript:;" data-status="2" class="product-search-tab text-uppercase">Sản phẩm đã ẩn</a>
             </div>
-        </div>
-
-        <div class="flex gap10 mb-3">
-            <button class="btn btn-active">
-                Tất cả
-            </button>
-            @*<button class="btn">
-            Đang hoạt động (2)
-            </button>
-            <button class="btn">
-            Vi phạm (1)
-            </button>
-            <button class="btn">
-            Chờ duyệt
-            </button>
-            <button class="btn">
-            Chưa được đăng
-            </button>*@
         </div>
         <div class="flex gap10 flex-lg-nowrap">
             <div class="form-group w-100 ">

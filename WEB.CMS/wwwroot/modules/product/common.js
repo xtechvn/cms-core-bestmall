@@ -205,6 +205,11 @@ var _product_constants = {
                                     <img src="{src}">
                                 </a>
                             </div>`,
+        ProductDetail_Images_Row_Item: ` <div class="items magnific_popup" data-id="{id}">
+                                <a class="thumb_img thumb_1x1 magnific_thumb">
+                                    <img src="{src}">
+                                </a>
+                            </div>`,
         ProductDetail_Video_Item: ` <div class="items magnific_popup" data-id="{id}">
                                 <button type="button" class="delete"><i class="icofont-close-line"></i></button>
                                 <a class="thumb_img thumb_1x1 magnific_thumb">
