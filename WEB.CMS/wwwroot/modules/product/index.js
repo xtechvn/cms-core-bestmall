@@ -18,6 +18,7 @@ var product_index = {
         product_index.DynamicBind()
         $('#product_list').closest('.table-responsive').addClass('placeholder')
         $('.hanmuc').closest('.flex-lg-nowrap').addClass('placeholder')
+        product_index.Select2Group($('#search-group'))
     },
     DynamicBind: function () {
         $('body').on('click', '.btn-search-product', function () {
@@ -229,7 +230,7 @@ var product_index = {
         }
         var request = {
             keyword: normalizeText($('#input-search-product-name').val()), // Làm sạch từ khóa
-            group_id: -1,
+            group_id: $('#search-group').find(':selected').val(),
             page_index: product_index.Model.page_index,
             page_size: parseInt($('#item-per-page').find(':selected').val())
         }
@@ -275,6 +276,35 @@ var product_index = {
 
         //});
 
+    },
+    Select2Group: function (element) {
+        var element_placeholder = element.attr('placeholder')
+        element.select2({
+            placeholder: element_placeholder,
+            ajax: {
+                url: "/Product/SearchGroupProduct",
+                type: "post",
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    var query = {
+                        keyword: params.term,
+                    }
+                    return query;
+                },
+                processResults: function (response) {
+                    return {
+                        results: $.map(response.data, function (item) {
+                            return {
+                                text: '[' + item.id + '] - ' + item.name,
+                                id: item.id,
+                            }
+                        })
+                    };
+                },
+                cache: true
+            }
+        });
     },
     //RenderSearch: function (main_products, sub_products) {
     //    var html = ''
