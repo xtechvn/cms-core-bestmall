@@ -213,7 +213,7 @@ label.switch input:checked+.slider {
 
   input:checked ~ .checkmark {
     border: 1px solid #fd5023;
-    background: #fd5023;
+    background: #fd5023 !important;
   }
 }
 
