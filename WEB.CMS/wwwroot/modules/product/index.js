@@ -202,6 +202,12 @@ var product_index = {
                 product_index.Listing()
             }
         });
+        //$('#product_list').on('scroll', function () {
+        //    if ($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight) {
+        //        product_index.Listing();
+        //    }
+        //});
+
     },
     ResetSearch: function () {
         product_index.Model.page_index = 1;

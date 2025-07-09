@@ -131,8 +131,16 @@ namespace WEB.CMS.Models.Product
                 var sort_filter = Builders<ProductMongoDbModel>.Sort;
                 var sort_filter_definition = sort_filter.Descending(x => x.updated_last);
                 var model = _productDetailCollection.Find(filter).Sort(sort_filter_definition);
-                model.Options.Skip = page_index < 1 ? 0 : (page_index - 1) * page_size;
-                model.Options.Limit = page_size;
+                if (page_size > 0 && page_index>0)
+                {
+                    model.Options.Skip = page_index < 1 ? 0 : (page_index - 1) * page_size;
+                    model.Options.Limit = page_size;
+                }
+                else
+                {
+                    model.Options.Skip = 0;
+                    model.Options.Limit = 10;
+                }
                 //// Retrieve products from MongoDB
                 //var result1 = await _productDetailCollection.Find(filterDefinition).Sort(sort_filter_definition).ToListAsync();
 

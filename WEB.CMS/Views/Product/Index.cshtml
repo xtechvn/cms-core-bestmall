@@ -3,7 +3,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <section class="main-container main-products">
-    <div class="row-main container bg-white">
+    <div class="row-main container bg-white" style="padding-top:5px;">
         <div class="line-bottom" style="padding-bottom: 0;">
             <div class="tab-default mb0" data-tab-container="tab-container-1">
                 <a href="#" class="active text-uppercase" data-lbl="danh-sach-phong">
@@ -118,16 +118,17 @@
                 </table>
             </div>
             <div class="bottom-action flex flex-nowrap gap10 justify-content-end mt-3">
-                <button class="btn btn-default white" style="padding: 0 10px;">
+                @* <button class="btn btn-default white" style="padding: 0 10px;">
                     <i class="icofont-gear"></i>
                     <span>Tùy chỉnh</span>
-                </button>
+                </button> *@
                 <div class="form-group select-icon">
-                    <select id="item-per-page" class="select2" name="">
-                        <option value="50">Hiển thị 50 kết quả/trang</option>
-                        <option value="50">50</option>
-                        <option value="100">100</option>
-                        <option value="200">200</option>
+                    <select id="item-per-page" class="select2">
+                        <option value="20" selected>Hiển thị 20 sản phẩm</option>
+                        <option value="50">Hiển thị 50 sản phẩm</option>
+                        <option value="100">Hiển thị 100 sản phẩm</option>
+                        <option value="200">Hiển thị 200 sản phẩm</option>
+                        <option value="4000">Hiển thị tất cả sản phẩm</option>
                     </select>
                 </div>
             </div>
