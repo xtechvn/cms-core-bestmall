@@ -32,7 +32,7 @@
                     </div>
                     <div class="info">
                         <h3 class="name-product"> <nw class="product-name"> @main.name</nw> </h3>
-                        <p class="text-secondary mb-0">Mã: <nw class="product-code"> @main.code</nw></p>
+                        <p class="text-secondary mb-0">Mã: <nw class="product-code"> @(main.sku==null || main.sku.Trim()==""?main.code:main.sku)</nw></p>
                         <p class="text-secondary mb-0"> <nw class="product-variation"> @(variation_string == null || variation_string.Trim() == "" ? "Sản phẩm" : variation_string)</nw></p>
                     </div>
                 </div>

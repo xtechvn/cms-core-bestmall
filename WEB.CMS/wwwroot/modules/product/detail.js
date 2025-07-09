@@ -844,6 +844,7 @@ var product_detail_new = {
             return
         }
         parent.find('.row-attributes-value').append(_product_constants_2.Attributes.Input)
+
     },
     RenderRowData: function (tr) {
         if (tr.find('.td-price').length > 0 && tr.find('.td-profit').length > 0 && tr.find('.td-amount').length > 0) {
