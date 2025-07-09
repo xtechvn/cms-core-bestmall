@@ -226,6 +226,7 @@ var product_index = {
         $('.count').text('0')
         $('#product_list').closest('.table-responsive').addClass('placeholder')
         $('.hanmuc').closest('.flex-lg-nowrap').addClass('placeholder')
+        $('#product_list').html('')
     },
 
     Listing: function () {
