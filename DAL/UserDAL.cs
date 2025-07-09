@@ -332,7 +332,7 @@ namespace DAL
             {
                 using (var _DbContext = new EntityDataContext(_connection))
                 {
-                    return await _DbContext.Users.AsNoTracking().Where(s => s.UserName.ToLower().Contains(txt_search.ToLower())).ToListAsync();
+                    return await _DbContext.Users.AsNoTracking().Where(s => s.UserName.ToLower().Contains(txt_search.ToLower())||s.FullName.ToLower().Contains(txt_search.ToLower())).ToListAsync();
                 }
             }
             catch (Exception ex)
