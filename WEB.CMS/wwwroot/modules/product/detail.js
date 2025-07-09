@@ -1202,7 +1202,7 @@ var product_detail_new = {
             return false
         }
 
-        element = $('#supplier-id select').find(':selected')
+        element = $('#supplier-id select')
         if (element == null || element == undefined || element.find(':selected') == null || element.find(':selected') == undefined
             || element.find(':selected').val() == '' || element.find(':selected').val() == undefined) {
             _msgalert.error('Vui lòng chọn nhà cung cấp')
