@@ -34,7 +34,7 @@
         <div class="flex gap10 flex-lg-nowrap">
             <div class="form-group w-100 ">
                 <div class="search-wrapper">
-                    <input id="input-search-product-name" type="text" class="input_search  onclick-togle border" name="" value=""
+                    <input id="input-search-product-name" type="text" class="input_search  onclick-togle border" name="" value="" style="height:40px;"
                            placeholder="Từ khoá, mã sản phẩm,...">
                     <span class="search-btn">
                         <button class="btn-search-product" type="submit">
@@ -47,19 +47,19 @@
             </div>
             <div class="form-group w-100 ">
                 <div class="search-wrapper">
-                    <input type="text" class="input_search onclick-togle border" name="" value=""
-                           placeholder="Tìm kiếm theo ngành hàng">
-                    <span class="search-btn">
+                    <select id="search-group" class="select2 w-100" style="width:100% !important;" placeholder="Tìm kiếm theo ngành hàng">
+                    </select>
+                   @*  <span class="search-btn">
                         <button class="btn-search-product" type="submit">
                             <svg class="icon-svg">
                                 <use xlink:href="images/icons/icon.svg#search"></use>
                             </svg>
                         </button>
-                    </span>
+                    </span> *@
                 </div>
             </div>
             <div class="form-group">
-                <button class="btn select-icon btn-round btn-outline-secondary btn-search-product">
+                <button class="btn select-icon btn-round btn-outline-secondary btn-search-product" style="height:40px;">
                     <i class="icofont-search"></i>
                     Tìm kiếm
                 </button>
