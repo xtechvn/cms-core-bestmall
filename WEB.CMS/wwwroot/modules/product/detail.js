@@ -824,26 +824,29 @@ var product_detail_new = {
     RenderAddNewAttribute: function (parent, element, need_validate=true) {
         var exists = false
         var name = element.val()
-
-        parent.find('.form-control').each(function (index, item) {
-            var compare = $(this)
-            if (compare.is(element)) return true
-            if (need_validate == true) {
-                if (name != undefined && name.toLowerCase().trim() == compare.val().toLowerCase().trim()) {
-                    _msgalert.error("Tên phân loại " + name + "  đã có ")
-                    exists = true
+        var has_element_no_value=false
+        async function processElements() {
+            parent.find('.form-control').each(function (index, item) {
+                var compare = $(this)
+                if (compare.is(element)) return true
+                if (need_validate == true) {
+                    if (name != undefined && name.toLowerCase().trim() == compare.val().toLowerCase().trim()) {
+                        _msgalert.error("Tên phân loại " + name + "  đã có ")
+                        exists = true
+                        return false
+                    }
+                }
+                if (compare.val() == undefined || compare.val() == null || compare.val().trim() == '') {
+                    has_element_no_value = true
                     return false
                 }
-                else if (compare.val() == undefined || compare.val() == null || compare.val().trim() == '') {
-                    exists = true
-                    return false
-                }
-            }
-        })
-        if (exists == true) {
-            return
+            })
         }
-        parent.find('.row-attributes-value').append(_product_constants_2.Attributes.Input)
+        processElements()
+       
+        if (exists == false && need_validate== false && has_element_no_value==false) {
+            parent.find('.row-attributes-value').append(_product_constants_2.Attributes.Input)
+        }
 
     },
     RenderRowData: function (tr) {
