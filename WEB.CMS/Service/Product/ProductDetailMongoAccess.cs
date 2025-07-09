@@ -165,6 +165,42 @@ namespace WEB.CMS.Models.Product
                 return null;
             }
         }
+        public async Task<long> CountListing(string keyword = "", int group_id = -1, int status = -1)
+        {
+            try
+            {
+                var filter = Builders<ProductMongoDbModel>.Filter.Or(
+                                    Builders<ProductMongoDbModel>.Filter.Regex(p => p.name, new MongoDB.Bson.BsonRegularExpression(keyword.Trim().ToLower(), "i")),
+                                    Builders<ProductMongoDbModel>.Filter.Regex(p => p.sku, new MongoDB.Bson.BsonRegularExpression(keyword.Trim().ToLower(), "i")),
+                                    Builders<ProductMongoDbModel>.Filter.Regex(p => p.code, new MongoDB.Bson.BsonRegularExpression(keyword.Trim().ToLower(), "i"))
+
+                                    );
+                filter &= Builders<ProductMongoDbModel>.Filter.Or(
+                    Builders<ProductMongoDbModel>.Filter.Eq(p => p.parent_product_id, null),
+                    Builders<ProductMongoDbModel>.Filter.Eq(p => p.parent_product_id, "")
+                );
+                filter &= Builders<ProductMongoDbModel>.Filter.Where(s => s.status != (int)ProductStatus.REMOVE);
+                if (group_id > 0)
+                {
+                    filter &= Builders<ProductMongoDbModel>.Filter.Regex(x => x.group_product_id, new BsonRegularExpression($@"\b{group_id}\b"));
+
+                }
+                if (status > 0)
+                {
+                    filter &= Builders<ProductMongoDbModel>.Filter.Eq(x => x.status, status);
+
+                }
+                var model = await _productDetailCollection.CountDocumentsAsync(filter);
+                
+                return model;
+            }
+            catch (Exception ex)
+            {
+                Utilities.LogHelper.InsertLogTelegram("ProductDetailMongoAccess - Listing Error: " + ex);
+                return 0;
+            }
+        }
+
         // Hàm chuẩn hóa từ khóa tìm kiếm, giữ lại dấu ngoặc và các ký tự cần thiết
         private string NormalizeTextForSearch(string input)
         {

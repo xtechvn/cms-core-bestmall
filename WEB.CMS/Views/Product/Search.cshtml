@@ -6,6 +6,7 @@
     List<ProductMongoDbModel> sub_products = (List<ProductMongoDbModel>)ViewBag.Sub;
     List<ProductMongoDbModel> main_products = (List<ProductMongoDbModel>)ViewBag.Main;
     string StaticDomain = (string)ViewBag.StaticDomain;
+    long count = (long)ViewBag.CountProduct;
 }
 @if(main_products!=null && main_products.Count > 0)
 {
@@ -203,5 +204,5 @@
             }
         }
     }
-    <div id="search-count" style="display:none;">@main_products.Count</div>
+    <div id="search-count" style="display:none;">@count</div>
 }
