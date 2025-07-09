@@ -1571,12 +1571,6 @@ var product_detail_new = {
     ConfirmProductBuyWith: function () {
         var template = `
           <tr data-id="@item._id">
-                                        <td style="max-width: 50px">
-                                            <label class="check-list mb20 mr25">
-                                                <input class="check-product" type="checkbox">
-                                                <span class="checkmark"></span>
-                                            </label>
-                                        </td>
                                         <td style="max-width: 50%;">
                                             <div class="item-order text-left" style=" display: flex; ">
                                                 <div class="img" style=" margin-right: 5px; width:80px;">
