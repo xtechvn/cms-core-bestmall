@@ -608,6 +608,7 @@ namespace WEB.CMS.Models.Product
             }
             return 0;
         }
+
 		public async Task<long> GetCountProducts()
         {
             try

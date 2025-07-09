@@ -60,7 +60,7 @@ namespace Repositories.Repositories
                 if (menu_ids != null && menu_ids.Any())
                 {
                     var ListMenu =  _MenuDAL.GetAll();
-                    var childList = ListMenu.Where(s => menu_ids.Contains(s.Id));
+                    var childList = ListMenu.Where(s => menu_ids.Contains(s.Id) && s.Status == 0);// 0 :Hoạt động, 1 tạm ngừng
                     foreach (var item in childList)
                     {
                         rslist.Add(item);

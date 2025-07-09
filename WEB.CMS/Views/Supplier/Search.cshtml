@@ -85,7 +85,7 @@
                             @(item.UpdatedDate.HasValue && item.UpdatedDate != DateTime.MinValue ? item.UpdatedDate.Value.ToString("dd-MM-yyyy HH:mm") : string.Empty)
                         </td>
                         <td>
-                            <a class="delete blue" onclick="_supplier_service.ShowAddOrUpdate('@item.SupplierId')"><i class="fa fa-edit"></i></a> &nbsp;&nbsp;
+                            <a class=" blue" onclick="_supplier_service.ShowAddOrUpdate('@item.SupplierId')"><i class="fa fa-edit"></i></a> &nbsp;&nbsp;
                             @*<a class="red" ><i class="fa fa-times"></i></a>*@
                         </td>
                     </tr>

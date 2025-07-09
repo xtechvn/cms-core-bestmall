@@ -1248,6 +1248,9 @@ var product_detail_new = {
             else if ($('#main-amount input').val() == undefined || $('#main-amount input').val().trim() == '' || $('#main-amount input').val().trim() == '0') {
                 _msgalert.error('Vui lòng nhập giá bán tại form thông tin bán hàng')
                 success = false
+            } else if ($('#main-stock input').val() == undefined || $('#main-stock input').val().trim() == '' || $('#main-stock input').val().trim() == '0') {
+                _msgalert.error('Vui lòng nhập số lượng kho tại form thông tin bán hàng')
+                success = false
             }
 
         } else {
@@ -1274,9 +1277,41 @@ var product_detail_new = {
             })
         }
         if (!success) return success
-
-
-        
+		if ($('#discount-groupbuy tbody tr').length > 0) {
+            $('#discount-groupbuy tbody tr').each(function (index, item) {
+                var element = $(this)
+                var from = parseFloat(element.find('.td-from').find('input').val().replaceAll(',', ''))
+                var to = parseFloat(element.find('.td-to').find('input').val().replaceAll(',', ''))
+                if (from == undefined || isNaN(from) || from <= 0 || to == undefined || isNaN(to) || to <= 0) {
+                    _msgalert.error('Vui lòng nhập đầy đủ số lượng sản phẩm')
+                    success = false
+                    return false
+                }
+                if (from >= to) {
+                    _msgalert.error('Khoảng số lượng không hợp lệ')
+                    success = false
+                    return false
+                }
+                var checkbox_value = element.find('input[name="discount-type-' + (index) + '"]:checked').val()
+                if (checkbox_value == undefined || checkbox_value.trim() == '') {
+                    _msgalert.error('Vui lòng chọn loại chiết khấu')
+                    success = false
+                    return false
+                }
+                var number = parseFloat(element.find('.discount-number').find('input').val().replaceAll(',', ''))
+                if ((number == undefined || isNaN(number) || number <= 0) && checkbox_value == 0) {
+                    _msgalert.error('Vui lòng nhập Chiết khấu')
+                    success = false
+                    return false
+                }
+                var percent = parseFloat(element.find('.discount-percent').find('input').val().replaceAll(',', ''))
+                if ((percent == undefined || isNaN(percent) || percent <= 0) && checkbox_value == 1) {
+                    _msgalert.error('Vui lòng nhập Chiết khấu')
+                    success = false
+                    return false
+                }
+            })
+        }
         return success
     },
     GetAttributeItem: function () {

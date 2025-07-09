@@ -16,7 +16,7 @@
             <div class="form-group mb10 mr-2">
                 <input type="text" class="form-control" id="ip_search_fullname" placeholder="Tên nhà cung cấp" style="width: 150px;">
             </div>
-            <div class="form-group mb10 mr-2" style="min-width: 200px;">
+            @*<div class="form-group mb10 mr-2" style="min-width: 200px;">
                 <select class="" id="sl_search_service" multiple style="width: 100%!important;">
                     @if (service_types != null && service_types.Any())
                     {
@@ -26,7 +26,7 @@
                         }
                     }
                 </select>
-            </div>
+            </div>*@
             <div class="form-group mb10 mr-2" style="min-width: 200px;">
                 <select class="main-staff-select" id="sl_search_suggest_user" style="width:100%!important">
                 </select>
@@ -69,7 +69,7 @@
                 </div>
             </div>
             <div class="mb10 mr-2">
-                <button class="btn-search btn-default " type="button" onclick="_supplier_service.Export()" id="btnExport">
+                <button class="btn-search btn-default " type="button" onclick="_supplier_service.Export()" id="btnExport" title="Xuất file excel">
                     <i class="fa fa-file-excel-o" id="icon-export"></i>
                 </button>
                 <button type="button" class="btn btn-default bg-main" onclick="_supplier_service.OnSearch()">
@@ -167,6 +167,6 @@
 </section>
 
 @section scripts {
-    <script type="text/javascript" src="~/modules/supplier.js?v=3"></script>
-    <script type="text/javascript" src="~/modules/supplier_detail.js"></script>
+    <script type="text/javascript" src="~/modules/supplier.js?v=3" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/modules/supplier_detail.js" asp-append-version="true"></script>
 }

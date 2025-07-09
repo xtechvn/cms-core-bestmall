@@ -16,19 +16,19 @@
         if (img_src != null && !img_src.Contains(StaticDomain) && !img_src.Contains("data:image") && !img_src.Contains("http"))
             img_src = StaticDomain + main.avatar;
         <tr data-id="@main._id">
-            <td style="width: 0;">
+            @*<td style="width: 0;">
                 <label class="check-list mb-3">
                     <input type="checkbox">
                     <span class="checkmark"></span>
                 </label>
-            </td>
+            </td>*@
             <td style="width: 100px;">
                 <div class="item-order">
                     <div class="img">
                         <img src="@img_src" alt="">
                     </div>
                     <div class="info">
-                        <h3 class="name-product">
+                        <h3 class="name-product" style="color:blue;">
                             @main.name
                         </h3>
                         <div class="cat" style="display:none;"></div>
@@ -180,8 +180,8 @@
                     }
                 }
                 <tr class="sub-product" data-id="@sub._id" data-main-id="@sub.parent_product_id" style="@(c>=2?"display:none;":"")">
-                    <td style="width: 0;">
-                    </td>
+                    @*<td style="width: 0;">
+                    </td>*@
                     <td style="width: 100px;">
                         <div class="item-order">
                             <div class="img">

@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using OfficeOpenXml;
 using Repositories.IRepositories;
 using System.Text;
+using System.Threading.Tasks;
 using Utilities;
 using Utilities.Common;
 using Utilities.Contants;
@@ -59,9 +60,10 @@ namespace WEB.CMS.Controllers
 			      work_queue = new WorkQueueClient(configuration);
             _flashSaleProductESRepository = flashSaleProductRepository;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-
+          var count =await  _productV2DetailMongoAccess.GetCountProducts();
+            ViewBag.CountSp = count;
             return View();
         }
 

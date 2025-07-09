@@ -50,22 +50,31 @@ var _supplier_detail = {
         })
     },
     Upload: function (element) {
+        var _validFileExtensions = ["jpg", "jpeg", "bmp", "gif", "png"];
+        
         _supplier_detail.Data.Processing = true;
         var formData = new FormData()
-        var validate=true
+        var validate = true
+      
         $(element[0].files).each(function (index, item) {
+            var fileType = item.name.split('.').pop();
+            if (!_validFileExtensions.includes(fileType)) {
+                _msgalert.error('File upload phải thuộc các định dạng : jpg, jpeg, bmp, gif, png');
+                return false;
+            }
+
             formData.append("files", item);
             const fileSize = item.size; // Lấy dung lượng file theo bytes
             if (fileSize > _supplier_detail.Data.ImageMaxSize) {
                 validate = false
                 _msgalert.error('File được chọn đang vượt quá dung lượng giới hạn (5MB). Tên file: '+item.name);
-                return true; 
+                return false; 
             }
         });
-        if (!validate) {
-            element.val(null).trigger('change')
-            return
-        }
+        //if (!validate) {
+        //    element.val(null).trigger('change')
+        //    return
+        //}
         $.ajax({
             url: "/AttachFile/Upload",
             data: formData,
