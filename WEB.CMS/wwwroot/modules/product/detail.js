@@ -195,9 +195,9 @@ var product_detail_new = {
         });
         $('body').on('click', '#them-nganhhang-confirm', function () {
             var selected_count = $('#them-nganhhang .col-md-4 .active').length
-            var group_list = $('#group-product-selection').attr('data-id')
-            if (!group_list.includes('114') && selected_count < 3) {
-                _msgalert.error('Ngành hàng sản phẩm phải đủ 3 cấp')
+            var max_group_length = $('#them-nganhhang .col-md-4').length
+            if (selected_count < max_group_length) {
+                _msgalert.error('Ngành hàng sản phẩm phải chọn đủ ' + max_group_length +' cấp')
                 return
             }
             product_detail_new.RenderSelectedGroupProduct()
