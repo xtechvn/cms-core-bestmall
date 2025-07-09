@@ -46,7 +46,7 @@ var _department = {
     },
 
     ReLoad: function () {
-        this.Search(this.SearchParam);
+        location.reload();
     },
 
     OnChangeFullNameSearch: function (value) {
