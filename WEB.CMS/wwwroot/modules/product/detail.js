@@ -1209,6 +1209,7 @@ var product_detail_new = {
             success = false
             return false
         }
+
         if (!success) return success
         //Mô tả chung 
         if (tinymce.get('description-textarea').getContent() == undefined || tinymce.get('description-textarea').getContent().trim() == '') {
