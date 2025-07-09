@@ -1066,7 +1066,9 @@ namespace WEB.CMS.Controllers
         {
             int parent_id = 1;
             var list = _groupProductRepository.Search(keyword, parent_id);
-
+            if (list == null) list = new List<GroupProduct>();
+            var all_group = new GroupProduct { Id = 0, Name = "Tất cả nhóm hàng" };
+            list.Insert(0, all_group);
             return Ok(new
             {
                 is_success=list!=null && list.Count>0,
