@@ -261,22 +261,20 @@ var product_index = {
             $('.hanmuc').closest('.flex-lg-nowrap').removeClass('placeholder')
             product_index.Model.on_excuting = false
             product_index.Model.page_index++
-            // Gán tổng số sản phẩm vào phần tử với class 'count'
+            var product_count = $('#search-count').val()
             var current_count = $('.count').attr('data-value')
-            var recent_count = $('#search-count').html()
             if (current_count == undefined) current_count = '0';
-            if (recent_count == undefined) recent_count = '0';
+            if (product_count == undefined) product_count = '0';
             if (result.total_count == undefined || result.total_count <= 0) {
-                $('.count').attr('data-value', (parseFloat(recent_count) + parseFloat(current_count)))
+                $('.count').attr('data-value', (parseFloat(product_count) + parseFloat(current_count)))
             }
-            $('.count').text(result.total_count || (parseFloat(recent_count) + parseFloat(current_count)));
-            $('.hanmuc').closest('.flex-lg-nowrap').find('.count').html(parseFloat(recent_count))
-            var product_count = $('#search-count').text()
+            $('.count').text(result.total_count || (parseFloat(product_count) + parseFloat(current_count)));
+            $('.hanmuc').closest('.flex-lg-nowrap').find('.count').html(parseFloat(product_count))
             if (product_count != null && product_count != undefined && product_count.trim() != '') {
-                $('#count-product').attr('data-value', $('#search-count').text())
-                $('#count-product').html($('#search-count').text())
+                $('#count-product').attr('data-value', product_count)
+                $('#count-product').html(product_count)
             }
-            $('#search-count').remove()
+            $('#search-count').closest('tr').remove()
         })
         //_product_function.POST('/Product/ProductListing', request, function (result) {
         //    if (result.is_success && result.data && result.data.length > 0 && JSON.parse(result.data).length > 0) {
