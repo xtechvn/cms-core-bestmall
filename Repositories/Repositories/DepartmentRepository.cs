@@ -44,7 +44,8 @@ namespace Repositories.IRepositories
                 var data = await _DepartmentDAL.CreateAsync(model);
                 var update = await GetById(model.Id);
                 update.FullParent += ","+data;
-                await _DepartmentDAL.UpdateAsync(update);
+                update.FullParent = update.FullParent.Trim(',');
+               await _DepartmentDAL.UpdateAsync(update);
                 return data;
             }
             catch
@@ -101,7 +102,7 @@ namespace Repositories.IRepositories
 
                 return datas;
             }
-            catch
+            catch(Exception ex)
             {
                 throw;
             }
@@ -136,7 +137,7 @@ namespace Repositories.IRepositories
             try
             {
                 var datas = await _DepartmentDAL.GetByConditionAsync(s => s.DepartmentName.ToLower() == model.DepartmentName.ToLower()
-                && s.ParentId == model.ParentId && s.Id != model.Id);
+                && s.ParentId == model.ParentId && s.Id != model.Id && s.IsDelete == false);
 
                 if (datas != null && datas.Any())
                 {
