@@ -49,3 +49,10 @@ tr.flashsale-placeholder {
     min-width: 60px !important;
     margin-right: 10px !important;
 }
+
+#add-product-buy-with label {
+    padding-right: 0;
+    padding-bottom: 0;
+    place-content: center;
+    margin-bottom: 0px;
+}
