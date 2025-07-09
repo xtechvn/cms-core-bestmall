@@ -215,11 +215,12 @@ var product_index = {
             product_index.Listing();
         });
         $('body').on('click', '#btn-search-product-clear-search', function () {
-            _msgconfirm.openDialog('Xác nhận xóa bộ lọc', 'Thanh tìm kiếm tên sản phẩm và bộ lọc chọn ngành hàng sẽ được đặt về giá trị mặc định, bạn chắc chắn không?', function () {
+            _msgconfirm.openDialog('Xác nhận xóa bộ lọc', 'Bộ lọc sản phẩm sẽ được đặt về giá trị mặc định, bạn chắc chắn không?', function () {
                 $('#search-group').val('0').trigger('change')
                 $('#input-search-product-name').val('').trigger('change')
-                product_index.ResetSearch()
-                product_index.Listing();
+                $('.product-search-tab')[0].trigger('click')
+               // product_index.ResetSearch()
+               // product_index.Listing();
             })
            
         });
