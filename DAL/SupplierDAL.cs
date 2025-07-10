@@ -5,11 +5,13 @@ using Entities.ViewModels;
 using Entities.ViewModels.Funding;
 using Entities.ViewModels.SupplierConfig;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Utilities;
 using Utilities.Contants;
 
@@ -465,6 +467,21 @@ namespace DAL.Funding
                 return -1;
             }
         }
+        public async Task<List<Supplier>> GetAllSuplier()
+        {
+            try
+            {
+                using (var _DbContext = new EntityDataContext(_connection))
+                {
 
+                    return await _DbContext.Suppliers.AsNoTracking().Where(x => x.Status != 2).ToListAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("GetAllSuplier - LabelDAL: " + ex);
+                return null;
+            }
+        }
     }
 }

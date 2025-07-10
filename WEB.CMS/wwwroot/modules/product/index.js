@@ -229,31 +229,20 @@ var product_index = {
             var element = $(this)
             _msgconfirm.openDialog('Xác nhận xuất file Excel', 'Danh sách sản phẩm theo bộ lọc sẽ được xuất ra file Excel, bạn có chắc chắn không?', function () {
                 element.prop('disabled', true);
+                element.html('Vui lòng chờ...');
                 $('#icon-export').removeClass('icofont-file-excel');
-                $('#icon-export').addClass('fa-spinner fa-pulse');
-                //var active_tab = $('#product-search-tab-container .active');
-                //var status = -1;
-                //if (active_tab != null && active_tab != undefined) {
-                //    status = active_tab.attr('data-status')
-                //}
-                //var request = {
-                //    keyword: normalizeText($('#input-search-product-name').val()),
-                //    group_id: group_id_value,
-                //    status: status
-                //}
                 var request = product_index.GetSearchModel()
-
                 _product_function.POST('/Product/ExportExcel', request, function (result) {
 
                     _global_function.RemoveLoading()
                     element.prop('disabled', false);
-                    if (result.isSuccess) {
-                        _msgalert.success(result.message);
+                    element.html('Xuất Excel');
+                    if (result.is_success) {
+                        _msgalert.success(result.msg);
                         window.location.href = result.path;
                     } else {
-                        _msgalert.error(result.message);
+                        _msgalert.error(result.msg);
                     }
-                    $('#icon-export').removeClass('fa-spinner fa-pulse');
                     $('#icon-export').addClass('icofont-file-excel');
                 })
             })

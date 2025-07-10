@@ -3,6 +3,7 @@ using Caching.Elasticsearch.FlashSale;
 using Caching.RedisWorker;
 using Entities.Models;
 using Entities.ViewModels.Products;
+using HuloToys_Service.ElasticSearch.NewEs;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using OfficeOpenXml;
@@ -41,11 +42,12 @@ namespace WEB.CMS.Controllers
         private readonly WorkQueueClient work_queue;
         private readonly FlashSaleProductESRepository _flashSaleProductESRepository;
         private readonly IWebHostEnvironment _WebHostEnvironment;
+        private readonly GroupProductESService _groupProductESService;
 
         public ProductController(IConfiguration configuration, RedisConn redisConn, IGroupProductRepository groupProductRepository, ILabelRepository labelRepository,
             ISupplierRepository supplierRepository, IAllCodeRepository allCodeRepository, ProductDetailMongoAccess productV2DetailMongoAccess, 
             ProductSpecificationMongoAccess productSpecificationMongoAccess, ProductESRepository productESRepository, FlashSaleProductESRepository flashSaleProductRepository,
-            IWebHostEnvironment WebHostEnvironment)
+            IWebHostEnvironment WebHostEnvironment, GroupProductESService groupProductESService)
         {
             _productV2DetailMongoAccess = productV2DetailMongoAccess;
             _productSpecificationMongoAccess = productSpecificationMongoAccess;
@@ -63,6 +65,7 @@ namespace WEB.CMS.Controllers
 			      work_queue = new WorkQueueClient(configuration);
             _flashSaleProductESRepository = flashSaleProductRepository;
             _WebHostEnvironment = WebHostEnvironment;
+            _groupProductESService = groupProductESService;
         }
         public async Task<IActionResult> Index()
         {
@@ -1137,7 +1140,7 @@ namespace WEB.CMS.Controllers
                 var bytes = System.Text.Encoding.UTF8.GetBytes(keyword);
                 var normalizedKeyword = keyword.Normalize(NormalizationForm.FormC);
 
-                var main_products = await _productV2DetailMongoAccess.Listing(keyword, group_id, status);
+                var main_products = await _productV2DetailMongoAccess.Listing(keyword, group_id, status,-1,-1,true);
                 List<ProductMongoDbModel> sub_products = new List<ProductMongoDbModel>();
                 if (main_products != null && main_products.Count > 0)
                 {
@@ -1168,12 +1171,15 @@ namespace WEB.CMS.Controllers
                     {
                     }
                     string FilePath = Path.Combine(_UploadDirectory, _FileName);
+                    var list_group_product = _groupProductESService.GetAll();
+                    var list_label = await _labelRepository.GetAll();
+                    var list_suplier = await _supplierRepository.GetAll();
 
-                    ExcelHelper.ExportProductsToExcelWithSubProducts(main_products, sub_products, FilePath);
+                    ExcelHelper.ExportProductsToExcel(main_products,list_group_product,list_label,list_suplier, FilePath);
                     return Ok(new
                     {
                         is_success = true,
-                        path = FilePath,
+                        path = "/" + _UploadFolder.Replace(@"\",@"/") + "/" + _FileName,
                         msg = "Xuất Excel thành công",
 
                     });

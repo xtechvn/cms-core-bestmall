@@ -38,13 +38,16 @@ public partial class Article
     public DateTime? UpTime { get; set; }
 
     public short? Position { get; set; }
-    // 🆕 Thêm các cột liên quan đến AI
-    public byte? PlatForm { get; set; }
-    public byte? AimodelType { get; set; }
-    public string? CampaignName { get; set; }
-    public string? AiContent { get; set; }
-    public byte? IsPostedToFanpage { get; set; }
 
+    public byte? PlatForm { get; set; }
+
+    public byte? AimodelType { get; set; }
+
+    public string CampaignName { get; set; }
+
+    public string AiContent { get; set; }
+
+    public byte? IsPostedToFanpage { get; set; }
 
     public virtual ICollection<ArticleRelated> ArticleRelateds { get; set; } = new List<ArticleRelated>();
 

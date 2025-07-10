@@ -110,7 +110,7 @@ namespace WEB.CMS.Models.Product
             }
         }
 
-        public async Task<List<ProductMongoDbModel>> Listing(string keyword = "", int group_id = -1,int status=-1, int page_index = 1, int page_size = 10)
+        public async Task<List<ProductMongoDbModel>> Listing(string keyword = "", int group_id = -1,int status=-1, int page_index = 1, int page_size = 10,bool export_all=false)
         {
             try
             {
@@ -143,8 +143,9 @@ namespace WEB.CMS.Models.Product
                     model.Options.Skip = page_index < 1 ? 0 : (page_index - 1) * page_size;
                     model.Options.Limit = page_size;
                 }
-                else
+                else if(export_all==false) 
                 {
+                
                     model.Options.Skip = 0;
                     model.Options.Limit = 10;
                 }
