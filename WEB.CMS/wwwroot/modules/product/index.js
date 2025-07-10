@@ -229,21 +229,21 @@ var product_index = {
             var element = $(this)
             _msgconfirm.openDialog('Xác nhận xuất file Excel', 'Danh sách sản phẩm theo bộ lọc sẽ được xuất ra file Excel, bạn có chắc chắn không?', function () {
                 element.prop('disabled', true);
-                element.html('Vui lòng chờ...');
+                element.html('<i id="icon-export" class="icofont-file-excel"></i> Vui lòng chờ...');
                 $('#icon-export').removeClass('icofont-file-excel');
                 var request = product_index.GetSearchModel()
                 _product_function.POST('/Product/ExportExcel', request, function (result) {
 
                     _global_function.RemoveLoading()
                     element.prop('disabled', false);
-                    element.html('Xuất Excel');
+                    element.html('<i id="icon-export" class="icofont-file-excel"></i>Xuất Excel');
                     if (result.is_success) {
                         _msgalert.success(result.msg);
                         window.location.href = result.path;
                     } else {
                         _msgalert.error(result.msg);
                     }
-                    $('#icon-export').addClass('icofont-file-excel');
+                    //$('#icon-export').addClass('icofont-file-excel');
                 })
             })
         });
