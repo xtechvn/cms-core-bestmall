@@ -102,20 +102,21 @@ namespace Utilities
                     worksheet.Cell(currentRow, 3).Value = product.name;
                     worksheet.Cell(currentRow, 3).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
 
-                    // Giá sản phẩm
+                    // Giá sản phẩm - Đã đổi định dạng số tiền
                     worksheet.Cell(currentRow, 4).Value = product.amount;
-                    worksheet.Cell(currentRow, 4).Style.NumberFormat.Format = "#,##0.00";
+                    worksheet.Cell(currentRow, 4).Style.NumberFormat.Format = "#,##0"; // Thay đổi từ "#,##0.00"
                     worksheet.Cell(currentRow, 4).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Right;
 
-                    // Giá thấp nhất
+                    // Giá thấp nhất - Đã đổi định dạng số tiền
                     worksheet.Cell(currentRow, 5).Value = product.amount_min;
-                    worksheet.Cell(currentRow, 5).Style.NumberFormat.Format = "#,##0.00";
+                    worksheet.Cell(currentRow, 5).Style.NumberFormat.Format = "#,##0"; // Thay đổi từ "#,##0.00"
                     worksheet.Cell(currentRow, 5).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Right;
 
-                    // Giá cao nhất
+                    // Giá cao nhất - Đã đổi định dạng số tiền
                     worksheet.Cell(currentRow, 6).Value = product.amount_max;
-                    worksheet.Cell(currentRow, 6).Style.NumberFormat.Format = "#,##0.00";
+                    worksheet.Cell(currentRow, 6).Style.NumberFormat.Format = "#,##0"; // Thay đổi từ "#,##0.00"
                     worksheet.Cell(currentRow, 6).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Right;
+
 
                     // Link ảnh đại diện (Avatar)
                     worksheet.Cell(currentRow, 7).Value = product.avatar;
@@ -144,15 +145,15 @@ namespace Utilities
 
                     // Kích thước đóng hàng
                     worksheet.Cell(currentRow, 13).Value = product.package_width;
-                    worksheet.Cell(currentRow, 13).Style.NumberFormat.Format = "#,##0.00";
+                    worksheet.Cell(currentRow, 13).Style.NumberFormat.Format = "#,##0";
                     worksheet.Cell(currentRow, 13).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Right;
 
                     worksheet.Cell(currentRow, 14).Value = product.package_height;
-                    worksheet.Cell(currentRow, 14).Style.NumberFormat.Format = "#,##0.00";
+                    worksheet.Cell(currentRow, 14).Style.NumberFormat.Format = "#,##0";
                     worksheet.Cell(currentRow, 14).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Right;
 
                     worksheet.Cell(currentRow, 15).Value = product.package_depth;
-                    worksheet.Cell(currentRow, 15).Style.NumberFormat.Format = "#,##0.00";
+                    worksheet.Cell(currentRow, 15).Style.NumberFormat.Format = "#,##0";
                     worksheet.Cell(currentRow, 15).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Right;
 
                     // Khối lượng
