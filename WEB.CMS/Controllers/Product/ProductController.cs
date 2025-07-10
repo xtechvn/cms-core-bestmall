@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using OfficeOpenXml;
 using Repositories.IRepositories;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Utilities;
@@ -39,10 +40,12 @@ namespace WEB.CMS.Controllers
         private readonly IAllCodeRepository _allCodeRepository;
         private readonly WorkQueueClient work_queue;
         private readonly FlashSaleProductESRepository _flashSaleProductESRepository;
+        private readonly IWebHostEnvironment _WebHostEnvironment;
 
         public ProductController(IConfiguration configuration, RedisConn redisConn, IGroupProductRepository groupProductRepository, ILabelRepository labelRepository,
             ISupplierRepository supplierRepository, IAllCodeRepository allCodeRepository, ProductDetailMongoAccess productV2DetailMongoAccess, 
-            ProductSpecificationMongoAccess productSpecificationMongoAccess, ProductESRepository productESRepository, FlashSaleProductESRepository flashSaleProductRepository)
+            ProductSpecificationMongoAccess productSpecificationMongoAccess, ProductESRepository productESRepository, FlashSaleProductESRepository flashSaleProductRepository,
+            IWebHostEnvironment WebHostEnvironment)
         {
             _productV2DetailMongoAccess = productV2DetailMongoAccess;
             _productSpecificationMongoAccess = productSpecificationMongoAccess;
@@ -59,6 +62,7 @@ namespace WEB.CMS.Controllers
             _allCodeRepository = allCodeRepository;
 			      work_queue = new WorkQueueClient(configuration);
             _flashSaleProductESRepository = flashSaleProductRepository;
+            _WebHostEnvironment = WebHostEnvironment;
         }
         public async Task<IActionResult> Index()
         {
@@ -1123,6 +1127,70 @@ namespace WEB.CMS.Controllers
             {
                 is_success=true
             });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ExportExcel(string keyword = "", int group_id = -1, int status = -1)
+        {
+            try
+            {
+                var bytes = System.Text.Encoding.UTF8.GetBytes(keyword);
+                var normalizedKeyword = keyword.Normalize(NormalizationForm.FormC);
+
+                var main_products = await _productV2DetailMongoAccess.Listing(keyword, group_id, status);
+                List<ProductMongoDbModel> sub_products = new List<ProductMongoDbModel>();
+                if (main_products != null && main_products.Count > 0)
+                {
+                    sub_products = await _productV2DetailMongoAccess.ListSubListing(main_products.Select(x => x._id).ToList());
+                    int _UserId = 0;
+                    if (HttpContext.User.FindFirst(ClaimTypes.NameIdentifier) != null)
+                    {
+                        _UserId = Convert.ToInt32(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+                    }
+                    string _FileName = StringHelpers.GenFileName("Danh sách sản phẩm", _UserId, "xlsx");
+                    string _UploadFolder = @"Template\Export";
+                    string _UploadDirectory = Path.Combine(_WebHostEnvironment.WebRootPath, _UploadFolder);
+
+                    if (!Directory.Exists(_UploadDirectory))
+                    {
+                        Directory.CreateDirectory(_UploadDirectory);
+                    }
+                    //delete all file in folder before export
+                    try
+                    {
+                        System.IO.DirectoryInfo di = new DirectoryInfo(_UploadDirectory);
+                        foreach (FileInfo file in di.GetFiles())
+                        {
+                            file.Delete();
+                        }
+                    }
+                    catch
+                    {
+                    }
+                    string FilePath = Path.Combine(_UploadDirectory, _FileName);
+
+                    ExcelHelper.ExportProductsToExcelWithSubProducts(main_products, sub_products, FilePath);
+                    return Ok(new
+                    {
+                        is_success = true,
+                        path = FilePath,
+                        msg = "Xuất Excel thành công",
+
+                    });
+                }
+               
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("ExportExcel - ProductController: " + ex.ToString());
+            }
+            return Ok(new
+            {
+                is_success = false,
+                msg = "Xuất Excel thất bại, vui lòng liên hệ với bộ phận kỹ thuật",
+                path = ""
+            });
+
         }
     }
 
