@@ -220,20 +220,52 @@ var product_index = {
                 $('#input-search-product-name').val('').trigger('change')
                 $('.product-search-tab').first().trigger('click')
 
-               // product_index.ResetSearch()
-               // product_index.Listing();
+                // product_index.ResetSearch()
+                // product_index.Listing();
             })
-           
-        });
 
+        });
+        $('body').on('click', '#export-excel', function () {
+            var element = $(this)
+            _msgconfirm.openDialog('Xác nhận xuất file Excel', 'Danh sách sản phẩm theo bộ lọc sẽ được xuất ra file Excel, bạn có chắc chắn không?', function () {
+                element.prop('disabled', true);
+                $('#icon-export').removeClass('icofont-file-excel');
+                $('#icon-export').addClass('fa-spinner fa-pulse');
+                //var active_tab = $('#product-search-tab-container .active');
+                //var status = -1;
+                //if (active_tab != null && active_tab != undefined) {
+                //    status = active_tab.attr('data-status')
+                //}
+                //var request = {
+                //    keyword: normalizeText($('#input-search-product-name').val()),
+                //    group_id: group_id_value,
+                //    status: status
+                //}
+                var request = product_index.GetSearchModel()
+
+                _product_function.POST('/Product/ExportExcel', request, function (result) {
+
+                    _global_function.RemoveLoading()
+                    element.prop('disabled', false);
+                    if (result.isSuccess) {
+                        _msgalert.success(result.message);
+                        window.location.href = result.path;
+                    } else {
+                        _msgalert.error(result.message);
+                    }
+                    $('#icon-export').removeClass('fa-spinner fa-pulse');
+                    $('#icon-export').addClass('icofont-file-excel');
+                })
+            })
+        });
     },
     ResetSearch: function () {
         product_index.Model.page_index = 1;
         product_index.Model.page_index = 1;
         product_index.Model.on_excuting = false;
         product_index.Model.reached_end = false;
-        if ($('.count').attr('data-value') == undefined || $('.count').attr('data-value') <= 0) 
-        $('.count').attr('data-value', '0')
+        if ($('.count').attr('data-value') == undefined || $('.count').attr('data-value') <= 0)
+            $('.count').attr('data-value', '0')
         $('.count').text('0')
         $('#product_list').closest('.table-responsive').addClass('placeholder')
         $('.hanmuc').closest('.flex-lg-nowrap').addClass('placeholder')
@@ -245,33 +277,34 @@ var product_index = {
             return;
         }
         product_index.Model.on_excuting = true
-        function normalizeText(input) {
-            return input
-                .normalize("NFC")
+        //function normalizeText(input) {
+        //    return input
+        //        .normalize("NFC")
 
-                //.replace(/[()]/g, "")             // Loại bỏ dấu ngoặc đơn
-                .replace(/\s+/g, ' ')             // Xóa khoảng trắng thừa
-                .trim();
-        }
-        var active_tab = $('#product-search-tab-container .active');
-        var status = -1;
+        //        //.replace(/[()]/g, "")             // Loại bỏ dấu ngoặc đơn
+        //        .replace(/\s+/g, ' ')             // Xóa khoảng trắng thừa
+        //        .trim();
+        //}
+        //var active_tab = $('#product-search-tab-container .active');
+        //var status = -1;
 
-        if (active_tab != null && active_tab != undefined) {
-            status = active_tab.attr('data-status')
-        }
-        var group_id = $('#search-group').find(':selected');
-        var group_id_value = '-1';
-        if (group_id != null && group_id != undefined) {
-            group_id_value = group_id.val()
-        }
+        //if (active_tab != null && active_tab != undefined) {
+        //    status = active_tab.attr('data-status')
+        //}
+        //var group_id = $('#search-group').find(':selected');
+        //var group_id_value = '-1';
+        //if (group_id != null && group_id != undefined) {
+        //    group_id_value = group_id.val()
+        //}
 
-        var request = {
-            keyword: normalizeText($('#input-search-product-name').val()), // Làm sạch từ khóa
-            group_id: group_id_value,
-            page_index: product_index.Model.page_index,
-            page_size: parseInt($('#item-per-page').find(':selected').val()),
-            status: status
-        }
+        //var request = {
+        //    keyword: normalizeText($('#input-search-product-name').val()), // Làm sạch từ khóa
+        //    group_id: group_id_value,
+        //    page_index: product_index.Model.page_index,
+        //    page_size: parseInt($('#item-per-page').find(':selected').val()),
+        //    status: status
+        //}
+        var request = product_index.GetSearchModel()
         _product_function.POST('/Product/Search', request, function (result) {
 
             $('#product_list').append(result)
@@ -347,6 +380,37 @@ var product_index = {
             }
         });
     },
+    GetSearchModel: function () {
+        
+        var active_tab = $('#product-search-tab-container .active');
+        var status = -1;
+
+        if (active_tab != null && active_tab != undefined) {
+            status = active_tab.attr('data-status')
+        }
+        var group_id = $('#search-group').find(':selected');
+        var group_id_value = '-1';
+        if (group_id != null && group_id != undefined) {
+            group_id_value = group_id.val()
+        }
+
+        var request = {
+            keyword: product_index.normalizeText($('#input-search-product-name').val()), // Làm sạch từ khóa
+            group_id: group_id_value,
+            page_index: product_index.Model.page_index,
+            page_size: parseInt($('#item-per-page').find(':selected').val()),
+            status: status
+        }
+        return request
+    },
+    normalizeText: function (input) {
+        return input
+            .normalize("NFC")
+
+            //.replace(/[()]/g, "")             // Loại bỏ dấu ngoặc đơn
+            .replace(/\s+/g, ' ')             // Xóa khoảng trắng thừa
+            .trim();
+    }
     //RenderSearch: function (main_products, sub_products) {
     //    var html = ''
 
