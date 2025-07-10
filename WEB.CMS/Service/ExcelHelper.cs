@@ -42,8 +42,6 @@ namespace Utilities
                 worksheet.Cell(2, 13).Value = "Rộng (cm)";
                 worksheet.Cell(2, 14).Value = "Cao (cm)";
                 worksheet.Cell(2, 15).Value = "Sâu (cm)";
-                worksheet.Cell(2, 16).Value = "Khối lượng (gram)"; // Lặp lại tiêu đề
-                worksheet.Cell(2, 17).Value = "SKU"; // Lặp lại tiêu đề
 
                 // --- Định dạng Header Cells ---
                 // Các header ở hàng 1 không bị gộp
