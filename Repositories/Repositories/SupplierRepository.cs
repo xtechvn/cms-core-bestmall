@@ -588,5 +588,10 @@ namespace Repositories.Repositories
             return supplierDAL.UpdateSupplierStatus(new_status,supplier_id);
 
         }
+        public async Task<List<Supplier>> GetAll()
+        {
+            return await supplierDAL.GetAllSuplier();
+
+        }
     }
 }

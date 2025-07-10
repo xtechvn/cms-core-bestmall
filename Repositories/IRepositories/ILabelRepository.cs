@@ -14,5 +14,6 @@ namespace Repositories.IRepositories
         int Insert(Label model);
         int Update(Label model);
         Task<Label> GetByCode(string code);
+        Task<List<Label>> GetAll();
     }
 }

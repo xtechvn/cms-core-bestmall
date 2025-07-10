@@ -4,6 +4,7 @@ using Entities.Models;
 using Entities.ViewModels.ElasticSearch;
 using Microsoft.Extensions.Configuration;
 using Nest;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,7 +38,7 @@ namespace HuloToys_Service.ElasticSearch.NewEs
                           .Query(q =>
                            q.Bool(
                                qb => qb.Must(
-                                   sh => sh.Match(m => m.Field("parentid").Query(parent_id.ToString())
+                                   sh => sh.Match(m => m.Field(y=>y.ParentId).Query(parent_id.ToString())
                                    )
                                    )
                                )
@@ -46,21 +47,7 @@ namespace HuloToys_Service.ElasticSearch.NewEs
                 if (query.IsValid)
                 {
                     var data = query.Documents as List<GroupProductESModel>;
-                    var result = data.Select(a => new GroupProduct
-                    {
-                        Id = a.id,
-                        ParentId = a.parentid,
-                        PositionId = a.positionid,                        
-                        Name = a.name,
-                        ImagePath = a.imagepath,
-                        OrderNo = a.orderno,
-                        Path = a.path,
-                        Status = a.status,
-                        Description = a.description,
-                        IsShowHeader = a.isshowheader,
-                        IsShowFooter = a.isshowfooter,
-
-                    }).ToList();
+                    var result = JsonConvert.DeserializeObject<List<GroupProduct>>(JsonConvert.SerializeObject(data));
                     return result;
                 }
             }
@@ -80,8 +67,8 @@ namespace HuloToys_Service.ElasticSearch.NewEs
                           .Query(q =>
                            q.Bool(
                                qb => qb.Must(
-                                  q => q.Match(m => m.Field("status").Query(((int)ArticleStatus.PUBLISH).ToString())),
-                                   sh => sh.Match(m => m.Field("id").Query(id.ToString())
+                                  q => q.Match(m => m.Field(y=>y.Status).Query(((int)ArticleStatus.PUBLISH).ToString())),
+                                   sh => sh.Match(m => m.Field(y=>y.Id).Query(id.ToString())
                                    )
                                    )
                                )
@@ -90,21 +77,8 @@ namespace HuloToys_Service.ElasticSearch.NewEs
                 if (query.IsValid)
                 {
                     var data = query.Documents as List<GroupProductESModel>;
-                    var result = data.Select(a => new GroupProduct
-                    {
-                        Id = a.id,
-                        ParentId = a.parentid,
-                        PositionId = a.positionid,
-                        Name = a.name,
-                        ImagePath = a.imagepath,
-                        OrderNo = a.orderno,
-                        Path = a.path,
-                        Status = a.status,
-                        Description = a.description,
-                        IsShowHeader = a.isshowheader,
-                        IsShowFooter = a.isshowfooter,
+                    var result = JsonConvert.DeserializeObject<List<GroupProduct>>(JsonConvert.SerializeObject(data));
 
-                    }).ToList();
                     return result.FirstOrDefault();
                 }
             }
@@ -115,5 +89,31 @@ namespace HuloToys_Service.ElasticSearch.NewEs
             }
             return null;
         }
+        public List<GroupProduct> GetAll()
+        {
+            try
+            {
+                var query = _client.Search<GroupProductESModel>(sd => sd
+                               .Index(index)
+                               .Size(4000)
+                          .Query(q =>
+                          q.MatchAll()));
+
+                if (query.IsValid)
+                {
+                    var data = query.Documents as List<GroupProductESModel>;
+                    var result = JsonConvert.DeserializeObject<List<GroupProduct>>(JsonConvert.SerializeObject(data));
+
+                    return result;
+                }
+            }
+            catch (Exception ex)
+            {
+                string error_msg = Assembly.GetExecutingAssembly().GetName().Name + "->" + MethodBase.GetCurrentMethod().Name + "=>" + ex.Message;
+                LogHelper.InsertLogTelegram(error_msg);
+            }
+            return null;
+        }
+
     }
 }

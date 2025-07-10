@@ -48,6 +48,6 @@ namespace Repositories.IRepositories
         // Program
         GenericViewModel<SupplierProgramGridViewModel> GetSupplierProgramList(SupplierProgramSearchModel model);
         public int UpdateSupplierStatus(int new_status, int supplier_id);
-
+        public Task<List<Supplier>> GetAll();
     }
 }

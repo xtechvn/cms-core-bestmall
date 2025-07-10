@@ -30,7 +30,6 @@ public partial class DataMSContext : DbContext
     public virtual DbSet<AllCode> AllCodes { get; set; }
 
     public virtual DbSet<Article> Articles { get; set; }
-    public virtual DbSet<FanpageArticleImage> FanpageArticleImages { get; set; }
 
     public virtual DbSet<ArticleCategory> ArticleCategories { get; set; }
 
@@ -66,6 +65,7 @@ public partial class DataMSContext : DbContext
 
     public virtual DbSet<District> Districts { get; set; }
 
+    public virtual DbSet<FanpageArticleImage> FanpageArticleImages { get; set; }
 
     public virtual DbSet<FlashSale> FlashSales { get; set; }
 
@@ -211,7 +211,7 @@ public partial class DataMSContext : DbContext
 
             entity.Property(e => e.CreateDate).HasColumnType("datetime");
             entity.Property(e => e.ForgotPasswordToken)
-                .HasMaxLength(2000)
+                .HasMaxLength(100)
                 .IsUnicode(false);
             entity.Property(e => e.GoogleToken)
                 .HasMaxLength(100)
@@ -872,6 +872,8 @@ public partial class DataMSContext : DbContext
                 .HasMaxLength(50)
                 .IsFixedLength();
             entity.Property(e => e.ReceiverName).HasMaxLength(150);
+            entity.Property(e => e.RefundDate).HasColumnType("datetime");
+            entity.Property(e => e.RefundReason).HasMaxLength(500);
             entity.Property(e => e.ShippingCode).HasMaxLength(50);
             entity.Property(e => e.UpdateLast).HasColumnType("datetime");
             entity.Property(e => e.UserGroupIds).HasMaxLength(250);
