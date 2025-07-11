@@ -903,12 +903,12 @@
                 Danh sách
                 phân loại hàng
             </label>
-            <div class="wrap_input pb-4">
+            <div class="wrap_input pb-4" style="overflow-y:scroll;">
                 <div class="flex flex-lg-nowrap gap10 mb-2">
                     <div class="w-100">
                         <table id="product-attributes-apply" class="w-100 table-responsive table-scroll">
-                            <tbody>
-                                <tr>
+                            <tbody class="w-100 " style=" display: contents; ">
+                                <tr class="w-100 ">
                                     <td class="td-price">
                                         <div class="form-group mb-0 price">
                                             <input type="text" class="form-control input-price" placeholder="Giá nhập">
@@ -953,12 +953,16 @@
                                                    placeholder="SKU phân loại">
                                         </div>
                                     </td>
+                                    <td style=" flex-grow: 1 !important; text-align: right; ">
+                                        <button class="btn btn-round btn-base  btn-all">Áp dụng cho tất cả phân loại</button>
+
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
-                    <button class="btn btn-round btn-base  btn-all">Áp dụng cho tất cả phân loại</button>
-                </div>
+@*                     <button class="btn btn-round btn-base  btn-all">Áp dụng cho tất cả phân loại</button>
+ *@                </div>
                 <div id="product-attributes-prices" class="table-responsive table-scroll" style=" max-height: max-content !important; ">
                 </div>
             </div>
