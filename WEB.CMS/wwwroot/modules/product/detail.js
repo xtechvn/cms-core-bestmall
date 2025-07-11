@@ -1407,7 +1407,28 @@ var product_detail_new = {
 
             })
         }
-        
+        $('.attributes-list').each(function (index, item) {
+            var element = $(this)
+            var name = element.find('h6').find('input').val()
+            if (name == null || name == undefined || name.trim() == '') {
+                _msgalert.error('Vui lòng nhập đầy đủ tên phân loại')
+                element.get(0).scrollIntoView({ behavior: 'smooth' });
+                success = false
+                return false
+            }
+
+            element.find('.attributes-detail').each(function (index_2, item_2) {
+                var element_detail = $(this)
+                var value = element_detail.find('.relative').find('input').val()
+                if (value == null || value == undefined || value.trim() == '') {
+                    _msgalert.error('Vui lòng nhập đầy đủ tên biến thể')
+                    element_detail.get(0).scrollIntoView({ behavior: 'smooth' });
+                    success = false
+                    return false
+                }
+            })
+            if (success == false) return false;
+        })
         return success
     },
     GetAttributeItem: function () {

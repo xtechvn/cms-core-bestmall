@@ -208,7 +208,9 @@
                 <label class="label">Chọn ngành hàng <sup class="red">*</sup></label>
                 <div class="wrap_input">
                     <div class="form-group namesp">
-                        <input type="text" class="form-control"
+                        <input type="text" class="form-control" 
+                        data-group-count="@(product != null && product.group_product_id != null && product.group_product_id.Trim() != "" ? product.group_product_id.Split(",").Length : "3")"
+                               data-old-id="@(product != null && product.group_product_id != null && product.group_product_id.Trim() != "" ? product.group_product_id : "")"
                                placeholder="Tên sản phẩm + Thương hiệu + Model + Thông số kỹ thuật" data-id="@(product != null && product.group_product_id != null && product.group_product_id.Trim() != "" ? product.group_product_id : "")" value="@group_product" disabled>
                         <a href="#them-nganhhang" class="edit select-group-product"><i class="icofont-ui-edit"></i></a>
                     </div>
@@ -779,6 +781,7 @@
                                 <div class="col-md-6">
                                     <div class="box-list">
                                         <h6>
+                                            Tên phân loại :
                                             <b>@(product.attributes[(i - 1)].name == null ? "" : product.attributes[(i - 1)].name)</b>
                                             <nw class="change-attribute-name wrap_input" style="display:none; font-size:16px!important;">
                                                 <input type="text" class="attr-name" value="@(product.attributes[(i - 1)].name == null ? "" : product.attributes[(i - 1)].name)" />
@@ -797,6 +800,8 @@
                                 </div>
                             </div>
                             <div class="line-bottom"></div>
+                            <h6>Tên biến thể:</h6>
+
                             <div class="row row-attributes-value ui-sortable">
                                 @if (product != null && product.attributes_detail != null && product.attributes_detail.Count > 0)
                                 {
