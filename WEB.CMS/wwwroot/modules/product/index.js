@@ -151,27 +151,73 @@ var product_index = {
 
             }
         });
-        $('body').on('click', '.xemthem', function () {
+        $('body').on('click', '.sub-product-viewmore .xemthem', function () {
+            var max_show_per_click = 5;
             var element = $(this)
-            var data_id = element.attr('data-main-id')
-            var count = 0
+            var data_id = element.closest('.sub-product-viewmore').attr('data-main-id');
+            var max_sub = element.closest('.sub-product-viewmore').attr('data-count');
+            var max_sub_value = 0;
+            if (max_sub != undefined && max_sub.trim() != '' && !isNaN(parseInt(max_sub)) && parseInt(max_sub)>0) {
+                max_sub_value = parseInt(max_sub)
+            }
+            var count_show = 0;
             $('#product_list .sub-product').each(function (index, item) {
                 var element_compare = $(this)
-                if (element_compare.attr('data-id') == data_id) {
-                    if (count >= parseInt(element.find('nw').attr('data-count'))) return false;
-                    else if (element_compare.is(':hidden')) {
+                if (count_show > max_show_per_click) return false;
+                else if (element_compare.hasClass('sub-product-viewmore') || element_compare.hasClass('sub-product-collapse')) return true;
+                else  if (element_compare.attr('data-main-id') != undefined && element_compare.attr('data-main-id') == data_id) {
+                    if (element_compare.is(':hidden')) {
                         element_compare.show()
-                        count++
                     }
+                    count_show++;
+
                 }
             })
-            if (parseInt(element.find('nw').attr('data-count')) - count > 0) {
-                element.find('nw').html('Xem thêm (còn ' + (parseInt(element.find('nw').attr('data-count')) - count) + ' phân loại)')
+            if (count_show >= max_sub_value) {
+                element.find('span').html(`
+                                Thu gọn
+                                <i class="icofont-simple-up"></i>
+
+                `)
+                element.closest('.sub-product-viewmore').addClass('sub-product-collapse')
+                element.closest('.sub-product-viewmore').removeClass('sub-product-viewmore')
+            } else {
+                element.find('span').html(`
+                Xem thêm (còn <nw class="remain-sub">`+ (max_sub_value - count_show)+`</nw>  phân loại)
+                                <i class="icofont-simple-down"></i>
+
+                `)
             }
-            else {
-                element.find('nw').html('')
-                element.find('.icofont-simple-down').hide()
+        });
+        $('body').on('click', '.sub-product-collapse .xemthem', function () {
+            var max_show_per_click = 2;
+            var element = $(this)
+            var data_id = element.closest('.sub-product-collapse').attr('data-main-id');
+            var max_sub = element.closest('.sub-product-collapse').attr('data-count');
+            var max_sub_value = 0;
+            if (max_sub != undefined && max_sub.trim() != '' && !isNaN(parseInt(max_sub)) && parseInt(max_sub) > 0) {
+                max_sub_value = parseInt(max_sub)
             }
+            var count_show = 0;
+            $('#product_list .sub-product').each(function (index, item) {
+                var element_compare = $(this)
+                if (element_compare.hasClass('sub-product-viewmore') || element_compare.hasClass('sub-product-collapse')) return true;
+                else if (element_compare.attr('data-main-id') != undefined && element_compare.attr('data-main-id') == data_id) {
+                    if (!element_compare.is(':hidden') && count_show < max_show_per_click) {
+                        count_show++;
+                        return true;
+                    }
+                    element_compare.hide()
+                }
+            })
+            element.find('span').html(`
+                Xem thêm (còn <nw class="remain-sub">`+ (max_sub_value - count_show) + `</nw>  phân loại)
+                                <i class="icofont-simple-down"></i>
+
+                `)
+            element.closest('.sub-product-collapse').addClass('sub-product-viewmore')
+            element.closest('.sub-product-collapse').removeClass('sub-product-collapse')
+
         });
         //-- Import Excel:
         $('body').on('click', '.product-import', function () {

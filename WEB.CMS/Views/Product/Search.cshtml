@@ -179,7 +179,7 @@
                         img_src_sub = StaticDomain + sub_attr_img[0];
                     }
                 }
-                <tr class="sub-product" data-id="@sub._id" data-main-id="@sub.parent_product_id" style="@(c>=2?"display:none;":"")">
+                <tr class="sub-product" data-id="@sub._id" data-main-id="@sub.parent_product_id" style="@(c>2?"display:none;":"")">
                     @*<td style="width: 0;">
                     </td>*@
                     <td style="width: 100px;">
@@ -200,6 +200,19 @@
                     <td class="text-center">@sub.amount.ToString("N0")</td>
                     <td class="text-center">@sub.quanity_of_stock.ToString("N0")</td>
                     <td class="text-center"></td>
+                </tr>
+            }
+            @if (sub_by_main.Count() > 2)
+            {
+                                <tr class="sub-product sub-product-viewmore" data-main-id="@main._id" data-count="@sub_by_main.Count()">
+                    <td colspan="6" class="text-center">
+                        <a href="javascript:;" class="xemthem">
+                            <span>
+                                Xem thêm (còn <nw class="remain-sub">@(sub_by_main.Count()-2)</nw>  phân loại)
+                                <i class="icofont-simple-down"></i>
+                            </span>
+                        </a>
+                    </td>
                 </tr>
             }
         }
