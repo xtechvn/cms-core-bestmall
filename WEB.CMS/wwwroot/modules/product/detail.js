@@ -17,7 +17,7 @@ var product_detail_new = {
         product_detail_new.RenderProductBuyWith()
         product_detail_new.Select2Supplier($('#supplier-id select'))
         product_detail_new.Select2Label($('#label-id select'))
-        product_detail_new.Select2Spec($('#description-specification-list select'))
+        product_detail_new.Select2Spec($('#description-specification select'))
         $('#specifications-list .spec-value').attr('readonly', 'readonly')
         _common.tinyMce('#description-textarea')
         _common.tinyMce('#description-ingredients-textarea')
@@ -1379,6 +1379,35 @@ var product_detail_new = {
                 return false
             }
         }
+        if ($('#description-specification tbody tr') == undefined|| $('#description-specification tbody tr').length <= 0) {
+            _msgalert.error('Vui lòng nhập Thông tin về sản phẩm trong mục [Thông tin chi tiết]')
+            $('#description-specification tbody').get(0).scrollIntoView({ behavior: 'smooth' });
+            success = false
+            return false
+        } else {
+            $('#description-specification tbody tr').each(function (index, item) {
+                var element = $(this)
+                if (element.hasClass('summary')) { return true }
+                var selected_key = element.find('select').find(':selected')
+                var selected_value = element.find('input')
+                if (selected_key == null || selected_key == undefined) {
+                    _msgalert.error('Vui lòng chọn tên thông tin về sản phẩm trong bảng [Thông tin về sản phẩm]')
+                    element.get(0).scrollIntoView({ behavior: 'smooth' });
+                    success = false
+                    return false
+
+                }
+                if (selected_value == null || selected_value == undefined || selected_value.val() == undefined || selected_value.val().trim()=='') {
+
+                    _msgalert.error('Vui lòng nhập đầy đủ giá trị trong bảng [Thông tin về sản phẩm]')
+                    element.get(0).scrollIntoView({ behavior: 'smooth' });
+                    success = false
+                    return false
+                }
+
+            })
+        }
+        
         return success
     },
     GetAttributeItem: function () {
