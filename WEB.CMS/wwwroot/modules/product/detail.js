@@ -336,7 +336,7 @@ var product_detail_new = {
                     element_input.val('')
                     element_input.attr('readonly', 'readonly')
                 })
-                $('#product-attributes-apply')[0].scrollIntoView(true);
+                $('#product-attributes-apply')[0].scrollIntoView({ behavior: 'smooth' });
 
             } else {
                 $('.th-weight').hide()
@@ -348,7 +348,7 @@ var product_detail_new = {
                     element_input.val(element_input.attr('data-old'))
                     element_input.removeAttr('readonly')
                 })
-                $('#single-weight')[0].scrollIntoView(true);
+                $('#single-weight')[0].scrollIntoView({ behavior: 'smooth' });
             }
         });
         //--global click event:
@@ -1084,6 +1084,8 @@ var product_detail_new = {
                     variation.package_width = model.package_width
                     variation.package_height = model.package_height
                     variation.package_depth = model.package_depth
+                } else {
+
                 }
                 for (var i = 0; i < $('.attributes-list').length; i++) {
                     var attr_value = element.attr('data-attribute-' + i)
@@ -1254,6 +1256,7 @@ var product_detail_new = {
             }
 
         } else {
+            var is_one_weight = ($('#single-weight .switch-weight').is(':checked'))
             $('#product-attributes-prices tbody tr').each(function (index, index) {
                 var element = $(this)
                 var price = parseFloat(element.find('.td-price').find('input').val().replaceAll(',', ''))
@@ -1273,6 +1276,37 @@ var product_detail_new = {
                     _msgalert.error('Vui lòng nhập đầy đủ giá bán cho tất cả các biến thể của sản phẩm')
                     success = false
                     return false
+                }
+                if (is_one_weight == false) {
+                    var weight = parseFloat(element.find('.td-weight').find('input').val().replaceAll(',', ''))
+                    if (weight == undefined || isNaN(weight) || weight <= 0) {
+                        _msgalert.error('Vui lòng nhập đầy đủ khối lượng hàng cho tất cả các biến thể của sản phẩm')
+                        element.scrollIntoView({ behavior: 'smooth' });
+                        success = false
+                        return false
+                    }
+                  
+                    var package_width = parseFloat(element.find('.td-dismenssion-width').find('input').val().replaceAll(',', ''))
+                    if (package_width == undefined || isNaN(package_width) || package_width <= 0) {
+                        _msgalert.error('Vui lòng nhập đầy đủ kích thước chiều dài gói hàng cho tất cả các biến thể của sản phẩm')
+                        element.scrollIntoView({ behavior: 'smooth' });
+                        success = false
+                        return false
+                    }
+                    var package_height = parseFloat(element.find('.td-dismenssion-height').find('input').val().replaceAll(',', ''))
+                    if (package_height == undefined || isNaN(package_height) || package_height <= 0) {
+                        _msgalert.error('Vui lòng nhập đầy đủ kích thước chiều rộng gói hàng cho tất cả các biến thể của sản phẩm')
+                        element.scrollIntoView({ behavior: 'smooth' });
+                        success = false
+                        return false
+                    }
+                    var package_depth = parseFloat(element.find('.td-dismenssion-depth').find('input').val().replaceAll(',', ''))
+                    if (package_depth == undefined || isNaN(package_depth) || package_depth <= 0) {
+                        _msgalert.error('Vui lòng nhập đầy đủ kích thước chiều cao gói hàng cho tất cả các biến thể của sản phẩm')
+                        element.scrollIntoView({ behavior: 'smooth' });
+                        success = false
+                        return false
+                    }
                 }
             })
         }
