@@ -1429,8 +1429,9 @@ var product_detail_new = {
                 success = false
                 return false
             }
-
+            var max_length_attr_detail = element.find('.attributes-detail').length
             element.find('.attributes-detail').each(function (index_2, item_2) {
+                if (index_2 >= (max_length_attr_detail - 1)) return false
                 var element_detail = $(this)
                 var value = element_detail.find('.relative').find('input').val()
                 if (value == null || value == undefined || value.trim() == '') {
