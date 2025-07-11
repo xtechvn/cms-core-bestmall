@@ -1238,21 +1238,27 @@ var product_detail_new = {
         }
         if (!success) return success
 
-        if ($('#product-attributes-prices').closest('.item-edit').is(':hidden')) {
-            if ($('#main-price input').val() == undefined || $('#main-price input').val().trim() == '' || $('#main-price input').val().trim() == '0') {
-                _msgalert.error('Vui lòng nhập giá nhập tại form thông tin bán hàng')
+        if ($('#product-attributes-table').is(':hidden')) {
+            var price = parseFloat($('#main-price').find('input').val().replaceAll(',', ''))
+            if (price == undefined || isNaN(price) || price <= 0) {
+                _msgalert.error('Vui lòng nhập đầy đủ giá nhập cho sản phẩm')
+                $('#main-price').find('input').get(0).scrollIntoView({ behavior: 'smooth' });
                 success = false
+                return false
             }
-            else if ($('#main-profit input').val() == undefined || $('#main-profit input').val().trim() == '' || $('#main-profit input').val().trim() == '0') {
-                _msgalert.error('Vui lòng nhập lợi nhuận tại form thông tin bán hàng')
+            var profit = parseFloat($('#main-profit').find('input').val().replaceAll(',', ''))
+            if (profit == undefined || isNaN(profit) || profit <= 0) {
+                _msgalert.error('Vui lòng nhập đầy đủ giá nhập cho sản phẩm')
+                $('#main-profit').find('input').get(0).scrollIntoView({ behavior: 'smooth' });
                 success = false
+                return false
             }
-            else if ($('#main-amount input').val() == undefined || $('#main-amount input').val().trim() == '' || $('#main-amount input').val().trim() == '0') {
-                _msgalert.error('Vui lòng nhập giá bán tại form thông tin bán hàng')
+            var stock = parseFloat($('#main-stock').find('input').val().replaceAll(',', ''))
+            if (stock == undefined || isNaN(stock) || stock <= 0) {
+                _msgalert.error('Vui lòng nhập đầy đủ số lượng sản phẩm trong kho hàng cho sản phẩm')
+                $('#main-stock').find('input').get(0).scrollIntoView({ behavior: 'smooth' });
                 success = false
-            } else if ($('#main-stock input').val() == undefined || $('#main-stock input').val().trim() == '' || $('#main-stock input').val().trim() == '0') {
-                _msgalert.error('Vui lòng nhập số lượng kho tại form thông tin bán hàng')
-                success = false
+                return false
             }
 
         } else {
@@ -1303,6 +1309,13 @@ var product_detail_new = {
                     var package_depth = parseFloat(element.find('.td-dismenssion-depth').find('input').val().replaceAll(',', ''))
                     if (package_depth == undefined || isNaN(package_depth) || package_depth <= 0) {
                         _msgalert.error('Vui lòng nhập đầy đủ kích thước chiều cao gói hàng cho tất cả các biến thể của sản phẩm')
+                        element.get(0).scrollIntoView({ behavior: 'smooth' });
+                        success = false
+                        return false
+                    }
+                    var quanity_of_stock = parseFloat(element.find('.td-stock').find('input').val().replaceAll(',', ''))
+                    if (quanity_of_stock == undefined || isNaN(quanity_of_stock) || quanity_of_stock <= 0) {
+                        _msgalert.error('Vui lòng nhập đầy đủ số lượng kho hàng cho tất cả các biến thể của sản phẩm')
                         element.get(0).scrollIntoView({ behavior: 'smooth' });
                         success = false
                         return false
@@ -1377,6 +1390,7 @@ var product_detail_new = {
                 return false
             }
         }
+      
         return success
     },
     GetAttributeItem: function () {

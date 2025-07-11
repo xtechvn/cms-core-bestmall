@@ -967,7 +967,7 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="item flex flex-lg-nowrap gap10 mb-2 w-100 ">
-                        <label class="label">Giá nhập</label>
+                        <label class="label">Giá nhập <sup class="red">*</sup></label>
                         <div class="wrap_input">
                             <div id="main-price" class="form-group price">
                                 <input type="text" class="form-control input-price" placeholder="Nhập giá" value="@(product==null ?"0":product.price.ToString("N0"))">
@@ -980,7 +980,7 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="item flex flex-lg-nowrap gap10 mb-2 w-100 product-single-profit">
-                        <label class="label">Lợi nhuận</label>
+                        <label class="label">Lợi nhuận <sup class="red">*</sup></label>
                         <div class="wrap_input">
                             <div id="main-profit" class="form-group price">
                                 <input type="text" class="form-control input-price" placeholder="Nhập giá" value="@(product==null ?"0":product.profit.ToString("N0"))">
@@ -1006,7 +1006,7 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="item flex flex-lg-nowrap gap10 mb-2 w-100">
-                        <label class="label">Kho</label>
+                        <label class="label">Kho hàng<sup class="red">*</sup></label>
                         <div id="main-stock" class="wrap_input">
                             <div class="form-group price">
                                 <input type="text" class="form-control input-price" placeholder="Nhập giá" value="@(product==null ?"0":product.quanity_of_stock.ToString("N0"))">
