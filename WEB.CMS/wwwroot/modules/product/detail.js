@@ -298,7 +298,7 @@ var product_detail_new = {
             product_detail_new.AddProductMedia(element)
         });
         //--Attribute table:
-        $('body').on('click', '.btn-all', function () {
+        $('body').on('click', '#product-attributes-apply .btn-all', function () {
             product_detail_new.ApplyAllPriceToTable()
             $('.btn-all').css('background-color', '')
             $('.btn-all').css('border-color', '')
