@@ -12,7 +12,7 @@ var product_index = {
         on_excuting: false
     },
     Initialization: function () {
-        var model = [{ url: '/', name: 'Trang chủ' }, { url: '/productv2', name: 'Quản lý sản phẩm', activated: true }]
+        var model = [{ url: '/', name: 'Trang chủ' }, { url: '/product', name: 'Quản lý sản phẩm', activated: true }]
         _global_function.RenderBreadcumb(model)
         product_index.Listing();
         product_index.DynamicBind()
@@ -61,10 +61,10 @@ var product_index = {
                 if (product_id != null && product_id != undefined && product_id.trim() != '') {
                     _product_function.POST('/Product/UpdateProductStatus', { product_id: product_id, status: 2 }, function (result) {
                         if (result.is_success) {
-                            _msgalert.success(result.msg)
+                            _msgalert.success('Ẩn sản phẩm thành công')
                             setTimeout(function () {
                                 window.location.href = '/product'
-                            }, 1000);
+                            }, 1500);
                         }
                         else {
                             _msgalert.error(result.msg)
@@ -86,10 +86,10 @@ var product_index = {
                 if (product_id != null && product_id != undefined && product_id.trim() != '') {
                     _product_function.POST('/Product/UpdateProductStatus', { product_id: product_id, status: 1 }, function (result) {
                         if (result.is_success) {
-                            _msgalert.success(result.msg)
+                            _msgalert.success('Hiển thị sản phẩm thành công')
                             setTimeout(function () {
                                 window.location.href = '/product'
-                            }, 1000);
+                            }, 1500);
                         }
                         else {
                             _msgalert.error(result.msg)
@@ -109,7 +109,7 @@ var product_index = {
                 if (product_id != null && product_id != undefined && product_id.trim() != '') {
                     _product_function.POST('/Product/UpdateProductStatus', { product_id: product_id, status: 3 }, function (result) {
                         if (result.is_success) {
-                            _msgalert.success(result.msg)
+                            _msgalert.success('Xóa sản phẩm thành công')
                             setTimeout(function () {
                                 window.location.href = '/product'
                             }, 1000);
@@ -130,7 +130,7 @@ var product_index = {
                 if (product_id != null && product_id != undefined && product_id.trim() != '') {
                     _product_function.POST('/Product/CopyProductByID', { product_id: product_id }, function (result) {
                         if (result.is_success) {
-                            _msgalert.success(result.msg)
+                            _msgalert.success('Sao chép sản phẩm thành công')
                             setTimeout(function () {
                                 window.location.href = '/product'
                             }, 1000);
