@@ -1109,7 +1109,7 @@
 
             </div>
         </div>
-        <div class="box-input-ship" style="@((product != null && product.is_one_weight == true)? "":"display:none;")">
+        <div class="box-input-ship" style="@((product != null && product.is_one_weight == true)? "":(product==null || product._id==null?"":"display:none;"))">
             <div class="item flex flex-lg-nowrap gap10 mb-2 w-100">
                 <label class="label">Cân nặng<sup class="red">*</sup></label>
                 <div class="wrap_input">
