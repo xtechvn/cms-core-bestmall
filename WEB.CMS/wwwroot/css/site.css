@@ -61,3 +61,7 @@ tr.flashsale-placeholder {
 #videos .thumb_img img {
     object-fit: contain !important;
 }
+
+#product-attributes-apply tr td {
+    padding-left: 7px !important;
+}
