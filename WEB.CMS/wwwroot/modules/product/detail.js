@@ -1347,7 +1347,7 @@ var product_detail_new = {
             })
         }
         if (is_one_weight == true) {
-            var weight = parseFloat($('#single-weight').find('.weight').find('input').val().replaceAll(',', ''))
+            var weight = parseFloat($('#single-weight').find('.weight').val().replaceAll(',', ''))
             if (weight == undefined || isNaN(weight) || weight <= 0) {
                 _msgalert.error('Vui lòng nhập đầy đủ khối lượng hàng trong phần vận chuyển')
                 $('#single-weight').get(0).scrollIntoView({ behavior: 'smooth' });
@@ -1355,21 +1355,21 @@ var product_detail_new = {
                 return false
             }
 
-            var package_width = parseFloat($('#single-weight').find('.dismenssion-width').find('input').val().replaceAll(',', ''))
+            var package_width = parseFloat($('#single-weight').find('.dismenssion-width').val().replaceAll(',', ''))
             if (package_width == undefined || isNaN(package_width) || package_width <= 0) {
                 _msgalert.error('Vui lòng nhập đầy đủ kích thước chiều dài gói hàng trong phần vận chuyển')
                 $('#single-weight').get(0).scrollIntoView({ behavior: 'smooth' });
                 success = false
                 return false
             }
-            var package_height = parseFloat($('#single-weight').find('.dismenssion-height').find('input').val().replaceAll(',', ''))
+            var package_height = parseFloat($('#single-weight').find('.dismenssion-height').val().replaceAll(',', ''))
             if (package_height == undefined || isNaN(package_height) || package_height <= 0) {
                 _msgalert.error('Vui lòng nhập đầy đủ kích thước chiều rộng gói hàng trong phần vận chuyển')
                 $('#single-weight').get(0).scrollIntoView({ behavior: 'smooth' });
                 success = false
                 return false
             }
-            var package_depth = parseFloat($('#single-weight').find('.dismenssion-depth').find('input').val().replaceAll(',', ''))
+            var package_depth = parseFloat($('#single-weight').find('.dismenssion-depth').val().replaceAll(',', ''))
             if (package_depth == undefined || isNaN(package_depth) || package_depth <= 0) {
                 _msgalert.error('Vui lòng nhập đầy đủ kích thước chiều cao gói hàng trong phần vận chuyển')
                 $('#single-weight').get(0).scrollIntoView({ behavior: 'smooth' });
