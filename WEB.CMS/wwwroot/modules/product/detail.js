@@ -1046,7 +1046,7 @@ var product_detail_new = {
         model.package_width = (package_width == undefined || isNaN(package_width) || package_width <= 0) ? null : package_width;
         model.package_height = (package_height == undefined || isNaN(package_height) || package_height <= 0) ? null : package_height;
         model.package_depth = (package_depth == undefined || isNaN(package_depth) || package_depth <= 0) ? null : package_depth;
-        model.is_one_weight = !($('#single-weight .switch-weight').is(':checked'))
+        model.is_one_weight = ($('#single-weight .switch-weight').is(':checked'))
 
         model.variations = []
         if (!$('#product-attributes-price').closest('.item-edit').is(':hidden')) {
