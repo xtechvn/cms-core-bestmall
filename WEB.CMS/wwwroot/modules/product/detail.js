@@ -1384,24 +1384,24 @@ var product_detail_new = {
                 var profit = parseFloat(element.find('.td-profit').find('input').val().replaceAll(',', ''))
                 var amount = parseFloat(element.find('.td-amount').find('input').val().replaceAll(',', ''))
                 if (price == undefined || isNaN(price) || price <= 0) {
-                    _msgalert.error('Vui lòng nhập đầy đủ giá nhập cho tất cả các biến thể của sản phẩm')
+                    _msgalert.error('Vui lòng nhập đầy đủ Giá cho tất cả các biến thể của sản phẩm')
                     success = false
                     return false
                 }
                 if (profit == undefined || isNaN(profit) || profit < 0) {
-                    _msgalert.error('Vui lòng nhập đầy đủ lợi nhuận cho tất cả các biến thể của sản phẩm')
+                    _msgalert.error('Vui lòng nhập đầy đủ Lợi nhuận cho tất cả các biến thể của sản phẩm')
                     success = false
                     return false
                 }
                 if (amount == undefined || isNaN(amount) || amount < 0) {
-                    _msgalert.error('Vui lòng nhập đầy đủ giá bán cho tất cả các biến thể của sản phẩm')
+                    _msgalert.error('Vui lòng nhập đầy đủ Giá bán cho tất cả các biến thể của sản phẩm')
                     success = false
                     return false
                 }
                 if (is_one_weight == false) {
                     var weight = parseFloat(element.find('.td-weight').find('input').val().replaceAll(',', ''))
                     if (weight == undefined || isNaN(weight) || weight <= 0) {
-                        _msgalert.error('Vui lòng nhập đầy đủ khối lượng hàng cho tất cả các biến thể của sản phẩm')
+                        _msgalert.error('Vui lòng nhập đầy đủ cân nặng (sau khi đóng gói) cho tất cả các biến thể của sản phẩm')
                         element.get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
                         success = false
                         return false
@@ -1409,28 +1409,28 @@ var product_detail_new = {
 
                     var package_width = parseFloat(element.find('.td-dismenssion-width').find('input').val().replaceAll(',', ''))
                     if (package_width == undefined || isNaN(package_width) || package_width <= 0) {
-                        _msgalert.error('Vui lòng nhập đầy đủ kích thước chiều dài gói hàng cho tất cả các biến thể của sản phẩm')
+                        _msgalert.error('Vui lòng nhập đầy đủ Kích thước đóng gói - Chiều dài gói hàng cho tất cả các biến thể của sản phẩm')
                         element.get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
                         success = false
                         return false
                     }
                     var package_height = parseFloat(element.find('.td-dismenssion-height').find('input').val().replaceAll(',', ''))
                     if (package_height == undefined || isNaN(package_height) || package_height <= 0) {
-                        _msgalert.error('Vui lòng nhập đầy đủ kích thước chiều rộng gói hàng cho tất cả các biến thể của sản phẩm')
+                        _msgalert.error('Vui lòng nhập đầy đủ Kích thước đóng gói - Chiều rộng gói hàng cho tất cả các biến thể của sản phẩm')
                         element.get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
                         success = false
                         return false
                     }
                     var package_depth = parseFloat(element.find('.td-dismenssion-depth').find('input').val().replaceAll(',', ''))
                     if (package_depth == undefined || isNaN(package_depth) || package_depth <= 0) {
-                        _msgalert.error('Vui lòng nhập đầy đủ kích thước chiều cao gói hàng cho tất cả các biến thể của sản phẩm')
+                        _msgalert.error('Vui lòng nhập đầy đủ Kích thước đóng gói - Chiều cao gói hàng cho tất cả các biến thể của sản phẩm')
                         element.get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
                         success = false
                         return false
                     }
                     var quanity_of_stock = parseFloat(element.find('.td-stock').find('input').val().replaceAll(',', ''))
                     if (quanity_of_stock == undefined || isNaN(quanity_of_stock) || quanity_of_stock <= 0) {
-                        _msgalert.error('Vui lòng nhập đầy đủ số lượng kho hàng cho tất cả các biến thể của sản phẩm')
+                        _msgalert.error('Vui lòng nhập đầy đủ Kho hàng cho tất cả các biến thể của sản phẩm')
                         element.get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
                         success = false
                         return false
