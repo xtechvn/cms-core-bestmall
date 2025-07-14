@@ -157,7 +157,7 @@ var flashsale_detail = {
             if (!validate) return;
             var id = $('#flashsale-detail').val()
             var id_value = (id == undefined || isNaN(parseInt(id))) ? 0 : parseInt(id)
-            _msgconfirm.openDialog('Xác nhận' + (id_value > 0 ? 'cập nhật chương trình' : 'thêm chương trình'), 'Thông tin chương trình Flashsale được ' + (id_value > 0 ? 'cập nhật' : 'thêm mới') + ', bạn chắc chắn không?', function () {
+            _msgconfirm.openDialog('Xác nhận' + (id_value > 0 ? ' cập nhật chương trình' :  ' thêm chương trình'), 'Thông tin chương trình Flashsale được ' + (id_value > 0 ? 'cập nhật' : 'thêm mới') + ', bạn chắc chắn không?', function () {
 
                 flashsale_detail.Summit()
             })

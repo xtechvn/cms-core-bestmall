@@ -14,6 +14,8 @@ var product_detail_new = {
         product_detail_new.ShowProductTab()
         product_detail_new.DynamicBind()
         product_detail_new.RenderAttributesPrice()
+        product_detail_new.ReRenderAttributesDetail()
+
         product_detail_new.RenderProductBuyWith()
         product_detail_new.Select2Supplier($('#supplier-id select'))
         product_detail_new.Select2Label($('#label-id select'))
@@ -29,19 +31,19 @@ var product_detail_new = {
             var element = $(this)
             switch (element.attr('data-id')) {
                 case '1': {
-                    $("#images").get(0).scrollIntoView({ behavior: 'smooth' });
+                    $("#images").get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
 
                 } break
                 case '2': {
-                    $("#selling-information").get(0).scrollIntoView({ behavior: 'smooth' });
+                    $("#selling-information").get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
 
                 } break
                 case '3': {
-                    $("#other-information").get(0).scrollIntoView({ behavior: 'smooth' });
+                    $("#other-information").get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
 
                 } break
                 case '4': {
-                    $("#other-information").get(0).scrollIntoView({ behavior: 'smooth' });
+                    $("#other-information").get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
 
                 } break
             }
@@ -108,6 +110,7 @@ var product_detail_new = {
                 ghostClass: "row-attributes-value",
                 update: function (event, ui) {
                     product_detail_new.RenderAttributesPrice()
+                    product_detail_new.ReRenderAttributesDetail()
                 }
             });
 
@@ -138,9 +141,6 @@ var product_detail_new = {
             product_detail_new.RenderSpecificationSelectOption(element)
 
         });
-
-
-
         $('body').on('click', '.specifications-list .col-md-6 .add-specificaion-value', function (e) {
             var element = $(this)
             element.closest('.border-top').find('.add-specificaion-value-box').show()
@@ -197,7 +197,7 @@ var product_detail_new = {
             var selected_count = $('#them-nganhhang .col-md-4 .active').length
             var max_group_length = $('#them-nganhhang .col-md-4').length
             if (selected_count < max_group_length) {
-                _msgalert.error('Ngành hàng sản phẩm phải chọn đủ ' + max_group_length +' cấp')
+                _msgalert.error('Ngành hàng sản phẩm phải chọn đủ ' + max_group_length + ' cấp')
                 return
             }
             product_detail_new.RenderSelectedGroupProduct()
@@ -211,7 +211,7 @@ var product_detail_new = {
         $('body').on('keyup', '.attributes-detail .form-control', function () {
             var element = $(this)
             setTimeout(function () {
-                product_detail_new.RenderAddNewAttribute(element.closest('.attributes-list'), element,false)
+                product_detail_new.RenderAddNewAttribute(element.closest('.attributes-list'), element, false)
                 product_detail_new.RenderAttributesPrice()
 
             }, 1000);
@@ -336,7 +336,7 @@ var product_detail_new = {
                     element_input.val('')
                     element_input.attr('readonly', 'readonly')
                 })
-                $('#product-attributes-apply')[0].scrollIntoView({ behavior: 'smooth' });
+                $('#product-attributes-apply')[0].scrollIntoView({ block: 'center', behavior: 'smooth' });
                 $('#single-weight .box-input-ship').hide()
             } else {
                 $('.th-weight').hide()
@@ -348,7 +348,7 @@ var product_detail_new = {
                     element_input.val(element_input.attr('data-old'))
                     element_input.removeAttr('readonly')
                 })
-                $('#single-weight')[0].scrollIntoView({ behavior: 'smooth' });
+                $('#single-weight')[0].scrollIntoView({ block: 'center', behavior: 'smooth' });
                 $('#single-weight .box-input-ship').show()
 
             }
@@ -585,13 +585,30 @@ var product_detail_new = {
             }
             _product_function.POST('/Product/AttributesPrice', request, function (result) {
                 $('#product-attributes-prices').html(result)
+
             });
         } else {
             var request = product_detail_new.GetVariationDetail()
             _product_function.POST('/Product/AttributesPrice', request, function (result) {
                 $('#product-attributes-prices').html(result)
+
             });
         }
+    },
+    ReRenderAttributesDetail: function () {
+        $('.attributes-list').each(function (index, item) {
+            var parent = $(this)
+            var first = true
+            parent.find('.attributes-detail').each(function (index, item) {
+                var element = $(this)
+                if (first) {
+                    element.find('.delete-attribute-detail').hide()
+                    first = false;
+                } else {
+                    element.find('.delete-attribute-detail').show()
+                }
+            })
+        })
     },
     GetVariationDetail: function () {
         var request = {
@@ -823,10 +840,10 @@ var product_detail_new = {
         element.closest('.col-md-6').find('.namesp').find('input').attr('data-value', value)
         element.closest('.col-md-6').find('.namesp').find('input').val(html)
     },
-    RenderAddNewAttribute: function (parent, element, need_validate=true) {
+    RenderAddNewAttribute: function (parent, element, need_validate = true) {
         var exists = false
         var name = element.val()
-        var has_element_no_value=false
+        var has_element_no_value = false
         async function processElements() {
             parent.find('.form-control').each(function (index, item) {
                 var compare = $(this)
@@ -845,8 +862,8 @@ var product_detail_new = {
             })
         }
         processElements()
-       
-        if (exists == false && need_validate== false && has_element_no_value==false) {
+
+        if (exists == false && need_validate == false && has_element_no_value == false) {
             parent.find('.row-attributes-value').append(_product_constants_2.Attributes.Input)
         }
 
@@ -1191,10 +1208,10 @@ var product_detail_new = {
         } else {
             var group_list = $('#group-id .namesp input').attr('data-id')
             var max_group_count = $('#group-id input').attr('data-group-count')
-            var max_group_count_value =( max_group_count == undefined || max_group_count.trim() == '' || isNaN(parseInt(max_group_count)) || parseInt(max_group_count) <= 0) ? 3 : parseInt(max_group_count)
-            
+            var max_group_count_value = (max_group_count == undefined || max_group_count.trim() == '' || isNaN(parseInt(max_group_count)) || parseInt(max_group_count) <= 0) ? 3 : parseInt(max_group_count)
+
             if (!group_list.includes('114') && group_list.split(',').length < max_group_count_value) {
-                _msgalert.error('Ngành hàng sản phẩm phải đủ ' + max_group_count_value +' cấp')
+                _msgalert.error('Ngành hàng sản phẩm phải đủ ' + max_group_count_value + ' cấp')
                 success = false
             }
         }
@@ -1240,20 +1257,23 @@ var product_detail_new = {
         }
         if (!success) return success
 
-        if ($('#product-attributes-prices').closest('.item-edit').is(':hidden')) {
-            if ($('#main-price input').val() == undefined || $('#main-price input').val().trim() == '' || $('#main-price input').val().trim() == '0') {
-                _msgalert.error('Vui lòng nhập giá nhập tại form thông tin bán hàng')
+        if ($('#product-attributes-table').is(':hidden')) {
+            var price = parseFloat($('#main-price').find('input').val().replaceAll(',', ''))
+            if (price == undefined || isNaN(price) || price <= 0) {
+                _msgalert.error('Vui lòng nhập đầy đủ giá nhập cho sản phẩm')
+                $('#main-price').find('input').get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
                 success = false
             }
-            else if ($('#main-profit input').val() == undefined || $('#main-profit input').val().trim() == '' || $('#main-profit input').val().trim() == '0') {
-                _msgalert.error('Vui lòng nhập lợi nhuận tại form thông tin bán hàng')
+            var profit = parseFloat($('#main-profit').find('input').val().replaceAll(',', ''))
+            if (profit == undefined || isNaN(profit) || profit <= 0) {
+                _msgalert.error('Vui lòng nhập đầy đủ giá nhập cho sản phẩm')
+                $('#main-profit').find('input').get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
                 success = false
             }
-            else if ($('#main-amount input').val() == undefined || $('#main-amount input').val().trim() == '' || $('#main-amount input').val().trim() == '0') {
-                _msgalert.error('Vui lòng nhập giá bán tại form thông tin bán hàng')
-                success = false
-            } else if ($('#main-stock input').val() == undefined || $('#main-stock input').val().trim() == '' || $('#main-stock input').val().trim() == '0') {
-                _msgalert.error('Vui lòng nhập số lượng kho tại form thông tin bán hàng')
+            var stock = parseFloat($('#main-stock').find('input').val().replaceAll(',', ''))
+            if (stock == undefined || isNaN(stock) || stock <= 0) {
+                _msgalert.error('Vui lòng nhập đầy đủ số lượng sản phẩm trong kho hàng cho sản phẩm')
+                $('#main-stock').find('input').get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
                 success = false
             }
 
@@ -1283,29 +1303,36 @@ var product_detail_new = {
                     var weight = parseFloat(element.find('.td-weight').find('input').val().replaceAll(',', ''))
                     if (weight == undefined || isNaN(weight) || weight <= 0) {
                         _msgalert.error('Vui lòng nhập đầy đủ số lượng hàng cho tất cả các biến thể của sản phẩm')
-                        element.get(0).scrollIntoView({ behavior: 'smooth' });
+                        element.get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
                         success = false
                         return false
                     }
-                  
+
                     var package_width = parseFloat(element.find('.td-dismenssion-width').find('input').val().replaceAll(',', ''))
                     if (package_width == undefined || isNaN(package_width) || package_width <= 0) {
                         _msgalert.error('Vui lòng nhập đầy đủ kích thước chiều dài gói hàng cho tất cả các biến thể của sản phẩm')
-                        element.get(0).scrollIntoView({ behavior: 'smooth' });
+                        element.get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
                         success = false
                         return false
                     }
                     var package_height = parseFloat(element.find('.td-dismenssion-height').find('input').val().replaceAll(',', ''))
                     if (package_height == undefined || isNaN(package_height) || package_height <= 0) {
                         _msgalert.error('Vui lòng nhập đầy đủ kích thước chiều rộng gói hàng cho tất cả các biến thể của sản phẩm')
-                        element.get(0).scrollIntoView({ behavior: 'smooth' });
+                        element.get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
                         success = false
                         return false
                     }
                     var package_depth = parseFloat(element.find('.td-dismenssion-depth').find('input').val().replaceAll(',', ''))
                     if (package_depth == undefined || isNaN(package_depth) || package_depth <= 0) {
                         _msgalert.error('Vui lòng nhập đầy đủ kích thước chiều cao gói hàng cho tất cả các biến thể của sản phẩm')
-                        element.get(0).scrollIntoView({ behavior: 'smooth' });
+                        element.get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
+                        success = false
+                        return false
+                    }
+                    var quanity_of_stock = parseFloat(element.find('.td-stock').find('input').val().replaceAll(',', ''))
+                    if (quanity_of_stock == undefined || isNaN(quanity_of_stock) || quanity_of_stock <= 0) {
+                        _msgalert.error('Vui lòng nhập đầy đủ số lượng kho hàng cho tất cả các biến thể của sản phẩm')
+                        element.get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
                         success = false
                         return false
                     }
@@ -1313,7 +1340,7 @@ var product_detail_new = {
             })
         }
         if (!success) return success
-		if ($('#discount-groupbuy tbody tr').length > 0) {
+        if ($('#discount-groupbuy tbody tr').length > 0) {
             $('#discount-groupbuy tbody tr').each(function (index, item) {
                 var element = $(this)
                 var from = parseFloat(element.find('.td-from').find('input').val().replaceAll(',', ''))
@@ -1352,7 +1379,7 @@ var product_detail_new = {
             var weight = parseFloat($('#single-weight').find('.weight').val().replaceAll(',', ''))
             if (weight == undefined || isNaN(weight) || weight <= 0) {
                 _msgalert.error('Vui lòng nhập đầy đủ khối lượng hàng trong phần vận chuyển')
-                $('#single-weight').get(0).scrollIntoView({ behavior: 'smooth' });
+                $('#single-weight').get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
                 success = false
                 return false
             }
@@ -1360,28 +1387,28 @@ var product_detail_new = {
             var package_width = parseFloat($('#single-weight').find('.dismenssion-width').val().replaceAll(',', ''))
             if (package_width == undefined || isNaN(package_width) || package_width <= 0) {
                 _msgalert.error('Vui lòng nhập đầy đủ kích thước chiều dài gói hàng trong phần vận chuyển')
-                $('#single-weight').get(0).scrollIntoView({ behavior: 'smooth' });
+                $('#single-weight').get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
                 success = false
                 return false
             }
             var package_height = parseFloat($('#single-weight').find('.dismenssion-height').val().replaceAll(',', ''))
             if (package_height == undefined || isNaN(package_height) || package_height <= 0) {
                 _msgalert.error('Vui lòng nhập đầy đủ kích thước chiều rộng gói hàng trong phần vận chuyển')
-                $('#single-weight').get(0).scrollIntoView({ behavior: 'smooth' });
+                $('#single-weight').get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
                 success = false
                 return false
             }
             var package_depth = parseFloat($('#single-weight').find('.dismenssion-depth').val().replaceAll(',', ''))
             if (package_depth == undefined || isNaN(package_depth) || package_depth <= 0) {
                 _msgalert.error('Vui lòng nhập đầy đủ kích thước chiều cao gói hàng trong phần vận chuyển')
-                $('#single-weight').get(0).scrollIntoView({ behavior: 'smooth' });
+                $('#single-weight').get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
                 success = false
                 return false
             }
         }
-        if ($('#description-specification tbody tr') == undefined|| $('#description-specification tbody tr').length <= 0) {
-            _msgalert.error('Vui lòng nhập Thông tin về sản phẩm trong mục [Thông tin chi tiết]')
-            $('#description-specification tbody').get(0).scrollIntoView({ behavior: 'smooth' });
+        if ($('#description-specification tbody tr') == undefined || $('#description-specification tbody tr').length <= 0) {
+            _msgalert.error('Vui lòng nhập Thông tin về sản phẩm trong mục [Thông tin về sản phẩm]')
+            $('#description-specification tbody').get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
             success = false
             return false
         } else {
@@ -1392,15 +1419,15 @@ var product_detail_new = {
                 var selected_value = element.find('input')
                 if (selected_key == null || selected_key == undefined) {
                     _msgalert.error('Vui lòng chọn tên thông tin về sản phẩm trong bảng [Thông tin về sản phẩm]')
-                    element.get(0).scrollIntoView({ behavior: 'smooth' });
+                    element.get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
                     success = false
                     return false
 
                 }
-                if (selected_value == null || selected_value == undefined || selected_value.val() == undefined || selected_value.val().trim()=='') {
+                if (selected_value == null || selected_value == undefined || selected_value.val() == undefined || selected_value.val().trim() == '') {
 
                     _msgalert.error('Vui lòng nhập đầy đủ giá trị trong bảng [Thông tin về sản phẩm]')
-                    element.get(0).scrollIntoView({ behavior: 'smooth' });
+                    element.get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
                     success = false
                     return false
                 }
@@ -1412,18 +1439,29 @@ var product_detail_new = {
             var name = element.find('h6').find('input').val()
             if (name == null || name == undefined || name.trim() == '') {
                 _msgalert.error('Vui lòng nhập đầy đủ tên phân loại')
-                element.get(0).scrollIntoView({ behavior: 'smooth' });
+                element.get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
                 success = false
                 return false
             }
             var max_length_attr_detail = element.find('.attributes-detail').length
+            if (max_length_attr_detail == undefined || max_length_attr_detail <= 0) {
+                _msgalert.error('Vui lòng nhập ít nhất 1 biến thể ứng với phân loại')
+                element.get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
+                success = false
+                return false
+            }
             element.find('.attributes-detail').each(function (index_2, item_2) {
                 if (index_2 >= (max_length_attr_detail - 1)) return false
                 var element_detail = $(this)
                 var value = element_detail.find('.relative').find('input').val()
                 if (value == null || value == undefined || value.trim() == '') {
                     _msgalert.error('Vui lòng nhập đầy đủ tên biến thể')
-                    element_detail.get(0).scrollIntoView({ behavior: 'smooth' });
+                    element_detail.get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
+                    success = false
+                    return false
+                } else if (value.trim().length > 14) {
+                    _msgalert.error('Tên biến thể không được quá 14 ký tự')
+                    element_detail.get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
                     success = false
                     return false
                 }
