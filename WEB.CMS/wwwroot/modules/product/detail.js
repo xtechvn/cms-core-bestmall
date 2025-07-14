@@ -1162,21 +1162,28 @@ var product_detail_new = {
         var max_item = _product_constants.VALUES.ProductDetail_Max_Image
         if ($('#images .flex-lg-nowrap .magnific_popup').length >= max_item) {
             _msgalert.error('Số lượng ảnh vượt quá giới hạn')
+            $('#images .flex-lg-nowrap .magnific_popup').get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
+
             success = false
         } else if ($('#images .magnific_popup').length == 0) {
             _msgalert.error('Chưa có ảnh sản phẩm')
+            $('#images .flex-lg-nowrap .magnific_popup').get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
+
             success = false
         }
 
-        var value = $('#product-name input').val()
         //-- avt
         max_item = _product_constants.VALUES.ProductDetail_Max_Avt
         if ($('#avatar .flex-lg-nowrap .magnific_popup').length >= max_item) {
             _msgalert.error('Số lượng ảnh đại diện vượt quá giới hạn')
+            $('#avatar .flex-lg-nowrap .magnific_popup').get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
+
             success = false
         }
         else if ($('#avatar .magnific_popup').length == 0) {
             _msgalert.error('Chưa có ảnh đại diện sản phẩm')
+            $('#avatar .flex-lg-nowrap .magnific_popup').get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
+
             success = false
         }
         if (!success) return success
@@ -1184,28 +1191,23 @@ var product_detail_new = {
         max_item = _product_constants.VALUES.ProductDetail_Max_Avt
         if ($('#videos .flex-lg-nowrap .magnific_popup').length >= max_item) {
             _msgalert.error('Số lượng video vượt quá giới hạn')
+            $('#videos .flex-lg-nowrap .magnific_popup').get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
+
             success = false
         }
         if (!success) return success
         //-- product-name:
+        var value = $('#product-name input').val()
         if (value == undefined || value.trim() == '') {
             _msgalert.error('Tên sản phẩm không được bỏ trống')
+            $('#product-name input').get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
             success = false
         } else if (value.length > 120) {
             _msgalert.error('Tên sản phẩm không được quá 120 ký tự')
+            $('#product-name input').get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
             success = false
         }
         if (!success) return success
-       
-        if (!success) return success
-        
-
-        //if ($('#description textarea').val() == undefined
-        //    || $('#description textarea').val().trim()=='') {
-        //    _msgalert.error('Mô tả sản phẩm không được bỏ trống')
-        //    success = false
-        //}
-        //if (!success) return success
 
         //--group id
         if ($('#group-id .namesp input').val() == undefined
@@ -1213,14 +1215,16 @@ var product_detail_new = {
             || $('#group-id .namesp input').attr('data-id') == undefined
             || $('#group-id .namesp input').attr('data-id').trim() == '') {
             _msgalert.error('Vui lòng chọn ngành hàng cho sản phẩm')
+            $('#group-id .namesp input').get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
+
             success = false
         } else {
             var group_list = $('#group-id .namesp input').attr('data-id')
             var max_group_count = $('#group-id input').attr('data-group-count')
             var max_group_count_value = (max_group_count == undefined || max_group_count.trim() == '' || isNaN(parseInt(max_group_count)) || parseInt(max_group_count) <= 0) ? 3 : parseInt(max_group_count)
-
             if (!group_list.includes('114') && group_list.split(',').length < max_group_count_value) {
                 _msgalert.error('Ngành hàng sản phẩm phải đủ ' + max_group_count_value + ' cấp')
+                $('#group-id .namesp input').get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
                 success = false
             }
         }
@@ -1229,6 +1233,7 @@ var product_detail_new = {
         if (element == null || element == undefined || element.find(':selected') == null || element.find(':selected') == undefined
             || element.find(':selected').val() == '' || element.find(':selected').val() == undefined) {
             _msgalert.error('Vui lòng chọn nhãn hiệu')
+            $('#label-id select').get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
             success = false
             return false
         }
@@ -1237,6 +1242,7 @@ var product_detail_new = {
         if (element == null || element == undefined || element.find(':selected') == null || element.find(':selected') == undefined
             || element.find(':selected').val() == '' || element.find(':selected').val() == undefined) {
             _msgalert.error('Vui lòng chọn nhà cung cấp')
+            $('#supplier-id select').get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
             success = false
             return false
         }
@@ -1245,24 +1251,28 @@ var product_detail_new = {
         //Mô tả chung 
         if (tinymce.get('description-textarea').getContent() == undefined || tinymce.get('description-textarea').getContent().trim() == '') {
             _msgalert.error('Vui lòng nhập Mô tả chung')
+            $('#description-textarea').get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
             success = false
         }
         if (!success) return success
         //Thành phần
         if (tinymce.get('description-ingredients-textarea').getContent() == undefined || tinymce.get('description-ingredients-textarea').getContent().trim() == '') {
             _msgalert.error('Vui lòng nhập Thành phần')
+            $('#description-ingredients-textarea').get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
             success = false
         }
         if (!success) return success
         //Công dụng
         if (tinymce.get('description-effect-textarea').getContent() == undefined || tinymce.get('description-effect-textarea').getContent().trim() == '') {
             _msgalert.error('Vui lòng nhập Công dụng')
+            $('#description-effect-textarea').get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
             success = false
         }
         if (!success) return success
         //Cách dùng
         if (tinymce.get('description-usepolicy-textarea').getContent() == undefined || tinymce.get('description-usepolicy-textarea').getContent().trim() == '') {
             _msgalert.error('Vui lòng nhập Cách dùng')
+            $('#description-usepolicy-textarea').get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
             success = false
         }
         if (!success) return success
