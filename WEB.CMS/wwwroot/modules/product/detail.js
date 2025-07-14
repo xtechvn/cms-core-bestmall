@@ -1453,6 +1453,17 @@ var product_detail_new = {
                 success = false
                 return false
             }
+            if (max_length_attr_detail == 1
+                || element.find('.attributes-detail').first().find('.relative') == undefined
+                || element.find('.attributes-detail').first().find('.relative').find('input').val() == undefined
+                || element.find('.attributes-detail').first().find('.relative').find('input').val().trim()==''
+                
+                ) {
+                _msgalert.error('Vui lòng nhập ít nhất 1 biến thể ứng với phân loại')
+                element.get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
+                success = false
+                return false
+            }
             element.find('.attributes-detail').each(function (index_2, item_2) {
                 if (index_2 >= (max_length_attr_detail - 1)) return false
                 var element_detail = $(this)
