@@ -144,7 +144,7 @@ namespace WEB.CMS.Models.Product
                             break;
                         case (int)ProductStatus.ACTIVE:
                             {
-                                filter &= Builders<ProductMongoDbModel>.Filter.Or(
+                                filter &= Builders<ProductMongoDbModel>.Filter.And(
                                    Builders<ProductMongoDbModel>.Filter.Eq(p => p.status, (int)ProductStatus.ACTIVE),
                                    Builders<ProductMongoDbModel>.Filter.Eq(p => p.supplier_status, (int)SUPPLIER_STATUS.CONFIRMED)
                                 );
@@ -152,7 +152,7 @@ namespace WEB.CMS.Models.Product
                             break;
                         case (int)ProductStatus.DEACTIVE:
                             {
-                                filter &= Builders<ProductMongoDbModel>.Filter.Or(
+                                filter &= Builders<ProductMongoDbModel>.Filter.And(
                                    Builders<ProductMongoDbModel>.Filter.Eq(p => p.status, (int)ProductStatus.DEACTIVE),
                                    Builders<ProductMongoDbModel>.Filter.Ne(p => p.supplier_status, (int)SUPPLIER_STATUS.CONFIRMED)
                                 );
@@ -507,7 +507,8 @@ namespace WEB.CMS.Models.Product
 
                                     );
 
-                filter &= Builders<ProductMongoDbModel>.Filter.Where(s => s.status != (int)ProductStatus.REMOVE);
+                filter &= Builders<ProductMongoDbModel>.Filter.Eq(s => s.status, (int)ProductStatus.ACTIVE);
+                filter &= Builders<ProductMongoDbModel>.Filter.Eq(p => p.supplier_status, (int)SUPPLIER_STATUS.CONFIRMED);
                 if (group_id > 0)
                 {
                     filter &= Builders<ProductMongoDbModel>.Filter.Regex(x => x.group_product_id, group_id.ToString());
