@@ -1451,9 +1451,9 @@ var product_detail_new = {
                 return false
             }
             if (max_length_attr_detail == 1
-                || element.find('.attributes-detail').first().find('.relative') == undefined
+                &&( element.find('.attributes-detail').first().find('.relative') == undefined
                 || element.find('.attributes-detail').first().find('.relative').find('input').val() == undefined
-                || element.find('.attributes-detail').first().find('.relative').find('input').val().trim()==''
+                || element.find('.attributes-detail').first().find('.relative').find('input').val().trim()=='')
                 
                 ) {
                 _msgalert.error('Vui lòng nhập ít nhất 1 biến thể ứng với phân loại')
