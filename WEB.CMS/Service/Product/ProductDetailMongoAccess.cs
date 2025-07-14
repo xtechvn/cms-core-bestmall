@@ -124,7 +124,7 @@ namespace WEB.CMS.Models.Product
                     Builders<ProductMongoDbModel>.Filter.Eq(p => p.parent_product_id, null),
                     Builders<ProductMongoDbModel>.Filter.Eq(p => p.parent_product_id, "")
                 );
-                filter &= Builders<ProductMongoDbModel>.Filter.Where(s => s.status != (int)ProductStatus.REMOVE);
+                filter &= Builders<ProductMongoDbModel>.Filter.Ne(s => s.status ,(int)ProductStatus.REMOVE);
                 if (group_id > 0)
                 {
                     filter &= Builders<ProductMongoDbModel>.Filter.Regex(x => x.group_product_id, new BsonRegularExpression($@"\b{group_id}\b"));
@@ -132,8 +132,39 @@ namespace WEB.CMS.Models.Product
                 }
                 if (status > 0)
                 {
-                    filter &= Builders<ProductMongoDbModel>.Filter.Eq(x => x.status, status);
-
+                    switch (status)
+                    {
+                        case (int)ProductStatus.ON_WAITING_CONFIRM:
+                            {
+                                filter &= Builders<ProductMongoDbModel>.Filter.Or(
+                                   Builders<ProductMongoDbModel>.Filter.Eq(p => p.status, (int)ProductStatus.ON_WAITING_CONFIRM),
+                                   Builders<ProductMongoDbModel>.Filter.Eq(p => p.supplier_status, (int)SUPPLIER_STATUS.ON_WAITING_CONFIRMATION)
+                                );
+                            }
+                            break;
+                        case (int)ProductStatus.ACTIVE:
+                            {
+                                filter &= Builders<ProductMongoDbModel>.Filter.Or(
+                                   Builders<ProductMongoDbModel>.Filter.Eq(p => p.status, (int)ProductStatus.ACTIVE),
+                                   Builders<ProductMongoDbModel>.Filter.Eq(p => p.supplier_status, (int)SUPPLIER_STATUS.CONFIRMED)
+                                );
+                            }
+                            break;
+                        case (int)ProductStatus.DEACTIVE:
+                            {
+                                filter &= Builders<ProductMongoDbModel>.Filter.Or(
+                                   Builders<ProductMongoDbModel>.Filter.Eq(p => p.status, (int)ProductStatus.DEACTIVE),
+                                   Builders<ProductMongoDbModel>.Filter.Ne(p => p.supplier_status, (int)SUPPLIER_STATUS.CONFIRMED)
+                                );
+                            }
+                            break;
+                        default:
+                            {
+                                filter &= Builders<ProductMongoDbModel>.Filter.Eq(x => x.status, status);
+                            }
+                            break;
+                    }
+                   
                 }
                 var sort_filter = Builders<ProductMongoDbModel>.Sort;
                 var sort_filter_definition = sort_filter.Descending(x => x.updated_last);

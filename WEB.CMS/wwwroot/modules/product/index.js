@@ -264,10 +264,10 @@ var product_index = {
             _msgconfirm.openDialog('Xác nhận xóa bộ lọc', 'Bộ lọc sản phẩm sẽ được đặt về giá trị mặc định, bạn chắc chắn không?', function () {
                 $('#search-group').val('0').trigger('change')
                 $('#input-search-product-name').val('').trigger('change')
-                $('.product-search-tab').first().trigger('click')
+                //$('.product-search-tab').first().trigger('click')
 
-                // product_index.ResetSearch()
-                // product_index.Listing();
+                product_index.ResetSearch()
+                product_index.Listing();
             })
 
         });
