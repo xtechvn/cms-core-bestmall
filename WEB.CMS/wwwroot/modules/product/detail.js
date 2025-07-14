@@ -849,7 +849,7 @@ var product_detail_new = {
                 var compare = $(this)
                 if (compare.is(element)) return true
                 if (need_validate == true) {
-                    if (name != undefined && name.toLowerCase().trim() == compare.val().toLowerCase().trim()) {
+                    if (name != undefined && name.toLowerCase().trim() !='' && name.toLowerCase().trim() == compare.val().toLowerCase().trim()) {
                         _msgalert.error("Tên phân loại " + name + "  đã có ")
                         exists = true
                         return false
