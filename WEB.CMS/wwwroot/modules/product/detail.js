@@ -1401,7 +1401,7 @@ var product_detail_new = {
                 if (is_one_weight == false) {
                     var weight = parseFloat(element.find('.td-weight').find('input').val().replaceAll(',', ''))
                     if (weight == undefined || isNaN(weight) || weight <= 0) {
-                        _msgalert.error('Vui lòng nhập đầy đủ số lượng hàng cho tất cả các biến thể của sản phẩm')
+                        _msgalert.error('Vui lòng nhập đầy đủ khối lượng hàng cho tất cả các biến thể của sản phẩm')
                         element.get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
                         success = false
                         return false
