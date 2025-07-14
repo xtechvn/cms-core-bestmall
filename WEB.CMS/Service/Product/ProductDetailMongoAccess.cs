@@ -152,7 +152,7 @@ namespace WEB.CMS.Models.Product
                             break;
                         case (int)ProductStatus.DEACTIVE:
                             {
-                                filter &= Builders<ProductMongoDbModel>.Filter.And(
+                                filter &= Builders<ProductMongoDbModel>.Filter.Or(
                                    Builders<ProductMongoDbModel>.Filter.Eq(p => p.status, (int)ProductStatus.DEACTIVE),
                                    Builders<ProductMongoDbModel>.Filter.Ne(p => p.supplier_status, (int)SUPPLIER_STATUS.CONFIRMED)
                                 );
