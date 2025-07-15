@@ -1175,7 +1175,7 @@ namespace WEB.CMS.Controllers
                     var list_label = await _labelRepository.GetAll();
                     var list_suplier = await _supplierRepository.GetAll();
 
-                    ExcelHelper.ExportProductsToExcel(main_products, list_group_product, list_label, list_suplier, FilePath);
+                    ExcelHelper.ExportProductsToExcel(main_products, sub_products, list_group_product, list_label, list_suplier, FilePath);
                     return Ok(new
                     {
                         is_success = true,

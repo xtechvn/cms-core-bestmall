@@ -226,6 +226,7 @@ var product_detail_new = {
                         product_detail_new.ValidateProcessing = false;
                         return
                     } else if (value.trim().length > 14) {
+                        element.val(value.substring(0, 14));
                         _msgalert.error('Tên biến thể không được quá 14 ký tự')
                         element.get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
                         product_detail_new.ValidateProcessing = false;
