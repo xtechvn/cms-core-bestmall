@@ -169,7 +169,7 @@ namespace Utilities
                         // Merge cells A to C (columns 1 to 3) for sub-product
                         var mergedCellRange = worksheet.Range(currentRow, 1, currentRow, 3);
                         mergedCellRange.Merge();
-                        mergedCellRange.Value = ProductVariationHelper.RenderVariationDetail(subProduct.attributes,subProduct.attributes_detail,subProduct.variation_detail); // Assuming this helper function exists
+                        mergedCellRange.Value = "Phân loại: "+ ProductVariationHelper.RenderVariationDetail(subProduct.attributes,subProduct.attributes_detail,subProduct.variation_detail); // Assuming this helper function exists
                         mergedCellRange.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
                         mergedCellRange.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
                         mergedCellRange.Style.Fill.BackgroundColor = XLColor.LightGray; 
