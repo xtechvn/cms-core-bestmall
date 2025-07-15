@@ -172,11 +172,14 @@ namespace Utilities
                         mergedCellRange.Value = "Phân loại: "+ ProductVariationHelper.RenderVariationDetail(subProduct.attributes,subProduct.attributes_detail,subProduct.variation_detail); // Assuming this helper function exists
                         mergedCellRange.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
                         mergedCellRange.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
-                        mergedCellRange.Style.Fill.BackgroundColor = XLColor.LightGray; 
+
+                        var rowSubStyle = worksheet.Range(currentRow, 1, currentRow, 17);
+                        rowSubStyle.Style.Fill.BackgroundColor = XLColor.LightGray; 
 
                         worksheet.Cell(currentRow, 4).Value = subProduct.amount;
                         worksheet.Cell(currentRow, 4).Style.NumberFormat.Format = "#,##0";
                         worksheet.Cell(currentRow, 4).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Right;
+                        worksheet.Cell(currentRow, 4).Style.Fill.BackgroundColor = XLColor.LightGray;
 
                         //worksheet.Cell(currentRow, 5).Value = subProduct.amount_min;
                         //worksheet.Cell(currentRow, 5).Style.NumberFormat.Format = "#,##0";
