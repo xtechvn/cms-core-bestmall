@@ -32,6 +32,7 @@ namespace WEB.CMS.Controllers
         private readonly IUserRepository _userRepository;
         private RedisConn _redisConn;
         private SupplierService _supplierService;
+        private ProductDetailMongoAccess _productV2DetailMongoAccess ;
         private readonly int db_index = 9;
 
         public SupplierController(IAllCodeRepository allCodeRepository, ISupplierRepository supplierRepository, IUserRepository userRepository,
@@ -50,7 +51,7 @@ namespace WEB.CMS.Controllers
             _userRepository = userRepository;
             _supplierService = new SupplierService(configuration, productV2DetailMongoAccess);
             db_index = Convert.ToInt32(configuration["Redis:Database:db_search_result"]);
-
+            _productV2DetailMongoAccess = productV2DetailMongoAccess;
         }
 
         #region supplier

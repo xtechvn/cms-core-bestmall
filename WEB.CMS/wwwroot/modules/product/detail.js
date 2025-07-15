@@ -216,6 +216,16 @@ var product_detail_new = {
         $('body').on('keyup', '.attributes-detail .form-control', function () {
             var element = $(this)
             setTimeout(function () {
+                var value = element.val()
+                if (value == null || value == undefined || value.trim() == '') {
+                    _msgalert.error('Vui lòng nhập đầy đủ tên biến thể')
+                    element_detail.get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
+                    return
+                } else if (value.trim().length > 14) {
+                    _msgalert.error('Tên biến thể không được quá 14 ký tự')
+                    element_detail.get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
+                    return
+                }
                 product_detail_new.RenderAddNewAttribute(element.closest('.attributes-list'), element, false)
                 product_detail_new.RenderAttributesPrice()
 
