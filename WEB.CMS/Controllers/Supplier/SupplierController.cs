@@ -1,4 +1,5 @@
 ﻿using Caching.RedisWorker;
+using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using Entities.Models;
 using Entities.ViewModels;
 using Entities.ViewModels.BankingAccount;
@@ -6,6 +7,7 @@ using Entities.ViewModels.Funding;
 using Entities.ViewModels.SupplierConfig;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
+using Nest;
 using Newtonsoft.Json;
 using Repositories.IRepositories;
 using System.Security.Claims;
@@ -188,6 +190,8 @@ namespace WEB.CMS.Controllers
                 await _redisConn.DeleteCacheByKeyword(CacheName.PRODUCT_DETAIL, db_index);
                 if (result > 0)
                 {
+                    var exists = _supplierRepository.GetById(model.SupplierId);
+                    await _supplierService.UpdateSuplierAllProductStatus(exists.SupplierId, (int)exists.Status);
                     return new JsonResult(new
                     {
                         isSuccess = true,
