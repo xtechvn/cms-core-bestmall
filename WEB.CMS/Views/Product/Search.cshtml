@@ -63,41 +63,55 @@
             }
             <td class="text-center">
                 @{
-                    if (main.supplier_status == (int)SUPPLIER_STATUS.CONFIRMED)
+                  
+                    @switch (main.supplier_status)
                     {
-                        @switch (main.status)
-                        {
-                            case (int)ProductStatus.ON_WAITING_CONFIRM:
+                        case (int)SUPPLIER_STATUS.ON_WAITING_CONFIRMATION:
+                            {
+                                @switch (main.status)
                                 {
-                                    <span class="status-oranger">Chờ duyệt</span>
-                                }
-                                break;
-                            case (int)ProductStatus.ACTIVE:
-                                {
-                                    <span class="status-green">Hoạt động</span>
+                                    case (int)ProductStatus.ON_WAITING_CONFIRM:
+                                        {
+                                            <span class="status-oranger">Chờ duyệt</span>
+                                        }
+                                        break;
+                                    case (int)ProductStatus.ACTIVE:
+                                        {
+                                            <span class="status-green">Hoạt động</span>
 
-                                }
-                                break;
-                            case (int)ProductStatus.DEACTIVE:
-                                {
-                                    <span class="status-red">Ngưng hoạt động</span>
+                                        }
+                                        break;
+                                    case (int)ProductStatus.DEACTIVE:
+                                        {
+                                            <span class="status-red">Ngưng hoạt động</span>
 
+                                        }
+                                        break;
+                                    default:
+                                        {
+                                            <span class="status-oranger">Chờ duyệt</span>
+                                        }
+                                        break;
                                 }
-                                break;
-                            default:
-                                {
-                                    <span class="status-oranger">Chờ duyệt</span>
-                                }
-                                break;
-                        }
-                    }
-                    if (main.supplier_status == (int)SUPPLIER_STATUS.ON_WAITING_CONFIRMATION)
-                    {
-                        <span class="status-oranger">Chờ duyệt</span>
-                    }
-                    if (main.supplier_status == (int)SUPPLIER_STATUS.DELETED)
-                    {
-                        <span class="status-red">Ngưng hoạt động</span>
+                            }
+                            break;
+                        case (int)SUPPLIER_STATUS.CONFIRMED:
+                            {
+                                <span class="status-green">Đã duyệt</span>
+
+                            }
+                            break;
+                        case (int)SUPPLIER_STATUS.DELETED:
+                            {
+                                <span class="status-red">Ngưng hoạt động</span>
+
+                            }
+                            break;
+                        default:
+                            {
+                                <span class="status-oranger">Chờ duyệt</span>
+                            }
+                            break;
                     }
                 }
 
