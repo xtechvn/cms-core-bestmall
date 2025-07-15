@@ -222,12 +222,12 @@ var product_detail_new = {
                     var value = element.val()
                     if (value == null || value == undefined || value.trim() == '') {
                         _msgalert.error('Vui lòng nhập đầy đủ tên biến thể')
-                        element_detail.get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
+                        element.get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
                         product_detail_new.ValidateProcessing = false;
                         return
                     } else if (value.trim().length > 14) {
                         _msgalert.error('Tên biến thể không được quá 14 ký tự')
-                        element_detail.get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
+                        element.get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
                         product_detail_new.ValidateProcessing = false;
                         return
                     }
