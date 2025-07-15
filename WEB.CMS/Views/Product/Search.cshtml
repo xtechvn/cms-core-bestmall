@@ -63,30 +63,41 @@
             }
             <td class="text-center">
                 @{
-                    @switch (main.status)
+                    if (main.supplier_status == (int)SUPPLIER_STATUS.CONFIRMED)
                     {
-                        case (int)ProductStatus.ON_WAITING_CONFIRM:
-                            {
-                                <span class="status-oranger">Chờ duyệt</span>
-                            }
-                            break;
-                        case (int)ProductStatus.ACTIVE:
-                            {
-                                <span class="status-green">Hoạt động</span>
+                        @switch (main.status)
+                        {
+                            case (int)ProductStatus.ON_WAITING_CONFIRM:
+                                {
+                                    <span class="status-oranger">Chờ duyệt</span>
+                                }
+                                break;
+                            case (int)ProductStatus.ACTIVE:
+                                {
+                                    <span class="status-green">Hoạt động</span>
 
-                            }
-                            break;
-                        case (int)ProductStatus.DEACTIVE:
-                            {
-                                <span class="status-red">Ngưng hoạt động</span>
+                                }
+                                break;
+                            case (int)ProductStatus.DEACTIVE:
+                                {
+                                    <span class="status-red">Ngưng hoạt động</span>
 
-                            }
-                            break;
-                        default:
-                            {
-                                <span class="status-oranger">Chờ duyệt</span>
-                            }
-                            break;
+                                }
+                                break;
+                            default:
+                                {
+                                    <span class="status-oranger">Chờ duyệt</span>
+                                }
+                                break;
+                        }
+                    }
+                    if (main.supplier_status == (int)SUPPLIER_STATUS.ON_WAITING_CONFIRMATION)
+                    {
+                        <span class="status-oranger">Chờ duyệt</span>
+                    }
+                    if (main.supplier_status == (int)SUPPLIER_STATUS.DELETED)
+                    {
+                        <span class="status-red">Ngưng hoạt động</span>
                     }
                 }
 
