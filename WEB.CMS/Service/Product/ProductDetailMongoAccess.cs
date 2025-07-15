@@ -243,10 +243,14 @@ namespace WEB.CMS.Models.Product
                             break;
                         case (int)ProductStatus.DEACTIVE:
                             {
+                                filter &= Builders<ProductMongoDbModel>.Filter.And(
+                                  Builders<ProductMongoDbModel>.Filter.Ne(p => p.status, (int)ProductStatus.ACTIVE),
+                                  Builders<ProductMongoDbModel>.Filter.Ne(p => p.supplier_status, (int)SUPPLIER_STATUS.CONFIRMED)
+                               );
                                 filter &= Builders<ProductMongoDbModel>.Filter.Or(
-                                   Builders<ProductMongoDbModel>.Filter.Eq(p => p.status, (int)ProductStatus.DEACTIVE),
-                                   Builders<ProductMongoDbModel>.Filter.Ne(p => p.supplier_status, (int)SUPPLIER_STATUS.CONFIRMED)
-                                );
+                                 Builders<ProductMongoDbModel>.Filter.Ne(p => p.status, (int)ProductStatus.ON_WAITING_CONFIRM),
+                                 Builders<ProductMongoDbModel>.Filter.Ne(p => p.supplier_status, (int)SUPPLIER_STATUS.ON_WAITING_CONFIRMATION)
+                              );
                             }
                             break;
                         default:
