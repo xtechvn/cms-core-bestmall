@@ -531,21 +531,28 @@ namespace WEB.CMS.Models.Product
         {
             try
             {
-                var filter = Builders<ProductMongoDbModel>.Filter.Or(
+                var filter_general = Builders<ProductMongoDbModel>.Filter.Or(
                                     Builders<ProductMongoDbModel>.Filter.Regex(p => p.name, new MongoDB.Bson.BsonRegularExpression(keyword.Trim().ToLower(), "i")),
                                     Builders<ProductMongoDbModel>.Filter.Regex(p => p.sku, new MongoDB.Bson.BsonRegularExpression(keyword.Trim().ToLower(), "i")),
                                     Builders<ProductMongoDbModel>.Filter.Regex(p => p.code, new MongoDB.Bson.BsonRegularExpression(keyword.Trim().ToLower(), "i"))
 
                                     );
 
-                filter &= Builders<ProductMongoDbModel>.Filter.Eq(s => s.status, (int)ProductStatus.ACTIVE);
-                filter &= Builders<ProductMongoDbModel>.Filter.Eq(p => p.supplier_status, (int)SUPPLIER_STATUS.CONFIRMED);
-                filter &= Builders<ProductMongoDbModel>.Filter.Ne(p => p.price, 0);
-                filter &= Builders<ProductMongoDbModel>.Filter.Ne(p => p.amount, 0);
+                filter_general &= Builders<ProductMongoDbModel>.Filter.Eq(s => s.status, (int)ProductStatus.ACTIVE);
+                filter_general &= Builders<ProductMongoDbModel>.Filter.Eq(p => p.supplier_status, (int)SUPPLIER_STATUS.CONFIRMED);
+                filter_general &= Builders<ProductMongoDbModel>.Filter.Ne(p => p.price, 0);
+                filter_general &= Builders<ProductMongoDbModel>.Filter.Ne(p => p.amount, 0);
                 if (group_id > 0)
                 {
-                    filter &= Builders<ProductMongoDbModel>.Filter.Regex(x => x.group_product_id, group_id.ToString());
+                    filter_general &= Builders<ProductMongoDbModel>.Filter.Regex(x => x.group_product_id, group_id.ToString());
                 }
+                if (current_id != null && current_id.Count > 0)
+                {
+                    filter_general &= Builders<ProductMongoDbModel>.Filter.Nin(p => p._id, current_id);
+                    filter_general &= Builders<ProductMongoDbModel>.Filter.Nin(p => p.parent_product_id, current_id);
+
+                }
+
                 // Điều kiện cho Trường hợp 1: parent_product_id là null hoặc rỗng, VÀ không có variation_detail
                 var condition1_ParentIdNullOrEmpty = Builders<ProductMongoDbModel>.Filter.Or(
                     Builders<ProductMongoDbModel>.Filter.Eq(p => p.parent_product_id, null),
@@ -564,7 +571,7 @@ namespace WEB.CMS.Models.Product
                 var case1Filter = Builders<ProductMongoDbModel>.Filter.And(
                     condition1_ParentIdNullOrEmpty,
                     condition1_NoVariationDetail,
-                     Builders<ProductMongoDbModel>.Filter.Eq(s => s.status, (int)ProductStatus.ACTIVE)
+                    filter_general
                 );
 
                 // Điều kiện cho Trường hợp 2: Có parent_product_id VÀ cũng có variation_detail
@@ -583,20 +590,15 @@ namespace WEB.CMS.Models.Product
                 var case2Filter = Builders<ProductMongoDbModel>.Filter.And(
                     condition2_HasParentId,
                     condition2_HasVariationDetail,
-                     Builders<ProductMongoDbModel>.Filter.Eq(s => s.status, (int)ProductStatus.ACTIVE)
+                     filter_general
                 );
 
                 // Kết hợp hai trường hợp bằng toán tử OR
-                filter &= Builders<ProductMongoDbModel>.Filter.Or(
+               var filter = Builders<ProductMongoDbModel>.Filter.Or(
                     case1Filter,
                     case2Filter
                 );
-                if (current_id != null && current_id.Count > 0)
-                {
-                    filter &= Builders<ProductMongoDbModel>.Filter.Nin(p => p._id, current_id);
-                    filter &= Builders<ProductMongoDbModel>.Filter.Nin(p => p.parent_product_id, current_id);
-
-                }
+                
                 var sort_filter = Builders<ProductMongoDbModel>.Sort;
                 var sort_filter_definition = sort_filter.Descending(x => x.updated_last);
                 var model = _productDetailCollection.Find(filter).Sort(sort_filter_definition);
