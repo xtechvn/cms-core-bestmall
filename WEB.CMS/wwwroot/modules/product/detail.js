@@ -8,6 +8,7 @@
     product_detail_new.Initialization()
 })
 var product_detail_new = {
+    ValidateProcessing: false,
     Initialization: function () {
         product_detail_new.RenderHeader()
         product_detail_new.RenderSelectGroupProduct()
@@ -215,21 +216,27 @@ var product_detail_new = {
         })
         $('body').on('keyup', '.attributes-detail .form-control', function () {
             var element = $(this)
-            setTimeout(function () {
-                var value = element.val()
-                if (value == null || value == undefined || value.trim() == '') {
-                    _msgalert.error('Vui lòng nhập đầy đủ tên biến thể')
-                    element_detail.get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
-                    return
-                } else if (value.trim().length > 14) {
-                    _msgalert.error('Tên biến thể không được quá 14 ký tự')
-                    element_detail.get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
-                    return
-                }
-                product_detail_new.RenderAddNewAttribute(element.closest('.attributes-list'), element, false)
-                product_detail_new.RenderAttributesPrice()
+            if (product_detail_new.ValidateProcessing == false) {
+                setTimeout(function () {
+                    product_detail_new.ValidateProcessing = true;
+                    var value = element.val()
+                    if (value == null || value == undefined || value.trim() == '') {
+                        _msgalert.error('Vui lòng nhập đầy đủ tên biến thể')
+                        element_detail.get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
+                        product_detail_new.ValidateProcessing = false;
+                        return
+                    } else if (value.trim().length > 14) {
+                        _msgalert.error('Tên biến thể không được quá 14 ký tự')
+                        element_detail.get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
+                        product_detail_new.ValidateProcessing = false;
+                        return
+                    }
+                    product_detail_new.RenderAddNewAttribute(element.closest('.attributes-list'), element, false)
+                    product_detail_new.RenderAttributesPrice()
+                    product_detail_new.ValidateProcessing = false;
 
-            }, 1000);
+                }, 1000);
+            }
         })
         $('body').on('click', '.attributes-list .open-edit', function () {
             var element = $(this)
@@ -864,7 +871,7 @@ var product_detail_new = {
                 var compare = $(this)
                 if (compare.is(element)) return true
                 if (need_validate == true) {
-                    if (name != undefined && name.toLowerCase().trim() !='' && name.toLowerCase().trim() == compare.val().toLowerCase().trim()) {
+                    if (name != undefined && name.toLowerCase().trim() != '' && name.toLowerCase().trim() == compare.val().toLowerCase().trim()) {
                         _msgalert.error("Tên phân loại " + name + "  đã có ")
                         exists = true
                         return false
