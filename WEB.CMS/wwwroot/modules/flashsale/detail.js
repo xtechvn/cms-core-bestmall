@@ -592,6 +592,12 @@ var flashsale_detail = {
             _msgalert.error("Tên chương trình không được để trống")
             return false
         }
+
+        if ($('tbody tr.flashsale-data-tr-product') == undefined || $('tbody tr.flashsale-data-tr-product').length <= 0) {
+            _msgalert.error("Chiến dịch FlashSale cần ít nhất 1 sản phẩm")
+            $('#flashsale-data-tr-product-body').get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
+            return false;
+        }
         $('tbody tr.flashsale-data-tr-product').each(function (index) {
             const $productRow = $(this); // Dòng sản phẩm hiện tại
 

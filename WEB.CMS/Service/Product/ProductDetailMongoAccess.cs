@@ -540,8 +540,8 @@ namespace WEB.CMS.Models.Product
 
                 filter &= Builders<ProductMongoDbModel>.Filter.Eq(s => s.status, (int)ProductStatus.ACTIVE);
                 filter &= Builders<ProductMongoDbModel>.Filter.Eq(p => p.supplier_status, (int)SUPPLIER_STATUS.CONFIRMED);
-                filter &= Builders<ProductMongoDbModel>.Filter.Gt(p => p.price, 0);
-                filter &= Builders<ProductMongoDbModel>.Filter.Gt(p => p.amount, 0);
+                filter &= Builders<ProductMongoDbModel>.Filter.Ne(p => p.price, 0);
+                filter &= Builders<ProductMongoDbModel>.Filter.Ne(p => p.amount, 0);
                 if (group_id > 0)
                 {
                     filter &= Builders<ProductMongoDbModel>.Filter.Regex(x => x.group_product_id, group_id.ToString());
