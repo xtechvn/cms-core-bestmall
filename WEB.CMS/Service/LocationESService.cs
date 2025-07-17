@@ -490,7 +490,7 @@ namespace Caching.Elasticsearch
             try
             {
                 var query = elasticClient.Search<District>(s => s
-                     .Index(index_wards)
+                     .Index(index_district)
                     .Query(q => q
                         .Bool(b => b
                             .Must(m => m

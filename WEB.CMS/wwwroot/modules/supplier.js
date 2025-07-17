@@ -214,22 +214,22 @@ var _supplier_service = {
 
         if (!Form.valid()) { return; }
         var province = $('#supplier-province').find(':selected')
-        if (province == null || province == undefined) {
-            _msgalert.error("Vui lòng chọn tỉnh cho địa chỉ kho hàng ");
+        if (province == null || province == undefined || province.length<=0) {
+            _msgalert.error('', "Vui lòng chọn tỉnh cho địa chỉ kho hàng ");
             $("#supplier-province").get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
-
+            return
         }
         var district = $('#supplier-district').find(':selected')
-        if (district == null || district == undefined) {
-            _msgalert.error("Vui lòng chọn huyện trong địa chỉ kho hàng");
+        if (district == null || district == undefined || district.length <= 0) {
+            _msgalert.error('', "Vui lòng chọn huyện trong địa chỉ kho hàng");
             $("#supplier-district").get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
-
+            return
         }
         var ward = $('#supplier-ward').find(':selected')
-        if (ward == null || ward == undefined) {
-            _msgalert.error("Vui lòng phường / xã trong địa chỉ kho hàng ");
+        if (ward == null || ward == undefined || ward.length <= 0) {
+            _msgalert.error('',"Vui lòng phường / xã trong địa chỉ kho hàng ");
             $("#supplier-ward").get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
-
+            return
         }
         var status_attachment = 0;
         $('.form-group-attachment').each(function (index, item) {
@@ -677,6 +677,150 @@ var _supplier_service = {
         if (selected_ward != undefined) {
             $('#supplier-ward').val(selected_ward).trigger('change')
         }
+        // --- Lắng nghe sự kiện khi Tỉnh thay đổi ---
+        $('#supplier-province').on('select2:select', function (e) {
+            const provinceId = e.params.data.id;
+
+            // Reset và vô hiệu hóa Huyện và Xã
+            $('#supplier-district').val(null).trigger('change'); // Xóa chọn hiện tại
+            $('#supplier-district').prop('disabled', false); // Bật lại ô Huyện
+            $('#supplier-ward').val(null).trigger('change'); // Xóa chọn hiện tại
+            $('#supplier-ward').prop('disabled', true); // Vô hiệu hóa ô Xã
+
+            // Khởi tạo và tải dữ liệu cho Huyện dựa trên Tỉnh đã chọn
+            $('#supplier-district').select2({
+                ajax: {
+                    url: "/Location/DistrictSuggestion",
+                    type: "post",
+                    dataType: 'json',
+                    delay: 250,
+                    data: function (params) {
+                        var query = {
+                            keyword: params.term,
+                            province_id: $('#supplier-province').find(':selected').val()
+                        }
+                        return query;
+                    },
+                    processResults: function (response) {
+                        return {
+                            results: $.map(response.data, function (item) {
+                                return {
+                                    text: '[' + item.id + '] - ' + item.name,
+                                    id: item.id,
+                                }
+                            })
+                        };
+                    },
+                    cache: true
+                }
+            });
+        });
+
+        // --- Lắng nghe sự kiện khi Huyện thay đổi ---
+        $('#supplier-district').on('select2:select', function (e) {
+            const districtId = e.params.data.id;
+
+            // Reset và vô hiệu hóa Xã
+            $('#supplier-ward').val(null).trigger('change'); // Xóa chọn hiện tại
+            $('#supplier-ward').prop('disabled', false); 
+            $('#supplier-ward').removeProp('disabled');
+
+            // Khởi tạo và tải dữ liệu cho Xã dựa trên Huyện đã chọn
+            $('#supplier-ward').select2({
+                ajax: {
+                    url: "/Location/WardSuggestion",
+                    type: "post",
+                    dataType: 'json',
+                    delay: 250,
+                    data: function (params) {
+                        var query = {
+                            keyword: params.term,
+                            district_id: $('#supplier-district').find(':selected').val()
+                        }
+                        return query;
+                    },
+                    processResults: function (response) {
+                        return {
+                            results: $.map(response.data, function (item) {
+                                return {
+                                    text: '[' + item.id + '] - ' + item.name,
+                                    id: item.id,
+                                }
+                            })
+                        };
+                    },
+                    cache: true
+                }
+            });
+        });
+
+        // --- Xử lý khi người dùng xóa lựa chọn (Clear) ---
+        $('#supplier-province').on('select2:unselect', function (e) {
+            // Khi bỏ chọn Tỉnh, reset và vô hiệu hóa Huyện và Xã
+            $('#supplier-district').val(null).trigger('change').prop('disabled', true);
+            $('#supplier-ward').val(null).trigger('change').prop('disabled', true);
+        });
+
+        $('#supplier-district').on('select2:unselect', function (e) {
+            // Khi bỏ chọn Huyện, reset và vô hiệu hóa Xã
+            $('#supplier-ward').val(null).trigger('change').prop('disabled', true);
+        });
+        //$('body').on('select2:select', '#supplier-province', function (e) {
+        //    $('#supplier-district').select2({
+        //        ajax: {
+        //            url: "/Location/DistrictSuggestion",
+        //            type: "post",
+        //            dataType: 'json',
+        //            delay: 250,
+        //            data: function (params) {
+        //                var query = {
+        //                    keyword: params.term,
+        //                    province_id: $('#supplier-province').find(':selected').val()
+        //                }
+        //                return query;
+        //            },
+        //            processResults: function (response) {
+        //                return {
+        //                    results: $.map(response.data, function (item) {
+        //                        return {
+        //                            text: '[' + item.id + '] - ' + item.name,
+        //                            id: item.id,
+        //                        }
+        //                    })
+        //                };
+        //            },
+        //            cache: true
+        //        }
+        //    });
+        //});
+        //$('body').on('select2:select', '#supplier-district', function (e) {
+        //    $('#supplier-ward').select2({
+        //        ajax: {
+        //            url: "/Location/WardSuggestion",
+        //            type: "post",
+        //            dataType: 'json',
+        //            delay: 250,
+        //            data: function (params) {
+        //                var query = {
+        //                    keyword: params.term,
+        //                    district_id: $('#supplier-district').find(':selected').val()
+        //                }
+        //                return query;
+        //            },
+        //            processResults: function (response) {
+        //                return {
+        //                    results: $.map(response.data, function (item) {
+        //                        return {
+        //                            text: '[' + item.id + '] - ' + item.name,
+        //                            id: item.id,
+        //                        }
+        //                    })
+        //                };
+        //            },
+        //            cache: true
+        //        }
+        //    });
+        //});
     }
 }
 
@@ -748,4 +892,7 @@ $(document).ready(function () {
         }
     });
 
+});
+$(document).on('select2:open', () => {
+    document.querySelector('.select2-search__field').focus();
 });
