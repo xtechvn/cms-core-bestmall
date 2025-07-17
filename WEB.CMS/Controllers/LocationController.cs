@@ -1,4 +1,5 @@
-﻿using Caching.RedisWorker;
+﻿using Caching.Elasticsearch;
+using Caching.RedisWorker;
 using Entities.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
@@ -7,6 +8,7 @@ using Newtonsoft.Json;
 using Repositories.IRepositories;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Threading.Tasks;
 using Utilities;
 using Utilities.Contants;
@@ -21,16 +23,19 @@ namespace CMS.Controllers
         private readonly IDistrictRepository _districtRepository;
         private readonly IWardRepository _wardRepository;
         private readonly RedisConn _RedisService;
-        private readonly IConfiguration _Configuration;
+        private readonly IConfiguration _configuration;
+        private readonly LocationESService _locationESService;
 
-        public LocationController(IConfiguration configuration, IProvinceRepository provinceRepository, IDistrictRepository districtRepository, IWardRepository wardRepository, RedisConn redisService)
+        public LocationController(IConfiguration configuration, IProvinceRepository provinceRepository, 
+            IDistrictRepository districtRepository, IWardRepository wardRepository, RedisConn redisService, LocationESService locationESService)
         {
             _provinceRepository = provinceRepository;
             _districtRepository = districtRepository;
             _wardRepository = wardRepository;
             _RedisService = redisService;
-            _Configuration = configuration;
+            _configuration = configuration;
             _RedisService.Connect();
+            _locationESService = locationESService;
         }
         public IActionResult Index()
         {
@@ -345,7 +350,7 @@ namespace CMS.Controllers
                                             if (result != null)
                                             {
                                                 msg = "Province Updated: " + result;
-                                                int db_index = Convert.ToInt32(_Configuration["Redis:Database:db_common"]) > -1 ? Convert.ToInt32(_Configuration["Redis:Database:db_common"]) : 0;
+                                                int db_index = Convert.ToInt32(_configuration["Redis:Database:db_common"]) > -1 ? Convert.ToInt32(_configuration["Redis:Database:db_common"]) : 0;
                                                 _RedisService.clear("PROVINCE", db_index);
                                                 stt_code = 1;
                                                
@@ -393,7 +398,7 @@ namespace CMS.Controllers
                                             string result = await _districtRepository.UpdateDistrict(d);
                                             if (result != null)
                                             {
-                                                int db_index = Convert.ToInt32(_Configuration["Redis:Database:db_common"]) > -1 ? Convert.ToInt32(_Configuration["Redis:Database:db_common"]) : 0;
+                                                int db_index = Convert.ToInt32(_configuration["Redis:Database:db_common"]) > -1 ? Convert.ToInt32(_configuration["Redis:Database:db_common"]) : 0;
                                                 _RedisService.clear("DISTRICT_" + d.Id, db_index);
                                                 stt_code = 1;
                                                 msg = "District Updated: " + result;
@@ -444,7 +449,7 @@ namespace CMS.Controllers
                                             string result = await _wardRepository.UpdateWard(w);
                                             if (result != null)
                                             {
-                                                int db_index = Convert.ToInt32(_Configuration["Redis:Database:db_common"]) > -1 ? Convert.ToInt32(_Configuration["Redis:Database:db_common"]) : 0;
+                                                int db_index = Convert.ToInt32(_configuration["Redis:Database:db_common"]) > -1 ? Convert.ToInt32(_configuration["Redis:Database:db_common"]) : 0;
                                                 _RedisService.clear("WARD_" + w.Id, db_index);
                                                 stt_code = 1;
                                                 msg = "Ward Updated: " + result;
@@ -600,17 +605,17 @@ namespace CMS.Controllers
                 var province=await _provinceRepository.GetProvincesList();
                 if(province!=null && province.Count > 0)
                 {
-                    _RedisService.Set(CacheName.PROVINCE, JsonConvert.SerializeObject(province), Convert.ToInt32(_Configuration["Redis:Database:db_common"]));
+                    _RedisService.Set(CacheName.PROVINCE, JsonConvert.SerializeObject(province), Convert.ToInt32(_configuration["Redis:Database:db_common"]));
                 }
                 var districts = await _districtRepository.GetDistrictList();
                 if (districts != null && districts.Count > 0)
                 {
-                    _RedisService.Set(CacheName.DISTRICT, JsonConvert.SerializeObject(districts), Convert.ToInt32(_Configuration["Redis:Database:db_common"]));
+                    _RedisService.Set(CacheName.DISTRICT, JsonConvert.SerializeObject(districts), Convert.ToInt32(_configuration["Redis:Database:db_common"]));
                 }
                 var ward = await _wardRepository.GetWardList();
                 if (ward != null && ward.Count > 0)
                 {
-                    _RedisService.Set(CacheName.WARD, JsonConvert.SerializeObject(ward), Convert.ToInt32(_Configuration["Redis:Database:db_common"]));
+                    _RedisService.Set(CacheName.WARD, JsonConvert.SerializeObject(ward), Convert.ToInt32(_configuration["Redis:Database:db_common"]));
                 }
                 return Ok(new
                 {
@@ -629,5 +634,67 @@ namespace CMS.Controllers
             }
         }
 
+        [HttpPost]
+        public IActionResult WardSuggestion(string keyword)
+        {
+            if (keyword == null) keyword = "";
+
+            try
+            {
+                var list = _locationESService.WardSuggestion(keyword);
+                return Ok(new
+                {
+                    is_success=(list != null && list.Count > 0),
+                    data=list
+                });
+            }
+            catch (Exception ex)
+            {
+                string error_msg = Assembly.GetExecutingAssembly().GetName().Name + "->" + MethodBase.GetCurrentMethod().Name + "=>" + ex.ToString();
+                LogHelper.InsertLogTelegramByUrl(_configuration["BotSetting:bot_token"], _configuration["BotSetting:bot_group_id"], error_msg);
+            }
+            return null;
+        }
+        [HttpPost]
+
+        public IActionResult DistrictSuggestion(string keyword)
+        {
+            try
+            {
+                if (keyword == null) keyword = "";
+                var list = _locationESService.DistrictSuggestion(keyword);
+                return Ok(new
+                {
+                    is_success = (list != null && list.Count > 0),
+                    data = list
+                });
+            }
+            catch (Exception ex)
+            {
+                string error_msg = Assembly.GetExecutingAssembly().GetName().Name + "->" + MethodBase.GetCurrentMethod().Name + "=>" + ex.ToString();
+                LogHelper.InsertLogTelegramByUrl(_configuration["BotSetting:bot_token"], _configuration["BotSetting:bot_group_id"], error_msg);
+            }
+            return null;
+        }
+        public IActionResult ProvinceSuggestion(string keyword)
+        {
+            if (keyword == null) keyword = "";
+
+            try
+            {
+                var list = _locationESService.DistrictSuggestion(keyword);
+                return Ok(new
+                {
+                    is_success = (list != null && list.Count > 0),
+                    data = list
+                });
+            }
+            catch (Exception ex)
+            {
+                string error_msg = Assembly.GetExecutingAssembly().GetName().Name + "->" + MethodBase.GetCurrentMethod().Name + "=>" + ex.ToString();
+                LogHelper.InsertLogTelegramByUrl(_configuration["BotSetting:bot_token"], _configuration["BotSetting:bot_group_id"], error_msg);
+            }
+            return null;
+        }
     }
 }
