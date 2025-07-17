@@ -600,6 +600,7 @@ var _supplier_service = {
                 data: function (params) {
                     var query = {
                         keyword: params.term,
+                        district_id: $('#supplier-district').find(':selected').val()
                     }
                     return query;
                 },
@@ -625,6 +626,7 @@ var _supplier_service = {
                 data: function (params) {
                     var query = {
                         keyword: params.term,
+                        province_id: $('#supplier-province').find(':selected').val()
                     }
                     return query;
                 },
