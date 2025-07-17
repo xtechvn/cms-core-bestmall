@@ -682,7 +682,7 @@ namespace CMS.Controllers
 
             try
             {
-                var list = _locationESService.DistrictSuggestion(keyword);
+                var list = _locationESService.ProvinceSuggestion(keyword);
                 return Ok(new
                 {
                     is_success = (list != null && list.Count > 0),

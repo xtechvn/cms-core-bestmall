@@ -523,7 +523,7 @@ namespace Caching.Elasticsearch
             try
             {
                 var query = elasticClient.Search<Province>(sd => sd
-                  .Index(index_district)
+                  .Index(index_province)
                   .Size(10)
                   .Query(q => q.Bool(
                       qb => qb.Should(

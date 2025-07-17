@@ -52,7 +52,7 @@
                     <div class="form-group">
                         <label class="lbl">Tỉnh/Thành phố<sup class="red">*</sup></label>
                         <div class="wrap_input">
-                            <select id="supplier-province" class="w-100 form-control">
+                            <select id="supplier-province" class="w-100 form-control" style="width:100%">
                                 @if(province!=null && province.Id > 0)
                                 {
                                     <option selected value="@province.Id">@province.Name</option>
@@ -63,7 +63,7 @@
                     <div class="form-group">
                         <label class="lbl">Huyện<sup class="red">*</sup></label>
                         <div class="wrap_input">
-                            <select id="supplier-district" class="w-100 form-control">
+                            <select id="supplier-district" class="w-100 form-control" style="width:100%">
                                 @if (district != null && district.Id > 0)
                                 {
                                     <option selected value="@district.Id">@district.Name</option>
@@ -74,7 +74,7 @@
                     <div class="form-group">
                         <label class="lbl">Phường / Xã / Thị trấn<sup class="red">*</sup></label>
                         <div class="wrap_input">
-                            <select id="supplier-ward" class="w-100 form-control">
+                            <select id="supplier-ward" class="w-100 form-control" style="width:100%">
                                 @if (ward != null && ward.Id > 0)
                                 {
                                     <option selected value="@ward.Id">@ward.Name</option>
