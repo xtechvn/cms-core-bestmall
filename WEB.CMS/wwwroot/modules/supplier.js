@@ -821,7 +821,18 @@ var _supplier_service = {
         //        }
         //    });
         //});
-    }
+    },
+    SyncES: function () {
+        _ajax_caller.post('/supplier/SyncES', {}, function (result) {
+            if (result.is_success) {
+                _msgalert.success('Sync ES Successfully')
+            }
+            else {
+                _msgalert.error('Sync ES Failed')
+            }
+        });
+    },
+
 }
 
 var _changeInterval = null;
