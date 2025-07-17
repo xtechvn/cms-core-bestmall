@@ -641,7 +641,7 @@ namespace CMS.Controllers
 
             try
             {
-                var list = _locationESService.WardSuggestion(keyword);
+                var list = _locationESService.WardSuggestion(keyword, district_id);
                 return Ok(new
                 {
                     is_success=(list != null && list.Count > 0),
@@ -662,7 +662,7 @@ namespace CMS.Controllers
             try
             {
                 if (keyword == null) keyword = "";
-                var list = _locationESService.DistrictSuggestion(keyword);
+                var list = _locationESService.DistrictSuggestion(keyword, province_id);
                 return Ok(new
                 {
                     is_success = (list != null && list.Count > 0),
