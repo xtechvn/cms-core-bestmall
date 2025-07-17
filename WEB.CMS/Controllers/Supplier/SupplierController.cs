@@ -1,13 +1,17 @@
-﻿using Caching.RedisWorker;
+﻿using Caching.Elasticsearch;
+using Caching.Elasticsearch.FlashSale;
+using Caching.RedisWorker;
 using Entities.Models;
 using Entities.ViewModels;
 using Entities.ViewModels.BankingAccount;
+using Entities.ViewModels.ElasticSearch;
 using Entities.ViewModels.Funding;
 using Entities.ViewModels.SupplierConfig;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 using Newtonsoft.Json;
 using Repositories.IRepositories;
+using Repositories.Repositories;
 using System.Security.Claims;
 using Utilities;
 using Utilities.Contants;
@@ -32,11 +36,13 @@ namespace WEB.CMS.Controllers
         private readonly IUserRepository _userRepository;
         private RedisConn _redisConn;
         private SupplierService _supplierService;
+        private readonly SupplierESRepository _supplierESRepository;
+        private readonly LocationESService _locationESService;
         private readonly int db_index = 9;
 
         public SupplierController(IAllCodeRepository allCodeRepository, ISupplierRepository supplierRepository, IUserRepository userRepository,
             ICommonRepository commonRepository, IConfiguration _configuration, IWebHostEnvironment webHostEnvironment, IAttachFileRepository attachFileRepository
-            , ProductDetailMongoAccess productV2DetailMongoAccess)
+            , ProductDetailMongoAccess productV2DetailMongoAccess, SupplierESRepository supplierESRepository, LocationESService locationESService)
         {
             _allCodeRepository = allCodeRepository;
             _supplierRepository = supplierRepository;
@@ -50,7 +56,8 @@ namespace WEB.CMS.Controllers
             _userRepository = userRepository;
             _supplierService = new SupplierService(configuration, productV2DetailMongoAccess);
             db_index = Convert.ToInt32(configuration["Redis:Database:db_search_result"]);
-
+            _supplierESRepository = supplierESRepository;
+            _locationESService = locationESService;
         }
 
         #region supplier
@@ -90,10 +97,24 @@ namespace WEB.CMS.Controllers
             ViewBag.Attachment_Supply = new List<AttachFile>();
             ViewBag.Attachment_Confirm = new List<AttachFile>();
             ViewBag.HaveValidatePermission = false;
-
+            ViewBag.Province = new Province();
+            ViewBag.District = new District();
+            ViewBag.Ward = new Ward();
             if (id > 0)
             {
                 model = _supplierRepository.GetById(id);
+                if(model!=null && model.ProvinceId!=null && model.ProvinceId > 0)
+                {
+                    ViewBag.Province = _locationESService.GetProvincesById((int)model.ProvinceId);
+                }
+                if (model != null && model.DistrictId != null && model.DistrictId > 0)
+                {
+                    ViewBag.District = _locationESService.GetDistrictById((int)model.DistrictId);
+                }
+                if (model != null && model.WardId != null && model.WardId > 0)
+                {
+                    ViewBag.Ward = _locationESService.GetWardById((int)model.WardId);
+                }
                 ViewBag.Attachment_Root = await _AttachFileRepository.GetListByDataID(id, (int)AttachmentType.Supplier_Cert_RootProduct);
                 ViewBag.Attachment_Product = await _AttachFileRepository.GetListByDataID(id, (int)AttachmentType.Supplier_Cert_Product);
                 ViewBag.Attachment_Supply = await _AttachFileRepository.GetListByDataID(id, (int)AttachmentType.Supplier_Cert_Supply);
@@ -151,6 +172,15 @@ namespace WEB.CMS.Controllers
 
                 if (result > 0)
                 {
+                    try
+                    {
+                        var exists = _supplierRepository.GetSuplierById(result);
+                        string json = JsonConvert.SerializeObject(exists);
+                        SupplierESModel sp_es = JsonConvert.DeserializeObject<SupplierESModel>(json.ToLower());
+                        await _supplierESRepository.DeleteById(sp_es.supplierid);
+                        await _supplierESRepository.InsertAsync(sp_es);
+                    }
+                    catch { }
                     return new JsonResult(new
                     {
                         isSuccess = true,
@@ -187,6 +217,15 @@ namespace WEB.CMS.Controllers
                 await _redisConn.DeleteCacheByKeyword(CacheName.PRODUCT_DETAIL, db_index);
                 if (result > 0)
                 {
+                    try
+                    {
+                        var exists = _supplierRepository.GetSuplierById(result);
+                        string json = JsonConvert.SerializeObject(exists);
+                        SupplierESModel sp_es = JsonConvert.DeserializeObject<SupplierESModel>(json.ToLower());
+                        await _supplierESRepository.DeleteById(sp_es.supplierid);
+                        await _supplierESRepository.InsertAsync(sp_es);
+                    }
+                    catch { }
                     return new JsonResult(new
                     {
                         isSuccess = true,
@@ -746,5 +785,37 @@ namespace WEB.CMS.Controllers
                 });
             }
         }
+        public async Task<IActionResult> SyncES()
+        {
+            try
+            {
+                var sp = await _supplierRepository.GetAll();
+                if (sp != null && sp.Count > 0)
+                {
+                    try
+                    {
+                        string json = JsonConvert.SerializeObject(sp);
+                        List<SupplierESModel> sp_es = JsonConvert.DeserializeObject<List<SupplierESModel>>(json.ToLower());
+                        await _supplierESRepository.DeleteByIds(sp_es.Select(x => x.supplierid).ToList());
+                        await _supplierESRepository.IndexMany(sp_es);
+                    }
+                    catch { }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("SyncES - SupplierController: " + ex.ToString());
+                return Ok(new
+                {
+                    is_success = false
+                });
+            }
+            return Ok(new
+            {
+                is_success = true
+            });
+        }
+
     }
 }

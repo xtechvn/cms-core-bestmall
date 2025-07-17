@@ -100,7 +100,16 @@ var _supplier_detail = {
             }
         });
     },
-
+    SyncES: function () {
+        flashsale_detail.POST('/Supplier/SyncES', {}, function (result) {
+            if (result.is_success) {
+                _msgalert.success('Sync ES Successfully')
+            }
+            else {
+                _msgalert.error('Sync ES Failed')
+            }
+        });
+    },
 }
 
 var _supplier_contact = {

@@ -5,6 +5,9 @@
     List<AttachFile> Attachment_Supply = (List<AttachFile>)ViewBag.Attachment_Supply;
     List<AttachFile> Attachment_Confirm = (List<AttachFile>)ViewBag.Attachment_Confirm;
     bool has_permission= (bool)ViewBag.HaveValidatePermission;
+    Province province = (Province)ViewBag.Province;
+    District district = (District)ViewBag.District;
+    Ward ward = (Ward)ViewBag.Ward;
 }
 @using Entities.Models
 @using Entities.ViewModels.Funding
@@ -13,7 +16,7 @@
 
 <form id="form_supplier">
     <div class="row row_min">
-        <div class="grid-item col-md-12 @*@(Model.SupplierId > 0 ? " col-md-12" : "col-md-6" )*@">
+        <div class="grid-item col-md-6">
             <div class="border mb20">
                 <div class="lb-form">Thông tin cơ bản</div>
                 <div class="pd10">
@@ -36,13 +39,55 @@
                             <input type="text" class="form-control" asp-for="@Model.Email" />
                         </div>
                     </div>
+                   
+                  
+                </div>
+            </div>
+        </div>
+        <div class="grid-item col-md-6">
+            <div class="border mb20">
+                <div class="lb-form">Địa chỉ kho hàng</div>
+                <div class="pd10">
+
+                    <div class="form-group">
+                        <label class="lbl">Tỉnh/Thành phố<sup class="red">*</sup></label>
+                        <div class="wrap_input">
+                            <select id="supplier-province" class="w-100 form-control">
+                                @if(province!=null && province.Id > 0)
+                                {
+                                    <option selected value="@province.Id">@province.Name</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="lbl">Huyện<sup class="red">*</sup></label>
+                        <div class="wrap_input">
+                            <select id="supplier-district" class="w-100 form-control">
+                                @if (district != null && district.Id > 0)
+                                {
+                                    <option selected value="@district.Id">@district.Name</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="lbl">Phường / Xã / Thị trấn<sup class="red">*</sup></label>
+                        <div class="wrap_input">
+                            <select id="supplier-ward" class="w-100 form-control">
+                                @if (ward != null && ward.Id > 0)
+                                {
+                                    <option selected value="@ward.Id">@ward.Name</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
                     <div class="form-group">
                         <label class="lbl">Địa chỉ</label>
                         <div class="wrap_input">
                             <input type="text" class="form-control" asp-for="@Model.Address" />
                         </div>
                     </div>
-                   
                 </div>
             </div>
         </div>

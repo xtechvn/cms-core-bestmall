@@ -130,7 +130,7 @@ var _supplier_service = {
             _supplier_service.modal_element.find('.modal-body').html(result);
             _supplier_service.modal_element.modal('show');
             $('.modal-backdrop').css('z-index', '0')
-
+            _supplier_service.Select2Location()
         });
     },
 
@@ -213,6 +213,24 @@ var _supplier_service = {
         });
 
         if (!Form.valid()) { return; }
+        var province = $('#supplier-province').find(':selected')
+        if (province == null || province == undefined) {
+            _msgalert.error("Vui lòng chọn tỉnh cho địa chỉ kho hàng ");
+            $("#supplier-province").get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
+
+        }
+        var district = $('#supplier-district').find(':selected')
+        if (district == null || district == undefined) {
+            _msgalert.error("Vui lòng chọn huyện trong địa chỉ kho hàng");
+            $("#supplier-district").get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
+
+        }
+        var ward = $('#supplier-ward').find(':selected')
+        if (ward == null || ward == undefined) {
+            _msgalert.error("Vui lòng phường / xã trong địa chỉ kho hàng ");
+            $("#supplier-ward").get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
+
+        }
         var status_attachment = 0;
         $('.form-group-attachment').each(function (index, item) {
             var element = $(this)
@@ -250,6 +268,10 @@ var _supplier_service = {
         let formData = this.GetFormData(Form);
 
         formData['SupplierCode'] = 'SUPPLIER_CODE';
+        formData['ProvinceId'] = $('#supplier-province').find(':selected').val();
+        formData['DistrictId'] = $('#supplier-district').find(':selected').val();
+        formData['WardId'] = $('#supplier-ward').find(':selected').val();
+
 
         let url = formData.SupplierId > 0 ? "/Supplier/Update" : "/Supplier/Create";
         _global_function.AddLoading()
@@ -564,6 +586,95 @@ var _supplier_service = {
                 }
             });
         });
+    },
+    Select2Location: function () {
+        var selected_ward = $('#supplier-ward').find(':selected').val()
+        var selected_district = $('#supplier-district').find(':selected').val()
+        var selected_province = $('#supplier-province').find(':selected').val()
+        $('#supplier-ward').select2({
+            ajax: {
+                url: "/Location/WardSuggestion",
+                type: "post",
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    var query = {
+                        keyword: params.term,
+                    }
+                    return query;
+                },
+                processResults: function (response) {
+                    return {
+                        results: $.map(response.data, function (item) {
+                            return {
+                                text: '[' + item.id + '] - ' + item.name,
+                                id: item.id,
+                            }
+                        })
+                    };
+                },
+                cache: true
+            }
+        });
+        $('#supplier-district').select2({
+            ajax: {
+                url: "/Location/DistrictSuggestion",
+                type: "post",
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    var query = {
+                        keyword: params.term,
+                    }
+                    return query;
+                },
+                processResults: function (response) {
+                    return {
+                        results: $.map(response.data, function (item) {
+                            return {
+                                text: '[' + item.id + '] - ' + item.name,
+                                id: item.id,
+                            }
+                        })
+                    };
+                },
+                cache: true
+            }
+        });
+        $('#supplier-province').select2({
+            ajax: {
+                url: "/Location/ProvinceSuggestion",
+                type: "post",
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    var query = {
+                        keyword: params.term,
+                    }
+                    return query;
+                },
+                processResults: function (response) {
+                    return {
+                        results: $.map(response.data, function (item) {
+                            return {
+                                text: '[' + item.id + '] - ' + item.name,
+                                id: item.id,
+                            }
+                        })
+                    };
+                },
+                cache: true
+            }
+        });
+        if (selected_district != undefined) {
+            $('#supplier-district').val(selected_district).trigger('change')
+        }
+        if (selected_province != undefined) {
+            $('#supplier-province').val(selected_province).trigger('change')
+        }
+        if (selected_ward != undefined) {
+            $('#supplier-ward').val(selected_ward).trigger('change')
+        }
     }
 }
 

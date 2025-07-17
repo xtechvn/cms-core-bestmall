@@ -161,6 +161,9 @@ namespace DAL.Funding
                     new SqlParameter("@Address", model.Address ?? (object)DBNull.Value),
                     new SqlParameter("@CreatedBy", model.CreatedBy),
                     new SqlParameter("@CreatedDate", DateTime.Now),
+                    new SqlParameter("@ProvinceId", model.ProvinceId),
+                    new SqlParameter("@DistrictId", model.DistrictId),
+                    new SqlParameter("@WardId", model.WardId),
                 };
                 return _DbWorker.ExecuteNonQuery(StoreProcedureConstant.SP_InsertSupplier, objParam);
             }
@@ -183,7 +186,10 @@ namespace DAL.Funding
                     new SqlParameter("@Email", model.Email ?? (object)DBNull.Value),
                     new SqlParameter("@Phone", model.Phone ?? (object)DBNull.Value),
                     new SqlParameter("@Address", model.Address ?? (object)DBNull.Value),
-                    new SqlParameter("@UpdatedBy ", model.UpdatedBy)
+                    new SqlParameter("@UpdatedBy ", model.UpdatedBy),
+                       new SqlParameter("@ProvinceId", model.ProvinceId),
+                    new SqlParameter("@DistrictId", model.DistrictId),
+                    new SqlParameter("@WardId", model.WardId),
                 };
                 return _DbWorker.ExecuteNonQuery(StoreProcedureConstant.SP_UpdateSupplier, objParam_contractPay);
             }

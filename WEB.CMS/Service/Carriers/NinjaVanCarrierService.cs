@@ -67,9 +67,9 @@ namespace WEB.CMS.Service.Carriers
                            + "[" + (order.Address == null ? "NULL" : order.Address) + "]");
                     return carrier_packages_id;
                 }
-                var provinces = _locationESService.GetProvincesByID((int)order.ProvinceId);
+                var provinces = _locationESService.GetProvincesById((int)order.ProvinceId);
                 var district = _locationESService.GetDistrictById((int)order.DistrictId);
-                var ward = _locationESService.GetWardsById((int)order.WardId);
+                var ward = _locationESService.GetWardById((int)order.WardId);
                 var http_client = new HttpClient();
                 var request = new HttpRequestMessage(HttpMethod.Post, _configuration["Carrier:NinjaVan:Domain"] + _configuration["Carrier:NinjaVan:APIs:CreateOrder"]);
                 request.Headers.Add("Authorization", "Bearer "+await GetBearerToken());

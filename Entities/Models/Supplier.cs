@@ -50,4 +50,8 @@ public partial class Supplier
     public DateTime? UpdatedDate { get; set; }
 
     public int? Status { get; set; }
+    public int? DistrictId { get; set; }
+
+    public int? WardId { get; set; }
+
 }
