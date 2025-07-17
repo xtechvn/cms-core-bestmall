@@ -635,7 +635,7 @@ namespace CMS.Controllers
         }
 
         [HttpPost]
-        public IActionResult WardSuggestion(string keyword)
+        public IActionResult WardSuggestion(string keyword, int district_id = -1)
         {
             if (keyword == null) keyword = "";
 
@@ -657,7 +657,7 @@ namespace CMS.Controllers
         }
         [HttpPost]
 
-        public IActionResult DistrictSuggestion(string keyword)
+        public IActionResult DistrictSuggestion(string keyword,int province_id=-1)
         {
             try
             {

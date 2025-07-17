@@ -1,6 +1,7 @@
 ﻿using Elasticsearch.Net;
 using Entities.Models;
 using Nest;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Numeric;
 using System.Configuration;
 using System.Reflection;
 using Utilities;
@@ -433,29 +434,37 @@ namespace Caching.Elasticsearch
             return null;
         }
 
-        public List<Ward> WardSuggestion(string keyword)
+        public List<Ward> WardSuggestion(string keyword, int district_id = -1)
         {
             List<Ward> result = new List<Ward>();
             try
             {
-                var query = elasticClient.Search<Ward>(sd => sd
-                  .Index(index_wards)
-                  .Size(10)
-                  .Query(q => q.Bool(
-                      qb => qb.Should(
-                          q1 => q1.QueryString(m => m
-                              .DefaultField(f => f.Name) // Chỉ tìm kiếm trên trường Name
-                              .Query("*" + keyword.Trim() + "*")
-                              .AnalyzeWildcard(true)
-                          ),
-                          q2 => q2.QueryString(m => m
-                              .DefaultField(f => f.NameNonUnicode) // Chỉ tìm kiếm trên trường NameNonUnicode
-                              .Query("*" + StringHelpers.RemoveUnicode(keyword.Trim()) + "*")
-                              .AnalyzeWildcard(true)
-                          )
-                      ).MinimumShouldMatch(1) // Chỉ cần khớp với ít nhất một trong hai điều kiện
-                  ))
-              );
+                var query = elasticClient.Search<Ward>(s => s
+                     .Index(index_wards)
+                    .Query(q => q
+                        .Bool(b => b
+                            .Must(m => m
+                                .Match(t => t
+                                    .Field(f => f.DistrictId) // Giả định ProvinceId là một trường trong YourDocumentType
+                                    .Query(district_id.ToString())
+                                )
+                            )
+                           .Should(sh => sh // `Should` nghĩa là một trong các điều kiện này nên khớp
+                                .QueryString(qs => qs
+                                    .DefaultField(f => f.Name)
+                                    .Query($"*{keyword}*") // Tìm kiếm với wildcard cho "ha noi"
+                                )
+                                || sh
+                                .QueryString(qs => qs
+                                    .DefaultField(f => f.NameNonUnicode)
+                                    .Query($"*{keyword}*") // Tìm kiếm với wildcard cho "ha noi"
+                                )
+                            )
+                        )
+                    )
+                    .From(0)
+                    .Size(100)
+                );
 
                 if (!query.IsValid)
                 {
@@ -475,29 +484,37 @@ namespace Caching.Elasticsearch
             }
             return null;
         }
-        public List<District> DistrictSuggestion(string keyword)
+        public List<District> DistrictSuggestion(string keyword, int province_id = -1)
         {
             List<District> result = new List<District>();
             try
             {
-                var query = elasticClient.Search<District>(sd => sd
-                  .Index(index_district)
-                  .Size(10)
-                  .Query(q => q.Bool(
-                      qb => qb.Should(
-                          q1 => q1.QueryString(m => m
-                              .DefaultField(f => f.Name) // Chỉ tìm kiếm trên trường Name
-                              .Query("*" + keyword.Trim() + "*")
-                              .AnalyzeWildcard(true)
-                          ),
-                          q2 => q2.QueryString(m => m
-                              .DefaultField(f => f.NameNonUnicode) // Chỉ tìm kiếm trên trường NameNonUnicode
-                              .Query("*" + StringHelpers.RemoveUnicode(keyword.Trim()) + "*")
-                              .AnalyzeWildcard(true)
-                          )
-                      ).MinimumShouldMatch(1) // Chỉ cần khớp với ít nhất một trong hai điều kiện
-                  ))
-              );
+                var query = elasticClient.Search<District>(s => s
+                     .Index(index_wards)
+                    .Query(q => q
+                        .Bool(b => b
+                            .Must(m => m
+                                .Match(t => t
+                                    .Field(f => f.ProvinceId) // Giả định ProvinceId là một trường trong YourDocumentType
+                                    .Query(province_id.ToString())
+                                )
+                            )
+                           .Should(sh => sh // `Should` nghĩa là một trong các điều kiện này nên khớp
+                                .QueryString(qs => qs
+                                    .DefaultField(f => f.Name)
+                                    .Query($"*{keyword}*") // Tìm kiếm với wildcard cho "ha noi"
+                                )
+                                || sh
+                                .QueryString(qs => qs
+                                    .DefaultField(f => f.NameNonUnicode)
+                                    .Query($"*{keyword}*") // Tìm kiếm với wildcard cho "ha noi"
+                                )
+                            )
+                        )
+                    )
+                    .From(0)
+                    .Size(100)
+                );
 
                 if (!query.IsValid)
                 {
@@ -524,7 +541,7 @@ namespace Caching.Elasticsearch
             {
                 var query = elasticClient.Search<Province>(sd => sd
                   .Index(index_province)
-                  .Size(10)
+                  .Size(100)
                   .Query(q => q.Bool(
                       qb => qb.Should(
                           q1 => q1.QueryString(m => m
