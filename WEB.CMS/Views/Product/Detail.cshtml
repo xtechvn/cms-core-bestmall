@@ -1112,20 +1112,20 @@
             <label class="label">Sản phẩm có chung cân nặg và kích thước</label>
             <div class="wrap_input">
                 <label class="switch no-text switch-active">
-                    <input type="checkbox" class="switch-weight" @(product != null && product.is_one_weight == true ? "checked" : (product==null || product._id==null?"checked":""))>
+                    <input type="checkbox" class="switch-weight" @(product == null || (product != null && product.is_one_weight == true) ? "checked" : ""))>
                     <span class="slider round"></span>
                 </label>
 
             </div>
         </div>
-        <div class="box-input-ship" style="@((product != null && product.is_one_weight == true)? "":(product==null || product._id==null?"":"display:none;"))">
+        <div class="box-input-ship" style="@(product == null || (product != null && product.is_one_weight == true) ? "":"display:none;"))">
             <div class="item flex flex-lg-nowrap gap10 mb-2 w-100">
                 <label class="label">Cân nặng<sup class="red">*</sup></label>
                 <div class="wrap_input">
                     <div class="row">
                         <div class="col-lg-4 col-md-6">
                             <div class="form-group mb-0 price">
-                                <input type="text" class="form-control input-price weight" placeholder="Nhập cân nặng" value="@(product!=null && product.weight!=null? ((float)product.weight).ToString("N0"):"")" @(product != null && product.is_one_weight == true ? "" : "readonly")>
+                                <input type="text" class="form-control input-price weight" placeholder="Nhập cân nặng" value="@(product != null && product.weight != null ? ((float)product.weight).ToString("N0") : "")" @(product == null || (product != null && product.is_one_weight == true) ? "" : "readonly")>
                                 <span class="note">gr</span>
                             </div>
                             <p class="mt-1">Sau khi đóng gói</p>
@@ -1139,19 +1139,19 @@
                     <div class="row">
                         <div class="col-lg-3 col-md-4">
                             <div class="form-group mb-0 price">
-                                <input type="text" class="form-control input-price dismenssion-height" placeholder="Nhập kích thước" value="@(product!=null && product.package_height!=null? ((float)product.package_height).ToString("N0"):"")" @(product != null && product.is_one_weight == true ? "" : "readonly")>
+                                <input type="text" class="form-control input-price dismenssion-height" placeholder="Nhập kích thước" value="@(product != null && product.package_height != null ? ((float)product.package_height).ToString("N0") : "")" @(product == null || (product != null && product.is_one_weight == true) ? "" : "readonly")>
                                 <span class="note">cm</span>
                             </div>
                         </div>
                         <div class="col-lg-3 col-md-4">
                             <div class="form-group mb-0 price">
-                                <input type="text" class="form-control input-price dismenssion-width" placeholder="Nhập kích thước" value="@(product!=null && product.package_width!=null? ((float)product.package_width).ToString("N0"):"")" @(product != null && product.is_one_weight == true ? "" : "readonly")>
+                                <input type="text" class="form-control input-price dismenssion-width" placeholder="Nhập kích thước" value="@(product != null && product.package_width != null ? ((float)product.package_width).ToString("N0") : "")" @(product == null || (product != null && product.is_one_weight == true) ? "" : "readonly")>
                                 <span class="note">cm</span>
                             </div>
                         </div>
                         <div class="col-lg-3 col-md-4">
                             <div class="form-group mb-0 price">
-                                <input type="text" class="form-control input-price dismenssion-depth" placeholder="Nhập kích thước" value="@(product!=null && product.package_depth!=null? ((float)product.package_depth).ToString("N0"):"")" @(product != null && product.is_one_weight == true ? "" : "readonly")>
+                                <input type="text" class="form-control input-price dismenssion-depth" placeholder="Nhập kích thước" value="@(product != null && product.package_depth != null ? ((float)product.package_depth).ToString("N0") : "")" @(product == null || (product != null && product.is_one_weight == true) ? "" : "readonly")>
                                 <span class="note">cm</span>
                             </div>
                         </div>
