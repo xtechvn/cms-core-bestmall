@@ -504,7 +504,7 @@ var _product_constants = {
 
 var _product_constants_2 = {
     Values: {
-        GroupProduct: 1,
+        GroupProduct: 188,
         GroupProductName: 'Danh mục sản phẩm',
 
     },
