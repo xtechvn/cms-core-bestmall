@@ -1666,6 +1666,7 @@ var product_detail_new = {
         }
         var discount_value = ((old_price - min_price) / old_price) * 100
         var discount = Math.round(discount_value <= 0 ? 0 : discount_value)
+        if (discount == undefined|| isNaN(discount)) discount = 0
         $('#discount input').val(discount).trigger('change')
     },
     AddNewProductBuyWith: function () {
