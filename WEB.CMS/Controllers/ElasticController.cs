@@ -36,7 +36,7 @@ namespace WEB.CMS.Controllers
                 };
 
                 var _data_push = JsonConvert.SerializeObject(j_param);
-                var response_queue = work_queue.InsertQueueSimple(_data_push, "SYNC_DATA_TO_ES");
+                var response_queue = work_queue.InsertQueueSimpleSyncES(_data_push);
 
                 if (response_queue)
                 {

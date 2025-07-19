@@ -65,36 +65,43 @@ namespace WEB.CMS.RabitMQ
                 }
             }
         }
-        //public bool InsertQueueSimpleDurable( string message, string queueName)
-        //{
-            
-        //    using (var connection = factory.CreateConnection())
-        //    using (var channel = connection.CreateModel())
-        //    {
-        //        try
-        //        {
-        //            channel.QueueDeclare(queue: queueName,
-        //                             durable: true,
-        //                             exclusive: false,
-        //                             autoDelete: false,
-        //                             arguments: null);
+        public bool InsertQueueSimpleSyncES(string message)
+        {
+            var factory_sync = new ConnectionFactory()
+            {
+                HostName = configuration["Queue:Host"],
+                UserName = configuration["Queue:Username_Sync"],
+                Password = configuration["Queue:Password_Sync"],
+                VirtualHost = configuration["Queue:V_Host_Sync"],
+                Port = Protocols.DefaultProtocol.DefaultPort
+            };
+            using (var connection = factory_sync.CreateConnection())
+            using (var channel = connection.CreateModel())
+            {
+                try
+                {
+                    channel.QueueDeclare(queue: configuration["Queue:QueueSyncES"],
+                                     durable: true,
+                                     exclusive: false,
+                                     autoDelete: false,
+                                     arguments: null);
 
-        //            var body = Encoding.UTF8.GetBytes(message);
+                    var body = Encoding.UTF8.GetBytes(message);
 
-        //            channel.BasicPublish(exchange: "",
-        //                                 routingKey: queueName,
-        //                                 basicProperties: null,
-        //                                 body: body);
-        //            return true;
+                    channel.BasicPublish(exchange: "",
+                                         routingKey: configuration["Queue:QueueSyncES"],
+                                         basicProperties: null,
+                                         body: body);
+                    return true;
 
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            string error_msg = Assembly.GetExecutingAssembly().GetName().Name + "->" + MethodBase.GetCurrentMethod().Name + "=>" + ex.Message;
-        //            LogHelper.InsertLogTelegramByUrl(configuration["telegram:log_try_catch:bot_token"], configuration["telegram:log_try_catch:group_id"], error_msg);
-        //            return false;
-        //        }
-        //    }
-        //}
+                }
+                catch (Exception ex)
+                {
+                    string error_msg = Assembly.GetExecutingAssembly().GetName().Name + "->" + MethodBase.GetCurrentMethod().Name + "=>" + ex.Message;
+                    LogHelper.InsertLogTelegramByUrl(configuration["telegram:log_try_catch:bot_token"], configuration["telegram:log_try_catch:group_id"], error_msg);
+                    return false;
+                }
+            }
+        }
     }
 }

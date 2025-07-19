@@ -362,7 +362,7 @@ namespace WEB.CMS.Controllers
                             };
                     var _data_push = JsonConvert.SerializeObject(j_param);
                     // Push message vào queue
-                    var response_queue = work_queue.InsertQueueSimple(_data_push, QueueName.queue_app_push);
+                    var response_queue = work_queue.InsertQueueSimpleSyncES(_data_push);
 
                     return new JsonResult(new
                     {
@@ -469,7 +469,7 @@ namespace WEB.CMS.Controllers
                             };
                 var _data_push = JsonConvert.SerializeObject(j_param);
                 // Push message vào queue
-                var response_queue = work_queue.InsertQueueSimple(_data_push, QueueName.queue_app_push);
+                var response_queue = work_queue.InsertQueueSimpleSyncES(_data_push);
 
 
             }
