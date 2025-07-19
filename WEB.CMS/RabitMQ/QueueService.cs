@@ -29,7 +29,7 @@ namespace WEB.CMS.RabitMQ
             var _data_push = JsonConvert.SerializeObject(j_param);
 
             // Push message vào queue
-            var response_queue = work_queue.InsertQueueSimple(_data_push, queueName);
+            var response_queue = work_queue.InsertQueueSimpleSyncES(_data_push);
 
             return new JsonResult(new
             {
