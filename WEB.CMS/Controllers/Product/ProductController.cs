@@ -379,6 +379,11 @@ namespace WEB.CMS.Controllers
                             {
                                 _redisConn.clear(CacheName.ARTICLE_CATEGORY_MENU + "_" + id, Convert.ToInt32(_configuration["Redis:Database:db_common"]));
                                 _redisConn.clear("ARTICLE_B2C_CATEGORY_MENU_FOOTER" + id, Convert.ToInt32(_configuration["Redis:Database:db_common"]));
+                                _redisConn.clear(CacheName.ARTICLE_B2C_CATEGORY_MENU + id, Convert.ToInt32(_configuration["Redis:Database:db_common"]));
+                                _redisConn.clear(CacheName.ARTICLE_B2C_CATEGORY_MENU + 188, Convert.ToInt32(_configuration["Redis:Database:db_common"]));
+                                _redisConn.clear(CacheName.ARTICLE_B2C_CATEGORY_MENU_FOOTER + 188, Convert.ToInt32(_configuration["Redis:Database:db_common"]));
+                                _redisConn.clear("GROUP_PRODUCT_FLASHSALE_" + id, Convert.ToInt32(_configuration["Redis:Database:db_common"]));
+                                await _redisConn.DeleteCacheByKeyword(CacheName.ARTICLE_CATEGORY_MENU, Convert.ToInt32(_configuration["Redis:Database:db_common"]));
                             }
                         }
                     }
