@@ -222,6 +222,7 @@ namespace WEB.CMS.Controllers
                         var exists = _supplierRepository.GetSuplierById(result);
                         string json = JsonConvert.SerializeObject(exists);
                         SupplierESModel sp_es = JsonConvert.DeserializeObject<SupplierESModel>(json.ToLower());
+                        sp_es.id = sp_es.supplierid;
                         await _supplierESRepository.DeleteById(sp_es.supplierid);
                         await _supplierESRepository.InsertAsync(sp_es);
                     }
@@ -796,6 +797,11 @@ namespace WEB.CMS.Controllers
                     {
                         string json = JsonConvert.SerializeObject(sp);
                         List<SupplierESModel> sp_es = JsonConvert.DeserializeObject<List<SupplierESModel>>(json.ToLower());
+                        foreach(var detail in sp_es)
+                        {
+                            detail.id = detail.supplierid;
+                        }
+
                         await _supplierESRepository.DeleteByIds(sp_es.Select(x => x.supplierid).ToList());
                         await _supplierESRepository.IndexMany(sp_es);
                     }
