@@ -55,7 +55,16 @@ namespace Caching.Elasticsearch.FlashSale
 
             return response.IsValid && response.Deleted > 0;
         }
+        public async Task<bool> DeleteAll()
+        {
+            var response = await _client.DeleteByQueryAsync<FlashSaleESModel>(q => q
+                .Query(rq => rq
+                    .MatchAll()
+                )
+            );
 
+            return response.IsValid && response.Deleted > 0;
+        }
         // 3. Function insert vào index
         public async Task<bool> InsertAsync(FlashSaleProductESModel product)
         {

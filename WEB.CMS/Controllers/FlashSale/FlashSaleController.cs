@@ -209,23 +209,24 @@ namespace WEB.CMS.Controllers.FlashSale
                     });
                 }
                 #region Sync ES
-                await _flashSaleESRepository.DeleteByFlashsaleId(flashsale.Id);
-                var supplier= _supplierRepository.GetSuplierById((int)flashsale.SupplierId);
-                FlashSaleESModel flashsale_es = new FlashSaleESModel()
-                {
-                    id = _flashSaleESRepository.GenerateId(),
-                    flashsale_id = flashsale.Id,
-                    fromdate = flashsale.FromDate,
-                    status = flashsale.Status,
-                    supplierid = flashsale.SupplierId,
-                    todate = flashsale.ToDate,
-                    name=flashsale.Name,
-                    banner=flashsale.Banner,
-                    supplier_name=supplier.FullName,
-                    created_date= flashsale.CreateDate,
+                //await _flashSaleESRepository.DeleteByFlashsaleId(flashsale.Id);
+                //var supplier= _supplierRepository.GetSuplierById((int)flashsale.SupplierId);
+                //FlashSaleESModel flashsale_es = new FlashSaleESModel()
+                //{
+                //    id = _flashSaleESRepository.GenerateId(),
+                //    flashsale_id = flashsale.Id,
+                //    fromdate = flashsale.FromDate,
+                //    status = flashsale.Status,
+                //    supplierid = flashsale.SupplierId,
+                //    todate = flashsale.ToDate,
+                //    name=flashsale.Name,
+                //    banner=flashsale.Banner,
+                //    supplier_name=supplier.FullName,
+                //    created_date= flashsale.CreateDate,
 
-                };
-                await _flashSaleESRepository.InsertAsync(flashsale_es);
+                //};
+                //await _flashSaleESRepository.InsertAsync(flashsale_es);
+                SyncES();
                 #endregion
               
 
@@ -422,6 +423,7 @@ namespace WEB.CMS.Controllers.FlashSale
                     await _flashSaleESRepository.IndexMany(all_fsl_es);
                 }
                 var fspl = await _flashSaleProductRepository.GetAll();
+                await _flashSaleProductESRepository.DeleteAll();
                 if (fspl != null && fspl.Count > 0)
                 {
                     List<FlashSaleProductESModel> all_fspl_es = fspl.Select(x => new FlashSaleProductESModel()
@@ -447,7 +449,7 @@ namespace WEB.CMS.Controllers.FlashSale
 
                         }
                     }
-                    await _flashSaleProductESRepository.DeleteByIds(all_fspl_es.Select(x => x.flashsale_productid).ToList());
+                   // await _flashSaleProductESRepository.DeleteByIds(all_fspl_es.Select(x => x.flashsale_productid).ToList());
                     await _flashSaleProductESRepository.IndexMany(all_fspl_es);
                 }
             }
