@@ -191,7 +191,7 @@ namespace Repositories.Repositories
             _strHtml.Append(@"<div class=""control"">");
             _strHtml.Append(@"<a class=""btn-add-group-product"" data-id=" + _parentModel.Id + "><img src=/images/icons/sql.png /></a>");
             _strHtml.Append(@"<a class=""btn-edit-group-product"" data-id=" + _parentModel.Id + "><img src=/images/icons/edit.png /></a>");
-            _strHtml.Append("<a class=\"btn-clearcache-group-product\"data-name=\""+ _parentModel.Name + "\" data-id=\"" + _parentModel.Id + "\"><img src=/images/icons/edit.png /></a>");
+           // _strHtml.Append("<a class=\"btn-clearcache-group-product\"data-name=\""+ _parentModel.Name + "\" data-id=\"" + _parentModel.Id + "\"><img src=/images/icons/edit.png /></a>");
             _strHtml.Append(@"</div>");
 
             if (_parentModel.Status == 1)

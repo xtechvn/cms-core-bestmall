@@ -512,12 +512,7 @@ var _product_constants_2 = {
         Input:` <div class="col-md-6 lastest-attribute-value item ui-sortable-handle attributes-detail" draggable="true">
                                                     <div class="box-list">
                                                         <div class="form-group namesp flex-input-choose">
-                                                            <label class="choose choose-wrap">
-                                                                <input type="file" name="myFile">
-                                                                <div class="choose-content">
-                                                                    <i class="icofont-image"></i>
-                                                                </div>
-                                                            </label>
+                                                          
                                                             <div class="relative w-100">
                                                                 <input type="text" class="form-control" placeholder="" value="">
                                                                 <span class="note"><nw class="count">0</nw>/14</span>
