@@ -162,6 +162,49 @@ namespace Caching.Elasticsearch.FlashSale
                 return new List<FlashSaleESModel>();
             }
         }
+        public async Task<List<FlashSaleESModel>> GetActiveFlashsaleBySupplierID(int supplier_id,DateTime from_date,DateTime to_date)
+        {
+            var now = DateTime.Now; 
+
+            var response = await _client.SearchAsync<FlashSaleESModel>(s => s
+                      .Query(q => q
+                          .Bool(b => b
+                              .Filter(
+                                  bs => bs.Term(t => t
+                                      .Field(f => f.supplierid)
+                                      .Value(supplier_id)
+                                  ),
+                                  bs => bs.Term(t => t
+                                      .Field(f => f.status)
+                                      .Value(1)
+                                  )
+                              )
+                              .Should(
+                                  sbs => sbs.DateRange(r => r
+                                      .Field(f => f.fromdate) 
+                                      .GreaterThanOrEquals(from_date)
+                                      .LessThanOrEquals(to_date)
+                                  ),
+                                  sbs => sbs.DateRange(r => r
+                                      .Field(f => f.todate) 
+                                      .GreaterThanOrEquals(from_date)
+                                      .LessThanOrEquals(to_date)
+                                  )
+                              )
+                              .MinimumShouldMatch(1) 
+                          )
+                      )
+            );
+
+            if (response.IsValid)
+            {
+                return response.Documents.ToList();
+            }
+            else
+            {
+                return new List<FlashSaleESModel>();
+            }
+        }
         public long GenerateId()
         {
             IdGenerator _generator = new(0); // Machine ID = 0

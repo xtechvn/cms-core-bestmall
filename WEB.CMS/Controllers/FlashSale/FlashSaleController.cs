@@ -156,7 +156,7 @@ namespace WEB.CMS.Controllers.FlashSale
                         msg = "Thời gian bắt đầu chiến dịch không được lớn hơn thời gian kết thúc",
                     });
                 }
-                var exists_active_flashsale = await _flashSaleESRepository.GetActiveFlashsaleBySupplierID((int)flashsale.SupplierId);
+                var exists_active_flashsale = await _flashSaleESRepository.GetActiveFlashsaleBySupplierID((int)flashsale.SupplierId, flashsale.FromDate, flashsale.ToDate);
                 if (exists_active_flashsale != null && exists_active_flashsale.Count > 0)
                 {
                     var id_compare = (flashsale.Id <= 0 ? 0 : flashsale.Id);
@@ -166,7 +166,7 @@ namespace WEB.CMS.Controllers.FlashSale
                         return Ok(new
                         {
                             is_success = false,
-                            msg = "Nhà cung cấp này đã có chương trình FlashSale khác đang hoạt động, vui lòng chọn nhà cung cấp khác",
+                            msg = "Nhà cung cấp này đã có chương trình FlashSale khác đang hoạt động cùng 1 khoảng thời gian, vui lòng chọn nhà cung cấp khác",
                         });
                     }
                 }
