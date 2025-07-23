@@ -17,7 +17,7 @@ using Utilities.Contants;
 using WEB.CMS.Customize;
 using WEB.CMS.Models;
 
-namespace WEB.Adavigo.CMS.Controllers
+namespace WEB.BestMall.CMS.Controllers
 {
     [CustomAuthorize]
 

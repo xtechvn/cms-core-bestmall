@@ -6,7 +6,7 @@ using Utilities;
 using WEB.CMS.Customize;
 using Entities.ViewModels.Label;
 using Entities.Models;
-using WEB.Adavigo.CMS.Service;
+using WEB.BestMall.CMS.Service;
 using System.Security.Claims;
 using Utilities.Contants;
 using WEB.CMS.Models.Product;

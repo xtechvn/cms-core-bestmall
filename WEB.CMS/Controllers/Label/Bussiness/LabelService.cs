@@ -1,6 +1,6 @@
 ﻿using Utilities.Contants;
 using Utilities.Contants.ProductV2;
-using WEB.Adavigo.CMS.Service;
+using WEB.BestMall.CMS.Service;
 using WEB.CMS.Models.Product;
 
 namespace WEB.CMS.Controllers.Bussiness

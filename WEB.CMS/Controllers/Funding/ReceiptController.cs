@@ -10,7 +10,7 @@ using Repositories.Repositories;
 using System.Security.Claims;
 using Utilities;
 using Utilities.Contants;
-using WEB.Adavigo.CMS.Service;
+using WEB.BestMall.CMS.Service;
 using WEB.CMS.Customize;
 using WEB.CMS.Models;
 using Newtonsoft.Json;
@@ -623,7 +623,7 @@ namespace WEB.CMS.Controllers.Funding
             }
             catch (Exception ex)
             {
-                LogHelper.InsertLogTelegram("GetListBankAccountAdavigo - ReceiptController: " + ex);
+                LogHelper.InsertLogTelegram("GetListBankAccountBestMall - ReceiptController: " + ex);
                 return Ok(new
                 {
                     isSuccess = false,

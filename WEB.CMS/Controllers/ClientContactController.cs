@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 using Utilities;
 using Utilities.Contants;
 
-namespace WEB.Adavigo.CMS.Controllers
+namespace WEB.BestMall.CMS.Controllers
 {
     public class ClientContactController : Controller
     {

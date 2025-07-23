@@ -8,7 +8,7 @@ using Repositories.IRepositories;
 using System.Security.Claims;
 using Utilities;
 using Utilities.Contants;
-using WEB.Adavigo.CMS.Service;
+using WEB.BestMall.CMS.Service;
 using WEB.CMS.Models;
 using WEB.CMS.RabitMQ;
 

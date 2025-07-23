@@ -10,7 +10,7 @@ using Utilities;
 using Utilities.Contants;
 using WEB.CMS.Models;
 
-namespace WEB.Adavigo.CMS.Service
+namespace WEB.BestMall.CMS.Service
 {
     public class IndentiferService
     {
