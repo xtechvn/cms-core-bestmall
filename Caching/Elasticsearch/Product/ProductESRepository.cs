@@ -87,6 +87,16 @@ namespace Caching.Elasticsearch
             IdGenerator _generator = new(0); // Machine ID = 0
             return _generator.CreateId();
         }
+        public async Task<bool> DeleteAll()
+        {
+            var response = await _client.DeleteByQueryAsync<ProductESModel>(q => q
+                .Query(rq => rq
+                    .MatchAll()
+                )
+            );
+
+            return response.IsValid && response.Deleted > 0;
+        }
     }
 
 

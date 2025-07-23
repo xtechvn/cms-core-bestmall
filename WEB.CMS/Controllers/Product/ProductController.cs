@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using OfficeOpenXml;
 using Repositories.IRepositories;
+using Repositories.Repositories;
 using System.Security.Claims;
 using System.Text;
 using Utilities;
@@ -377,6 +378,24 @@ namespace WEB.CMS.Controllers
                         {
                             foreach (var id in split)
                             {
+                                try
+                                {
+                                    var group= await _groupProductRepository.GetById(Convert.ToInt32(id));
+                                    group.ProductCount = await _productV2DetailMongoAccess.CountByGroupId(Convert.ToInt32(id));
+                                    await _groupProductRepository.UpSert(group);
+                                    var j_param = new Dictionary<string, object>
+                                    {
+                                         { "store_name", "SP_GetGroupProduct" },
+                                        { "index_es", "hulotoys_sp_getgroupproduct" },
+                                        {"project_type", Convert.ToInt16(ProjectType.HULOTOYS) },
+                                          {"id" , Convert.ToInt32(id) }
+
+                                    };
+                                    var _data_push = JsonConvert.SerializeObject(j_param);
+                                    // Push message vào queue
+                                    var response_queue = work_queue.InsertQueueSimpleSyncES(_data_push);
+                                }
+                                catch { }
                                 _redisConn.clear(CacheName.ARTICLE_CATEGORY_MENU + "_" + id, Convert.ToInt32(_configuration["Redis:Database:db_common"]));
                                 _redisConn.clear("ARTICLE_B2C_CATEGORY_MENU_FOOTER" + id, Convert.ToInt32(_configuration["Redis:Database:db_common"]));
                                 _redisConn.clear(CacheName.ARTICLE_B2C_CATEGORY_MENU + id, Convert.ToInt32(_configuration["Redis:Database:db_common"]));
@@ -1094,6 +1113,8 @@ namespace WEB.CMS.Controllers
         {
             try
             {
+
+                await _productESRepository.DeleteAll();
                 var products = await _productV2DetailMongoAccess.GetAllProducts();
                 if (products != null && products.Count > 0)
                 {
@@ -1101,8 +1122,6 @@ namespace WEB.CMS.Controllers
                     products = products.GroupBy(x => x.name).Select(x => x.First()).ToList();
                     foreach (var product in products)
                     {
-                        await _productESRepository.DeleteByProductIdAsync(product._id);
-
                         ProductESModel product_es = new ProductESModel()
                         {
                             id = _productESRepository.GenerateId(),

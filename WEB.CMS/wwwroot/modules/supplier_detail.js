@@ -48,6 +48,12 @@ var _supplier_detail = {
                 _supplier_detail.Upload(element)
             }
         })
+        $('body').on('click', '.tab-users-tr input, .tab-users-tr select', function () {
+            var element = $(this)
+            element.closest('.form-group').find('.error').hide()
+            element.closest('.form-group').find('.error').html('Vui lòng không để trống')
+        })
+        
     },
     Upload: function (element) {
         var _validFileExtensions = ["jpg", "jpeg", "bmp", "gif", "png"];
@@ -109,7 +115,9 @@ var _supplier_detail = {
                 _msgalert.error('Sync ES Failed')
             }
         });
-    },
+    }
+   
+
 }
 
 var _supplier_contact = {
@@ -459,11 +467,7 @@ var _suplier_user = {
                 }
             })
         })
-        $('body').on('click', '.tab-users-tr input, .tab-users-tr select', function () {
-            var element = $(this)
-            element.closest('.form-group').find('.error').hide() 
-            element.closest('.form-group').find('.error').html('Vui lòng không để trống') 
-        })
+        
     },
     ReArrangeIndex: function () {
         var count = 0;
@@ -550,7 +554,8 @@ var _suplier_user = {
     },
     removeSpecialCharactersUsername: function (str) {
         return str.replace(/[^a-zA-Z0-9._@-]/g, '');
-    }
+    },
+   
 
 }
 

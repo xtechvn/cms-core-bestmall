@@ -241,5 +241,17 @@ namespace Repositories.Repositories
             }
             return null;
         }
+        public async Task<List<Entities.Models.OrderDetail>> GetDetailByOrderId(long order_id)
+        {
+            try
+            {
+                return await _orderDetailDAL.GetByOrderId(order_id);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("GetByOrderId - OrderRepository: " + ex);
+            }
+            return null;
+        }
     }
 }
