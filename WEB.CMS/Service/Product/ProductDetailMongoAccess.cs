@@ -663,5 +663,27 @@ namespace WEB.CMS.Models.Product
                 return 0;
             }
         }
+        public async Task<List<ProductMongoDbModel>> GetBySupplierId(int supplier_id)
+        {
+            try
+            {
+                var filterDefinition = Builders<ProductMongoDbModel>.Filter;
+                var filter = filterDefinition.Empty;
+                filter &= Builders<ProductMongoDbModel>.Filter.Or(
+                    Builders<ProductMongoDbModel>.Filter.Eq(p => p.parent_product_id, null),
+                    Builders<ProductMongoDbModel>.Filter.Eq(p => p.parent_product_id, "")
+                );
+                filter &= Builders<ProductMongoDbModel>.Filter.Where(s => s.status != (int)ProductStatus.REMOVE);
+                filter &= Builders<ProductMongoDbModel>.Filter.Eq(x => x.supplier_id, supplier_id);
+
+
+                return await _productDetailCollection.Find(filter).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                Utilities.LogHelper.InsertLogTelegram("ProductDetailMongoAccess - GetBySupplierId Error: " + ex);
+            }
+            return null;
+        }
     }
 }

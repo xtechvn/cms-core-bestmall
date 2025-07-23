@@ -346,7 +346,7 @@ namespace WEB.CMS.Controllers
 
                 }
                 //--ES:
-                await _productESRepository.DeleteByProductIdAsync(product_main._id);
+                await _productESRepository.DeleteByProductId(product_main._id);
                 ProductESModel product_es = new ProductESModel()
                 {
                     id = _productESRepository.GenerateId(),
@@ -559,7 +559,7 @@ namespace WEB.CMS.Controllers
                 }
                 await _productV2DetailMongoAccess.Delete(product_id);
                 await _productV2DetailMongoAccess.RemoveSubProductByParentId(product_id);
-                await _productESRepository.DeleteByProductIdAsync(product_id);
+                await _productESRepository.DeleteByProductId(product_id);
 
                 return Ok(new
                 {
@@ -1135,7 +1135,9 @@ namespace WEB.CMS.Controllers
                             avatar = product.avatar,
                             status = product.status,
                             supplier_status = product.supplier_status,
-                            group_id = product.group_product_id
+                            group_id = product.group_product_id,
+                            supplier_id = product.supplier_id,
+
                         };
                         await _productESRepository.InsertAsync(product_es);
                         //-- ES FlashsalePRoduct:
@@ -1160,7 +1162,7 @@ namespace WEB.CMS.Controllers
         {
             try
             {
-                await _productESRepository.DeleteByProductIdAsync(product_id);
+                await _productESRepository.DeleteByProductId(product_id);
                 var product_main = await _productV2DetailMongoAccess.GetByID(product_id);
                 ProductESModel product_es = new ProductESModel()
                 {
@@ -1174,7 +1176,8 @@ namespace WEB.CMS.Controllers
                     avatar = product_main.avatar,
                     status = product_main.status,
                     supplier_status = product_main.supplier_status,
-                    group_id = product_main.group_product_id
+                    group_id = product_main.group_product_id,
+                    supplier_id=product_main.supplier_id,
                 };
                 await _productESRepository.InsertAsync(product_es);
             }

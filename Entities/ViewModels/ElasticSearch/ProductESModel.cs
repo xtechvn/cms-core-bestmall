@@ -13,5 +13,6 @@ public class ProductESModel
    public string avatar { get; set; }
    public int status { get; set; }
    public int? supplier_status { get; set; }
+   public int? supplier_id { get; set; }
    public string? group_id { get; set; }
 }
