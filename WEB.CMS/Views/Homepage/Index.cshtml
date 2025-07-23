@@ -1,4 +1,181 @@
 ﻿@{
-    ViewData["Title"] = "Admin - BestMall";
+    ViewData["Title"] = "Chỉnh sửa giao diện trang chủ - BestMall";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<section class="main-container add-banner add-product">
+    <div class="container">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Banner</li>
+        </ol>
+    </div>
+    <div class="row-main container">
+        <div class="line-bottom bg-white px-3 mb-3" style="padding-bottom: 0;">
+            <div class="tab-default mb0">
+                <a href="#" class="active p-2">Trang chủ</a>
+                <a href="#" class="p-2">Tin tức</a>
+            </div>
+        </div>
+    </div>
+    <div class="row-main container">
+        <div class="box-info bg-white p-3 mb-3">
+            <h4 class="title-box mb-3">Banner đầu trang chủ</h4>
+            <a href="javascript:;" class="float-right color-blue">Xem trước</a>
+            <h5 class="mb-3">Hình ảnh sản phẩm</h5>
+            <div class="item row flex-lg-nowrap gap10 mb-4 w-100">
+                <label class="col-2">Banner chính<br />(1200x360px)</label>
+                <div class="col-10 wrap_input">
+                    <div class="row list w-100" style="gap: 0;">
+                        <div class="col-md-3">
+                            <div class="w-100 items magnific_popup">
+                                <button type="button" class="delete"><i class="icofont-close-line"></i></button>
+                                <button type="button" class="crop"><i class="icofont-crop"></i></button>
+                                <a class=" magnific_thumb">
+                                    <img src="images/graphics/banner.png">
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="w-100 items magnific_popup">
+                                <button type="button" class="delete"><i class="icofont-close-line"></i></button>
+                                <button type="button" class="crop"><i class="icofont-crop"></i></button>
+                                <a class=" magnific_thumb">
+                                    <img src="images/graphics/banner.png">
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="w-100 items magnific_popup">
+                                <button type="button" class="delete"><i class="icofont-close-line"></i></button>
+                                <button type="button" class="crop"><i class="icofont-crop"></i></button>
+                                <a class=" magnific_thumb">
+                                    <img src="images/graphics/banner.png">
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="w-100 items magnific_popup">
+                                <button type="button" class="delete"><i class="icofont-close-line"></i></button>
+                                <button type="button" class="crop"><i class="icofont-crop"></i></button>
+                                <a class=" magnific_thumb">
+                                    <img src="images/graphics/banner.png">
+                                </a>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="row w-100">
+                        <div class="col-md-3 items import mt-3">
+                            <label class="choose choose-wrap p-5 rounded">
+                                <input type="file" name="myFile">
+                                <div class="choose-content">
+                                    <h4><i class="icofont-image text-lg"></i></h4>
+                                    <!-- <span>Thêm hình ảnh (0/9)</span> -->
+                                </div>
+                            </label>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+            <div class="item row flex-lg-nowrap gap10  w-100">
+                <label class="col-2">Banner phụ(1/3)<br />(Tỷ lệ 2:1)</label>
+                <div class="col-10 wrap_input">
+                    <div class="row list w-100" style="gap: 0;">
+                        <div class="col-md-2">
+                            <div class="w-100 items magnific_popup">
+                                <button type="button" class="delete"><i class="icofont-close-line"></i></button>
+                                <button type="button" class="crop"><i class="icofont-crop"></i></button>
+                                <a class=" magnific_thumb">
+                                    <img src="images/graphics/banner.png">
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="w-100 items magnific_popup">
+                                <button type="button" class="delete"><i class="icofont-close-line"></i></button>
+                                <button type="button" class="crop"><i class="icofont-crop"></i></button>
+                                <a class=" magnific_thumb">
+                                    <img src="images/graphics/banner.png">
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-md-2 items import">
+                            <label class="choose choose-wrap p-5 rounded">
+                                <input type="file" name="myFile">
+                                <div class="choose-content">
+                                    <h4><i class="icofont-image text-lg"></i></h4>
+                                    <!-- <span>Thêm hình ảnh (0/9)</span> -->
+                                </div>
+                            </label>
+                        </div>
+
+                    </div>
+                    <div class="row w-100">
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+        <div class="box-info bg-white p-3 mb-3">
+            <a href="javascript:;" class="btn btn-add float-right"><i class="icofont-plus-circle"></i>Thêm</a>
+            <h4 class="title-box mb-0">Banner ngành hàng<br /> </h4>
+            <p>(Tỷ 5:1)</p>
+            <div class="item row flex-lg-nowrap gap10 mb-4 w-100">
+                <label class="col-2">Banner 1<br />(1200x360px)</label>
+                <div class="col-10 wrap_input">
+                    <div class="bg-item p-3">
+                        <div class="wrap_input flex justify-between">
+                            <div class="d-flex align-items-center gap10 w-50">
+                                <h4 class="mb-0">Giá ưu đãi</h4>
+                                <p class="mb-0">(Tùy chỉnh)</p>
+                                <a href="javascript:;" class="edit"><i class="icofont-ui-edit"></i></a>
+                            </div>
+                            <a href="javascript:;" class="delete"><i class="icofont-close-line"></i></a>
+                        </div>
+                        <hr>
+                        <div class="w-50 items magnific_popup">
+                            <button type="button" class="delete"><i class="icofont-close-line"></i></button>
+                            <button type="button" class="crop"><i class="icofont-crop"></i></button>
+                            <a class=" magnific_thumb">
+                                <img src="images/graphics/banner.png">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="item row flex-lg-nowrap gap10 mb-4 w-100">
+                <label class="col-2">Banner 2<br />(1200x360px)</label>
+                <div class="col-10 wrap_input">
+                    <div class="bg-item p-3">
+                        <div class="wrap_input flex justify-between">
+                            <div class="d-flex gap10 w-50">
+                                <div class="form-group w-100 namesp mb-0 bg-white">
+                                    <input type="text" class="form-control" value="Giá ưu đãi"
+                                           placeholder="Tên ngành hàng">
+                                    <span class="note">0/120</span>
+                                </div>
+                                <a href="javascript:;" class="edit"><i class="icofont-ui-edit"></i></a>
+                            </div>
+                            <a href="javascript:;" class="delete"><i class="icofont-close-line"></i></a>
+                        </div>
+                        <hr>
+                        <label class="choose choose-wrap p-5 rounded w-50 bg-white">
+                            <input type="file" name="myFile">
+                            <div class="choose-content">
+                                <h4><i class="icofont-image text-lg"></i></h4>
+                                <span>Thêm hình ảnh (0/9)</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="action-form">
+            <a href="javascript:;" class="btn btn-round btn-outline-base">Hủy</a>
+            <a href="javascript:;" class="btn btn-round btn-base">Cập nhật</a>
+        </div>
+    </div>
+</section>
