@@ -564,6 +564,7 @@ namespace WEB.CMS.Controllers
                 }
                 await _productV2DetailMongoAccess.Delete(product_id);
                 await _productV2DetailMongoAccess.RemoveSubProductByParentId(product_id);
+                await _productESRepository.DeleteByProductIdAsync(product_id);
 
                 return Ok(new
                 {
@@ -941,6 +942,7 @@ namespace WEB.CMS.Controllers
                 int db_index = Convert.ToInt32(_configuration["Redis:Database:db_search_result"]);
                 await _redisConn.DeleteCacheByKeyword(CacheName.PRODUCT_LISTING, db_index);
                 await _redisConn.DeleteCacheByKeyword(CacheName.PRODUCT_DETAIL + product_id, db_index);
+                await SyncES(product_id);
                 return Ok(new
                 {
                     is_success = true,
@@ -976,6 +978,8 @@ namespace WEB.CMS.Controllers
                 int db_index = Convert.ToInt32(_configuration["Redis:Database:db_search_result"]);
                 await _redisConn.DeleteCacheByKeyword(CacheName.PRODUCT_LISTING, db_index);
                 await _redisConn.DeleteCacheByKeyword(CacheName.PRODUCT_DETAIL + product_id, db_index);
+                await SyncES(product_id);
+
                 return Ok(new
                 {
                     is_success = true,
@@ -1011,6 +1015,8 @@ namespace WEB.CMS.Controllers
                 int db_index = Convert.ToInt32(_configuration["Redis:Database:db_search_result"]);
                 await _redisConn.DeleteCacheByKeyword(CacheName.PRODUCT_LISTING, db_index);
                 await _redisConn.DeleteCacheByKeyword(CacheName.PRODUCT_DETAIL + product_id, db_index);
+                await SyncES(product_id);
+
                 return Ok(new
                 {
                     is_success = true,
@@ -1141,6 +1147,41 @@ namespace WEB.CMS.Controllers
                         await _flashSaleProductESRepository.UpdateFlashSaleGroup(product._id, product.group_product_id);
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("SyncES - ProductController: " + ex.ToString());
+                return Ok(new
+                {
+                    is_success = false
+                });
+            }
+            return Ok(new
+            {
+                is_success = true
+            });
+        }
+        public async Task<IActionResult> SyncES(string product_id)
+        {
+            try
+            {
+                await _productESRepository.DeleteByProductIdAsync(product_id);
+                var product_main = await _productV2DetailMongoAccess.GetByID(product_id);
+                ProductESModel product_es = new ProductESModel()
+                {
+                    id = _productESRepository.GenerateId(),
+                    amount = product_main.amount_min == null ? product_main.amount : (double)product_main.amount_min,
+                    description = product_main.description,
+                    name = product_main.name,
+                    product_code = product_main.code,
+                    product_id = product_main._id,
+                    product_name_no_tv = CommonHelper.RemoveSpecialCharacters(StringHelpers.RemoveUnicode(product_main.name).ToLower().Replace(" ", "").Trim()),
+                    avatar = product_main.avatar,
+                    status = product_main.status,
+                    supplier_status = product_main.supplier_status,
+                    group_id = product_main.group_product_id
+                };
+                await _productESRepository.InsertAsync(product_es);
             }
             catch (Exception ex)
             {

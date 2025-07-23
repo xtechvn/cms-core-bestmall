@@ -54,7 +54,7 @@ namespace Caching.Elasticsearch
 
             return response.IsValid && response.Deleted > 0;
         }
-
+        
         // 3. Function insert vào index
         public async Task<bool> InsertAsync(ProductESModel product)
         {

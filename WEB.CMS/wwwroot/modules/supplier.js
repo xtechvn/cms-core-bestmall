@@ -307,7 +307,6 @@ var _supplier_service = {
         if (banner_main.length > 0) {
             formData['BannerMain'] = JSON.parse(banner_main);
         }
-
         var banner_sub = []
         $('#banner-sub .col-md-3 .magnific_popup').each(function (index, item) {
             var element_image = $(this)
