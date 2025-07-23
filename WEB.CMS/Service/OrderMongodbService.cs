@@ -11,7 +11,7 @@ namespace APP_CHECKOUT.MongoDb
         public OrderMongodbService(IConfiguration configuration) {
 
             _configuration= configuration;
-            //      "connection_string": "mongodb://adavigolog_writer:adavigolog_2022@103.163.216.42:27017/?authSource=Adavigo"
+            //      "connection_string": "mongodb://adavigolog_writer:adavigolog_2022@103.163.216.42:27017/?authSource=BestMall"
             string _connection = "mongodb://" + _configuration["DataBaseConfig:MongoServer:user"]
                  + ":" + _configuration["DataBaseConfig:MongoServer:pwd"]
                  + "@" + _configuration["DataBaseConfig:MongoServer:Host"]

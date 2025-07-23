@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 using Utilities;
 
 
-namespace WEB.Adavigo.CMS.Service
+namespace WEB.BestMall.CMS.Service
 {
     public class TransferSmsService
     {

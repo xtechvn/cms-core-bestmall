@@ -13,7 +13,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Utilities;
 using Utilities.Contants;
-using WEB.Adavigo.CMS.Service;
+using WEB.BestMall.CMS.Service;
 using WEB.CMS.Customize;
 
 namespace WEB.CMS.Controllers

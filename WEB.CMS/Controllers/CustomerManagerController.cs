@@ -20,12 +20,12 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Utilities;
 using Utilities.Contants;
-using WEB.Adavigo.CMS.Service;
+using WEB.BestMall.CMS.Service;
 using WEB.CMS.Customize;
 using WEB.CMS.Models;
 using WEB.CMS.Service;
 
-namespace WEB.Adavigo.CMS.Controllers
+namespace WEB.BestMall.CMS.Controllers
 {
     [CustomAuthorize]
     public class CustomerManagerController : Controller

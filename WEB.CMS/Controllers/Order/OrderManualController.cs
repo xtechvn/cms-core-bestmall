@@ -12,7 +12,7 @@ using Repositories.Repositories;
 using System.Security.Claims;
 using Utilities;
 using Utilities.Contants;
-using WEB.Adavigo.CMS.Service;
+using WEB.BestMall.CMS.Service;
 using WEB.CMS.Controllers.Elastic.Bussiness;
 using WEB.CMS.Controllers.Order.Bussiness;
 using WEB.CMS.Customize;

@@ -15,7 +15,7 @@ using Utilities;
 using Utilities.Common;
 using Utilities.Contants;
 using Utilities.Contants.ProductV2;
-using WEB.Adavigo.CMS.Service;
+using WEB.BestMall.CMS.Service;
 using WEB.CMS.Controllers.Product.Bussiness;
 using WEB.CMS.Customize;
 using WEB.CMS.Models.Product;
