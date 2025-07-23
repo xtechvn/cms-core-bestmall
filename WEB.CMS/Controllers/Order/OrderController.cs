@@ -123,6 +123,7 @@ namespace WEB.CMS.Controllers
         {
             ViewBag.orderId = orderId;
             ViewBag.editsale = false;
+            ViewBag.CarrierTypeName = "";
             try
             {
                 int _UserId = 0;
@@ -177,7 +178,7 @@ namespace WEB.CMS.Controllers
                             }
                         }
                        
-                    return View(dataOrder);
+                        return View(dataOrder);
                     }
                  
                 }
