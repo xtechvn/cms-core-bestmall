@@ -164,8 +164,8 @@ namespace DAL.Funding
                     new SqlParameter("@ProvinceId", model.ProvinceId),
                     new SqlParameter("@DistrictId", model.DistrictId),
                     new SqlParameter("@WardId", model.WardId),
-                     new SqlParameter("@BannerMain", model.BannerMain),
-                    new SqlParameter("@BannerSub", model.BannerSub),
+                     new SqlParameter("@BannerMain", model.BannerMain?? (object)DBNull.Value),
+                    new SqlParameter("@BannerSub", model.BannerSub?? (object)DBNull.Value),
                 };
                 return _DbWorker.ExecuteNonQuery(StoreProcedureConstant.SP_InsertSupplier, objParam);
             }
@@ -192,8 +192,8 @@ namespace DAL.Funding
                        new SqlParameter("@ProvinceId", model.ProvinceId),
                     new SqlParameter("@DistrictId", model.DistrictId),
                     new SqlParameter("@WardId", model.WardId),
-                    new SqlParameter("@BannerMain", model.BannerMain),
-                    new SqlParameter("@BannerSub", model.BannerSub),
+                    new SqlParameter("@BannerMain", model.BannerMain?? (object)DBNull.Value),
+                    new SqlParameter("@BannerSub", model.BannerSub?? (object)DBNull.Value),
                 };
                 return _DbWorker.ExecuteNonQuery(StoreProcedureConstant.SP_UpdateSupplier, objParam_contractPay);
             }
