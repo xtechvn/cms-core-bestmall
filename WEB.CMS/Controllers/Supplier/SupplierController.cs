@@ -49,7 +49,7 @@ namespace WEB.CMS.Controllers
 
         public SupplierController(IAllCodeRepository allCodeRepository, ISupplierRepository supplierRepository, IUserRepository userRepository,
             ICommonRepository commonRepository, IConfiguration _configuration, IWebHostEnvironment webHostEnvironment, IAttachFileRepository attachFileRepository
-            , ProductDetailMongoAccess productV2DetailMongoAccess, SupplierESRepository supplierESRepository, LocationESService locationESService)
+            , ProductDetailMongoAccess productV2DetailMongoAccess, SupplierESRepository supplierESRepository, LocationESService locationESService, ProductESRepository _productESRepository)
         {
             _allCodeRepository = allCodeRepository;
             _supplierRepository = supplierRepository;
@@ -61,7 +61,7 @@ namespace WEB.CMS.Controllers
             _redisConn = new RedisConn(configuration);
             _redisConn.Connect();
             _userRepository = userRepository;
-            _supplierService = new SupplierService(configuration, productV2DetailMongoAccess);
+            _supplierService = new SupplierService(configuration, productV2DetailMongoAccess, _productESRepository);
             db_index = Convert.ToInt32(configuration["Redis:Database:db_search_result"]);
             _productV2DetailMongoAccess = productV2DetailMongoAccess;
             _supplierESRepository = supplierESRepository;
@@ -250,6 +250,7 @@ namespace WEB.CMS.Controllers
                         sp_es.id = sp_es.supplierid;
                         await _supplierESRepository.DeleteById(sp_es.supplierid);
                         await _supplierESRepository.InsertAsync(sp_es);
+                        await _supplierService.SyncES(model.SupplierId);
                     }
                     catch { }
                     return new JsonResult(new

@@ -41,20 +41,33 @@ namespace Caching.Elasticsearch
         }
 
         // 2. Function xóa theo product_id
-        public async Task<bool> DeleteByProductIdAsync(string productId)
+        public async Task<bool> DeleteByProductId(string product_id)
         {
             var response = await _client.DeleteByQueryAsync<ProductESModel>(q => q
                 .Query(rq => rq
                     .Term(t => t
                         .Field(f => f.product_id)
-                        .Value(productId)
+                        .Value(product_id)
                     )
                 )
             );
 
             return response.IsValid && response.Deleted > 0;
         }
-        
+        public async Task<bool> DeleteBySupplier(int supplier_id)
+        {
+            var response = await _client.DeleteByQueryAsync<ProductESModel>(q => q
+                .Query(rq => rq
+                    .Term(t => t
+                        .Field(f => f.supplier_id)
+                        .Value(supplier_id)
+                    )
+                )
+            );
+
+            return response.IsValid && response.Deleted > 0;
+        }
+
         // 3. Function insert vào index
         public async Task<bool> InsertAsync(ProductESModel product)
         {
