@@ -254,6 +254,8 @@ namespace DAL
                     new SqlParameter("@RefundStatus", model.RefundStatus??(object)DBNull.Value),
                     new SqlParameter("@RefundReason", model.RefundReason??(object)DBNull.Value),
                     new SqlParameter("@RefundDate", model.RefundDate??(object)DBNull.Value),
+                    new SqlParameter("@ShippingToken", model.ShippingToken??(object)DBNull.Value),
+                    new SqlParameter("@ShippingTypeCode", model.ShippingTypeCode??(object)DBNull.Value),
 
                 };
 

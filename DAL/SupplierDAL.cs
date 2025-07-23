@@ -164,6 +164,8 @@ namespace DAL.Funding
                     new SqlParameter("@ProvinceId", model.ProvinceId),
                     new SqlParameter("@DistrictId", model.DistrictId),
                     new SqlParameter("@WardId", model.WardId),
+                     new SqlParameter("@BannerMain", model.BannerMain),
+                    new SqlParameter("@BannerSub", model.BannerSub),
                 };
                 return _DbWorker.ExecuteNonQuery(StoreProcedureConstant.SP_InsertSupplier, objParam);
             }
@@ -190,6 +192,8 @@ namespace DAL.Funding
                        new SqlParameter("@ProvinceId", model.ProvinceId),
                     new SqlParameter("@DistrictId", model.DistrictId),
                     new SqlParameter("@WardId", model.WardId),
+                    new SqlParameter("@BannerMain", model.BannerMain),
+                    new SqlParameter("@BannerSub", model.BannerSub),
                 };
                 return _DbWorker.ExecuteNonQuery(StoreProcedureConstant.SP_UpdateSupplier, objParam_contractPay);
             }

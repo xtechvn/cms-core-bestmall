@@ -7,6 +7,7 @@ using Entities.ViewModels.BankingAccount;
 using Entities.ViewModels.ElasticSearch;
 using Entities.ViewModels.Funding;
 using Entities.ViewModels.SupplierConfig;
+using ENTITIES.ViewModels.ElasticSearch;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 using Newtonsoft.Json;
@@ -100,6 +101,8 @@ namespace WEB.CMS.Controllers
             ViewBag.Province = new Province();
             ViewBag.District = new District();
             ViewBag.Ward = new Ward();
+            ViewBag.BannerMain = new List<string>();
+            ViewBag.BannerSub = new List<string>();
             if (id > 0)
             {
                 model = _supplierRepository.GetById(id);
@@ -115,10 +118,23 @@ namespace WEB.CMS.Controllers
                 {
                     ViewBag.Ward = _locationESService.GetWardById((int)model.WardId);
                 }
+
                 ViewBag.Attachment_Root = await _AttachFileRepository.GetListByDataID(id, (int)AttachmentType.Supplier_Cert_RootProduct);
                 ViewBag.Attachment_Product = await _AttachFileRepository.GetListByDataID(id, (int)AttachmentType.Supplier_Cert_Product);
                 ViewBag.Attachment_Supply = await _AttachFileRepository.GetListByDataID(id, (int)AttachmentType.Supplier_Cert_Supply);
                 ViewBag.Attachment_Confirm = await _AttachFileRepository.GetListByDataID(id, (int)AttachmentType.Supplier_Cert_Confirm);
+                if (model != null && model.BannerMain != null && model.BannerMain.Trim() != "" && model.BannerMain.Trim() != "")
+                {
+                    ViewBag.BannerMain = JsonConvert.DeserializeObject<List<string>>(model.BannerMain);
+
+                }
+                if (model != null && model.BannerSub != null && model.BannerSub.Trim() != "" && model.BannerSub.Trim() != "")
+                {
+                    ViewBag.BannerSub = JsonConvert.DeserializeObject<List<string>>(model.BannerSub);
+
+                }
+                string static_domain = configuration["DomainConfig:ImageStatic"];
+                ViewBag.StaticDomain = static_domain != null && static_domain.EndsWith("/") ? static_domain : static_domain + "/";
             }
             try
             {
@@ -332,9 +348,11 @@ namespace WEB.CMS.Controllers
         {
             var model = _supplierRepository.GetDetailById(id);
             ViewBag.Users = new List<User>();
+           
             if (id > 0)
             {
                 ViewBag.Users = await _userRepository.GetBySuplierId(id);
+               
             }
             return View(model);
         }

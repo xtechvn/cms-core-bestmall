@@ -2,6 +2,7 @@
 using Caching.Elasticsearch.FlashSale;
 using Caching.RedisWorker;
 using Entities.ConfigModels;
+using HuloToys_Service.Controllers.Shipping.Business;
 using HuloToys_Service.ElasticSearch;
 using HuloToys_Service.ElasticSearch.NewEs;
 using HuloToys_Service.MongoDb;
@@ -121,6 +122,7 @@ builder.Services.AddSingleton<SupplierESRepository>();
 // Setting Redis                     
 builder.Services.AddSingleton<RedisConn>();
 builder.Services.AddSingleton<ManagementUser>();
+builder.Services.AddSingleton<ViettelPostService>();
 
 
 var app = builder.Build();

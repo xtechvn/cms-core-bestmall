@@ -79,4 +79,8 @@ public partial class Order
     public string RefundReason { get; set; }
 
     public DateTime? RefundDate { get; set; }
+
+    public string ShippingTypeCode { get; set; }
+
+    public string ShippingToken { get; set; }
 }

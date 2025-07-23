@@ -3,8 +3,21 @@ var _supplier_service = {
     Init: function () {
         this.modal_element = $('#global_modal_popup');
         this.OnSearch();
+        _supplier_service.DynamicBind()
     },
+    DynamicBind: function () {
+        $('body').on('change', '#banner-main input,#banner-sub input ', function () {
+            var element = $(this)
+            _supplier_service.AddImage(element)
+        })
+        $('body').on('click', '#banner-main .col-md-3 .delete,#banner-sub .col-md-3 .delete ', function () {
+            var element = $(this)
+            element.closest('.col-md-3').find('.magnific_popup').hide()
+            element.closest('.col-md-3').find('.choose').show()
+            element.closest('.col-md-3').find('.magnific_popup').find('img').attr('src', '')
 
+        })
+    },
     GetParam: function () {
         let services = $('#sl_search_service').val();
         //let provinces = $('#sl_search_province').val();
@@ -272,6 +285,47 @@ var _supplier_service = {
         formData['DistrictId'] = $('#supplier-district').find(':selected').val();
         formData['WardId'] = $('#supplier-ward').find(':selected').val();
 
+        var banner_main = []
+        $('#banner-main .col-md-3 .magnific_popup').each(function (index, item) {
+            var element_image = $(this)
+            if (element_image.find('img').length > 0) {
+                var data_src = element_image.find('img').attr('src')
+                if (data_src == null || data_src == undefined || data_src.trim() == '') return true
+                if (_supplier_service.CheckIfImageVideoIsLocal(data_src)) {
+                    var result = _supplier_service.POSTSynchorus('/Product/SummitImages', { data_image: data_src })
+                    if (result != undefined && result.data != undefined && result.data.trim() != '') {
+                        banner_main.push(result.data)
+                    } else {
+                        banner_main.push(data_src)
+                    }
+                }
+                else {
+                    banner_main.push(data_src)
+                }
+            }
+        })
+        formData['BannerMain'] = JSON.parse(banner_main);
+
+        var banner_sub = []
+        $('#banner-sub .col-md-3 .magnific_popup').each(function (index, item) {
+            var element_image = $(this)
+            if (element_image.find('img').length > 0) {
+                var data_src = element_image.find('img').attr('src')
+                if (data_src == null || data_src == undefined || data_src.trim() == '') return true
+                if (_supplier_service.CheckIfImageVideoIsLocal(data_src)) {
+                    var result = _supplier_service.POSTSynchorus('/Product/SummitImages', { data_image: data_src })
+                    if (result != undefined && result.data != undefined && result.data.trim() != '') {
+                        banner_sub.push(result.data)
+                    } else {
+                        banner_sub.push(data_src)
+                    }
+                }
+                else {
+                    banner_sub.push(data_src)
+                }
+            }
+        })
+        formData['BannerSub'] = JSON.parse(banner_sub);
 
         let url = formData.SupplierId > 0 ? "/Supplier/Update" : "/Supplier/Create";
         _global_function.AddLoading()
@@ -821,6 +875,53 @@ var _supplier_service = {
         //        }
         //    });
         //});
+    },
+    AddImage: function (element) {
+        var ImageExtension = ['jpeg', 'jpg', 'png', 'bmp']
+
+        if ($.inArray(element.val().split('.').pop().toLowerCase(), ImageExtension) == -1) {
+            _msgalert.error("Vui lòng chỉ upload các định dạng sau: " + ImageExtension.join(', '));
+            return
+        }
+
+        $(element[0].files).each(function (index, item) {
+
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                var src = e.target.result;
+                element.closest('.col-md-3').find('.magnific_popup').find('img').attr('src', src)
+            }
+            element.closest('.col-md-3').find('.magnific_popup').show()
+            element.closest('.col-md-3').find('.choose').hide()
+            reader.readAsDataURL(item);
+            return false;
+        });
+        element.val(null)
+
+    },
+    POSTSynchorus: function (url, model) {
+        var data = undefined
+        $.ajax({
+            url: url,
+            type: "POST",
+            data: model,
+            success: function (result) {
+                data = result;
+            },
+            error: function (err) {
+                console.log(err)
+            },
+            async: false
+        });
+        return data
+    },
+    CheckIfImageVideoIsLocal: function (data) {
+        if (data != undefined && (data.includes("data:image") || data.includes("data:video") || data.includes("base64,"))) {
+            return true
+        }
+        else {
+            return false
+        }
     }
 }
 

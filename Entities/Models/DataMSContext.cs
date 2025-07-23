@@ -875,6 +875,7 @@ public partial class DataMSContext : DbContext
             entity.Property(e => e.RefundDate).HasColumnType("datetime");
             entity.Property(e => e.RefundReason).HasMaxLength(500);
             entity.Property(e => e.ShippingCode).HasMaxLength(50);
+            entity.Property(e => e.ShippingTypeCode).HasMaxLength(50);
             entity.Property(e => e.UpdateLast).HasColumnType("datetime");
             entity.Property(e => e.UserGroupIds).HasMaxLength(250);
             entity.Property(e => e.UtmMedium).HasMaxLength(250);
@@ -1094,9 +1095,9 @@ public partial class DataMSContext : DbContext
 
         modelBuilder.Entity<Province>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Province__FD0A6F838767F971");
-
-            entity.ToTable("Province");
+            entity
+                .HasNoKey()
+                .ToTable("Province");
 
             entity.Property(e => e.CreatedDate).HasColumnType("datetime");
             entity.Property(e => e.Name)
@@ -1108,9 +1109,7 @@ public partial class DataMSContext : DbContext
             entity.Property(e => e.ProvinceId)
                 .IsRequired()
                 .HasMaxLength(5);
-            entity.Property(e => e.Type)
-                .IsRequired()
-                .HasMaxLength(30);
+            entity.Property(e => e.Type).HasMaxLength(30);
         });
 
         modelBuilder.Entity<ProvinceHotel>(entity =>
@@ -1200,6 +1199,8 @@ public partial class DataMSContext : DbContext
             entity.ToTable("Supplier");
 
             entity.Property(e => e.Address).HasMaxLength(500);
+            entity.Property(e => e.BannerMain).HasMaxLength(4000);
+            entity.Property(e => e.BannerSub).HasMaxLength(4000);
             entity.Property(e => e.CreatedDate).HasColumnType("datetime");
             entity.Property(e => e.Description).HasMaxLength(500);
             entity.Property(e => e.Email)

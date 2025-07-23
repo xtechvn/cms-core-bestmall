@@ -4,10 +4,14 @@
     List<AttachFile> Attachment_Product = (List<AttachFile>)ViewBag.Attachment_Product;
     List<AttachFile> Attachment_Supply = (List<AttachFile>)ViewBag.Attachment_Supply;
     List<AttachFile> Attachment_Confirm = (List<AttachFile>)ViewBag.Attachment_Confirm;
-    bool has_permission= (bool)ViewBag.HaveValidatePermission;
+    bool has_permission = (bool)ViewBag.HaveValidatePermission;
     Province province = (Province)ViewBag.Province;
     District district = (District)ViewBag.District;
     Ward ward = (Ward)ViewBag.Ward;
+    List<string> banner_main = (List<string>)ViewBag.BannerMain;
+    List<string> banner_sub = (List<string>)ViewBag.BannerSub;
+    string static_url = (string)ViewBag.Static;
+
 }
 @using Entities.Models
 @using Entities.ViewModels.Funding
@@ -39,8 +43,8 @@
                             <input type="text" class="form-control" asp-for="@Model.Email" />
                         </div>
                     </div>
-                   
-                  
+
+
                 </div>
             </div>
         </div>
@@ -53,7 +57,7 @@
                         <label class="lbl">Tỉnh/Thành phố<sup class="red">*</sup></label>
                         <div class="wrap_input">
                             <select id="supplier-province" class="w-100 form-control" style="width:100%">
-                                @if(province!=null && province.Id > 0)
+                                @if (province != null && province.Id > 0)
                                 {
                                     <option selected value="@province.Id">@province.Name</option>
                                 }
@@ -90,6 +94,104 @@
                     </div>
                 </div>
             </div>
+        </div>
+        <div id="banner-main" class="grid-item col-md-12">
+            <div class="border mb20">
+                <div class="lb-form">Banner đầu trang chủ</div>
+                <div class="pd10">
+                    <div class="item row flex-lg-nowrap gap10 mb-4 w-100">
+                        <label class="col-2" style="align-content: center;padding-left: 15px;">Banner chính<br />(900 x 250)</label>
+                        <div class="col-10 wrap_input">
+                            <div class="row list w-100" style="gap: 0;">
+                                @for (int i = 0; i < 3; i++)
+                                {
+                                    string url_fixed = "";
+                                    if (banner_main != null && banner_main.Count > i && banner_main[i] != null)
+                                    {
+                                        url_fixed = banner_main[0];
+                                        if (!url_fixed.Contains(static_url)
+                                        && !url_fixed.Contains("base64")
+                                        && !url_fixed.Contains("data:video"))
+                                        {
+                                            url_fixed = static_url + banner_main[0];
+                                        }
+                                    }
+                                    <div class="col-md-3 @((banner_main != null && banner_main.Count > i && banner_main[i] != null) ? "" : " items import mt-3")" style=" margin-right: 15px; ">
+                                        <div class="w-100 items magnific_popup" style="@((banner_main != null && banner_main.Count > i && banner_main[i] != null) ? "" : "display:none;")">
+                                            <button type="button" class="delete"><i class="icofont-close-line"></i></button>
+                                            <a class=" magnific_thumb">
+                                                <img src="@url_fixed">
+                                            </a>
+                                        </div>
+                                        <label class="choose choose-wrap p-5 rounded" style="@((banner_main != null && banner_main.Count > i && banner_main[i] != null) ? "display:none;" : "")">
+                                            <input class="banner-main-file" type="file" name="myFile">
+                                            <div class="choose-content">
+                                                <h4><i class="icofont-image text-lg"></i></h4>
+                                            </div>
+                                        </label>
+                                    </div>
+                                }
+
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+
+        </div>
+        <div id="banner-sub" class="grid-item col-md-12">
+            <div class="border mb20">
+                <div class="lb-form">Banner phụ</div>
+                <div class="pd10">
+                    <div class="item row flex-lg-nowrap gap10 mb-4 w-100">
+                        <label class="col-2" style="align-content: center;padding-left: 15px;">
+                            Banner phụ<br />(Tỷ lệ 2:1)
+                        </label>
+                        <div class="col-10 wrap_input">
+                            <div class="row list w-100" style="gap: 0;">
+                                @for (int i = 0; i < 3; i++)
+                                {
+                                    string url_fixed = "";
+                                    if (banner_sub != null && banner_sub.Count > i && banner_sub[i] != null)
+                                    {
+                                        url_fixed = banner_sub[0];
+                                        if (!url_fixed.Contains(static_url)
+                                        && !url_fixed.Contains("base64")
+                                        && !url_fixed.Contains("data:video"))
+                                        {
+                                            url_fixed = static_url + banner_sub[0];
+                                        }
+                                    }
+                                    <div class="col-md-3 @((banner_sub != null && banner_sub.Count > i && banner_sub[i] != null) ? "" : " items import mt-3")" style=" margin-right: 15px; ">
+                                        <div class="w-100 items magnific_popup" style="@((banner_sub != null && banner_sub.Count > i && banner_sub[i] != null) ? "" : "display:none;")">
+                                            <button type="button" class="delete"><i class="icofont-close-line"></i></button>
+                                            <a class=" magnific_thumb">
+                                                <img src="@url_fixed">
+                                            </a>
+                                        </div>
+                                        <label class="choose choose-wrap p-5 rounded" style="@((banner_sub != null && banner_sub.Count > i && banner_sub[i] != null) ? "display:none;" : "")">
+                                            <input class="banner-sub-file" type="file" name="myFile">
+                                            <div class="choose-content">
+                                                <h4><i class="icofont-image text-lg"></i></h4>
+                                            </div>
+                                        </label>
+                                    </div>
+                                }
+
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+
         </div>
         <div class="grid-item col-md-12">
             <div class="border mb20">
@@ -256,9 +358,9 @@
 
                 </div>
             </div>
-           
+
         </div>
-       @*  @if (Model.SupplierId == 0)
+        @*  @if (Model.SupplierId == 0)
         {
             <div class="grid-item col-md-6">
                 <div class="border mb20">
