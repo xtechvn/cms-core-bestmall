@@ -710,7 +710,7 @@ namespace WEB.CMS.Controllers
                 await _supplierService.UpdateSuplierAllProductStatus(data_id,status);
                 await _redisConn.DeleteCacheByKeyword(CacheName.PRODUCT_LISTING, db_index);
                 await _redisConn.DeleteCacheByKeyword(CacheName.PRODUCT_DETAIL, db_index);
-                await _supplierService.SyncES(model.SupplierId);
+                await _supplierService.SyncES(data_id);
 
                 return new JsonResult(new
                 {
