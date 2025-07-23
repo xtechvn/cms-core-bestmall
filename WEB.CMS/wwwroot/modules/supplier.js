@@ -304,8 +304,12 @@ var _supplier_service = {
                 }
             }
         })
-        formData['BannerMain'] = JSON.parse(banner_main);
+        if (banner_main.length > 0) {
+            formData['BannerMain'] = JSON.parse(banner_main);
+        }
+        else {
 
+        }
         var banner_sub = []
         $('#banner-sub .col-md-3 .magnific_popup').each(function (index, item) {
             var element_image = $(this)
@@ -325,7 +329,9 @@ var _supplier_service = {
                 }
             }
         })
-        formData['BannerSub'] = JSON.parse(banner_sub);
+        if (banner_sub.length > 0) {
+            formData['BannerSub'] = JSON.parse(banner_sub);
+        }
 
         let url = formData.SupplierId > 0 ? "/Supplier/Update" : "/Supplier/Create";
         _global_function.AddLoading()
@@ -876,7 +882,7 @@ var _supplier_service = {
         //    });
         //});
     },
-    AddImage: function (element) {
+AddImage: function (element) {
         var ImageExtension = ['jpeg', 'jpg', 'png', 'bmp']
 
         if ($.inArray(element.val().split('.').pop().toLowerCase(), ImageExtension) == -1) {
