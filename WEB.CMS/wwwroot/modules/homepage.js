@@ -1,0 +1,147 @@
+﻿var homepage = {
+    Init: function () {
+
+        homepage.DynamicBind()
+    },
+    DynamicBind: function () {
+        $('body').on('click', '#banner-main .col-md-3 .delete,#banner-sub .col-md-3 .delete ', function () {
+            var element = $(this)
+            element.closest('.col-md-3').find('.magnific_popup').hide()
+            element.closest('.col-md-3').find('.choose').show()
+            element.closest('.col-md-3').find('.magnific_popup').find('img').attr('src', '')
+
+        })
+        $('body').on('change', '#banner-main input,#banner-sub input ', function () {
+            var element = $(this)
+            homepage.AddImage(element)
+        })
+        $('body').on('click', '#save-progress', function () {
+
+            homepage.Summit()
+        })
+    },
+    AddImage: function (element) {
+        var ImageExtension = ['jpeg', 'jpg', 'png', 'bmp']
+
+        if ($.inArray(element.val().split('.').pop().toLowerCase(), ImageExtension) == -1) {
+            _msgalert.error("Vui lòng chỉ upload các định dạng sau: " + ImageExtension.join(', '));
+            return
+        }
+
+        $(element[0].files).each(function (index, item) {
+
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                var src = e.target.result;
+                element.closest('.col-md-3').find('.magnific_popup').find('img').attr('src', src)
+            }
+            element.closest('.col-md-3').find('.magnific_popup').show()
+            element.closest('.col-md-3').find('.choose').hide()
+            reader.readAsDataURL(item);
+            return false;
+        });
+        element.val(null)
+
+    },
+    POSTSynchorus: function (url, model) {
+        var data = undefined
+        $.ajax({
+            url: url,
+            type: "POST",
+            data: model,
+            success: function (result) {
+                data = result;
+            },
+            error: function (err) {
+                console.log(err)
+            },
+            async: false
+        });
+        return data
+    },
+    CheckIfImageVideoIsLocal: function (data) {
+        if (data != undefined && (data.includes("data:image") || data.includes("data:video") || data.includes("base64,"))) {
+            return true
+        }
+        else {
+            return false
+        }
+    },
+    Summit: function () {
+        var banner_main = []
+        $('#banner-main .col-md-3 .magnific_popup').each(function (index, item) {
+            var element_image = $(this)
+            if (element_image.find('img').length > 0) {
+                var data_src = element_image.find('img').attr('src')
+                if (data_src == null || data_src == undefined || data_src.trim() == '') return true
+                if (_supplier_service.CheckIfImageVideoIsLocal(data_src)) {
+                    var result = _supplier_service.POSTSynchorus('/Product/SummitImages', { data_image: data_src })
+                    if (result != undefined && result.data != undefined && result.data.trim() != '') {
+                        banner_main.push(result.data)
+                    } else {
+                        banner_main.push({
+                            Id: element_image.attr('data-id'),
+                            CodeValue: element_image.attr('data-pos'),
+                            OrderNo: element_image.attr('data-pos'),
+                            Description: data_src
+                        })
+                    }
+                }
+                else {
+                    banner_main.push({
+                        Id: element_image.attr('data-id'),
+                        CodeValue: element_image.attr('data-pos'),
+
+                        OrderNo: element_image.attr('data-pos'),
+                        Description: data_src
+                    })
+                }
+            }
+        })
+        var banner_sub = []
+        $('#banner-sub .col-md-3 .magnific_popup').each(function (index, item) {
+            var element_image = $(this)
+            if (element_image.find('img').length > 0) {
+                var data_src = element_image.find('img').attr('src')
+                if (data_src == null || data_src == undefined || data_src.trim() == '') return true
+                if (_supplier_service.CheckIfImageVideoIsLocal(data_src)) {
+                    var result = _supplier_service.POSTSynchorus('/Product/SummitImages', { data_image: data_src })
+                    if (result != undefined && result.data != undefined && result.data.trim() != '') {
+                        banner_sub.push(result.data)
+                    } else {
+                        banner_sub.push({
+                            Id: element_image.attr('data-id'),
+                            CodeValue: element_image.attr('data-pos'),
+
+                            OrderNo: element_image.attr('data-pos'),
+                            Description: data_src
+                        })
+                    }
+                }
+                else {
+                    banner_sub.push({
+                        Id: element_image.attr('data-id'),
+                        CodeValue: element_image.attr('data-pos'),
+
+                        OrderNo: element_image.attr('data-pos'),
+                        Description: data_src
+                    })
+                }
+            }
+        })
+        var request = { banner_main: banner_main, banner_sub: banner_sub }
+        let url = "/homepage/summit";
+        _global_function.AddLoading()
+        _ajax_caller.post(url, request, function (result) {
+            _global_function.RemoveLoading()
+
+            if (result.isSuccess) {
+                _msgalert.success(result.message);
+
+            } else {
+                _msgalert.error(result.message);
+            }
+
+        });
+    }
+}

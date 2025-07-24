@@ -34,6 +34,7 @@ namespace Utilities.Contants
         public const string LABEL = "LABEL_";
         public const string ARTICLE_ID_TAGS = "ARTICLE_TAGS_";
         public const string ARTICLE_CATEGORY_MENU = "ARTICLE_CATEGORY_MENU_";
+        public const string HOMEPAGE_SLIDE = "HOMEPAGE_SLIDE";
 
     }
 }

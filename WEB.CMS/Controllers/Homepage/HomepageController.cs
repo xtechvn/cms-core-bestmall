@@ -1,8 +1,13 @@
 ﻿using Caching.Elasticsearch;
 using Caching.Elasticsearch.FlashSale;
 using Caching.RedisWorker;
+using Entities.Models;
 using Microsoft.AspNetCore.Mvc;
 using Repositories.IRepositories;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using Utilities;
+using Utilities.Contants;
 using WEB.BestMall.CMS.Service;
 using WEB.CMS.Controllers.Product.Bussiness;
 using WEB.CMS.Customize;
@@ -42,9 +47,92 @@ namespace WEB.CMS.Controllers.Homepage
             _supplierRepository = supplierRepository;
             _allCodeRepository = allCodeRepository;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            int max_slide = 3;
+            int max_sub = 2;
+            ViewBag.BannerSlide =  new List<AllCode>();
+            ViewBag.BannerSub =  new List<AllCode>();
+            ViewBag.MaxSlide = max_slide;
+            ViewBag.MaxSub = max_sub;
+
+            try
+            {
+                ViewBag.BannerSlide = _allCodeRepository.GetListByType("HOMEPAGE_SLIDE");
+                ViewBag.BannerSub = _allCodeRepository.GetListByType("HOMEPAGE_SUBBANNER");
+
+            }
+            catch
+            {
+
+            }
             return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> Summit(List<AllCode> banner_main, List<AllCode> banner_sub)
+        {
+
+            try
+            {
+                int _UserId = 0;
+
+                if (HttpContext.User.FindFirst(ClaimTypes.NameIdentifier) != null)
+                {
+                    _UserId = Convert.ToInt32(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+                }
+                if (banner_main != null && banner_main .Count>0) {
+                    foreach (var banner in banner_main) {
+                        banner.Type = "HOMEPAGE_SLIDE";
+                        banner.UpdateTime=DateTime.Now;
+                        banner.CreateDate = DateTime.Now;
+                        banner.CreatedBy = _UserId;
+                        banner.UpdatedBy = _UserId;
+                        if (banner.Id > 0)
+                        {
+                           await  _allCodeRepository.Update(banner);
+                        }
+                        else
+                        {
+                            await _allCodeRepository.Create(banner);
+                        }
+                    }
+                }
+                if (banner_sub != null && banner_sub.Count > 0)
+                {
+                    foreach (var banner in banner_sub)
+                    {
+                        banner.Type = "HOMEPAGE_SUBBANNER";
+                        banner.UpdateTime = DateTime.Now;
+                        banner.CreateDate = DateTime.Now;
+                        banner.CreatedBy = _UserId;
+                        banner.UpdatedBy = _UserId;
+                        if (banner.Id > 0)
+                        {
+                            await _allCodeRepository.Update(banner);
+                        }
+                        else
+                        {
+                            await _allCodeRepository.Create(banner);
+                        }
+                    }
+                }
+                _redisConn.clear(CacheName.HOMEPAGE_SLIDE, Convert.ToInt32(_configuration["Redis:Database:db_common"]));
+                return Ok(new
+                {
+                    is_success = true,
+                    message="Cập nhật thành công"
+                });
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("Summit - HomepageController: " + ex);
+            }
+            return Ok(new
+            {
+                is_success=false,
+                message = "Cập nhật thất bại"
+
+            });
         }
     }
 }

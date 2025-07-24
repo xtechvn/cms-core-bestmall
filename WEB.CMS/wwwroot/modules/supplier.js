@@ -879,7 +879,7 @@ var _supplier_service = {
         //    });
         //});
     },
-AddImage: function (element) {
+    AddImage: function (element) {
         var ImageExtension = ['jpeg', 'jpg', 'png', 'bmp']
 
         if ($.inArray(element.val().split('.').pop().toLowerCase(), ImageExtension) == -1) {
