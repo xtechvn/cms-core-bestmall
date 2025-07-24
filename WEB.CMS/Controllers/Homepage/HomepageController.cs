@@ -89,6 +89,8 @@ namespace WEB.CMS.Controllers.Homepage
                         banner.CreateDate = DateTime.Now;
                         banner.CreatedBy = _UserId;
                         banner.UpdatedBy = _UserId;
+                        string static_domain = _configuration["DomainConfig:ImageStatic"];
+                        banner.Description = banner.Description.Replace(static_domain, "");
                         if (banner.Id > 0)
                         {
                             await _allCodeRepository.Update(banner);
@@ -105,6 +107,8 @@ namespace WEB.CMS.Controllers.Homepage
                         banner.CreateDate = DateTime.Now;
                         banner.CreatedBy = _UserId;
                         banner.UpdatedBy = _UserId;
+                        string static_domain = _configuration["DomainConfig:ImageStatic"];
+                        banner.Description = banner.Description.Replace(static_domain, "");
                         if (banner.Id > 0)
                         {
                             await _allCodeRepository.Update(banner);
