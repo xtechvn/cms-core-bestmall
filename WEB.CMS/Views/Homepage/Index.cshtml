@@ -14,17 +14,17 @@
     <div class="row-main container">
         <div class="box-info bg-white p-3 mb-3">
             <h4 class="title-box mb-3">Banner Slide đầu trang chủ</h4>
-            <a href="javascript:;" class="float-right color-blue">Xem trước</a>
-@*             <h5 class="mb-3">Hình ảnh sản phẩm</h5>
+@*             <a href="javascript:;" class="float-right color-blue">Xem trước</a>
+            <h5 class="mb-3">Hình ảnh sản phẩm</h5>
  *@            <div class="item row flex-lg-nowrap gap10 mb-4 w-100">
                 <label class="col-2">Banner Slide<br />(1200x360px)</label>
-                <div class="col-10 wrap_input" id="banner-main">
-                    <div class="row list w-100" style="gap: 0;">
+                <div class="col-10 wrap_input" >
+                    <div class="row list w-100" style="gap: 0;" id="banner-main">
                         @for (int i = 0; i < max_slide; i++)
                         {
                             var selected = banner_slide==null? new AllCode(): banner_slide.FirstOrDefault(x => x.CodeValue == (i + 1));
                             string url_fixed = "";
-                            if (selected!=null && selected.Id > 0)
+                            if (selected!=null && selected.Id > 0&& selected.Description !=null&& selected.Description.Trim() !="")
                             {
                                 url_fixed = selected.Description;
                                 if (!url_fixed.Contains(static_url)
@@ -34,22 +34,24 @@
                                     url_fixed = static_url + selected.Description;
                                 }
                             }
-                            <div class="col-md-3 @( (selected!=null && selected.Id > 0) ? "" : " items import")"
+                            <div class="col-md-3 @( (selected!=null && selected.Id > 0&& url_fixed !=null&&url_fixed.Trim() !="") ? "" : " items import")"
                                  data-pos="@((i + 1))"
                                  data-id="@( (selected!=null && selected.Id > 0) ? selected.Id : "-1")"
                                 style=" margin-right: 15px; ">
-                                <div class="w-100 items magnific_popup" style="@( (selected!=null && selected.Id > 0)  ? "" : "display:none;")">
+                                <div class="w-100 items magnific_popup" style="@( (selected!=null && selected.Id > 0&& url_fixed !=null&&url_fixed.Trim() !="")  ? "" : "display:none;")">
                                     <button type="button" class="delete"><i class="icofont-close-line"></i></button>
                                     <a class=" magnific_thumb">
                                         <img src="@url_fixed">
                                     </a>
                                 </div>
-                                <label class="choose choose-wrap p-5 rounded" style="@( (selected!=null && selected.Id > 0)  ? "display:none;" : "")">
-                                    <input class="banner-sub-file" type="file" name="myFile">
+                                <div class="choose choose-wrap p-5 rounded" style="@( (selected!=null && selected.Id > 0&& url_fixed !=null&&url_fixed.Trim() !="")  ? "display:none;" : "")">
                                     <div class="choose-content">
                                         <h4><i class="icofont-image text-lg"></i></h4>
                                     </div>
-                                </label>
+
+                                </div>
+                                <input class="banner-file" type="file" style="display:none;" />
+
                             </div>
                         }
                        
@@ -68,7 +70,7 @@
                             var selected = banner_sub == null ? new AllCode() : banner_sub.FirstOrDefault(x => x.CodeValue == (i + 1));
 
                             string url_fixed = "";
-                            if (selected != null && selected.Id > 0)
+                            if (selected != null && selected.Id > 0 && selected.Description != null && selected.Description.Trim() != "")
                             {
                                 url_fixed = selected.Description;
                                 if (!url_fixed.Contains(static_url)
@@ -78,22 +80,24 @@
                                     url_fixed = static_url + selected.Description;
                                 }
                             }
-                            <div class="col-md-3 @((selected != null && selected.Id > 0) ? "" : " items import")"
+                            <div class="col-md-3 @((selected != null && selected.Id > 0 && url_fixed != null && url_fixed.Trim() != "") ? "" : " items import")"
                                  data-pos="@((i + 1))"
                                  data-id="@((selected != null && selected.Id > 0) ? selected.Id : "-1")"
                                 style=" margin-right: 15px; ">
-                                <div class="w-100 items magnific_popup" style="@((selected != null && selected.Id > 0) ? "" : "display:none;")">
+                                <div class="w-100 items magnific_popup" style="@((selected != null && selected.Id > 0 && url_fixed != null && url_fixed.Trim() != "") ? "" : "display:none;")">
                                     <button type="button" class="delete"><i class="icofont-close-line"></i></button>
                                     <a class=" magnific_thumb">
                                         <img src="@url_fixed">
                                     </a>
                                 </div>
-                                <label class="choose choose-wrap p-5 rounded" style="@((selected != null && selected.Id > 0) ? "display:none;" : "")">
-                                    <input class="banner-sub-file" type="file" name="myFile">
+                                <div class="choose choose-wrap p-5 rounded" style="@((selected != null && selected.Id > 0 && url_fixed != null && url_fixed.Trim() != "") ? "display:none;" : "")">
                                     <div class="choose-content">
                                         <h4><i class="icofont-image text-lg"></i></h4>
                                     </div>
-                                </label>
+
+                                </div>
+                                <input class="banner-file" type="file" style="display:none;" />
+
                             </div>
                         }
                     </div>
@@ -157,8 +161,8 @@
             </div>
         </div> *@
         <div class="action-form">
-            <a href="javascript:;" class="btn btn-round btn-outline-base">Hủy</a>
-            <a href="javascript:;" class="btn btn-round btn-base">Cập nhật</a>
+            <a id="cancel-progress" href="javascript:;" class="btn btn-round btn-outline-base">Hủy</a>
+            <a id="save-progress" href="javascript:;" class="btn btn-round btn-base">Cập nhật</a>
         </div>
     </div>
 </section>

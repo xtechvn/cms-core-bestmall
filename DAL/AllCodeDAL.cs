@@ -240,5 +240,32 @@ namespace DAL
             }
             return null;
         }
+        public int InsertAllcode(AllCode model)
+        {
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+            new SqlParameter("@Type", SqlDbType.VarChar, 30) { Value = model.Type },
+            new SqlParameter("@CodeValue", SqlDbType.SmallInt) { Value = model.CodeValue },
+            new SqlParameter("@Description", SqlDbType.NVarChar, 300) { Value = (object)model.Description ?? DBNull.Value },
+            new SqlParameter("@OrderNo", SqlDbType.SmallInt) { Value = (object)model.OrderNo ?? DBNull.Value },
+            new SqlParameter("@CreatedBy", SqlDbType.Int) { Value = model.CreatedBy }
+            };
+
+            return _DbWorker.ExecuteNonQuery("sp_InsertAllcode", parameters);
+        }
+        public int UpdateAllcode(AllCode model)
+        {
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+            new SqlParameter("@Id", SqlDbType.Int) { Value = model.Id },
+            new SqlParameter("@Type", SqlDbType.VarChar, 30) { Value = model.Type },
+            new SqlParameter("@CodeValue", SqlDbType.SmallInt) { Value = model.CodeValue },
+            new SqlParameter("@Description", SqlDbType.NVarChar, 300) { Value = (object)model.Description ?? DBNull.Value },
+            new SqlParameter("@OrderNo", SqlDbType.SmallInt) { Value = (object)model.OrderNo ?? DBNull.Value },
+            new SqlParameter("@UpdatedBy", SqlDbType.Int) { Value = model.UpdatedBy },
+            };
+
+            return _DbWorker.ExecuteNonQuery("sp_UpdateAllcode", parameters);
+        }
     }
 }

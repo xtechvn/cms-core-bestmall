@@ -33,27 +33,8 @@ namespace Repositories.Repositories
         {
             try
             {
-                var entity = new AllCode()
-                {
-                    CodeValue = model.CodeValue,
-                    CreateDate = DateTime.Now,
-                    Description = model.Description,
-                    OrderNo = model.CodeValue,
-                    Type = model.Type
-                };
-                var rs = await _AllCodeDAL.CreateAsync(entity);
-                if (entity.Id > 0)
-                {
-                    var allCode = _AllCodeDAL.GetById(entity.Id);
-                    if (allCode != null && allCode.Result != null)
-                    {
-                        var allCodeEntity = allCode.Result;
-                        allCodeEntity.CodeValue = (short)allCodeEntity.Id;
-                        allCodeEntity.OrderNo = (short)allCodeEntity.Id;
-                        await _AllCodeDAL.UpdateAsync(allCodeEntity);
-                    }
-                }
-                return entity.Id;
+                model.Id= _AllCodeDAL.InsertAllcode(model);
+                return model.Id;
             }
             catch (Exception ex)
             {
@@ -101,8 +82,10 @@ namespace Repositories.Repositories
                 entity.Description = model.Description;
                 entity.OrderNo = model.CodeValue;
                 entity.Type = model.Type;
+                entity.Description = model.Description;
                 entity.UpdateTime = DateTime.Now;
-                await _AllCodeDAL.UpdateAsync(entity);
+                entity.UpdatedBy = model.UpdatedBy;
+                 _AllCodeDAL.UpdateAllcode(entity);
                 return model.Id;
             }
             catch (Exception ex)
