@@ -55,9 +55,11 @@ namespace WEB.CMS.Controllers.Homepage
             ViewBag.BannerSub =  new List<AllCode>();
             ViewBag.MaxSlide = max_slide;
             ViewBag.MaxSub = max_sub;
-
+            string static_domain = _configuration["DomainConfig:ImageStatic"];
+            ViewBag.Static = static_domain != null && static_domain.EndsWith("/") ? static_domain : static_domain + "/";
             try
             {
+              
                 ViewBag.BannerSlide = _allCodeRepository.GetListByType("HOMEPAGE_SLIDE");
                 ViewBag.BannerSub = _allCodeRepository.GetListByType("HOMEPAGE_SUBBANNER");
 

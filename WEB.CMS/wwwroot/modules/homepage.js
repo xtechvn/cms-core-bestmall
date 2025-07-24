@@ -1,6 +1,11 @@
-﻿var homepage = {
-    Init: function () {
+﻿$(document).ready(function () {
 
+    homepage.Init()
+})
+
+
+var homepage = {
+    Init: function () {
         homepage.DynamicBind()
     },
     DynamicBind: function () {
@@ -8,16 +13,38 @@
             var element = $(this)
             element.closest('.col-md-3').find('.magnific_popup').hide()
             element.closest('.col-md-3').find('.choose').show()
-            element.closest('.col-md-3').find('.magnific_popup').find('img').attr('src', '')
+            element.closest('.col-md-3').find('img').attr('src', '')
 
         })
-        $('body').on('change', '#banner-main input,#banner-sub input ', function () {
+        $('body').on('change', '.col-md-3 .banner-file', function () {
             var element = $(this)
+            console.log('Change event triggered for:', this.id); // In ra ID của input bị thay đổi
+
             homepage.AddImage(element)
         })
+
+
         $('body').on('click', '#save-progress', function () {
 
             homepage.Summit()
+        })
+        $('body').on('click', '#cancel-progress', function () {
+            var title = 'Xác nhận hủy';
+            var description = 'Các chỉnh sửa sẽ không được lưu lại, Bạn có chắc chắn không?';
+
+            _msgconfirm.openDialog(title, description, function () {
+                setTimeout(function () {
+                    window.location.reload();
+                }, 1000);
+            });
+            
+
+        })
+        $('body').on('click', '.choose', function (e) {
+            e.preventDefault()
+            var element = $(this)
+            element.closest('.col-md-3').find('input').trigger('click')
+
         })
     },
     AddImage: function (element) {
@@ -69,15 +96,31 @@
     },
     Summit: function () {
         var banner_main = []
-        $('#banner-main .col-md-3 .magnific_popup').each(function (index, item) {
+        $('#banner-main .col-md-3').each(function (index, item) {
+            
             var element_image = $(this)
             if (element_image.find('img').length > 0) {
                 var data_src = element_image.find('img').attr('src')
-                if (data_src == null || data_src == undefined || data_src.trim() == '') return true
-                if (_supplier_service.CheckIfImageVideoIsLocal(data_src)) {
-                    var result = _supplier_service.POSTSynchorus('/Product/SummitImages', { data_image: data_src })
+                if (data_src == null || data_src == undefined || data_src.trim() == '') {
+                    banner_main.push(
+                        {
+                            Id: element_image.attr('data-id'),
+                            CodeValue: element_image.attr('data-pos'),
+                            OrderNo: element_image.attr('data-pos'),
+                            Description: ""
+                        })
+                    return true
+                }
+                if (homepage.CheckIfImageVideoIsLocal(data_src)) {
+                    var result = homepage.POSTSynchorus('/Product/SummitImages', { data_image: data_src })
                     if (result != undefined && result.data != undefined && result.data.trim() != '') {
-                        banner_main.push(result.data)
+                        banner_main.push(
+                            {
+                                Id: element_image.attr('data-id'),
+                                CodeValue: element_image.attr('data-pos'),
+                                OrderNo: element_image.attr('data-pos'),
+                                Description: result.data
+                            })
                     } else {
                         banner_main.push({
                             Id: element_image.attr('data-id'),
@@ -99,15 +142,31 @@
             }
         })
         var banner_sub = []
-        $('#banner-sub .col-md-3 .magnific_popup').each(function (index, item) {
+        $('#banner-sub .col-md-3').each(function (index, item) {
             var element_image = $(this)
             if (element_image.find('img').length > 0) {
                 var data_src = element_image.find('img').attr('src')
-                if (data_src == null || data_src == undefined || data_src.trim() == '') return true
-                if (_supplier_service.CheckIfImageVideoIsLocal(data_src)) {
-                    var result = _supplier_service.POSTSynchorus('/Product/SummitImages', { data_image: data_src })
+                if (data_src == null || data_src == undefined || data_src.trim() == '') {
+                    banner_sub.push(
+                        {
+                            Id: element_image.attr('data-id'),
+                            CodeValue: element_image.attr('data-pos'),
+                            OrderNo: element_image.attr('data-pos'),
+                            Description: ""
+                        })
+                    return true
+
+                }
+                if (homepage.CheckIfImageVideoIsLocal(data_src)) {
+                    var result = homepage.POSTSynchorus('/Product/SummitImages', { data_image: data_src })
                     if (result != undefined && result.data != undefined && result.data.trim() != '') {
-                        banner_sub.push(result.data)
+                        banner_sub.push(
+                            {
+                                Id: element_image.attr('data-id'),
+                                CodeValue: element_image.attr('data-pos'),
+                                OrderNo: element_image.attr('data-pos'),
+                                Description: result.data
+                            })
                     } else {
                         banner_sub.push({
                             Id: element_image.attr('data-id'),
@@ -135,7 +194,7 @@
         _ajax_caller.post(url, request, function (result) {
             _global_function.RemoveLoading()
 
-            if (result.isSuccess) {
+            if (result.is_success) {
                 _msgalert.success(result.message);
 
             } else {

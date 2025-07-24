@@ -141,7 +141,7 @@ namespace WEB.CMS.Controllers
 
                 }
                 string static_domain = configuration["DomainConfig:ImageStatic"];
-                ViewBag.StaticDomain = static_domain != null && static_domain.EndsWith("/") ? static_domain : static_domain + "/";
+                ViewBag.StaticDomain = static_domain;
             }
             try
             {
