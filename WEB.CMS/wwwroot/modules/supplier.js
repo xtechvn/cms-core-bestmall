@@ -305,7 +305,7 @@ var _supplier_service = {
             }
         })
         if (banner_main.length > 0) {
-            formData['BannerMain'] = JSON.parse(banner_main);
+            formData['BannerMain'] = JSON.stringify(banner_main);
         }
         var banner_sub = []
         $('#banner-sub .col-md-3 .magnific_popup').each(function (index, item) {
@@ -327,7 +327,7 @@ var _supplier_service = {
             }
         })
         if (banner_sub.length > 0) {
-            formData['BannerSub'] = JSON.parse(banner_sub);
+            formData['BannerSub'] = JSON.stringify(banner_sub);
         }
 
         let url = formData.SupplierId > 0 ? "/Supplier/Update" : "/Supplier/Create";

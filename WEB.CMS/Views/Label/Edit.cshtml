@@ -4,6 +4,9 @@
     Label data = (Label)ViewBag.Data;
     if (data == null) data = new Label();
     string StaticDomain = (string)ViewBag.StaticDomain;
+    List<string> banner_sub = (List<string>)ViewBag.BannerSub;
+    string static_url = StaticDomain;
+    string url_fixed = "";
 
 }
 
@@ -150,6 +153,102 @@
                     </div>
                 </div>
             </div>
+        </div>
+        <div id="banner-main" class="grid-item col-md-12">
+            <div class="border mb20">
+                <div class="lb-form">Banner chính của trang nhà cung cấp</div>
+                <div class="pd10">
+                    <div class="item row flex-lg-nowrap gap10 mb-4 w-100">
+                        <label class="col-2" style="align-content: center;padding-left: 15px;">Banner chính<br />(900 x 250)</label>
+                        <div class="col-10 wrap_input">
+                            <div class="row list w-100" style="gap: 0;">
+                                @{
+                                    if (data.BannerMain != null && data.BannerMain.Trim()!="")
+                                    {
+                                        url_fixed = data.BannerMain;
+                                        if (!url_fixed.Contains(static_url)
+                                        && !url_fixed.Contains("base64")
+                                        && !url_fixed.Contains("data:video"))
+                                        {
+                                            url_fixed = static_url + data.BannerMain;
+                                        }
+                                    }
+                                }
+                               
+                                <div class="col-md-3 @((data.BannerMain != null && data.BannerMain.Trim() != "") ? "" : " items import")" style=" margin-right: 15px; " id="banner-main">
+                                    <div class="w-100 items magnific_popup" style="@((data.BannerMain != null && data.BannerMain.Trim()!="") ? "" : "display:none;")">
+                                        <button type="button" class="delete"><i class="icofont-close-line"></i></button>
+                                        <a class=" magnific_thumb">
+                                            <img src="@url_fixed">
+                                        </a>
+                                    </div>
+                                    <label class="choose choose-wrap p-5 rounded" style="@((data.BannerMain != null && data.BannerMain.Trim() != "") ? "display:none;" : "")">
+                                        <input class="banner-file" type="file" name="myFile">
+                                        <div class="choose-content">
+                                            <h4><i class="icofont-image text-lg"></i></h4>
+                                        </div>
+                                    </label>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+
+        </div>
+        <div id="banner-sub" class="grid-item col-md-12">
+            <div class="border mb20">
+                <div class="lb-form">Banner phụ trong trang nhà cung cấp</div>
+                <div class="pd10">
+                    <div class="item row flex-lg-nowrap gap10 mb-4 w-100">
+                        <label class="col-2" style="align-content: center;padding-left: 15px;">
+                            Banner phụ<br />(Tỷ lệ 2:1)
+                        </label>
+                        <div class="col-10 wrap_input">
+                            <div class="row list w-100" style="gap: 0;" id="banner-sub">
+                                @for (int i = 0; i < 3; i++)
+                                {
+                                    url_fixed = "";
+                                    if (banner_sub != null && banner_sub.Count > i && banner_sub[i] != null&& banner_sub[i].Trim() != "")
+                                    {
+                                        url_fixed = banner_sub[0];
+                                        if (!url_fixed.Contains(static_url)
+                                        && !url_fixed.Contains("base64")
+                                        && !url_fixed.Contains("data:video"))
+                                        {
+                                            url_fixed = static_url + banner_sub[i];
+                                        }
+                                    }
+                                    <div class="col-md-3 @((banner_sub != null && banner_sub.Count > i && banner_sub[i] != null && banner_sub[i].Trim() != "") ? "" : " items import")" style=" margin-right: 15px; ">
+                                        <div class="w-100 items magnific_popup" style="@((banner_sub != null && banner_sub.Count > i && banner_sub[i] != null && banner_sub[i].Trim() != "") ? "" : "display:none;")">
+                                            <button type="button" class="delete"><i class="icofont-close-line"></i></button>
+                                            <a class=" magnific_thumb">
+                                                <img src="@url_fixed">
+                                            </a>
+                                        </div>
+                                        <label class="choose choose-wrap p-5 rounded" style="@((banner_sub != null && banner_sub.Count > i && banner_sub[i] != null && banner_sub[i].Trim() != "") ? "display:none;" : "")">
+                                            <input class="banner-file" type="file" name="myFile">
+                                            <div class="choose-content">
+                                                <h4><i class="icofont-image text-lg"></i></h4>
+                                            </div>
+                                        </label>
+                                    </div>
+                                }
+
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+
         </div>
     </div>
 </div>
