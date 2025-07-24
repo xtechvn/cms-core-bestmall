@@ -1,17 +1,16 @@
 ﻿using Caching.RedisWorker;
-using Entities.ViewModels;
-using Microsoft.AspNetCore.Mvc;
-using Repositories.IRepositories;
-using Utilities;
-using WEB.CMS.Customize;
-using Entities.ViewModels.Label;
 using Entities.Models;
-using WEB.BestMall.CMS.Service;
+using Entities.ViewModels;
+using Entities.ViewModels.Label;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using Repositories.IRepositories;
 using System.Security.Claims;
+using Utilities;
 using Utilities.Contants;
-using WEB.CMS.Models.Product;
 using WEB.CMS.Controllers.Bussiness;
-using Utilities.Common;
+using WEB.CMS.Customize;
+using WEB.CMS.Models.Product;
 
 namespace WEB.CMS.Controllers
 {
@@ -89,13 +88,19 @@ namespace WEB.CMS.Controllers
         public async Task<IActionResult> Edit(int label_id)
         {
             ViewBag.Data = new Label();
+            ViewBag.BannerSub = new List<string>();
             try
             {
                 ViewBag.StaticDomain = _configuration["DomainConfig:ImageStatic"];
 
                 if (label_id > 0)
                 {
-                    ViewBag.Data = await _labelRepository.GetById(label_id);
+                    var data = await _labelRepository.GetById(label_id);
+                    ViewBag.Data = data;
+                    if(data != null && data.BannerSub!=null && data.BannerSub.Trim() != "")
+                    {
+                        ViewBag.BannerSub = JsonConvert.DeserializeObject<List<string>>(data.BannerSub);
+                    }
                 }
             }
             catch (Exception ex)
