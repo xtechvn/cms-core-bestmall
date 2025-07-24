@@ -56,7 +56,7 @@ namespace WEB.CMS.Controllers.Homepage
             ViewBag.MaxSlide = max_slide;
             ViewBag.MaxSub = max_sub;
             string static_domain = _configuration["DomainConfig:ImageStatic"];
-            ViewBag.Static = static_domain != null && static_domain.EndsWith("/") ? static_domain : static_domain + "/";
+            ViewBag.Static = static_domain;
             try
             {
               
