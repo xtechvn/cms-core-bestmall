@@ -91,12 +91,9 @@ namespace WEB.CMS.Controllers.Homepage
                         banner.UpdatedBy = _UserId;
                         if (banner.Id > 0)
                         {
-                           await  _allCodeRepository.Update(banner);
+                            await _allCodeRepository.Update(banner);
                         }
-                        else
-                        {
-                            await _allCodeRepository.Create(banner);
-                        }
+
                     }
                 }
                 if (banner_sub != null && banner_sub.Count > 0)
@@ -111,10 +108,6 @@ namespace WEB.CMS.Controllers.Homepage
                         if (banner.Id > 0)
                         {
                             await _allCodeRepository.Update(banner);
-                        }
-                        else
-                        {
-                            await _allCodeRepository.Create(banner);
                         }
                     }
                 }
