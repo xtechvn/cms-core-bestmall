@@ -119,7 +119,8 @@ namespace WEB.CMS.Controllers
                     Description = model.Description,
                     PositionId = model.PositionId,
                     Status = model.Status,
-                    ImagePath = await UpLoadHelper.UploadBase64Src(model.ImageBase64, _UrlStaticImage),
+                    //ImagePath = await UpLoadHelper.UploadBase64Src(model.ImageBase64, _UrlStaticImage),
+                    ImagePath = model.ImagePath,
                     IsShowHeader = model.IsShowHeader,
                     IsShowFooter = model.IsShowFooter,
                     ModifiedOn = DateTime.Now,
@@ -127,10 +128,31 @@ namespace WEB.CMS.Controllers
                     ProductCount=(model.Id>0? await _productV2DetailMongoAccess.CountByGroupId(model.Id):0),
                     IsFlashSale=model.IsFlashSale,
                     CreatedOn=DateTime.Now,
-                    
-                    
+
+
                 };
-                var rs = await _GroupProductRepository.UpSert(upsertModel);
+                if (model.ImagePath == null|| model.ImagePath.Trim()=="")
+                {
+                    upsertModel.ImagePath = await UpLoadHelper.UploadBase64Src(model.ImageBase64, _UrlStaticImage);
+                }
+                else if(model.ImagePath.Contains("base64") || model.ImagePath.Contains("data:video"))
+                {
+                    upsertModel.ImagePath = await UpLoadHelper.UploadBase64Src(model.ImagePath, _UrlStaticImage);
+
+                }
+                else
+                {
+                    var static_url = _configuration["API:StaticURL"];
+
+                    string url_fixed = upsertModel.ImagePath;
+                    if (!url_fixed.Contains(static_url)
+                    && !url_fixed.Contains("base64")
+                    && !url_fixed.Contains("data:video"))
+                    {
+                        upsertModel.ImagePath = static_url + upsertModel.ImagePath;
+                    }
+                }
+                    var rs = await _GroupProductRepository.UpSert(upsertModel);
                 if (rs > 0)
                 {
                     _redisService.clear(CacheName.ARTICLE_B2C_CATEGORY_MENU + rs, Convert.ToInt32(_configuration["Redis:Database:db_common"]));
@@ -141,8 +163,10 @@ namespace WEB.CMS.Controllers
                     await _redisService.DeleteCacheByKeyword(CacheName.ARTICLE_CATEGORY_MENU, Convert.ToInt32(_configuration["Redis:Database:db_common"]));
 
 
+                    try
+                    {
 
-                    var j_param = new Dictionary<string, object>
+                        var j_param = new Dictionary<string, object>
                                 {
                                      { "store_name", "SP_GetGroupProduct" },
                                     { "index_es", "hulotoys_sp_getgroupproduct" },
@@ -150,10 +174,12 @@ namespace WEB.CMS.Controllers
                                       {"id" , model.Id }
 
                                 };
-                    var _data_push = JsonConvert.SerializeObject(j_param);
-                    // Push message vào queue
-                    var response_queue = work_queue.InsertQueueSimpleSyncES(_data_push);
+                        var _data_push = JsonConvert.SerializeObject(j_param);
+                        // Push message vào queue
+                        var response_queue = work_queue.InsertQueueSimpleSyncES(_data_push);
 
+                    }
+                    catch { }
                     return new JsonResult(new
                     {
                         isSuccess = true,
