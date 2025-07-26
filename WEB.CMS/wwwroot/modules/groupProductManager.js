@@ -249,10 +249,28 @@ var _groupProduct = {
             var formData = new FormData(form);
             var imagedata = $('.image-preview').attr('src');
 
+            var data_src = imagedata
+            if (data_src == null || data_src == undefined || data_src.trim() == '') {
+               
+                formData.append('ImageBase64', imagedata);
+                formData.append('imageSize', $('.sl-image-size option:selected').attr('size'));
+
+            }
+            else if (_groupProduct.CheckIfImageVideoIsLocal(data_src)) {
+                var result = _groupProduct.POSTSynchorus('/Product/SummitImages', { data_image: data_src })
+                if (result != undefined && result.data != undefined && result.data.trim() != '') {
+                    formData.append('ImagePath', result.data);
+                } else {
+                    formData.append('ImageBase64', imagedata);
+                    formData.append('imageSize', $('.sl-image-size option:selected').attr('size'));
+                }
+            }
+            else {
+                formData.append('ImageBase64', imagedata);
+                formData.append('imageSize', $('.sl-image-size option:selected').attr('size'));
+            }
          
 
-            formData.append('ImageBase64', imagedata);
-            formData.append('imageSize', $('.sl-image-size option:selected').attr('size'));
             formData.append('IsFlashSale', $('#IsFlashSale').is(':checked'));
             formData.append('IsShowFooter', $('#IsShowFooter').is(':checked'));
             formData.append('IsShowHeader', $('#IsShowHeader').is(':checked'));
@@ -582,6 +600,30 @@ var _groupProduct = {
                 _groupProduct.AFFList = JSON.parse(data);
             }
         });
+    },
+    POSTSynchorus: function (url, model) {
+        var data = undefined
+        $.ajax({
+            url: url,
+            type: "POST",
+            data: model,
+            success: function (result) {
+                data = result;
+            },
+            error: function (err) {
+                console.log(err)
+            },
+            async: false
+        });
+        return data
+    },
+    CheckIfImageVideoIsLocal: function (data) {
+        if (data != undefined && (data.includes("data:image") || data.includes("data:video") || data.includes("base64,"))) {
+            return true
+        }
+        else {
+            return false
+        }
     }
 
 };

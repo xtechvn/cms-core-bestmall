@@ -80,10 +80,12 @@
                     Footer
                 </label>
                 <label class="check-list inline">
-                    @if(Model!=null && Model.IsFlashSale!=null && Model.IsFlashSale == true)
+                    @if (Model != null && Model.IsFlashSale != null && Model.IsFlashSale == true)
                     {
                         <input data-val="true" data-val-required="The IsFlashSale field is required." id="IsFlashSale" name="IsFlashSale" type="checkbox" checked>
-                    }else{
+                    }
+                    else
+                    {
                         <input data-val="true" data-val-required="The IsFlashSale field is required." id="IsFlashSale" name="IsFlashSale" type="checkbox">
 
                     }
@@ -105,7 +107,7 @@
                 <span class="txt_12 gray mt5">(Chấp nhận ảnh jpg, gif, png)</span>
             </label>
             <div class="wrap_input">
-                <div class="row mb10">
+              @*   <div class="row mb10">
                     <div class="col-md-5 col-xs-12">
                         <select class="form-control sl-image-size" asp-for="@Model.PositionId" style="width: 200px;">
                             <option value="-1" size="150x200">Chọn kích thước</option>
@@ -125,10 +127,10 @@
                     </div>
                     <button type="button" class="btn btn-danger" style="display:none;" id="btn-cropimage">Save edit</button>
                     <button type="button" class="btn btn-default cancel" style="display:none;" id="btn-cancel-crop">Cancel</button>
-                </div>
-                <div class="wrap-image-preview" style="width: 150px;text-align: center;">
+                </div> *@
+                <div class="wrap-image-preview" style="width: 150px;text-align: center; display: inline-grid;">
                     @{
-                        if (Model!=null && Model.ImagePath != null)
+                        if (Model != null && Model.ImagePath != null)
                         {
                             string url_fixed = Model.ImagePath;
                             if (!url_fixed.Contains(static_url)
@@ -139,7 +141,7 @@
                             }
                             <img class="image-preview mb10"
                                  src="@url_fixed"
-                            onerror="_imageError(this)" />
+                                 onerror="_imageError(this)" />
                         }
                         else
                         {
@@ -148,7 +150,7 @@
                                  onerror="_imageError(this)" />
                         }
                     }
-                    
+
                     <input type="file" id="image_file" style="display:none;" />
                     <input type="hidden" asp-for="@Model.ImagePath" />
                     <button type="button" class="btn btn-primary" style="margin-left: 0px!important;" id="btn-upload-image" onclick="$('#image_file').trigger('click');"><i class="fa fa-image"></i>Upload</button>
@@ -168,47 +170,61 @@
         <div class="form-group align-right mt20 mb0 block">
             @if (Model.Id != 0)
             {
-                <button type="button" class="btn btn-default btn-dynamic-enable bg-main" onclick="_groupProduct.OnSave()"><i class="fa fa-floppy-o"></i>Lưu</button>
-@*                 <button type="button" class="btn btn-default btn-dynamic-enable red" onclick="_groupProduct.OnDelete('@Model.Id')"><i class="fa fa-trash"></i>Xóa</button>
+            <button type="button" class="btn btn-default btn-dynamic-enable bg-main" onclick="_groupProduct.OnSave()"><i class="fa fa-floppy-o"></i>Lưu</button>
+            @*                 <button type="button" class="btn btn-default btn-dynamic-enable red" onclick="_groupProduct.OnDelete('@Model.Id')"><i class="fa fa-trash"></i>Xóa</button>
  *@            }
-            else
-            {
-                <button type="button" class="btn btn-default btn-dynamic-enable bg-main" onclick="_groupProduct.OnSave()"><i class="fa fa-floppy-o"></i>Tạo</button>
-            }
-            <button type="button" class="btn btn-default btn-dynamic-enable cancel" onclick="$.magnificPopup.close();">
-                <i class="fa fa-minus-circle"></i>Bỏ qua
-            </button>
+                        else
+                {
+                    <button type="button" class="btn btn-default btn-dynamic-enable bg-main" onclick="_groupProduct.OnSave()"><i class="fa fa-floppy-o"></i>Tạo</button>
+                }
+                <button type="button" class="btn btn-default btn-dynamic-enable cancel" onclick="$.magnificPopup.close();">
+                    <i class="fa fa-minus-circle"></i>Bỏ qua
+                </button>
+            </div>
         </div>
-    </div>
-</form>
+    </form>
 
-<script>
-    var uploadCrop = $('#croppie-content').croppie({
-        viewport: {
-            width: 177,
-            height: 270,
-            type: 'square'
-        },
-        boundary: {
-            width: 300,
-            height: 300
-        },
-        url: '/images/icons/noimage.png'
-    });
+    <script>
+        var uploadCrop = $('#croppie-content').croppie({
+            viewport: {
+                width: 177,
+                height: 270,
+                type: 'square'
+            },
+            boundary: {
+                width: 300,
+                height: 300
+            },
+            url: '/images/icons/noimage.png'
+        });
 
-    $('.sl-image-size').change(function () {
-        var value = $("option:selected", this).attr('size');
-        var width = parseInt(value.split("x")[0]);
-        var height = parseInt(value.split("x")[1]);
-        var filedata = $('#image_file')[0].files[0];
-        $('#croppie-content').croppie('destroy');
-        if (filedata) {
-            $('.wrap-croppie').show();
-            $('.wrap-image-preview').hide();
-            $('#btn-cropimage').show();
-            var reader = new FileReader();
-            reader.readAsDataURL(filedata);
-            reader.onload = function () {
+        $('.sl-image-size').change(function () {
+            var value = $("option:selected", this).attr('size');
+            var width = parseInt(value.split("x")[0]);
+            var height = parseInt(value.split("x")[1]);
+            var filedata = $('#image_file')[0].files[0];
+            $('#croppie-content').croppie('destroy');
+            if (filedata) {
+                $('.wrap-croppie').show();
+                $('.wrap-image-preview').hide();
+                $('#btn-cropimage').show();
+                var reader = new FileReader();
+                reader.readAsDataURL(filedata);
+                reader.onload = function () {
+                    $('#croppie-content').croppie({
+                        viewport: {
+                            width: width,
+                            height: height,
+                            type: 'square'
+                        },
+                        boundary: {
+                            width: 300,
+                            height: 300
+                        },
+                        url: reader.result
+                    });
+                };
+            } else {
                 $('#croppie-content').croppie({
                     viewport: {
                         width: width,
@@ -219,108 +235,109 @@
                         width: 300,
                         height: 300
                     },
-                    url: reader.result
+                    url: '/images/icons/noimage.png'
                 });
-            };
-        } else {
-            $('#croppie-content').croppie({
-                viewport: {
-                    width: width,
-                    height: height,
-                    type: 'square'
-                },
-                boundary: {
-                    width: 300,
-                    height: 300
-                },
-                url: '/images/icons/noimage.png'
+            }
+        });
+
+        $('#image_file').change(function (event) {
+            if (event.target.files && event.target.files[0]) {
+                $('.wrap-croppie').show();
+                $('.wrap-image-preview').hide();
+                $('#btn-upload-image').hide();
+                $('#btn-cropimage').show();
+                $('#btn-cancel-crop').show();
+                $('.btn-dynamic-enable').prop('disabled', true);
+                var reader = new FileReader();
+                // reader.onload = function (e) {
+                //     uploadCrop.croppie('bind', {
+                //         url: e.target.result
+                //     });
+                // };
+               //-- Bypass crop:
+                       reader.onload = function (e) {
+                        $('.wrap-croppie').hide();
+                        $('#btn-upload-image').show();
+                        $('#btn-cropimage').hide();
+                        $('#btn-cancel-crop').hide();
+
+                        $('.image-preview').attr('src', e.target.result);
+                        $('.wrap-image-preview').show();
+                        $('#image_file').val('');
+                        $('.btn-dynamic-enable').prop('disabled', false);
+
+                       };
+
+
+                reader.readAsDataURL(event.target.files[0]);
+            }
+        });
+
+        $('#btn-cropimage').click(function () {
+            uploadCrop.croppie('result', {
+                type: 'canvas',
+                size: 'original'
+            }).then(function (base64img) {
+                $('.wrap-croppie').hide();
+
+                $('#btn-upload-image').show();
+                $('#btn-cropimage').hide();
+                $('#btn-cancel-crop').hide();
+
+                $('.image-preview').attr('src', base64img);
+                $('.wrap-image-preview').show();
+                $('#image_file').val('');
+                $('.btn-dynamic-enable').prop('disabled', false);
             });
-        }
-    });
+        });
 
-    $('#image_file').change(function (event) {
-        if (event.target.files && event.target.files[0]) {
-            $('.wrap-croppie').show();
-            $('.wrap-image-preview').hide();
-            $('#btn-upload-image').hide();
-            $('#btn-cropimage').show();
-            $('#btn-cancel-crop').show();
-            $('.btn-dynamic-enable').prop('disabled', true);
-            var reader = new FileReader();
-            reader.onload = function (e) {
-                uploadCrop.croppie('bind', {
-                    url: e.target.result
-                });
-            };
-            reader.readAsDataURL(event.target.files[0]);
-        }
-    });
-
-    $('#btn-cropimage').click(function () {
-        uploadCrop.croppie('result', {
-            type: 'canvas',
-            size: 'original'
-        }).then(function (base64img) {
+        $('#btn-cancel-crop').click(function () {
             $('.wrap-croppie').hide();
-
             $('#btn-upload-image').show();
             $('#btn-cropimage').hide();
             $('#btn-cancel-crop').hide();
-
-            $('.image-preview').attr('src', base64img);
             $('.wrap-image-preview').show();
             $('#image_file').val('');
             $('.btn-dynamic-enable').prop('disabled', false);
         });
-    });
 
-    $('#btn-cancel-crop').click(function () {
-        $('.wrap-croppie').hide();
-        $('#btn-upload-image').show();
-        $('#btn-cropimage').hide();
-        $('#btn-cancel-crop').hide();
-        $('.wrap-image-preview').show();
-        $('#image_file').val('');
-        $('.btn-dynamic-enable').prop('disabled', false);
-    });
+        $('#minus-btn').click(function () {
+            var value = parseInt($('.qty_input').val()) - 1;
+            if (value < 0) {
+                value = 0;
+            }
+            $('.qty_input').val(value);
+        });
 
-    $('#minus-btn').click(function () {
-        var value = parseInt($('.qty_input').val()) - 1;
-        if (value < 0) {
-            value = 0;
+        $('#plus-btn').click(function () {
+            var value = parseInt($('.qty_input').val()) + 1;
+            $('.qty_input').val(value);
+        });
+
+        $('.mapping-menu').on('click', '.detail-product-link', function () {
+            var seft = $(this);
+            var link = seft.closest('div.row.itemt').find('.link-store').val().trim();
+            if (link != "")
+                window.open(link);
+            else
+                _msgalert.error('Bạn phải nhập link sản phẩm vào text box, Hệ thống điều hướng chuyển trang');
+        });
+
+        function OnCreateLabel() {
+            var dropdownHtml = $('.select-box-data .dropdown-store')[0].outerHTML;
+            var strHtml = '<div class="row itemt">'
+                + '<div class="col-sm-4 mb10">'
+                + dropdownHtml
+                + '</div>'
+                + '<div class="col-sm-7 mb10">'
+                + '<textarea class="form-control link-store" style="resize:none;"></textarea>'
+                + '</div>'
+                + '<div class="col-sm-1 mb10 text-center blue" style="padding-top:6px;">'
+                + '<a class="cur-pointer blue detail-product-link" title="Xem Link chi tiết"><i class="fa fa-eye"></i></a>'
+                + '</div>'
+                + '<a class="cur-pointer call" data-groupid="@Model.Id" onclick="_groupProduct.OnCrawl(this);"><img src="images/icons/web-crawler.svg"></a>'
+                + '<a class="delete" onclick="$(this).closest(' + "'.itemt'" + ').remove();"><i class="fa fa-times"></i></a>'
+                + '</div>';
+            $('#grid-mapping-label').append(strHtml);
         }
-        $('.qty_input').val(value);
-    });
-
-    $('#plus-btn').click(function () {
-        var value = parseInt($('.qty_input').val()) + 1;
-        $('.qty_input').val(value);
-    });
-
-    $('.mapping-menu').on('click', '.detail-product-link', function () {
-        var seft = $(this);
-        var link = seft.closest('div.row.itemt').find('.link-store').val().trim();
-        if (link != "")
-            window.open(link);
-        else
-            _msgalert.error('Bạn phải nhập link sản phẩm vào text box, Hệ thống điều hướng chuyển trang');
-    });
-
-    function OnCreateLabel() {
-        var dropdownHtml = $('.select-box-data .dropdown-store')[0].outerHTML;
-        var strHtml = '<div class="row itemt">'
-            + '<div class="col-sm-4 mb10">'
-            + dropdownHtml
-            + '</div>'
-            + '<div class="col-sm-7 mb10">'
-            + '<textarea class="form-control link-store" style="resize:none;"></textarea>'
-            + '</div>'
-            + '<div class="col-sm-1 mb10 text-center blue" style="padding-top:6px;">'
-            + '<a class="cur-pointer blue detail-product-link" title="Xem Link chi tiết"><i class="fa fa-eye"></i></a>'
-            + '</div>'
-            + '<a class="cur-pointer call" data-groupid="@Model.Id" onclick="_groupProduct.OnCrawl(this);"><img src="images/icons/web-crawler.svg"></a>'
-            + '<a class="delete" onclick="$(this).closest(' + "'.itemt'" + ').remove();"><i class="fa fa-times"></i></a>'
-            + '</div>';
-        $('#grid-mapping-label').append(strHtml);
-    }
-</script>
+    </script>
