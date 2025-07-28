@@ -148,7 +148,7 @@ namespace WEB.CMS.Controllers.Homepage
                         }
                     }
                 }
-                _redisConn.clear(CacheName.HOMEPAGE_SLIDE, Convert.ToInt32(_configuration["Redis:Database:db_search_result"]));
+                _redisConn.clear(CacheName.HOMEPAGE_SLIDE, Convert.ToInt32(_configuration["Redis:Database:db_common"]));
                 return Ok(new
                 {
                     is_success = true,
