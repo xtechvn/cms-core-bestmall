@@ -233,6 +233,7 @@ var homepage = {
                     })
                 }
             }
+            return false
         })
         var trending_sub = []
         $('#banner-trend-sub .col-md-3').each(function (index, item) {

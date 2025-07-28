@@ -118,6 +118,11 @@ namespace WEB.CMS.Controllers.Homepage
                         {
                             await _allCodeRepository.Update(banner);
                         }
+                        else
+                        {
+                            await _allCodeRepository.Create(banner);
+
+                        }
                     }
                 }
                 if (trending_sub != null && trending_sub.Count > 0)
@@ -135,6 +140,11 @@ namespace WEB.CMS.Controllers.Homepage
                         if (banner.Id > 0)
                         {
                             await _allCodeRepository.Update(banner);
+                        }
+                        else
+                        {
+                            await _allCodeRepository.Create(banner);
+
                         }
                     }
                 }
