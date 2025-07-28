@@ -50,7 +50,7 @@ namespace WEB.CMS.Controllers.Homepage
         public async Task<IActionResult> Index()
         {
             int max_slide = 3;
-            int max_sub = 2;
+            int max_sub = 3;
             ViewBag.BannerSlide =  new List<AllCode>();
             ViewBag.BannerSub =  new List<AllCode>();
             ViewBag.MaxSlide = max_slide;
