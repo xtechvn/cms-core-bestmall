@@ -43,7 +43,14 @@ var homepage = {
         $('body').on('click', '.choose', function (e) {
             e.preventDefault()
             var element = $(this)
-            element.closest('.col-md-3').find('input').trigger('click')
+            if (element.closest('.col-md-3').length > 0) {
+                element.closest('.col-md-3').find('input').trigger('click')
+
+            }
+           else if (element.closest('.col-md-2').length > 0) {
+                element.closest('.col-md-2').find('input').trigger('click')
+
+            }
 
         })
     },
