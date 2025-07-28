@@ -28,7 +28,7 @@ namespace DAL
             {
                 using (var _DbContext = new EntityDataContext(_connection))
                 {
-                    var detail = await _DbContext.Set<AllCode>().Where(n => n.CodeValue == codevalue).ToListAsync();
+                    var detail = await _DbContext.AllCodes.AsNoTracking().Where(n => n.CodeValue == codevalue).ToListAsync();
                     if (detail != null)
                     {
                         return detail;
@@ -89,7 +89,7 @@ namespace DAL
             {
                 using (var _DbContext = new EntityDataContext(_connection))
                 {
-                    var detail = _DbContext.Set<AllCode>().Where(n => n.Type == type).ToList();
+                    var detail = _DbContext.AllCodes.AsNoTracking().Where(n => n.Type == type).ToList();
                     if (detail != null)
                     {
                         return detail;
@@ -110,7 +110,7 @@ namespace DAL
             {
                 using (var _DbContext = new EntityDataContext(_connection))
                 {
-                    var detail = _DbContext.Set<AllCode>().Where(n => n.Type == type).FirstOrDefault();
+                    var detail = _DbContext.AllCodes.AsNoTracking().Where(n => n.Type == type).FirstOrDefault();
                     if (detail != null)
                     {
                         return detail;
@@ -273,15 +273,12 @@ namespace DAL
             {
                 using (var _DbContext = new EntityDataContext(_connection))
                 {
-                    var detail = _DbContext.Set<AllCode>().Where(n => n.Type == type && (n.Description==null || n.Description=="")).ToList();
+                    var detail = _DbContext.AllCodes.AsNoTracking().Where(n => n.Type == type && (n.Description==null || n.Description=="")).ToList();
 
                     if (detail != null && detail.Count>0)
                     {
-                        foreach (var item in detail)
-                        {
-                            _DbContext.Set<AllCode>().Remove(item);
+                        _DbContext.AllCodes.RemoveRange(detail);
 
-                        }
                     }
 
                 }
@@ -299,15 +296,12 @@ namespace DAL
             {
                 using (var _DbContext = new EntityDataContext(_connection))
                 {
-                    var detail = _DbContext.Set<AllCode>().Where(n => n.Type == type ).ToList();
+                    var detail = _DbContext.AllCodes.AsNoTracking().Where(n => n.Type == type).ToList();
 
                     if (detail != null && detail.Count > 0)
                     {
-                        foreach (var item in detail)
-                        {
-                            _DbContext.Set<AllCode>().Remove(item);
+                        _DbContext.AllCodes.RemoveRange(detail);
 
-                        }
                     }
 
                 }
