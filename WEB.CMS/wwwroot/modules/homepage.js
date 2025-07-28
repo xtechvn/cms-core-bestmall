@@ -52,7 +52,7 @@ var homepage = {
                 parent_class = 'col-md-2'
 
             }
-            element.closest('' + parent_class).find('input').trigger('click')
+            element.closest('.' + parent_class).find('input').trigger('click')
 
 
         })
@@ -79,10 +79,10 @@ var homepage = {
             reader.onload = function (e) {
                 var src = e.target.result;
 
-                element.closest('' + parent_class).find('.magnific_popup').find('img').attr('src', src)
+                element.closest('.' + parent_class).find('.magnific_popup').find('img').attr('src', src)
             }
-            element.closest('' + parent_class).find('.magnific_popup').show()
-            element.closest('' + parent_class).find('.choose').hide()
+            element.closest('.' + parent_class).find('.magnific_popup').show()
+            element.closest('.' + parent_class).find('.choose').hide()
             reader.readAsDataURL(item);
             return false;
         });
