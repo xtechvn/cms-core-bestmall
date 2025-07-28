@@ -63,8 +63,8 @@ namespace WEB.CMS.Controllers.Homepage
               
                 ViewBag.BannerSlide = _allCodeRepository.GetListByType("HOMEPAGE_SLIDE");
                 ViewBag.BannerSub = _allCodeRepository.GetListByType("HOMEPAGE_SUBBANNER");
-                ViewBag.BannerSub = _allCodeRepository.GetListByType("HOMEPAGE_TRENDINGMAIN");
-                ViewBag.BannerSub = _allCodeRepository.GetListByType("HOMEPAGE_TRENDINGSUB");
+                ViewBag.BuyingTrendMain = _allCodeRepository.GetListByType("HOMEPAGE_TRENDINGMAIN");
+                ViewBag.BuyingTrendSub = _allCodeRepository.GetListByType("HOMEPAGE_TRENDINGSUB");
 
             }
             catch
