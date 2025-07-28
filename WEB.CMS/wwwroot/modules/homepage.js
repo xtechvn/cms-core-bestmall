@@ -43,20 +43,31 @@ var homepage = {
         $('body').on('click', '.choose', function (e) {
             e.preventDefault()
             var element = $(this)
+            var parent_class = 'col-md-3'
             if (element.closest('.col-md-3').length > 0) {
-                element.closest('.col-md-3').find('input').trigger('click')
+                parent_class = 'col-md-3'
 
             }
-           else if (element.closest('.col-md-2').length > 0) {
-                element.closest('.col-md-2').find('input').trigger('click')
+            else if (element.closest('.col-md-2').length > 0) {
+                parent_class = 'col-md-2'
 
             }
+            element.closest(parent_class).find('input').trigger('click')
+
 
         })
     },
     AddImage: function (element) {
         var ImageExtension = ['jpeg', 'jpg', 'png', 'bmp']
+        var parent_class = 'col-md-3'
+        if (element.closest('.col-md-3').length > 0) {
+            parent_class = 'col-md-3'
 
+        }
+        else if (element.closest('.col-md-2').length > 0) {
+            parent_class = 'col-md-2'
+
+        }
         if ($.inArray(element.val().split('.').pop().toLowerCase(), ImageExtension) == -1) {
             _msgalert.error("Vui lòng chỉ upload các định dạng sau: " + ImageExtension.join(', '));
             return
@@ -67,10 +78,11 @@ var homepage = {
             var reader = new FileReader();
             reader.onload = function (e) {
                 var src = e.target.result;
-                element.closest('.col-md-3').find('.magnific_popup').find('img').attr('src', src)
+
+                element.closest(parent_class).find('.magnific_popup').find('img').attr('src', src)
             }
-            element.closest('.col-md-3').find('.magnific_popup').show()
-            element.closest('.col-md-3').find('.choose').hide()
+            element.closest(parent_class).find('.magnific_popup').show()
+            element.closest(parent_class).find('.choose').hide()
             reader.readAsDataURL(item);
             return false;
         });
