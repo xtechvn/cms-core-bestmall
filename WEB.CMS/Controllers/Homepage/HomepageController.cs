@@ -74,7 +74,7 @@ namespace WEB.CMS.Controllers.Homepage
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> Summit(List<AllCode> banner_main, List<AllCode> banner_sub, List<AllCode> trending_main, List<AllCode> trending_sub)
+        public async Task<IActionResult> Summit(List<AllCode> banner_main, List<AllCode> banner_sub, List<AllCode> trending_main = null, List<AllCode> trending_sub = null)
         {
 
             try
