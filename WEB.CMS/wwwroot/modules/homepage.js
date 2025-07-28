@@ -43,31 +43,15 @@ var homepage = {
         $('body').on('click', '.choose', function (e) {
             e.preventDefault()
             var element = $(this)
-            var parent_class = 'col-md-3'
-            if (element.closest('.col-md-3').length > 0) {
-                parent_class = 'col-md-3'
 
-            }
-            else if (element.closest('.col-md-2').length > 0) {
-                parent_class = 'col-md-2'
-
-            }
-            element.closest('.' + parent_class).find('input').trigger('click')
+            element.closest('.img-upload-col').find('input').trigger('click')
 
 
         })
     },
     AddImage: function (element) {
         var ImageExtension = ['jpeg', 'jpg', 'png', 'bmp']
-        var parent_class = 'col-md-3'
-        if (element.closest('.col-md-3').length > 0) {
-            parent_class = 'col-md-3'
 
-        }
-        else if (element.closest('.col-md-2').length > 0) {
-            parent_class = 'col-md-2'
-
-        }
         if ($.inArray(element.val().split('.').pop().toLowerCase(), ImageExtension) == -1) {
             _msgalert.error("Vui lòng chỉ upload các định dạng sau: " + ImageExtension.join(', '));
             return
@@ -79,10 +63,10 @@ var homepage = {
             reader.onload = function (e) {
                 var src = e.target.result;
 
-                element.closest('.' + parent_class).find('.magnific_popup').find('img').attr('src', src)
+                element.closest('.img-upload-col').find('.magnific_popup').find('img').attr('src', src)
             }
-            element.closest('.' + parent_class).find('.magnific_popup').show()
-            element.closest('.' + parent_class).find('.choose').hide()
+            element.closest('.img-upload-col').find('.magnific_popup').show()
+            element.closest('.img-upload-col').find('.choose').hide()
             reader.readAsDataURL(item);
             return false;
         });
@@ -115,7 +99,7 @@ var homepage = {
     },
     Summit: function () {
         var banner_main = []
-        $('#banner-main .col-md-3').each(function (index, item) {
+        $('#banner-main .img-upload-col').each(function (index, item) {
             
             var element_image = $(this)
             if (element_image.find('img').length > 0) {
@@ -161,7 +145,7 @@ var homepage = {
             }
         })
         var banner_sub = []
-        $('#banner-sub .col-md-3').each(function (index, item) {
+        $('#banner-sub .img-upload-col').each(function (index, item) {
             var element_image = $(this)
             if (element_image.find('img').length > 0) {
                 var data_src = element_image.find('img').attr('src')
@@ -208,7 +192,7 @@ var homepage = {
             }
         })
         var trending_main = []
-        $('#banner-trend-main .col-md-3').each(function (index, item) {
+        $('#banner-trend-main .img-upload-col').each(function (index, item) {
 
             var element_image = $(this)
             if (element_image.find('img').length > 0) {
@@ -255,7 +239,7 @@ var homepage = {
             return false
         })
         var trending_sub = []
-        $('#banner-trend-sub .col-md-3').each(function (index, item) {
+        $('#banner-trend-sub .img-upload-col').each(function (index, item) {
 
             var element_image = $(this)
             if (element_image.find('img').length > 0) {

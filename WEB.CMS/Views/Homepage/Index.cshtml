@@ -37,7 +37,7 @@
                                     url_fixed = static_url + selected.Description;
                                 }
                             }
-                            <div class="col-md-3 @( (selected!=null && selected.Id > 0&& url_fixed !=null&&url_fixed.Trim() !="") ? "" : " items import")"
+                            <div class="col-md-3 img-upload-col @( (selected!=null && selected.Id > 0&& url_fixed !=null&&url_fixed.Trim() !="") ? "" : " items import")"
                                  data-pos="@((i + 1))"
                                  data-id="@( (selected!=null && selected.Id > 0) ? selected.Id : "-1")"
                                 style=" margin-right: 15px; ">
@@ -83,7 +83,7 @@
                                     url_fixed = static_url + selected.Description;
                                 }
                             }
-                            <div class="col-md-3 @((selected != null && selected.Id > 0 && url_fixed != null && url_fixed.Trim() != "") ? "" : " items import")"
+                            <div class="col-md-3 img-upload-col @((selected != null && selected.Id > 0 && url_fixed != null && url_fixed.Trim() != "") ? "" : " items import")"
                                  data-pos="@((i + 1))"
                                  data-id="@((selected != null && selected.Id > 0) ? selected.Id : "-1")"
                                 style=" margin-right: 15px; ">
@@ -114,7 +114,7 @@
                         @{
                             @for (int i = 0; i < 1; i++)
                             {
-                                var selected = banner_sub == null ? new AllCode() : banner_sub.FirstOrDefault(x => x.CodeValue == (i + 1));
+                                var selected = buying_trend_main == null ? new AllCode() : buying_trend_main.FirstOrDefault(x => x.CodeValue == (i + 1));
 
                                 url_fixed = "";
                                 if (selected != null && selected.Id > 0 && selected.Description != null && selected.Description.Trim() != "")
@@ -127,7 +127,7 @@
                                         url_fixed = static_url + selected.Description;
                                     }
                                 }
-                                <div class="col-md-3 @((selected != null && selected.Id > 0 && url_fixed != null && url_fixed.Trim() != "") ? "" : " items import")"
+                                <div class="col-md-3 img-upload-col @((selected != null && selected.Id > 0 && url_fixed != null && url_fixed.Trim() != "") ? "" : " items import")"
                                      data-pos="@((i + 1))"
                                      data-id="@((selected != null && selected.Id > 0) ? selected.Id : "-1")"
                                      style=" margin-right: 15px; ">
@@ -171,7 +171,7 @@
                                     url_fixed = static_url + selected.Description;
                                 }
                             }
-                            <div class="col-md-2 @((selected != null && selected.Id > 0 && url_fixed != null && url_fixed.Trim() != "") ? "" : " items import")"
+                            <div class="col-md-2 img-upload-col @((selected != null && selected.Id > 0 && url_fixed != null && url_fixed.Trim() != "") ? "" : " items import")"
                                  data-pos="@((i + 1))"
                                  data-id="@((selected != null && selected.Id > 0) ? selected.Id : "-1")"
                                  style=" margin-right: 15px; ">

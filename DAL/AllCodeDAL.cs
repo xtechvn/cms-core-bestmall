@@ -267,5 +267,30 @@ namespace DAL
 
             return _DbWorker.ExecuteNonQuery("sp_UpdateAllcode", parameters);
         }
+        public bool DeleteEmptyAllcodeDescription(string type)
+        {
+            try
+            {
+                using (var _DbContext = new EntityDataContext(_connection))
+                {
+                    var detail = _DbContext.Set<AllCode>().Where(n => n.Type == type && (n.Description==null || n.Description=="")).ToList();
+
+                    if (detail != null && detail.Count>0)
+                    {
+                        foreach (var item in detail)
+                        {
+                            _DbContext.Set<AllCode>().Remove(item);
+
+                        }
+                    }
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("GetByType - AllCodeDAL. " + ex);
+            }
+            return false;
+        }
     }
 }
