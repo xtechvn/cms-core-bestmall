@@ -16,7 +16,7 @@ var homepage = {
             element.closest('.col-md-3').find('img').attr('src', '')
 
         })
-        $('body').on('change', '.col-md-3 .banner-file', function () {
+        $('body').on('change', '.col-md-3 .banner-file,.col-md-2 .banner-file', function () {
             var element = $(this)
             console.log('Change event triggered for:', this.id); // In ra ID của input bị thay đổi
 
