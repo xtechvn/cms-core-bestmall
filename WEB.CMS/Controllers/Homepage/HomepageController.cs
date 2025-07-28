@@ -102,6 +102,23 @@ namespace WEB.CMS.Controllers.Homepage
 
                     }
                 }
+                if (banner_sub != null && banner_sub.Count>0) {
+                    foreach (var banner in banner_sub) {
+                        banner.Type = "HOMEPAGE_SUBBANNER";
+                        banner.UpdateTime=DateTime.Now;
+                        banner.CreateDate = DateTime.Now;
+                        banner.CreatedBy = _UserId;
+                        banner.UpdatedBy = _UserId;
+                        if (banner.Description == null) banner.Description = "";
+                        string static_domain = _configuration["DomainConfig:ImageStatic"];
+                        banner.Description = banner.Description.Replace(static_domain, "");
+                        if (banner.Id > 0)
+                        {
+                            await _allCodeRepository.Update(banner);
+                        }
+
+                    }
+                }
                 if (trending_main != null && trending_main.Count > 0)
                 {
                     foreach (var banner in trending_main)
@@ -141,13 +158,19 @@ namespace WEB.CMS.Controllers.Homepage
                         {
                             await _allCodeRepository.Update(banner);
                         }
-                        else
+                        else if(banner.Description!=null &&banner.Description.Trim()!="")
                         {
                             await _allCodeRepository.Create(banner);
 
                         }
+
                     }
                 }
+                _allCodeRepository.DeleteEmptyAllcodeDescription("HOMEPAGE_TRENDINGSUB");
+                _allCodeRepository.DeleteEmptyAllcodeDescription("HOMEPAGE_TRENDINGMAIN");
+                _allCodeRepository.DeleteEmptyAllcodeDescription("HOMEPAGE_SLIDE");
+                _allCodeRepository.DeleteEmptyAllcodeDescription("HOMEPAGE_SUBBANNER");
+
                 _redisConn.clear(CacheName.HOMEPAGE_SLIDE, Convert.ToInt32(_configuration["Redis:Database:db_common"]));
                 return Ok(new
                 {

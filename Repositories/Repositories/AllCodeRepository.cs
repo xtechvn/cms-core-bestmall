@@ -163,5 +163,9 @@ namespace Repositories.Repositories
         {
             return await _AllCodeDAL.GetAllSortByIDAndType(id,type);
         }
+        public bool DeleteEmptyAllcodeDescription(string type)
+        {
+            return  _AllCodeDAL.DeleteEmptyAllcodeDescription(type);
+        }
     }
 }
