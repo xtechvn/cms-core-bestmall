@@ -9,7 +9,7 @@ var homepage = {
         homepage.DynamicBind()
     },
     DynamicBind: function () {
-        $('body').on('click', '#banner-main .col-md-3 .delete,#banner-sub .col-md-3 .delete ', function () {
+        $('body').on('click', '#banner-main .col-md-3 .delete,#banner-sub .col-md-3 .delete,#banner-trend-main .col-md-3 .delete,#banner-trend-sub .col-md-3 .delete ', function () {
             var element = $(this)
             element.closest('.col-md-3').find('.magnific_popup').hide()
             element.closest('.col-md-3').find('.choose').show()
@@ -188,7 +188,99 @@ var homepage = {
                 }
             }
         })
-        var request = { banner_main: banner_main, banner_sub: banner_sub }
+        var trending_main = []
+        $('#banner-trend-main .col-md-3').each(function (index, item) {
+
+            var element_image = $(this)
+            if (element_image.find('img').length > 0) {
+                var data_src = element_image.find('img').attr('src')
+                if (data_src == null || data_src == undefined || data_src.trim() == '') {
+                    trending_main.push(
+                        {
+                            Id: element_image.attr('data-id'),
+                            CodeValue: element_image.attr('data-pos'),
+                            OrderNo: element_image.attr('data-pos'),
+                            Description: ""
+                        })
+                    return true
+                }
+                if (homepage.CheckIfImageVideoIsLocal(data_src)) {
+                    var result = homepage.POSTSynchorus('/Product/SummitImages', { data_image: data_src })
+                    if (result != undefined && result.data != undefined && result.data.trim() != '') {
+                        trending_main.push(
+                            {
+                                Id: element_image.attr('data-id'),
+                                CodeValue: element_image.attr('data-pos'),
+                                OrderNo: element_image.attr('data-pos'),
+                                Description: result.data
+                            })
+                    } else {
+                        trending_main.push({
+                            Id: element_image.attr('data-id'),
+                            CodeValue: element_image.attr('data-pos'),
+                            OrderNo: element_image.attr('data-pos'),
+                            Description: data_src
+                        })
+                    }
+                }
+                else {
+                    trending_main.push({
+                        Id: element_image.attr('data-id'),
+                        CodeValue: element_image.attr('data-pos'),
+
+                        OrderNo: element_image.attr('data-pos'),
+                        Description: data_src
+                    })
+                }
+            }
+        })
+        var trending_sub = []
+        $('#banner-trend-sub .col-md-3').each(function (index, item) {
+
+            var element_image = $(this)
+            if (element_image.find('img').length > 0) {
+                var data_src = element_image.find('img').attr('src')
+                if (data_src == null || data_src == undefined || data_src.trim() == '') {
+                    trending_sub.push(
+                        {
+                            Id: element_image.attr('data-id'),
+                            CodeValue: element_image.attr('data-pos'),
+                            OrderNo: element_image.attr('data-pos'),
+                            Description: ""
+                        })
+                    return true
+                }
+                if (homepage.CheckIfImageVideoIsLocal(data_src)) {
+                    var result = homepage.POSTSynchorus('/Product/SummitImages', { data_image: data_src })
+                    if (result != undefined && result.data != undefined && result.data.trim() != '') {
+                        trending_sub.push(
+                            {
+                                Id: element_image.attr('data-id'),
+                                CodeValue: element_image.attr('data-pos'),
+                                OrderNo: element_image.attr('data-pos'),
+                                Description: result.data
+                            })
+                    } else {
+                        trending_sub.push({
+                            Id: element_image.attr('data-id'),
+                            CodeValue: element_image.attr('data-pos'),
+                            OrderNo: element_image.attr('data-pos'),
+                            Description: data_src
+                        })
+                    }
+                }
+                else {
+                    trending_sub.push({
+                        Id: element_image.attr('data-id'),
+                        CodeValue: element_image.attr('data-pos'),
+
+                        OrderNo: element_image.attr('data-pos'),
+                        Description: data_src
+                    })
+                }
+            }
+        })
+        var request = { banner_main: banner_main, banner_sub: banner_sub, trending_main: trending_main, trending_sub: trending_sub }
         let url = "/homepage/summit";
         _global_function.AddLoading()
         _ajax_caller.post(url, request, function (result) {

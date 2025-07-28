@@ -55,6 +55,7 @@ namespace WEB.CMS.Controllers.Homepage
             ViewBag.BannerSub =  new List<AllCode>();
             ViewBag.MaxSlide = max_slide;
             ViewBag.MaxSub = max_sub;
+            ViewBag.MaxTrending = 4;
             string static_domain = _configuration["DomainConfig:ImageStatic"];
             ViewBag.Static = static_domain;
             try
@@ -62,6 +63,8 @@ namespace WEB.CMS.Controllers.Homepage
               
                 ViewBag.BannerSlide = _allCodeRepository.GetListByType("HOMEPAGE_SLIDE");
                 ViewBag.BannerSub = _allCodeRepository.GetListByType("HOMEPAGE_SUBBANNER");
+                ViewBag.BannerSub = _allCodeRepository.GetListByType("HOMEPAGE_TRENDINGMAIN");
+                ViewBag.BannerSub = _allCodeRepository.GetListByType("HOMEPAGE_TRENDINGSUB");
 
             }
             catch
@@ -71,7 +74,7 @@ namespace WEB.CMS.Controllers.Homepage
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> Summit(List<AllCode> banner_main, List<AllCode> banner_sub)
+        public async Task<IActionResult> Summit(List<AllCode> banner_main, List<AllCode> banner_sub, List<AllCode> trending_main, List<AllCode> trending_sub)
         {
 
             try
@@ -99,11 +102,29 @@ namespace WEB.CMS.Controllers.Homepage
 
                     }
                 }
-                if (banner_sub != null && banner_sub.Count > 0)
+                if (trending_main != null && trending_main.Count > 0)
                 {
-                    foreach (var banner in banner_sub)
+                    foreach (var banner in trending_main)
                     {
-                        banner.Type = "HOMEPAGE_SUBBANNER";
+                        banner.Type = "HOMEPAGE_TRENDINGMAIN";
+                        banner.UpdateTime = DateTime.Now;
+                        banner.CreateDate = DateTime.Now;
+                        banner.CreatedBy = _UserId;
+                        banner.UpdatedBy = _UserId;
+                        if (banner.Description == null) banner.Description = "";
+                        string static_domain = _configuration["DomainConfig:ImageStatic"];
+                        banner.Description = banner.Description.Replace(static_domain, "");
+                        if (banner.Id > 0)
+                        {
+                            await _allCodeRepository.Update(banner);
+                        }
+                    }
+                }
+                if (trending_sub != null && trending_sub.Count > 0)
+                {
+                    foreach (var banner in trending_sub)
+                    {
+                        banner.Type = "HOMEPAGE_TRENDINGSUB";
                         banner.UpdateTime = DateTime.Now;
                         banner.CreateDate = DateTime.Now;
                         banner.CreatedBy = _UserId;
