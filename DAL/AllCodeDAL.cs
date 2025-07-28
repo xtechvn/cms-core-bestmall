@@ -283,6 +283,33 @@ namespace DAL
 
                         }
                     }
+
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("GetByType - AllCodeDAL. " + ex);
+            }
+            return false;
+        }
+        public bool DeleteByType(string type)
+        {
+            try
+            {
+                using (var _DbContext = new EntityDataContext(_connection))
+                {
+                    var detail = _DbContext.Set<AllCode>().Where(n => n.Type == type ).ToList();
+
+                    if (detail != null && detail.Count > 0)
+                    {
+                        foreach (var item in detail)
+                        {
+                            _DbContext.Set<AllCode>().Remove(item);
+
+                        }
+                    }
+
                 }
                 return true;
             }

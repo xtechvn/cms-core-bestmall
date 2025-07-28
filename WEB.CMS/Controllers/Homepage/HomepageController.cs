@@ -50,7 +50,7 @@ namespace WEB.CMS.Controllers.Homepage
         public async Task<IActionResult> Index()
         {
             int max_slide = 3;
-            int max_sub = 3;
+            int max_sub = 2;
             ViewBag.BannerSlide =  new List<AllCode>();
             ViewBag.BannerSub =  new List<AllCode>();
             ViewBag.MaxSlide = max_slide;
@@ -86,6 +86,8 @@ namespace WEB.CMS.Controllers.Homepage
                     _UserId = Convert.ToInt32(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
                 }
                 if (banner_main != null && banner_main .Count>0) {
+                    _allCodeRepository.DeleteByType("HOMEPAGE_TRENDINGSUB");
+
                     foreach (var banner in banner_main) {
                         banner.Type = "HOMEPAGE_SLIDE";
                         banner.UpdateTime=DateTime.Now;

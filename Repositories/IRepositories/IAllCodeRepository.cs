@@ -28,5 +28,6 @@ namespace Repositories.IRepositories
         BankOnePay GetBankOnePayByBankName(string BankName);
         Task<List<AllCode>> GetAllSortByIDAndType(int id , string type);
         public bool DeleteEmptyAllcodeDescription(string type);
+        public bool DeleteByType(string type);
     }
 }
