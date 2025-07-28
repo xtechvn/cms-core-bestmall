@@ -86,8 +86,6 @@ namespace WEB.CMS.Controllers.Homepage
                     _UserId = Convert.ToInt32(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
                 }
                 if (banner_main != null && banner_main .Count>0) {
-                    _allCodeRepository.DeleteByType("HOMEPAGE_SLIDE");
-
                     foreach (var banner in banner_main) {
                         banner.Type = "HOMEPAGE_SLIDE";
                         banner.UpdateTime=DateTime.Now;
@@ -100,11 +98,6 @@ namespace WEB.CMS.Controllers.Homepage
                         if (banner.Id > 0)
                         {
                             await _allCodeRepository.Update(banner);
-                        }
-                        else if (banner.Description != null && banner.Description.Trim() != "")
-                        {
-                            await _allCodeRepository.Create(banner);
-
                         }
                     }
                 }
@@ -121,11 +114,6 @@ namespace WEB.CMS.Controllers.Homepage
                         if (banner.Id > 0)
                         {
                             await _allCodeRepository.Update(banner);
-                        }
-                        else if (banner.Description != null && banner.Description.Trim() != "")
-                        {
-                            await _allCodeRepository.Create(banner);
-
                         }
                     }
                 }
@@ -145,11 +133,6 @@ namespace WEB.CMS.Controllers.Homepage
                         {
                             await _allCodeRepository.Update(banner);
                         }
-                        else if(banner.Description != null && banner.Description.Trim() != "")
-                        {
-                            await _allCodeRepository.Create(banner);
-
-                        }
                     }
                 }
                 if (trending_sub != null && trending_sub.Count > 0)
@@ -168,11 +151,7 @@ namespace WEB.CMS.Controllers.Homepage
                         {
                             await _allCodeRepository.Update(banner);
                         }
-                        else if(banner.Description!=null &&banner.Description.Trim()!="")
-                        {
-                            await _allCodeRepository.Create(banner);
-
-                        }
+                        
 
                     }
                 }
