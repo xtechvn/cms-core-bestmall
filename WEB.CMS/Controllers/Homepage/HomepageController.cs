@@ -178,5 +178,46 @@ namespace WEB.CMS.Controllers.Homepage
 
             });
         }
+        [HttpPost]
+        public async Task<IActionResult> DeleteById(int id)
+        {
+
+            try
+            {
+                int _UserId = 0;
+
+                if (HttpContext.User.FindFirst(ClaimTypes.NameIdentifier) != null)
+                {
+                    _UserId = Convert.ToInt32(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+                }
+                if (id<=0 )
+                {
+                    return Ok(new
+                    {
+                        is_success = false,
+                        message = "FAILED"
+                    });
+                }
+               
+                await _allCodeRepository.Delete(id);
+
+                _redisConn.clear(CacheName.HOMEPAGE_SLIDE, Convert.ToInt32(_configuration["Redis:Database:db_common"]));
+                return Ok(new
+                {
+                    is_success = true,
+                    message = "SUCCESS"
+                });
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("DeleteById - HomepageController: " + ex);
+            }
+            return Ok(new
+            {
+                is_success = false,
+                message = "Cập nhật thất bại"
+
+            });
+        }
     }
 }

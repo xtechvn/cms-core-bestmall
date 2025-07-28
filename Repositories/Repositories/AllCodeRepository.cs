@@ -43,9 +43,10 @@ namespace Repositories.Repositories
             }
         }
 
-        public Task<long> Delete(int id)
+        public async Task<long> Delete(int id)
         {
-            throw new NotImplementedException();
+             _AllCodeDAL.Delete(id);
+            return id;
         }
 
         public List<AllCode> GetAll()
