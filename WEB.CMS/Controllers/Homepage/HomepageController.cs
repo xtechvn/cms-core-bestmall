@@ -99,7 +99,11 @@ namespace WEB.CMS.Controllers.Homepage
                         {
                             await _allCodeRepository.Update(banner);
                         }
+                        else if (banner.Description != null && banner.Description.Trim() != "")
+                        {
+                            await _allCodeRepository.Create(banner);
 
+                        }
                     }
                 }
                 if (banner_sub != null && banner_sub.Count>0) {
@@ -116,7 +120,11 @@ namespace WEB.CMS.Controllers.Homepage
                         {
                             await _allCodeRepository.Update(banner);
                         }
+                        else if (banner.Description != null && banner.Description.Trim() != "")
+                        {
+                            await _allCodeRepository.Create(banner);
 
+                        }
                     }
                 }
                 if (trending_main != null && trending_main.Count > 0)
@@ -135,7 +143,7 @@ namespace WEB.CMS.Controllers.Homepage
                         {
                             await _allCodeRepository.Update(banner);
                         }
-                        else
+                        else if(banner.Description != null && banner.Description.Trim() != "")
                         {
                             await _allCodeRepository.Create(banner);
 
