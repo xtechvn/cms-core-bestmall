@@ -43,9 +43,10 @@ namespace Repositories.Repositories
             }
         }
 
-        public Task<long> Delete(int id)
+        public async Task<long> Delete(int id)
         {
-            throw new NotImplementedException();
+             _AllCodeDAL.Delete(id);
+            return id;
         }
 
         public List<AllCode> GetAll()
@@ -162,6 +163,14 @@ namespace Repositories.Repositories
         public async Task<List<AllCode>> GetAllSortByIDAndType(int id,string type)
         {
             return await _AllCodeDAL.GetAllSortByIDAndType(id,type);
+        }
+        public bool DeleteEmptyAllcodeDescription(string type)
+        {
+            return  _AllCodeDAL.DeleteEmptyAllcodeDescription(type);
+        }
+        public bool DeleteByType(string type)
+        {
+            return  _AllCodeDAL.DeleteByType(type);
         }
     }
 }

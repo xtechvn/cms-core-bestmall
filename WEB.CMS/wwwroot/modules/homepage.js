@@ -43,31 +43,15 @@ var homepage = {
         $('body').on('click', '.choose', function (e) {
             e.preventDefault()
             var element = $(this)
-            var parent_class = 'col-md-3'
-            if (element.closest('.col-md-3').length > 0) {
-                parent_class = 'col-md-3'
 
-            }
-            else if (element.closest('.col-md-2').length > 0) {
-                parent_class = 'col-md-2'
-
-            }
-            element.closest('.' + parent_class).find('input').trigger('click')
+            element.closest('.img-upload-col').find('input').trigger('click')
 
 
         })
     },
     AddImage: function (element) {
         var ImageExtension = ['jpeg', 'jpg', 'png', 'bmp']
-        var parent_class = 'col-md-3'
-        if (element.closest('.col-md-3').length > 0) {
-            parent_class = 'col-md-3'
 
-        }
-        else if (element.closest('.col-md-2').length > 0) {
-            parent_class = 'col-md-2'
-
-        }
         if ($.inArray(element.val().split('.').pop().toLowerCase(), ImageExtension) == -1) {
             _msgalert.error("Vui lòng chỉ upload các định dạng sau: " + ImageExtension.join(', '));
             return
@@ -79,10 +63,10 @@ var homepage = {
             reader.onload = function (e) {
                 var src = e.target.result;
 
-                element.closest('.' + parent_class).find('.magnific_popup').find('img').attr('src', src)
+                element.closest('.img-upload-col').find('.magnific_popup').find('img').attr('src', src)
             }
-            element.closest('.' + parent_class).find('.magnific_popup').show()
-            element.closest('.' + parent_class).find('.choose').hide()
+            element.closest('.img-upload-col').find('.magnific_popup').show()
+            element.closest('.img-upload-col').find('.choose').hide()
             reader.readAsDataURL(item);
             return false;
         });
@@ -115,7 +99,7 @@ var homepage = {
     },
     Summit: function () {
         var banner_main = []
-        $('#banner-main .col-md-3').each(function (index, item) {
+        $('#banner-main .img-upload-col').each(function (index, item) {
             
             var element_image = $(this)
             if (element_image.find('img').length > 0) {
@@ -161,7 +145,7 @@ var homepage = {
             }
         })
         var banner_sub = []
-        $('#banner-sub .col-md-3').each(function (index, item) {
+        $('#banner-sub .img-upload-col').each(function (index, item) {
             var element_image = $(this)
             if (element_image.find('img').length > 0) {
                 var data_src = element_image.find('img').attr('src')
@@ -207,101 +191,117 @@ var homepage = {
                 }
             }
         })
-        var trending_main = []
-        $('#banner-trend-main .col-md-3').each(function (index, item) {
+        //var trending_main = []
+        //$('#banner-trend-main .img-upload-col').each(function (index, item) {
 
-            var element_image = $(this)
-            if (element_image.find('img').length > 0) {
-                var data_src = element_image.find('img').attr('src')
-                if (data_src == null || data_src == undefined || data_src.trim() == '') {
-                    trending_main.push(
-                        {
-                            Id: element_image.attr('data-id'),
-                            CodeValue: element_image.attr('data-pos'),
-                            OrderNo: element_image.attr('data-pos'),
-                            Description: ""
-                        })
-                    return true
-                }
-                if (homepage.CheckIfImageVideoIsLocal(data_src)) {
-                    var result = homepage.POSTSynchorus('/Product/SummitImages', { data_image: data_src })
-                    if (result != undefined && result.data != undefined && result.data.trim() != '') {
-                        trending_main.push(
-                            {
-                                Id: element_image.attr('data-id'),
-                                CodeValue: element_image.attr('data-pos'),
-                                OrderNo: element_image.attr('data-pos'),
-                                Description: result.data
-                            })
-                    } else {
-                        trending_main.push({
-                            Id: element_image.attr('data-id'),
-                            CodeValue: element_image.attr('data-pos'),
-                            OrderNo: element_image.attr('data-pos'),
-                            Description: data_src
-                        })
-                    }
-                }
-                else {
-                    trending_main.push({
-                        Id: element_image.attr('data-id'),
-                        CodeValue: element_image.attr('data-pos'),
+        //    var element_image = $(this)
+        //    if (element_image.find('img').length > 0) {
+        //        var data_src = element_image.find('img').attr('src')
+        //        if (data_src == null || data_src == undefined || data_src.trim() == '') {
+        //            trending_main.push(
+        //                {
+        //                    Id: element_image.attr('data-id'),
+        //                    CodeValue: element_image.attr('data-pos'),
+        //                    OrderNo: element_image.attr('data-pos'),
+        //                    Description: ""
+        //                })
+        //            return true
+        //        }
+        //        if (homepage.CheckIfImageVideoIsLocal(data_src)) {
+        //            var result = homepage.POSTSynchorus('/Product/SummitImages', { data_image: data_src })
+        //            if (result != undefined && result.data != undefined && result.data.trim() != '') {
+        //                trending_main.push(
+        //                    {
+        //                        Id: element_image.attr('data-id'),
+        //                        CodeValue: element_image.attr('data-pos'),
+        //                        OrderNo: element_image.attr('data-pos'),
+        //                        Description: result.data
+        //                    })
+        //            } else {
+        //                trending_main.push({
+        //                    Id: element_image.attr('data-id'),
+        //                    CodeValue: element_image.attr('data-pos'),
+        //                    OrderNo: element_image.attr('data-pos'),
+        //                    Description: data_src
+        //                })
+        //            }
+        //        }
+        //        else {
+        //            trending_main.push({
+        //                Id: element_image.attr('data-id'),
+        //                CodeValue: element_image.attr('data-pos'),
 
-                        OrderNo: element_image.attr('data-pos'),
-                        Description: data_src
-                    })
-                }
-            }
-            return false
-        })
-        var trending_sub = []
-        $('#banner-trend-sub .col-md-3').each(function (index, item) {
+        //                OrderNo: element_image.attr('data-pos'),
+        //                Description: data_src
+        //            })
+        //        }
+        //    }
+        //    return false
+        //})
+        //var trending_sub = []
+        //$('#banner-trend-sub .img-upload-col').each(function (index, item) {
 
-            var element_image = $(this)
-            if (element_image.find('img').length > 0) {
-                var data_src = element_image.find('img').attr('src')
-                if (data_src == null || data_src == undefined || data_src.trim() == '') {
-                    trending_sub.push(
-                        {
-                            Id: element_image.attr('data-id'),
-                            CodeValue: element_image.attr('data-pos'),
-                            OrderNo: element_image.attr('data-pos'),
-                            Description: ""
-                        })
-                    return true
-                }
-                if (homepage.CheckIfImageVideoIsLocal(data_src)) {
-                    var result = homepage.POSTSynchorus('/Product/SummitImages', { data_image: data_src })
-                    if (result != undefined && result.data != undefined && result.data.trim() != '') {
-                        trending_sub.push(
-                            {
-                                Id: element_image.attr('data-id'),
-                                CodeValue: element_image.attr('data-pos'),
-                                OrderNo: element_image.attr('data-pos'),
-                                Description: result.data
-                            })
-                    } else {
-                        trending_sub.push({
-                            Id: element_image.attr('data-id'),
-                            CodeValue: element_image.attr('data-pos'),
-                            OrderNo: element_image.attr('data-pos'),
-                            Description: data_src
-                        })
-                    }
-                }
-                else {
-                    trending_sub.push({
-                        Id: element_image.attr('data-id'),
-                        CodeValue: element_image.attr('data-pos'),
+        //    var element_image = $(this)
+        //    if (element_image.find('img').length > 0) {
+        //        var data_src = element_image.find('img').attr('src')
+        //        if (data_src == null || data_src == undefined || data_src.trim() == '') {
+        //            trending_sub.push(
+        //                {
+        //                    Id: element_image.attr('data-id'),
+        //                    CodeValue: element_image.attr('data-pos'),
+        //                    OrderNo: element_image.attr('data-pos'),
+        //                    Description: ""
+        //                })
+        //            return true
+        //        }
+        //        if (homepage.CheckIfImageVideoIsLocal(data_src)) {
+        //            var result = homepage.POSTSynchorus('/Product/SummitImages', { data_image: data_src })
+        //            if (result != undefined && result.data != undefined && result.data.trim() != '') {
+        //                trending_sub.push(
+        //                    {
+        //                        Id: element_image.attr('data-id'),
+        //                        CodeValue: element_image.attr('data-pos'),
+        //                        OrderNo: element_image.attr('data-pos'),
+        //                        Description: result.data
+        //                    })
+        //            } else {
+        //                trending_sub.push({
+        //                    Id: element_image.attr('data-id'),
+        //                    CodeValue: element_image.attr('data-pos'),
+        //                    OrderNo: element_image.attr('data-pos'),
+        //                    Description: data_src
+        //                })
+        //            }
+        //        }
+        //        else {
+        //            trending_sub.push({
+        //                Id: element_image.attr('data-id'),
+        //                CodeValue: element_image.attr('data-pos'),
 
-                        OrderNo: element_image.attr('data-pos'),
-                        Description: data_src
-                    })
-                }
-            }
-        })
-        var request = { banner_main: banner_main, banner_sub: banner_sub, trending_main: trending_main, trending_sub: trending_sub }
+        //                OrderNo: element_image.attr('data-pos'),
+        //                Description: data_src
+        //            })
+        //        }
+        //    }
+        //})
+        var request = { banner_main: banner_main, banner_sub: banner_sub/*, trending_main: trending_main, trending_sub: trending_sub*/ }
         let url = "/homepage/summit";
+        _global_function.AddLoading()
+        _ajax_caller.post(url, request, function (result) {
+            _global_function.RemoveLoading()
+
+            if (result.is_success) {
+                _msgalert.success(result.message);
+
+            } else {
+                _msgalert.error(result.message);
+            }
+
+        });
+    },
+    DeleteById: function (id) {
+        var request = { id: id }
+        let url = "/homepage/DeleteById";
         _global_function.AddLoading()
         _ajax_caller.post(url, request, function (result) {
             _global_function.RemoveLoading()

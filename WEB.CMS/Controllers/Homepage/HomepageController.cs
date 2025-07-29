@@ -50,7 +50,7 @@ namespace WEB.CMS.Controllers.Homepage
         public async Task<IActionResult> Index()
         {
             int max_slide = 3;
-            int max_sub = 3;
+            int max_sub = 2;
             ViewBag.BannerSlide =  new List<AllCode>();
             ViewBag.BannerSub =  new List<AllCode>();
             ViewBag.MaxSlide = max_slide;
@@ -74,7 +74,7 @@ namespace WEB.CMS.Controllers.Homepage
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> Summit(List<AllCode> banner_main, List<AllCode> banner_sub, List<AllCode> trending_main, List<AllCode> trending_sub)
+        public async Task<IActionResult> Summit(List<AllCode> banner_main, List<AllCode> banner_sub, List<AllCode> trending_main = null, List<AllCode> trending_sub = null)
         {
 
             try
@@ -99,7 +99,22 @@ namespace WEB.CMS.Controllers.Homepage
                         {
                             await _allCodeRepository.Update(banner);
                         }
-
+                    }
+                }
+                if (banner_sub != null && banner_sub.Count>0) {
+                    foreach (var banner in banner_sub) {
+                        banner.Type = "HOMEPAGE_SUBBANNER";
+                        banner.UpdateTime=DateTime.Now;
+                        banner.CreateDate = DateTime.Now;
+                        banner.CreatedBy = _UserId;
+                        banner.UpdatedBy = _UserId;
+                        if (banner.Description == null) banner.Description = "";
+                        string static_domain = _configuration["DomainConfig:ImageStatic"];
+                        banner.Description = banner.Description.Replace(static_domain, "");
+                        if (banner.Id > 0)
+                        {
+                            await _allCodeRepository.Update(banner);
+                        }
                     }
                 }
                 if (trending_main != null && trending_main.Count > 0)
@@ -117,11 +132,6 @@ namespace WEB.CMS.Controllers.Homepage
                         if (banner.Id > 0)
                         {
                             await _allCodeRepository.Update(banner);
-                        }
-                        else
-                        {
-                            await _allCodeRepository.Create(banner);
-
                         }
                     }
                 }
@@ -141,13 +151,15 @@ namespace WEB.CMS.Controllers.Homepage
                         {
                             await _allCodeRepository.Update(banner);
                         }
-                        else
-                        {
-                            await _allCodeRepository.Create(banner);
+                        
 
-                        }
                     }
                 }
+                _allCodeRepository.DeleteEmptyAllcodeDescription("HOMEPAGE_TRENDINGSUB");
+                _allCodeRepository.DeleteEmptyAllcodeDescription("HOMEPAGE_TRENDINGMAIN");
+                _allCodeRepository.DeleteEmptyAllcodeDescription("HOMEPAGE_SLIDE");
+                _allCodeRepository.DeleteEmptyAllcodeDescription("HOMEPAGE_SUBBANNER");
+
                 _redisConn.clear(CacheName.HOMEPAGE_SLIDE, Convert.ToInt32(_configuration["Redis:Database:db_common"]));
                 return Ok(new
                 {
@@ -162,6 +174,47 @@ namespace WEB.CMS.Controllers.Homepage
             return Ok(new
             {
                 is_success=false,
+                message = "Cập nhật thất bại"
+
+            });
+        }
+        [HttpPost]
+        public async Task<IActionResult> DeleteById(int id)
+        {
+
+            try
+            {
+                int _UserId = 0;
+
+                if (HttpContext.User.FindFirst(ClaimTypes.NameIdentifier) != null)
+                {
+                    _UserId = Convert.ToInt32(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+                }
+                if (id<=0 )
+                {
+                    return Ok(new
+                    {
+                        is_success = false,
+                        message = "FAILED"
+                    });
+                }
+               
+                await _allCodeRepository.Delete(id);
+
+                _redisConn.clear(CacheName.HOMEPAGE_SLIDE, Convert.ToInt32(_configuration["Redis:Database:db_common"]));
+                return Ok(new
+                {
+                    is_success = true,
+                    message = "SUCCESS"
+                });
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("DeleteById - HomepageController: " + ex);
+            }
+            return Ok(new
+            {
+                is_success = false,
                 message = "Cập nhật thất bại"
 
             });
