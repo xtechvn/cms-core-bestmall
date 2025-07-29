@@ -71,6 +71,7 @@ namespace Utilities
         {
             TIEN_MAT = 1,
             CHUYEN_KHOAN = 2,
+            VNPAY=3
         }
 
         public enum ORDER_DEBT_STATUS

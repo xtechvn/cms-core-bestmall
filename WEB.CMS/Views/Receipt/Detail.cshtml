@@ -78,9 +78,15 @@
                                     <div class="col-7 mb10">:</div>
                                 }
                                 <div class="col-5 mb10">Nội dung</div>
-                                <div class="col-7 mb10">: @Model.Note</div>
+                                <div class="col-7 mb10">: 
+                                    
+                                    <textarea style=" width: 100%; height: 150px; " disabled="">@Html.Raw(Model.Note) </textarea>
+                                    
+                                </div>
                                 <div class="col-5 mb10">Ghi chú</div>
-                                <div class="col-7 mb10">: @Model.Description</div>
+                                <div class="col-7 mb10">:
+                                    <textarea style=" width: 100%; height: 150px; " disabled="">@Html.Raw(Model.Description) </textarea>
+                                </div>
                                 <div class="col-5 mb10">Ảnh đính kèm</div>
                                 <div class="col-7 mb10">
                                     @if (!string.IsNullOrEmpty(Model.AttatchmentFile))
@@ -90,7 +96,7 @@
                                 </div>
                             </div>
                         </td>
-                        <td>
+                        <td style=" align-content: flex-start; ">
                             <div class="row">
                                 <div class="col-5 mb10">Ngày tạo</div>
                                 <div class="col-7 mb10">
