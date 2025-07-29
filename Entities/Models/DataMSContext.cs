@@ -765,8 +765,10 @@ public partial class DataMSContext : DbContext
 
             entity.Property(e => e.Avatar).HasMaxLength(500);
             entity.Property(e => e.Banner).HasMaxLength(500);
+            entity.Property(e => e.BannerMain).HasMaxLength(4000);
+            entity.Property(e => e.BannerSub).HasMaxLength(4000);
             entity.Property(e => e.CreateTime).HasColumnType("datetime");
-            entity.Property(e => e.Description).HasMaxLength(500);
+            entity.Property(e => e.Description).HasMaxLength(4000);
             entity.Property(e => e.Icon).HasMaxLength(500);
             entity.Property(e => e.LabelCode)
                 .HasMaxLength(100)
@@ -875,6 +877,7 @@ public partial class DataMSContext : DbContext
             entity.Property(e => e.RefundDate).HasColumnType("datetime");
             entity.Property(e => e.RefundReason).HasMaxLength(500);
             entity.Property(e => e.ShippingCode).HasMaxLength(50);
+            entity.Property(e => e.ShippingToken).HasMaxLength(4000);
             entity.Property(e => e.ShippingTypeCode).HasMaxLength(50);
             entity.Property(e => e.UpdateLast).HasColumnType("datetime");
             entity.Property(e => e.UserGroupIds).HasMaxLength(250);
