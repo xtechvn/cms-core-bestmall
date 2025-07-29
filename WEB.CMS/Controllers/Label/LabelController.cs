@@ -198,6 +198,8 @@ namespace WEB.CMS.Controllers
                     _labelRepository.Insert(updated_model);
                 }
                 _redisConn.clear(CacheName.LABEL+updated_model.Id, db_index);
+                _redisConn.clear(CacheName.LABEL, db_index);
+                _redisConn.clear(CacheName.LABEL_SHOPMALL, db_index);
                 _redisConn.DeleteCacheByKeyword(CacheName.PRODUCT_LISTING, db_index);
                 _redisConn.DeleteCacheByKeyword(CacheName.PRODUCT_DETAIL, db_index);
                 return Ok(new

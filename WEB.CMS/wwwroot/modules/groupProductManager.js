@@ -74,7 +74,27 @@ $('#grid-data').on('click', '.ckb-aff-category', function () {
     _groupProduct.OnSetupAffCategory(cateid, affid, type);
 });
 
+$('body').on('change', '#image_file', function (e) {
+    setTimeout(function () {
+        $('#image_file_url').val($('.image-preview').attr('src')).trigger('change')
 
+    }, 500);
+
+});
+$('body').on('keypress', '#image_file_url', function (e) {
+    if (e.which === 13) {
+        e.preventDefault();
+        var imageUrl = $(this).val();
+        var currentTime = new Date().getTime();
+
+        $('.image-preview').attr('src', imageUrl + '?' + currentTime).trigger('change');
+    }
+});
+$('body').on('focusout', '#image_file_url', function (e) {
+    var imageUrl = $(this).val();
+    var currentTime = new Date().getTime();
+    $('.image-preview').attr('src', imageUrl + '?' + currentTime).trigger('change');
+});
 var _groupProduct = {
     Init: function () {
         let searchData = {
@@ -248,12 +268,18 @@ var _groupProduct = {
             let form = document.getElementById('form-group-product');
             var formData = new FormData(form);
             var imagedata = $('.image-preview').attr('src');
-
+            var image_data_url = $('#image_file_url').val()
             var data_src = imagedata
-            if (data_src == null || data_src == undefined || data_src.trim() == '') {
+
+            if (image_data_url != undefined && image_data_url.trim() != ''
+                && image_data_url.trim() != data_src) {
+                formData.append('ImageBase64', image_data_url);
+
+            }
+            else if (data_src == null || data_src == undefined || data_src.trim() == '') {
                
                 formData.append('ImageBase64', imagedata);
-                formData.append('imageSize', $('.sl-image-size option:selected').attr('size'));
+                //formData.append('imageSize', $('.sl-image-size option:selected').attr('size'));
 
             }
             else if (_groupProduct.CheckIfImageVideoIsLocal(data_src)) {
@@ -262,12 +288,12 @@ var _groupProduct = {
                     formData.append('ImagePath', result.data);
                 } else {
                     formData.append('ImageBase64', imagedata);
-                    formData.append('imageSize', $('.sl-image-size option:selected').attr('size'));
+                    //formData.append('imageSize', $('.sl-image-size option:selected').attr('size'));
                 }
             }
             else {
                 formData.append('ImageBase64', imagedata);
-                formData.append('imageSize', $('.sl-image-size option:selected').attr('size'));
+               // formData.append('imageSize', $('.sl-image-size option:selected').attr('size'));
             }
          
 

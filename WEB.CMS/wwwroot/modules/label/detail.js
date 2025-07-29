@@ -144,6 +144,8 @@ var label_detail = {
         var icon = $("#update-icon").val();
         var parentId = $("#update-parentid").val();  
         var level = $("#update-level").val(); 
+        var position = $("#update-position").val(); 
+        var ShopMallPosition = $("#update-shopmall-position").val(); 
         var userSupplierId = $("#update-userSupplierId").val();
         var banner = $("#update-banner-import img") == undefined ? '' : $("#update-banner-import img").attr('src'); 
         var avt = $("#update-avatar-import img") == undefined ? '' : $("#update-avatar-import img").attr('src'); 
@@ -199,6 +201,8 @@ var label_detail = {
         formData.append("UserSupplierId", userSupplierId);
         formData.append("Banner", banner == undefined ? '' : banner);
         formData.append("Avatar", avt == undefined ? '' : avt);
+        formData.append("Position", position);
+        formData.append("ShopMallPosition", ShopMallPosition);
 
         //-- Banner:
 
