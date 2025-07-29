@@ -68,8 +68,11 @@ namespace DAL
                     new SqlParameter("@UserSupplierId", model.UserSupplierId),
                     new SqlParameter("@Banner", model.Banner),
                     new SqlParameter("@Avatar ", model.Avatar),
-                     new SqlParameter("@BannerMain", model.BannerMain?? (object)DBNull.Value),
+                    new SqlParameter("@BannerMain", model.BannerMain?? (object)DBNull.Value),
                     new SqlParameter("@BannerSub", model.BannerSub?? (object)DBNull.Value),
+                    new SqlParameter("@Position", model.Position?? (object)DBNull.Value),
+                    new SqlParameter("@ShopMallPosition", model.ShopMallPosition?? (object)DBNull.Value),
+
                 ];
                 var id = _DbWorker.ExecuteNonQuery(StoreProcedureConstant.InsertLabel, objParam);
                 model.Id = id;
@@ -104,6 +107,9 @@ namespace DAL
                     new SqlParameter("@Avatar ", model.Avatar),
                      new SqlParameter("@BannerMain", model.BannerMain?? (object)DBNull.Value),
                     new SqlParameter("@BannerSub", model.BannerSub?? (object)DBNull.Value),
+                    new SqlParameter("@Position", model.Position?? (object)DBNull.Value),
+                    new SqlParameter("@ShopMallPosition", model.ShopMallPosition?? (object)DBNull.Value),
+
                 ];
                 var id = _DbWorker.ExecuteNonQuery(StoreProcedureConstant.UpdateLabel, objParam);
                 model.Id = id;

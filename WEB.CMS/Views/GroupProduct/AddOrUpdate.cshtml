@@ -107,7 +107,7 @@
                 <span class="txt_12 gray mt5">(Chấp nhận ảnh jpg, gif, png)</span>
             </label>
             <div class="wrap_input">
-              @*   <div class="row mb10">
+                @*   <div class="row mb10">
                     <div class="col-md-5 col-xs-12">
                         <select class="form-control sl-image-size" asp-for="@Model.PositionId" style="width: 200px;">
                             <option value="-1" size="150x200">Chọn kích thước</option>
@@ -130,31 +130,40 @@
                 </div> *@
                 <div class="wrap-image-preview" style="width: 150px;text-align: center; display: inline-grid;">
                     @{
+                        string url_fixed = "/images/icons/noimage.png";
                         if (Model != null && Model.ImagePath != null)
                         {
-                            string url_fixed = Model.ImagePath;
+                            url_fixed = Model.ImagePath;
                             if (!url_fixed.Contains(static_url)
+                            && !url_fixed.Contains("https://")
+                            && !url_fixed.Contains("http://")
                             && !url_fixed.Contains("base64")
                             && !url_fixed.Contains("data:image"))
                             {
                                 url_fixed = static_url + Model.ImagePath;
                             }
-                            <img class="image-preview mb10"
-                                 src="@url_fixed"
-                                 onerror="_imageError(this)" />
+
                         }
-                        else
-                        {
-                            <img class="image-preview mb10"
-                                 src="/images/icons/noimage.png"
-                                 onerror="_imageError(this)" />
-                        }
+                        <img class="image-preview mb10"
+                             src="@url_fixed"
+                             onerror="_imageError(this)" />
                     }
 
                     <input type="file" id="image_file" style="display:none;" />
                     <input type="hidden" asp-for="@Model.ImagePath" />
                     <button type="button" class="btn btn-primary" style="margin-left: 0px!important;" id="btn-upload-image" onclick="$('#image_file').trigger('click');"><i class="fa fa-image"></i>Upload</button>
+
+
                 </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="lbl">
+                URL
+            </label>
+            <div class="wrap_input">
+                <input type="text" class="form-control" id="image_file_url" value="@url_fixed" />
             </div>
         </div>
 
