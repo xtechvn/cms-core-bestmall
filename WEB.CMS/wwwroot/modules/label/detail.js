@@ -177,8 +177,8 @@ var label_detail = {
             $("#update-description").focus();
             return false;
         }
-        if (description.length > 500) {
-            _msgalert.error("Mô tả thương hiệu không được quá 500 ký tự.");
+        if (description.length > 4000) {
+            _msgalert.error("Mô tả thương hiệu không được quá 4000 ký tự.");
             $("#update-description").focus();
             return false;
         }
