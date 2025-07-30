@@ -172,6 +172,16 @@ var label_detail = {
             $("#update-code").focus();
             return false;
         }
+        if (!description) {
+            _msgalert.error("Mô tả thương hiệu là bắt buộc.");
+            $("#update-description").focus();
+            return false;
+        }
+        if (description.length > 4000) {
+            _msgalert.error("Mô tả thương hiệu không được quá 4000 ký tự.");
+            $("#update-description").focus();
+            return false;
+        }
         if (icon == null || icon == undefined || icon == 'null' || icon == 'undefined'|| icon.trim() == '') {
             _msgalert.error("Ảnh đại diện thương hiệu là bắt buộc");
             $("#update-icon").focus();
