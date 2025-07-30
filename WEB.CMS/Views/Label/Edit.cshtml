@@ -226,7 +226,7 @@
                                     url_fixed = "";
                                     if (banner_sub != null && banner_sub.Count > i && banner_sub[i] != null&& banner_sub[i].Trim() != "")
                                     {
-                                        url_fixed = banner_sub[0];
+                                        url_fixed = banner_sub[i];
                                         if (!url_fixed.Contains(static_url)
                                         && !url_fixed.Contains("base64")
                                         && !url_fixed.Contains("data:video"))
