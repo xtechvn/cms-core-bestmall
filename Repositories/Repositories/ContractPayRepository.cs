@@ -310,7 +310,7 @@ namespace Repositories.Repositories
                     if (order != null)
                     {
                         OrderViewModel orderViewModel = new OrderViewModel();
-                        orderViewModel.OrderId = order.OrderId.ToString();
+                        orderViewModel.OrderId = order.OrderId;
                         orderViewModel.OrderNo = order.OrderNo;
                         if (order.StartDate != null)
                             orderViewModel.StartDate = order.StartDate.ToString("dd/MM/yyyy");

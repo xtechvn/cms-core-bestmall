@@ -689,7 +689,7 @@ namespace WEB.CMS.Controllers.Funding
                     });
                 orderDetail.CopyProperties(orderViewModel);
                 orderViewModel.OrderNo = orderDetail.OrderNo;
-                orderViewModel.OrderId = orderDetail.OrderId.ToString();
+                orderViewModel.OrderId = orderDetail.OrderId;
                 orderViewModel.ClientId = orderDetail.ClientId;
 
                 var client = _clientRepository.GetClientDetailByClientId(orderDetail.ClientId).Result;

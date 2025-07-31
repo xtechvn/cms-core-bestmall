@@ -96,9 +96,9 @@
                                 </td>
                                 <td class="text-right">
                                     <div class="green">@item.Payment.ToString("#,##0")/</div>
-                                    <div class="red">@(item.Amount == 0 ? "0" : item.Amount.ToString("#,##"))</div>
+                                    <div class="red">@((double)item.Amount == null ? "0" : ((double)item.Amount).ToString("#,##"))</div>
                                 </td>
-                                <td>@item.Profit.ToString("#,##")</td>
+                                <td>@(((double)item.Profit).ToString("#,##"))</td>
                                 <td>
                                     @switch (item.StatusCode)
                                     {
