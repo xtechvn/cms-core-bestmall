@@ -40,15 +40,16 @@
                                     <div class="content">
                                         <div class="name">@(client.ClientName)</div>
                                         <div>@client.Phone - @client.Email</div>
-                                        <div>@(ViewBag.Address != ""?"Địa chỉ giao hàng: "+ ViewBag.Address:"")
-                                            @if (Model.OrderStatus == (int)OrderStatus.CREATED_ORDER  || Model.OrderStatus == (int)OrderStatus.PAID)
+                                        <div>
+                                            @(ViewBag.Address != "" ? "Địa chỉ giao hàng: " + ViewBag.Address : "")
+                                            @if (Model.OrderStatus == (int)OrderStatus.CREATED_ORDER || Model.OrderStatus == (int)OrderStatus.PAID)
                                             {
                                                 <a onclick="_orderDetail.EditAddress(@ViewBag.OrderId)"><i class="fa fa-edit"></i></a>
                                             }
                                         </div>
-                                         <div>
+                                        <div>
                                             @( ViewBag.ReceiverName != ""?"Người nhận: " + ViewBag.ReceiverName : "")
-                                          
+
                                         </div>
                                     </div>
                                 </div>
@@ -174,21 +175,43 @@
                                     </li>
                                     <li class="flex justify-content-between mb-2">
                                         <div class="">Đơn vị vận chuyển</div>
-                                        <div class="text-right">@Model.CarrierTypeName </div>
+                                        <div class="text-right">
+                                            @switch (Model.CarrierId)
+                                            {
+                                                default:
+                                                    {
+                                                        <nw>Khách hàng lấy tại BestMall</nw>
+                                                    }
+                                                    break;
+                                                case 2:
+                                                    {
+                                                        <nw>Ninja Van</nw>
+                                                    }
+                                                    break;
+                                                case 3:
+                                                    {
+                                                        <nw>Viettel Post</nw>
+
+                                                    }
+                                                    break;
+
+                                            }
+
+                                        </div>
                                     </li>
                                     <li class="flex justify-content-between mb-2">
                                         <div class="">Phương thức giao hàng</div>
-                                        <div class="text-right">@Model.ShippingTypeName </div>
+                                        <div class="text-right">@Model.ShippingTypeCode </div>
                                     </li>
                                     <li class="flex justify-content-between mb-2">
                                         <div class="">Phí vận chuyển</div>
-                                        <div class="text-right">@Model.ShippingFee.ToString("N0") đ </div>
+                                        <div class="text-right">@((Model.ShippingFee == null ? 0 : (double)Model.ShippingFee).ToString("N0")) đ </div>
                                     </li>
                                     <li class="flex justify-content-between mb-2">
                                         <div class="">Mã vận đơn</div>
                                         <div class="text-right">@Model.ShippingCode </div>
                                     </li>
-                                    @if (Model.RefundStatus != null && Model.RefundStatus >0)
+                                    @if (Model.RefundStatus != null && Model.RefundStatus > 0)
                                     {
                                         <li class="flex justify-content-between mb-2">
                                             <div class="">Trả hàng hoàn tiền</div>
@@ -280,8 +303,8 @@
 
                     <div class="form-group align-right mt20 block pin-btn-bottom ">
                         <button type="button" class="btn btn-default cancel ml-1" onclick="history.back()">Quay lại</button>
-                       
-                        
+
+
                         @if (ViewBag.editsale == true && Model.OrderStatus == (int)OrderStatus.PAID)
                         {
                             <button type="button" class="btn btn-default ml-1" onclick="_orderDetail.ChangeOrderSaler(@ViewBag.OrderId,'@ViewBag.OrderNo')">Nhận xử lý đơn hàng</button>
