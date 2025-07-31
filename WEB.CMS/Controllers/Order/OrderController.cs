@@ -27,7 +27,7 @@ namespace WEB.CMS.Controllers
         private readonly ICommonRepository _commonRepository;
         private ElasticService _elasticService;
 
-        public OrderController(IConfiguration configuration, IAllCodeRepository allCodeRepository, IOrderRepository orderRepository, IClientRepository clientRepository, 
+        public OrderController(IConfiguration configuration, IAllCodeRepository allCodeRepository, IOrderRepository orderRepository, IClientRepository clientRepository,
             IUserRepository userRepository, IContractPayRepository contractPayRepository, IPaymentRequestRepository paymentRequestRepository, ICommonRepository commonRepository
             , ProductDetailMongoAccess productV2DetailMongoAccess, ElasticService elasticService)
         {
@@ -87,16 +87,16 @@ namespace WEB.CMS.Controllers
                 searchModel.PageIndex = (int)currentPage;
                 var model = new GenericViewModel<OrderViewModel>();
                 var model2 = new TotalCountSumOrder();
-                if (searchModel.Status!=null && searchModel.Status.Contains(-1))
+                if (searchModel.Status != null && searchModel.Status.Contains(-1))
                 {
                     searchModel.Status = new List<int>();
                 }
                 model = await _orderRepository.GetList(searchModel);
-                if(model != null && model.ListData != null && model.ListData.Count>0)
+                if (model != null && model.ListData != null && model.ListData.Count > 0)
                 {
-                    foreach(var item in model.ListData)
+                    foreach (var item in model.ListData)
                     {
-                        item.ListProduct= await _productV2DetailMongoAccess.GetListByIds(item.ListProductId);
+                        item.ListProduct = await _productV2DetailMongoAccess.GetListByIds(item.ListProductId);
                     }
                 }
                 model2 = await _orderRepository.GetTotalCountSumOrder(searchModel);
@@ -137,10 +137,10 @@ namespace WEB.CMS.Controllers
                     var dataOrder = await _orderRepository.GetOrderDetailByOrderId(orderId);
                     if (dataOrder != null)
                     {
-                          ViewBag.ReceiverName = dataOrder.ReceiverName+" SDT: "+ dataOrder.PhoneOrder;
-                        if( dataOrder.SalerId != _UserId && dataOrder.OrderStatus == (int)OrderStatus.PAID)
+                        ViewBag.ReceiverName = dataOrder.ReceiverName + " SDT: " + dataOrder.PhoneOrder;
+                        if (dataOrder.SalerId != _UserId && dataOrder.OrderStatus == (int)OrderStatus.PAID)
                         {
-                            ViewBag.editsale = true; 
+                            ViewBag.editsale = true;
                         }
                         ViewBag.OrderNo = dataOrder.OrderNo;
 
@@ -162,7 +162,7 @@ namespace WEB.CMS.Controllers
                             if (UserUpdateclient != null)
                                 ViewBag.UserUpdateClientName = UserUpdateclient.FullName;
                         }
-                       
+
                         if (dataOrder.StartDate != null)
                             ViewBag.createTime = Convert.ToDateTime(dataOrder.StartDate).ToString("dd/MM/yyyy HH:mm:ss");
                         if (dataOrder.EndDate != null)
@@ -177,12 +177,11 @@ namespace WEB.CMS.Controllers
                                 ViewBag.client = UserCreateclient;
                             }
                         }
-                       
                         return View(dataOrder);
                     }
-                 
+
                 }
-             
+
             }
             catch (Exception ex)
             {
@@ -200,7 +199,7 @@ namespace WEB.CMS.Controllers
                     var data = await _orderRepository.GetOrderDetailByOrderId(orderId);
                     if (data.SalerId != null)
                     {
-                        var SalerGroup =await _userRepository.GetClientDetailAsync(data.SalerId);
+                        var SalerGroup = await _userRepository.GetClientDetailAsync(data.SalerId);
                         ViewBag.Saler = SalerGroup;
                     }
                     List<User> List_SalerGroup = new List<User>();
@@ -219,7 +218,7 @@ namespace WEB.CMS.Controllers
                             }
                             ViewBag.SalerGroup = List_SalerGroup;
                         }
-                        
+
                     }
                 }
                 return PartialView();
@@ -236,8 +235,8 @@ namespace WEB.CMS.Controllers
             try
             {
                 ViewBag.domainImg = _configuration["DomainConfig:ImageStatic"];
-                var list_OrderDetail =await _orderRepository.GetListOrderDetail(orderId);
-                var ids= list_OrderDetail.Select(s=>s.ProductId).ToList();
+                var list_OrderDetail = await _orderRepository.GetListOrderDetail(orderId);
+                var ids = list_OrderDetail.Select(s => s.ProductId).ToList();
                 var List_product = await _productV2DetailMongoAccess.GetListByIds(string.Join(",", ids));
                 ViewBag.data = List_product;
                 var dataOrder = await _orderRepository.GetOrderDetailByOrderId(orderId);
@@ -294,7 +293,7 @@ namespace WEB.CMS.Controllers
                     var dataOrder = await _orderRepository.GetOrderDetailByOrderId(orderId);
                     if (dataOrder != null)
                     {
-                        var data =  _paymentRequestRepository.GetListPaymentRequestByOrderId(Convert.ToInt32(dataOrder.OrderId));
+                        var data = _paymentRequestRepository.GetListPaymentRequestByOrderId(Convert.ToInt32(dataOrder.OrderId));
                         if (data != null)
                         {
                             ViewBag.listPayment = data;
@@ -337,9 +336,19 @@ namespace WEB.CMS.Controllers
                 if (order != null && order.OrderId > 0 && order.PaymentStatus >= 0 && order.OrderStatus == (int)OrderStatus.PAID)
                 {
                     order.UpdateLast = DateTime.Now;
-                    order.UserId = saleid>0? saleid:_UserId;
+                    order.UserId = saleid > 0 ? saleid : _UserId;
                     order.UserUpdateId = _UserId;
-                    order.OrderStatus = (order.OrderStatus == (int)OrderStatus.PAID) ? (int)OrderStatus.PROCESSING: order.OrderStatus;
+                    order.OrderStatus = (order.OrderStatus == (int)OrderStatus.PAID) ? (int)OrderStatus.PROCESSING : order.OrderStatus;
+                  
+                    var updated = await _orderRepository.UpdateOrder(order);
+                    _elasticService.PushToQueue("SP_GetOrder", order.OrderId);
+                }
+                else if (order != null && order.PaymentType == (short)PaymentType.COD && order.OrderStatus == (int)OrderStatus.CREATED_ORDER)
+                {
+                    order.OrderStatus = (int)OrderStatus.PROCESSING;
+                    order.UpdateLast = DateTime.Now;
+                    order.UserId = saleid > 0 ? saleid : _UserId;
+                    order.UserUpdateId = _UserId;
                     var updated = await _orderRepository.UpdateOrder(order);
                     _elasticService.PushToQueue("SP_GetOrder", order.OrderId);
                 }
@@ -350,7 +359,7 @@ namespace WEB.CMS.Controllers
                 //orderDetail.UserId = _UserId;
                 //orderDetail.UserUpdateId = _UserId;
                 //var success = await _orderRepository.UpdateOrder(orderDetail);
-              
+
                 return Ok(new
                 {
                     status = (int)ResponseType.SUCCESS,
@@ -374,11 +383,11 @@ namespace WEB.CMS.Controllers
                 if (orderId != 0)
                 {
                     var dataOrder = await _orderRepository.GetOrderDetailByOrderId(orderId);
-                    if (dataOrder.ProvinceId != null )
+                    if (dataOrder.ProvinceId != null)
                     {
                         ViewBag.District = await _commonRepository.GetDistrictList(dataOrder.ProvinceId.ToString());
                     }
-                    if (dataOrder.DistrictId != null )
+                    if (dataOrder.DistrictId != null)
                     {
                         ViewBag.Ward = await _commonRepository.GetWardListByDistrictId(dataOrder.DistrictId.ToString());
                     }
@@ -386,12 +395,12 @@ namespace WEB.CMS.Controllers
                     ViewBag.orderId = orderId;
                     return PartialView(dataOrder);
                 }
-              
+
             }
             catch (Exception ex)
             {
                 LogHelper.InsertLogTelegram("EditAddress-OrderController" + ex.ToString());
-               
+
             }
             return PartialView();
         }
@@ -413,7 +422,7 @@ namespace WEB.CMS.Controllers
                     status = (int)ResponseType.ERROR,
                 });
             }
-            
+
         }
         public async Task<IActionResult> SuggestWard(string id)
         {
@@ -434,7 +443,7 @@ namespace WEB.CMS.Controllers
                     status = (int)ResponseType.ERROR,
                 });
             }
-          
+
         }
         public async Task<IActionResult> UpdateAddress(Entities.Models.Order model)
         {

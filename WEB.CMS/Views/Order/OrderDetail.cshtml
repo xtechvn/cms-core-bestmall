@@ -312,6 +312,11 @@
                             <button id="orderdetail-confirm-refund" type="button" class="btn btn-default ml-1 " style="background-color:darkred;">Xác nhận trả hàng/ Hoàn tiền</button>
 
                         }
+                        @if (Model.OrderStatus == (int)OrderStatus.CREATED_ORDER && Model.PaymentType != null && Model.PaymentType == (short)PaymentType.COD)
+                        {
+                            <button type="button" class="btn btn-default ml-1 " onclick="_orderDetail.ChangeOrderSaler(@ViewBag.OrderId,'@ViewBag.OrderNo')">Nhận xử lý đơn hàng COD</button>
+
+                        }
                     </div>
                 </div>
             </div>
