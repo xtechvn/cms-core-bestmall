@@ -520,7 +520,7 @@ namespace DAL
                         var orderInfo = orderDAL.GetDetailOrderByOrderId(item.OrderId).Result;
                         if (orderInfo != null && orderInfo.OrderStatus != (int)OrderStatus.CREATED_ORDER)
                         {
-                            status = orderInfo.OrderStatus.Value;
+                            status = orderInfo.OrderStatus;
                         }
                         if (model.Type == (int)DepositHistoryConstant.CONTRACT_PAY_TYPE.THU_TIEN_DON_HANG && item.Amount >= item.TotalNeedPayment)
                         {
@@ -729,7 +729,7 @@ namespace DAL
                     var orderInfo = orderDAL.GetDetailOrderByOrderId(item.OrderId).Result;
                     if (orderInfo != null && orderInfo.OrderStatus != (int)OrderStatus.CREATED_ORDER)
                     {
-                        status = orderInfo.OrderStatus.Value;
+                        status = orderInfo.OrderStatus;
                     }
                     if (model.Type == (int)DepositHistoryConstant.CONTRACT_PAY_TYPE.THU_TIEN_DON_HANG && item.Amount >= item.TotalNeedPayment)
                     {

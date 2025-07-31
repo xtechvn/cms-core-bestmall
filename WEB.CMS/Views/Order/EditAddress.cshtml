@@ -28,7 +28,7 @@
                                     {
                                         foreach (var item in provinces)
                                         {
-                                            @if (item.ProvinceId != Model.ProvinceId)
+                                            @if (Convert.ToInt32(item.ProvinceId) != Model.ProvinceId)
                                             {
                                                 <option value="@item.Id">@item.Name</option>
                                             }
@@ -52,7 +52,7 @@
                                     {
                                         foreach (var item in District)
                                         {
-                                            @if (item.DistrictId != Model.DistrictId)
+                                            @if (Convert.ToInt32(item.DistrictId) != Model.DistrictId)
                                             {
                                                 <option value="@item.Id">@item.Name</option>
                                             }
@@ -75,7 +75,7 @@
                                     {
                                         foreach (var item in Ward)
                                         {
-                                            @if (item.WardId != Model.WardId)
+                                            @if (Convert.ToInt32(item.WardId) != Model.WardId)
                                             {
                                                 <option value="@item.Id">@item.Name</option>
                                             }

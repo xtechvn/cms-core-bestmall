@@ -157,8 +157,8 @@ namespace Repositories.Repositories
                         var TotalDisarmed = listContractPayDetail.Where(n => n.DataId != null
                                 && n.DataId.Value == Convert.ToInt64(item.OrderId)).ToList().Sum(n => n.Amount);
                         item.TotalDisarmed = (double)TotalDisarmed;
-                        item.TotalAmount = item.Amount;
-                        item.TotalNeedPayment = item.Amount - item.TotalDisarmed;
+                        item.TotalAmount = (double)item.Amount;
+                        item.TotalNeedPayment = (double)item.Amount - item.TotalDisarmed;
                         item.CopyProperties(orderViewModel);
                         if (detail != null)
                         {
@@ -191,15 +191,15 @@ namespace Repositories.Repositories
                                 order.CopyProperties(orderViewModel);
                                 orderViewModel.Amount = (double)item?.Amount;
                                 orderViewModel.Payment = (double)item?.Amount;
-                                orderViewModel.TotalDisarmed = order.Amount;
-                                orderViewModel.TotalAmount = order.Amount;
+                                orderViewModel.TotalDisarmed = (double)order.Amount;
+                                orderViewModel.TotalAmount = (double)order.Amount;
                             }
                             else
                             {
                                 var orderInfo =await _OrderDal.GetDetailOrderByOrderId(item.DataId.Value);
                                 if (orderInfo != null)
                                 {
-                                    orderViewModel.OrderId = orderInfo.OrderId.ToString();
+                                    orderViewModel.OrderId = orderInfo.OrderId;
                                     orderViewModel.OrderNo = orderInfo.OrderNo;
                                     orderViewModel.StartDate = orderInfo.StartDate != null ?
                                         orderInfo.StartDate.ToString("dd:MM:yyyy") : string.Empty;
@@ -209,8 +209,8 @@ namespace Repositories.Repositories
                                     orderViewModel.SalerName = userDAL.GetById(orderInfo.SalerId != null ? orderInfo.SalerId : 0).Result?.FullName;
                                     orderViewModel.Amount = (double)item?.Amount;
                                     orderViewModel.Payment = (double)item?.Amount;
-                                    orderViewModel.TotalDisarmed = orderInfo.Amount;
-                                    orderViewModel.TotalAmount = orderInfo.Amount;
+                                    orderViewModel.TotalDisarmed = (double)orderInfo.Amount;
+                                    orderViewModel.TotalAmount = (double)orderInfo.Amount;
                                 }
                             }
                             orderViewModel.PayDetailId = item.Id;

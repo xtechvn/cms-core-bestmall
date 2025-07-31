@@ -104,7 +104,7 @@ namespace WEB.CMS.Controllers
                 {
                     //theo All
                     TotalAmmount = model2.Amount.ToString("N0"),
-                    TotalDone = model?.ListData?.Sum(x => x.Amount).ToString("N0"),
+                    TotalDone = model?.ListData?.Sum(x => (double)x.Amount).ToString("N0"),
                     TotalProductService = model2.Price.ToString("N0"),
                     TotalProfit = model2.Profit.ToString("N0")
 
