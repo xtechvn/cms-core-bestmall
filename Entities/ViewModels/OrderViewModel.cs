@@ -241,6 +241,8 @@ namespace Entities.ViewModels
         public int? RefundStatus { get; set; }
         public string RefundReason { get; set; }
         public DateTime? RefundDate { get; set; }
+        public short? PaymentType { get; set; }
+
     }
     public class OrderServiceViewModel
     {
