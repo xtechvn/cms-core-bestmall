@@ -448,9 +448,9 @@ var product_detail_new = {
             });
         });
         $('body').on('keyup', '#single-product-amount input', function () {
-            var price = isNaN(parseFloat($('#main-price').find('input').val().replaceAll(',', ''))) ? 0 : parseFloat($('#main-price').find('input').val().replaceAll(',', ''))
+            var amount = isNaN(parseFloat($('#main-amount').find('input').val().replaceAll(',', ''))) ? 0 : parseFloat($('#main-amount').find('input').val().replaceAll(',', ''))
             var profit = isNaN(parseFloat($('#main-profit').find('input').val().replaceAll(',', ''))) ? 0 : parseFloat($('#main-profit').find('input').val().replaceAll(',', ''))
-            $('#main-amount').find('input').val(_product_function.Comma(price + profit))
+            $('#main-price').find('input').val(_product_function.Comma(amount - profit))
         });
         $('body').on('keyup', '#old-price input', function (e) {
             var element = $(this)
@@ -893,10 +893,10 @@ var product_detail_new = {
     },
     RenderRowData: function (tr) {
         if (tr.find('.td-price').length > 0 && tr.find('.td-profit').length > 0 && tr.find('.td-amount').length > 0) {
-            var price = isNaN(parseFloat(tr.find('.td-price').find('input').val().replaceAll(',', ''))) ? 0 : parseFloat(tr.find('.td-price').find('input').val().replaceAll(',', ''))
+            var amount = isNaN(parseFloat(tr.find('.td-amount').find('input').val().replaceAll(',', ''))) ? 0 : parseFloat(tr.find('.td-amount').find('input').val().replaceAll(',', ''))
             var profit = isNaN(parseFloat(tr.find('.td-profit').find('input').val().replaceAll(',', ''))) ? 0 : parseFloat(tr.find('.td-profit').find('input').val().replaceAll(',', ''))
 
-            tr.find('.td-amount').find('input').val(_product_function.Comma(price + profit))
+            tr.find('.td-price').find('input').val(_product_function.Comma(amount - profit))
         }
 
     },
@@ -1022,6 +1022,9 @@ var product_detail_new = {
         model.description_ingredients = tinymce.get('description-ingredients-textarea').getContent()
         model.description_effect = tinymce.get('description-effect-textarea').getContent()
         model.description_usepolicy = tinymce.get('description-usepolicy-textarea').getContent()
+
+        model.description_delivery = $('#description-delivery input').val()
+        model.description_refund = $('#description-refund input').val()
         //model.specification = []
         //$('#specifications .col-md-6').each(function (index, item) {
         //    var element = $(this)
@@ -1156,6 +1159,9 @@ var product_detail_new = {
                 model.products_buy_with.push(product_id_compare)
             }
         })
+
+        model.profit_value = model.profit;
+        model.profit_value_type = 0;
 
         _product_function.POST('/Product/Summit', { request: model }, function (result) {
             if (result.is_success) {
