@@ -126,26 +126,52 @@
                                     }
                                 </td>
                                 <td>
-                                    <div>@item.CarrierTypeName</div>
-                                    <div>@item.ShippingTypeName</div>
+                                    <div>
+                                        @switch (item.CarrierId)
+                                        {
+                                            default:
+                                                {
+
+                                                }
+                                                break;
+                                            case 1:
+                                                {
+                                                    <nw>Khách hàng lấy tại BestMall</nw>
+                                                }
+                                                break;
+                                            case 2:
+                                                {
+                                                    <nw>Ninja Van</nw>
+                                                }
+                                                break;
+                                            case 3:
+                                                {
+                                                    <nw>Viettel Post</nw>
+
+                                                }
+                                                break;
+
+                                        }
+                                    </div>
+                                    <div>@item.ShippingTypeCode</div>
                                     <div>@item.ShippingCode</div>
                                 </td>
                                 <td>
-                                    @if (item.PaymentStatus != "")
+                                    @if (item.PaymentStatus >0)
                                     {
-                                        @if (Convert.ToInt32(item.PaymentStatus) == (int)PaymentStatus.UNPAID)
+                                        @if (item.PaymentStatus == (int)PaymentStatus.UNPAID)
                                         {
                                             <div class="status-oranger">
                                                 @item.PaymentStatusName
                                             </div>
                                         }
-                                        @if (Convert.ToInt32(item.PaymentStatus) == (int)PaymentStatus.PAID)
+                                        else if (item.PaymentStatus == (int)PaymentStatus.PAID)
                                         {
                                             <div class="status-green">
                                                 @item.PaymentStatusName
                                             </div>
                                         }
-                                        @if (Convert.ToInt32(item.PaymentStatus) == (int)PaymentStatus.PAID_NOT_ENOUGH)
+                                        else if(item.PaymentStatus == (int)PaymentStatus.PAID_NOT_ENOUGH)
                                         {
                                             <div class="status-blue">
                                                 @item.PaymentStatusName
