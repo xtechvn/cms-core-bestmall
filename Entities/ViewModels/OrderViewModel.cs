@@ -5,35 +5,27 @@ using System.Collections.Generic;
 
 namespace Entities.ViewModels
 {
-    public class OrderViewModel
+    public class OrderViewModel:Order
     {
-        public string OrderId { get; set; }
-        public string OrderNo { get; set; }
+
         public string StartDate { get; set; }
         public string EndDate { get; set; }
         public string ClientName { get; set; }
-        public long? ClientId { get; set; }
         public string ClientNumber { get; set; }
         public string ClientEmail { get; set; }
-        public string Note { get; set; }
         public double Payment { get; set; }
-        public double Amount { get; set; }
-        public string UtmSource { get; set; }
-        public double Profit { get; set; }
+
         //public List<Source> StatusDetail { get; set; } = new List<Source>();
         public string Status { get; set; }
         public int StatusCode { get; set; }
         public int PayDetailId { get; set; }
-        public DateTime CreatedDate { get; set; }
         public string CreateName { get; set; }
         public string UpdateName { get; set; }
-        public DateTime UpdateLast { get; set; }
         public string SalerName { get; set; }
         public string SalerUserName { get; set; }
         public string SalerEmail { get; set; }
         public string SalerGroupName { get; set; }
         public string PaymentTypeName { get; set; }
-        public string PaymentStatus { get; set; }
         public double TotalDisarmed { get; set; }
         public double TotalAmount{ get; set; }
         public double TotalNeedPayment { get; set; }
@@ -46,13 +38,9 @@ namespace Entities.ViewModels
         public string PaymentStatusName { get; set; }
         public string PermisionTypeName { get; set; }
         public string OperatorIdName { get; set; }
-        public string UtmMedium { get; set; }
         public int IsFinishPayment { get; set; }
         public string ListProductId { get; set; }
-        public string OrderStatus { get; set; }
         public string OrderCode { get; set; }
-        public string ShippingCode { get; set; }
-        public double ShippingFee { get; set; }
         public string ShippingTypeName { get; set; }
         public string CarrierTypeName { get; set; }
         public List<ProductMongoDbModel> ListProduct { get; set; }
