@@ -85,11 +85,11 @@
                     <ul class="w-100 my-3">
                         <li class="flex justify-content-between mb-2">
                             <div class="">Tổng giá trị đơn hàng</div>
-                            <h6 class="text-right text-danger">@(((double)dataOrder.Amount - (double)dataOrder.ShippingFee).ToString("N0")) đ</h6>
+                            <h6 class="text-right text-danger">@(((double)dataOrder.Amount - (dataOrder.ShippingFee == null ? 0 : (double)dataOrder.ShippingFee) + (dataOrder.Discount == null ? 0 : (double)dataOrder.Discount)).ToString("N0")) đ</h6>
                         </li>
                         <li class="flex justify-content-between mb-2">
                             <div class="">Phí vận chuyển (Dự kiến)</div>
-                            <h6 class="text-right text-danger">@(((double)dataOrder.ShippingFee).ToString("N0")) đ</h6>
+                            <h6 class="text-right text-danger">@((dataOrder.ShippingFee == null ? 0 : (double)dataOrder.ShippingFee).ToString("N0")) đ</h6>
                         </li>
                         <li class="flex justify-content-between mb-2">
                             <div class="">Voucher</div>
