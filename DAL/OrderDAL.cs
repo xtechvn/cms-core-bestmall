@@ -30,7 +30,7 @@ namespace DAL
             try
             {
 
-                SqlParameter[] objParam = new SqlParameter[25];
+                SqlParameter[] objParam = new SqlParameter[26];
 
 
                 objParam[0] = (CheckDate(searchModel.CreateTime) == DateTime.MinValue) ? new SqlParameter("@CreateTime", DBNull.Value) : new SqlParameter("@CreateTime", CheckDate(searchModel.CreateTime));
@@ -122,6 +122,7 @@ namespace DAL
 
                 objParam[23] = new SqlParameter("@OrderId", searchModel.BoongKingCode);
                 objParam[24] = new SqlParameter("@CarrierId", searchModel.CarrierId);
+                objParam[25] = new SqlParameter("@SupplierId", (object)DBNull.Value);
 
 
                 return _DbWorker.GetDataTable(proc, objParam);
@@ -256,6 +257,7 @@ namespace DAL
                     new SqlParameter("@RefundDate", model.RefundDate??(object)DBNull.Value),
                     new SqlParameter("@ShippingToken", model.ShippingToken??(object)DBNull.Value),
                     new SqlParameter("@ShippingTypeCode", model.ShippingTypeCode??(object)DBNull.Value),
+                    new SqlParameter("@SupplierId", model.SupplierId??(object)DBNull.Value),
 
                 };
 
