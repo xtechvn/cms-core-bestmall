@@ -780,7 +780,7 @@ namespace WEB.CMS.Controllers
                 {
                     Id = request.Id,
                     FullName = request.FullName,
-                    Password = request.Password,
+                    Password = EncodeHelpers.MD5Hash(request.Password),
                     UserName = "ncc" + request.SupplierId + "." + request.UserName,
                     Address = suplier.Address,
                     Manager = 0,
@@ -794,7 +794,7 @@ namespace WEB.CMS.Controllers
                     Email = suplier.Email,
                     Status = request.Status,
                     Phone = suplier.Phone,
-                    ResetPassword = request.Password
+                    ResetPassword = EncodeHelpers.MD5Hash(request.Password)
                 };
                 var id = await _userRepository.UpdateSuplierUser(user);
 
