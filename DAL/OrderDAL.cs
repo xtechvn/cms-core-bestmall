@@ -132,12 +132,12 @@ namespace DAL
                 // objParam[23] = new SqlParameter("@OrderId", searchModel.BoongKingCode);
                 if (searchModel.CarrierId == null)
                 {
-                    objParam[24] = new SqlParameter("@OrderId", DBNull.Value);
+                    objParam[24] = new SqlParameter("@CarrierId", DBNull.Value);
 
                 }
                 else
                 {
-                    objParam[24] = new SqlParameter("@OrderId", searchModel.CarrierId);
+                    objParam[24] = new SqlParameter("@CarrierId", searchModel.CarrierId);
 
                 }
                // objParam[24] = new SqlParameter("@CarrierId", searchModel.CarrierId);
