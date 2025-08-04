@@ -2,6 +2,7 @@
 using Entities.ViewModels;
 using Entities.ViewModels.Mongo;
 using ENTITIES.ViewModels.ElasticSearch;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Repositories.IRepositories;
 using StackExchange.Redis;
@@ -9,6 +10,7 @@ using System.Security.Claims;
 using Utilities;
 using Utilities.Contants;
 using WEB.CMS.Controllers.Elastic.Bussiness;
+using WEB.CMS.Customize;
 using WEB.CMS.Models.Product;
 
 namespace WEB.CMS.Controllers
@@ -26,10 +28,11 @@ namespace WEB.CMS.Controllers
         private readonly ProductDetailMongoAccess _productV2DetailMongoAccess;
         private readonly ICommonRepository _commonRepository;
         private ElasticService _elasticService;
+        private readonly IWebHostEnvironment _WebHostEnvironment;
 
         public OrderController(IConfiguration configuration, IAllCodeRepository allCodeRepository, IOrderRepository orderRepository, IClientRepository clientRepository,
             IUserRepository userRepository, IContractPayRepository contractPayRepository, IPaymentRequestRepository paymentRequestRepository, ICommonRepository commonRepository
-            , ProductDetailMongoAccess productV2DetailMongoAccess, ElasticService elasticService)
+            , ProductDetailMongoAccess productV2DetailMongoAccess, ElasticService elasticService, IWebHostEnvironment webHostEnvironment)
         {
             _configuration = configuration;
             _allCodeRepository = allCodeRepository;
@@ -41,6 +44,7 @@ namespace WEB.CMS.Controllers
             _productV2DetailMongoAccess = productV2DetailMongoAccess;
             _commonRepository = commonRepository;
             _elasticService = elasticService;
+            _WebHostEnvironment = webHostEnvironment;
         }
         public IActionResult Index()
         {
@@ -473,6 +477,72 @@ namespace WEB.CMS.Controllers
                 status = (int)ResponseType.SUCCESS,
                 msg = "Cập nhật địa chỉ giao hàng không thành công"
             });
+        }
+
+        public async Task<IActionResult> ExportExcel(OrderViewSearchModel searchModel)
+        {
+            try
+            {
+                //var model = await _orderRepository.GetList(searchModel);
+
+
+                int _UserId = 0;
+                if (HttpContext.User.FindFirst(ClaimTypes.NameIdentifier) != null)
+                {
+                    _UserId = Convert.ToInt32(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+                }
+                string _FileName = StringHelpers.GenFileName("Danh sách đơn hàng", _UserId, "xlsx");
+                string _UploadFolder = @"Template\Export";
+                string _UploadDirectory = Path.Combine(_WebHostEnvironment.WebRootPath, _UploadFolder);
+
+                if (!Directory.Exists(_UploadDirectory))
+                {
+                    Directory.CreateDirectory(_UploadDirectory);
+                }
+                //delete all file in folder before export
+                try
+                {
+                    System.IO.DirectoryInfo di = new DirectoryInfo(_UploadDirectory);
+                    foreach (FileInfo file in di.GetFiles())
+                    {
+                        file.Delete();
+                    }
+                }
+                catch
+                {
+                }
+                string FilePath = Path.Combine(_UploadDirectory, _FileName);
+                searchModel.pageSize = -1;
+                searchModel.PageIndex = 1;
+                var rsPath = await _orderRepository.ExportDeposit(searchModel, FilePath);
+
+                if (!string.IsNullOrEmpty(rsPath))
+                {
+                    return new JsonResult(new
+                    {
+                        isSuccess = true,
+                        message = "Xuất dữ liệu thành công",
+                        path = "/" + _UploadFolder + "/" + _FileName
+                    });
+                }
+                else
+                {
+                    return new JsonResult(new
+                    {
+                        isSuccess = false,
+                        message = "Xuất dữ liệu thất bại"
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("ExportExcel - OrderController: " + ex);
+                return new JsonResult(new
+                {
+                    isSuccess = false,
+                    message = ex.Message.ToString()
+                });
+            }
         }
     }
 }
