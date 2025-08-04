@@ -1,4 +1,5 @@
-﻿using DAL;
+﻿using Aspose.Cells;
+using DAL;
 using DAL.OrderDetail;
 using DAL.StoreProcedure;
 using Entities.ConfigModels;
@@ -6,15 +7,13 @@ using Entities.Models;
 using Entities.ViewModels;
 using Entities.ViewModels.OrderDetail;
 using Microsoft.Extensions.Options;
-using Nest;
-using PdfSharp;
+using Newtonsoft.Json;
 using Repositories.IRepositories;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Globalization;
+using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Utilities;
 using Utilities.Contants;
@@ -252,6 +251,203 @@ namespace Repositories.Repositories
                 LogHelper.InsertLogTelegram("GetByOrderId - OrderRepository: " + ex);
             }
             return null;
+        }
+        public async Task<string> ExportDeposit(OrderViewSearchModel searchModel, string FilePath)
+        {
+            var pathResult = string.Empty;
+            try
+            {
+                var data = new List<OrderViewModel>();
+                DataTable dt = await _OrderDal.GetPagingList(searchModel, ProcedureConstants.GETALLORDER_SEARCH);
+                if (dt != null && dt.Rows.Count > 0)
+                {
+                    data = dt.ToList<OrderViewModel>();
+                }
+                else
+                {
+                    LogHelper.InsertLogTelegram("GetList -  OrderRepository: No Order Count with" + JsonConvert.SerializeObject(searchModel));
+                }
+
+                if (data != null && data.Count > 0)
+                {
+                    Workbook wb = new Workbook();
+                    Worksheet ws = wb.Worksheets[0];
+                    ws.Name = "Danh sách đơn hàng";
+                    Cells cell = ws.Cells;
+
+                    // Define headers and their corresponding OrderViewModel properties
+                    // Tuple: Item1 = Header Text, Item2 = Property Name (for easy access via reflection or switch)
+                    var headers = new List<Tuple<string, string>>
+            {
+                Tuple.Create("Mã đơn", "OrderCode"),
+                Tuple.Create("Ngày bắt đầu", "StartDate"),
+                Tuple.Create("Ngày kết thúc", "EndDate"),
+                Tuple.Create("Tên khách hàng", "ClientName"),
+                Tuple.Create("Số điện thoại khách hàng", "ClientNumber"),
+                Tuple.Create("Email khách hàng", "ClientEmail"),
+                Tuple.Create("Giá", "Price"),
+                Tuple.Create("Lợi nhuận", "Profit"),
+                Tuple.Create("Giảm giá", "Discount"),
+                Tuple.Create("Doanh thu", "Amount"),
+                Tuple.Create("Trạng thái đơn hàng", "Status"),
+                Tuple.Create("Mã trạng thái", "StatusCode"),
+                Tuple.Create("Tên người tạo", "CreatedName"),
+                Tuple.Create("Tên người cập nhật", "UpdateName"),
+                Tuple.Create("Tên người bán", "SalerName"),
+                Tuple.Create("Tên tài khoản người bán", "SalerUserName"),
+                Tuple.Create("Email người bán", "SalerEmail"),
+                Tuple.Create("Nhóm người bán", "SalerGroupName"),
+                Tuple.Create("Tên loại thanh toán", "PaymentTypeName"),
+                Tuple.Create("Tổng số đã giải ngân", "TotalDisarmed"),
+                Tuple.Create("Tổng số tiền", "TotalAmount"),
+                Tuple.Create("Tổng số tiền cần thanh toán", "TotalNeedPayment"),
+                Tuple.Create("Tên người cập nhật User", "UsUpdateName"),
+                Tuple.Create("Loại dịch vụ", "ServiceType"),
+                Tuple.Create("Mã Voucher", "Vouchercode"),
+                Tuple.Create("Đã kiểm tra", "IsChecked"),
+                Tuple.Create("Đã vô hiệu hóa", "IsDisabled"),
+                Tuple.Create("Tên trạng thái thanh toán", "PaymentStatusName"),
+                Tuple.Create("Tên loại quyền", "PermisionTypeName"),
+                Tuple.Create("Tên điều hành viên", "OperatorIdName"),
+                Tuple.Create("Hoàn thành thanh toán", "IsFinishPayment"),
+                Tuple.Create("Danh sách ID sản phẩm", "ListProductId"),
+                Tuple.Create("Tên loại vận chuyển", "ShippingTypeName"),
+                Tuple.Create("Tên loại nhà vận chuyển", "CarrierTypeName"),
+                Tuple.Create("ID đơn hàng", "OrderId"),
+                Tuple.Create("ID khách hàng", "ClientId"),
+                Tuple.Create("Số đơn hàng", "OrderNo"),
+                Tuple.Create("Ngày tạo", "CreatedDate"),
+                Tuple.Create("Được tạo bởi", "CreatedBy"),
+                Tuple.Create("Cập nhật lần cuối", "UpdateLast"),
+                Tuple.Create("ID người cập nhật", "UserUpdateId"),
+                Tuple.Create("Trạng thái thanh toán", "PaymentStatus"),
+                Tuple.Create("Nguồn UTM", "UtmSource"),
+                Tuple.Create("Trung bình UTM", "UtmMedium"),
+                Tuple.Create("Ghi chú", "Note"),
+                Tuple.Create("ID Voucher", "VoucherId"),
+                Tuple.Create("Đã xóa", "IsDelete"),
+                Tuple.Create("ID người dùng", "UserId"),
+                Tuple.Create("ID nhóm người dùng", "UserGroupIds"),
+                Tuple.Create("Tên người nhận", "ReceiverName"),
+                Tuple.Create("Số điện thoại người nhận", "Phone"),
+                Tuple.Create("ID tỉnh", "ProvinceId"),
+                Tuple.Create("ID quận", "DistrictId"),
+                Tuple.Create("ID phường", "WardId"),
+                Tuple.Create("Địa chỉ", "Address"),
+                Tuple.Create("Phí vận chuyển", "ShippingFee"),
+                Tuple.Create("ID nhà vận chuyển", "CarrierId"),
+                Tuple.Create("Loại vận chuyển", "ShippingType"),
+                Tuple.Create("Mã vận chuyển", "ShippingCode"),
+                Tuple.Create("Trạng thái vận chuyển", "ShippingStatus"),
+                Tuple.Create("Cân nặng gói hàng", "PackageWeight"),
+                Tuple.Create("Trạng thái hoàn tiền", "RefundStatus"),
+                Tuple.Create("Lý do hoàn tiền", "RefundReason"),
+                Tuple.Create("Ngày hoàn tiền", "RefundDate"),
+                Tuple.Create("Mã loại vận chuyển", "ShippingTypeCode"),
+                Tuple.Create("Mã Token vận chuyển", "ShippingToken"),
+                Tuple.Create("ID nhà cung cấp", "SupplierId"),
+            };
+
+                    // Set up header row
+                    ws.Cells["A1"].PutValue("STT");
+                    cell.SetColumnWidth(0, 8);
+                    for (int i = 0; i < headers.Count; i++)
+                    {
+                        cell.SetColumnWidth(i + 1, 30);
+                        ws.Cells[0, i + 1].PutValue(headers[i].Item1);
+                    }
+
+                    // Set header style
+                    //var headerStyle = ws.Cells.CreateRange(0, 0, 1, headers.Count + 1).GetStyle();
+                    //headerStyle.Font.IsBold = true;
+                    //headerStyle.IsTextWrapped = true;
+                    //headerStyle.ForegroundColor = Color.FromArgb(33, 88, 103);
+                    //headerStyle.BackgroundColor = Color.FromArgb(33, 88, 103);
+                    //headerStyle.Pattern = BackgroundType.Solid;
+                    //headerStyle.Font.Color = Color.White;
+                    //headerStyle.VerticalAlignment = TextAlignmentType.Center;
+                    ////headerStyle.Borders.SetBorders(BorderType.AllBorder, CellBorderType.Thin, Color.Black);
+                    //headerStyle.Borders[BorderType.TopBorder].LineStyle = CellBorderType.Thin;
+                    //headerStyle.Borders[BorderType.BottomBorder].LineStyle = CellBorderType.Thin;
+                    //headerStyle.Borders[BorderType.LeftBorder].LineStyle = CellBorderType.Thin;
+                    //headerStyle.Borders[BorderType.RightBorder].LineStyle = CellBorderType.Thin;
+
+                    // Set header style
+                    // Lấy Style từ ô A1
+                    var headerStyle = ws.Cells["A1"].GetStyle();
+
+                    // Thiết lập các thuộc tính cho headerStyle
+                    headerStyle.Font.IsBold = true;
+                    headerStyle.IsTextWrapped = true;
+                    headerStyle.ForegroundColor = Color.FromArgb(33, 88, 103);
+                    headerStyle.BackgroundColor = Color.FromArgb(33, 88, 103);
+                    headerStyle.Pattern = BackgroundType.Solid;
+                    headerStyle.Font.Color = Color.White;
+                    headerStyle.VerticalAlignment = TextAlignmentType.Center;
+
+                    // Sử dụng cú pháp đúng để thiết lập viền cho toàn bộ range
+                    // Tạo range
+                    var headerRange = ws.Cells.CreateRange(0, 0, 1, headers.Count + 1);
+                    // Đặt viền cho range
+                    headerRange.SetOutlineBorder(BorderType.TopBorder, CellBorderType.Thin, Color.Black);
+                    headerRange.SetOutlineBorder(BorderType.BottomBorder, CellBorderType.Thin, Color.Black);
+                    headerRange.SetOutlineBorder(BorderType.LeftBorder, CellBorderType.Thin, Color.Black);
+                    headerRange.SetOutlineBorder(BorderType.RightBorder, CellBorderType.Thin, Color.Black);
+
+                    // Áp dụng style đã có cho toàn bộ range
+                    StyleFlag st = new();
+                    st.All = true;
+                    headerRange.ApplyStyle(headerStyle, st);
+
+                    //ws.Cells.CreateRange(0, 0, 1, headers.Count + 1).ApplyStyle(headerStyle, new StyleFlag() { All = true });
+
+                    // Fill data rows
+                    int rowIndex = 1;
+                    foreach (var item in data)
+                    {
+                        rowIndex++;
+                        ws.Cells["A" + rowIndex].PutValue(rowIndex - 1);
+
+                        for (int colIndex = 0; colIndex < headers.Count; colIndex++)
+                        {
+                            var propertyName = headers[colIndex].Item2;
+                            var propertyValue = item.GetType().GetProperty(propertyName)?.GetValue(item, null);
+                            string cellValue = propertyValue?.ToString() ?? string.Empty;
+
+                            // Handle special formatting for specific fields
+                            if (propertyName == "SalerName")
+                            {
+                                cellValue = $"{item.SalerName}\n{item.SalerUserName}\n{item.SalerEmail}";
+                            }
+                            else if (propertyName == "PermisionTypeName")
+                            {
+                                cellValue = $"{(string.IsNullOrEmpty(item.PermisionTypeName) ? "Không công nợ" : item.PermisionTypeName)} - {item.PaymentStatusName}";
+                            }
+
+                            ws.Cells[rowIndex - 1, colIndex + 1].PutValue(cellValue);
+                        }
+                    }
+
+                    // Set body style
+                    var bodyRange = cell.CreateRange(1, 0, data.Count, headers.Count + 1);
+                    var bodyStyle = ws.Cells["A2"].GetStyle();
+                    //bodyStyle.Borders.SetBorders(BorderType.AllBorder, CellBorderType.Thin, Color.Black);
+                    bodyStyle.Borders[BorderType.TopBorder].LineStyle = CellBorderType.Thin;
+                    bodyStyle.Borders[BorderType.BottomBorder].LineStyle = CellBorderType.Thin;
+                    bodyStyle.Borders[BorderType.LeftBorder].LineStyle = CellBorderType.Thin;
+                    bodyStyle.Borders[BorderType.RightBorder].LineStyle = CellBorderType.Thin;
+                    bodyStyle.VerticalAlignment = TextAlignmentType.Center;
+                    bodyRange.ApplyStyle(bodyStyle, new StyleFlag() { All = true });
+
+                    wb.Save(FilePath);
+                    pathResult = FilePath;
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("ExportDeposit - OrderRepository: " + ex);
+            }
+            return pathResult;
         }
     }
 }
