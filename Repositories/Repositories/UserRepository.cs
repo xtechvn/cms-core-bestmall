@@ -800,7 +800,7 @@ namespace Repositories.Repositories
                         exists.UserName = request.UserName;
                         if(request.Password!=null && request.Password.Trim() != "")
                         {
-                            exists.Password = EncodeHelpers.MD5Hash(request.Password);
+                            exists.Password = request.Password;
                         }
                         exists.FullName = request.FullName;
                         exists.Email = request.Email;
