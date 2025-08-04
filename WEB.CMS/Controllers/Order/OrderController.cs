@@ -87,8 +87,8 @@ namespace WEB.CMS.Controllers
             try
             {
                 ViewBag.domainImg = _configuration["DomainConfig:ImageStatic"];
-                searchModel.pageSize = (int)pageSize;
-                searchModel.PageIndex = (int)currentPage;
+               // searchModel.pageSize = (int)pageSize;
+              //  searchModel.PageIndex = (int)currentPage;
                 var model = new GenericViewModel<OrderViewModel>();
                 var model2 = new TotalCountSumOrder();
                 if (searchModel.Status != null && searchModel.Status.Contains(-1))
