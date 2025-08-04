@@ -512,8 +512,8 @@ namespace WEB.CMS.Controllers
                 {
                 }
                 string FilePath = Path.Combine(_UploadDirectory, _FileName);
-                searchModel.pageSize = -1;
-                searchModel.PageIndex = 500000;
+                searchModel.pageSize = 500000;
+                searchModel.PageIndex = -1; 
                 var rsPath = await _orderRepository.ExportDeposit(searchModel, FilePath);
 
                 if (!string.IsNullOrEmpty(rsPath))
