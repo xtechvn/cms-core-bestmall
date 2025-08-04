@@ -44,6 +44,10 @@ namespace Entities.ViewModels
         public string ShippingTypeName { get; set; }
         public string CarrierTypeName { get; set; }
         public List<ProductMongoDbModel> ListProduct { get; set; }
+        public string ProvinceName { get; set; }
+        public string DistrictName { get; set; }
+        public string WardName { get; set; }
+
     }
     public class TotalValueOrder
     {
