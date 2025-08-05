@@ -68,9 +68,36 @@
                                     </div>
                                 </td>
                                 <td class="td-profit">
-                                    <div class="form-group mb-0 price">
+                                    <div class="form-group mb-0 main-profit price">
                                         <input type="text" class="form-control input-price" placeholder="Lợi nhuận" value="@(sub_selected != null && sub_selected.profit>=0 ? sub_selected.profit.ToString("N0",nfi):"")">
-                                        <span class="note">đ</span>
+                                    </div>
+                                    <div class="form-group main-profit-value price " style=" @(sub_selected != null && (sub_selected.profit_value_type == null || sub_selected.profit_value_type == 0) ? "display:none;" : "")">
+                                        <input type="text" class="form-control input-price" placeholder="Nhập giá" value="@(sub_selected == null || sub_selected.profit_value == null ? "0" : ((float)sub_selected.profit_value).ToString("N2"))">
+                                    </div>
+                                    <div class="form-group main-profit-value-type price" style="width:90px !important;">
+                                        <select class="select2 w-100 form-control" style="width:100%">
+                                            @{
+                                                if (sub_selected == null || sub_selected.profit_value_type == 0)
+                                                {
+                                                    <option value="0" selected>VNĐ</option>
+
+                                                }
+                                                else
+                                                {
+                                                    <option value="0" selected>VNĐ</option>
+                                                }
+                                                if (sub_selected != null && sub_selected.profit_value_type == 1)
+                                                {
+                                                    <option value="1" selected>%</option>
+
+                                                }
+                                                else
+                                                {
+                                                    <option value="1">%</option>
+                                                }
+                                            }
+
+                                        </select>
                                     </div>
                                 </td>
                                 <td class="td-amount">
@@ -127,10 +154,18 @@
                                     <span class="note">đ</span>
                                 </div>
                             </td>
-                            <td class="td-profit">
-                                <div class="form-group mb-0 price">
-                                    <input type="text" class="form-control input-price" placeholder="Lợi nhuận" value="@(sub_selected != null && sub_selected.profit>=0 ? sub_selected.profit.ToString("N0",nfi):"")">
-                                    <span class="note">đ</span>
+                            <td class="td-profit" style="display:flex;">
+                                <div class="form-group mb-0 td-profit-vnd price" style="margin-bottom:0!important;">
+                                    <input type="text" class="form-control input-price" placeholder="Lợi nhuận" value="">
+                                </div>
+                                <div class="form-group main-profit-value price " style="display:none;margin-bottom:0!important;">
+                                    <input type="text" class="form-control input-price" placeholder="Lợi nhuận" value="">
+                                </div>
+                                <div class="form-group main-profit-value-type price" style="width:90px !important;margin-bottom:0!important;">
+                                    <select class="select2 w-100 form-control" style="width:100%">
+                                        <option value="0" selected>VNĐ</option>
+                                        <option value="1">%</option>
+                                    </select>
                                 </div>
                             </td>
                             <td class="td-amount">
