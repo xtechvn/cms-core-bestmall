@@ -449,6 +449,13 @@ var product_detail_new = {
         });
         $('body').on('keyup', '#single-product-amount input', function () {
             var amount = isNaN(parseFloat($('#main-amount').find('input').val().replaceAll(',', ''))) ? 0 : parseFloat($('#main-amount').find('input').val().replaceAll(',', ''))
+            var profit_value = $('#main-profit-value-type select').find(':selected').val()
+            if (profit_value.trim() == '1') {
+                var percent_value = isNaN(parseFloat($('#main-profit-value').find('input').val().replaceAll(',', ''))) ? 0 : parseFloat($('#main-profit-value').find('input').val().replaceAll(',', ''))
+                var value_profit = amount / 100 * percent_value;
+                var rounded_value = Math.round(isNaN(value_profit) ? 0 : value_profit);
+                $('#main-profit').find('input').val(_global_function.Comma(rounded_value))
+            }
             var profit = isNaN(parseFloat($('#main-profit').find('input').val().replaceAll(',', ''))) ? 0 : parseFloat($('#main-profit').find('input').val().replaceAll(',', ''))
             $('#main-price').find('input').val(_product_function.Comma(amount - profit))
         });
@@ -506,6 +513,20 @@ var product_detail_new = {
         $('body').on('click', '#product-buy-with tbody tr .delete-row', function () {
             var element = $(this)
             element.closest('tr').remove()
+        });
+        $('body').on('select2:select', '#main-profit-value-type select', function () {
+            var element = $(this)
+            var value = element.find(':selected').val()
+            switch (value) {
+                case '0': {
+                    $('#main-profit').show()
+                    $('#main-profit-value').hide()
+                } break;
+                case '1': {
+                    $('#main-profit').hide()
+                    $('#main-profit-value').show()
+                } break;
+            }
         });
     },
     ShowProductTab: function () {
