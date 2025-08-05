@@ -653,7 +653,7 @@
                                 <input type="text" class="form-control input-price" placeholder="Nhập giá" value="@(product==null ?"0":product.profit.ToString("N0",nfi))">
                             </div>
                             <div id="main-profit-value" class="form-group price" style=" @(product != null && (product.profit_value_type == null || product.profit_value_type == 0) ? "display:none;" : "")">
-                                <input type="text" class="form-control input-price" placeholder="Nhập giá" value="@(product == null || product.profit_value == null ? "0" : ((float)product.profit_value).ToString("N2"))">
+                                <input type="text" class="form-control input-price" placeholder="Nhập giá" value="@(product == null || product.profit_value == null ? "0" : ((float)product.profit_value).ToString("N0", nfi))">
                             </div>
                             <div id="main-profit-value-type" class="form-group" style="width:90px !important;">
                                 <select class="select2 w-100 form-control" style="width:100%">
