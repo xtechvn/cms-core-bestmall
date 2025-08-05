@@ -565,6 +565,19 @@ var product_detail_new = {
                 } break;
             }
         });
+        $('body').on('change', '#attachment input', function (e) {
+            var element = $(this)
+            var parent = element.closest('.wrap_input')
+            if ((parent.find('.list').find('.items').length - 1 + (element[0].files.length)) > _product_constants.VALUES.ProductDetail_Max_Image) {
+                _msgalert.error('Số lượng ảnh sản phẩm không được vượt quá ' + _product_function.Comma(_product_constants.VALUES.ProductDetail_Max_Image) + ' ảnh')
+            }
+            else {
+
+                element.attr('data-type', 'attachment_image')
+                product_detail_new.AddProductMedia(element)
+            }
+        });
+
     },
     ShowProductTab: function () {
         $('#specification-disabled').hide()
@@ -830,6 +843,28 @@ var product_detail_new = {
                 reader.readAsDataURL(element[0].files[0]);
                 element.val(null)
             } break
+            case 'attachment_image':
+                {
+                    var parent = element.closest('.wrap_input');
+                    if ($.inArray(element.val().split('.').pop().toLowerCase(), _product_constants.VALUES.ImageExtension) == -1) {
+                        _msgalert.error("Vui lòng chỉ upload các định dạng sau: " + _product_constants.VALUES.ImageExtension.join(', '));
+                        return
+                    }
+                    if ((parent.find('.list').find('.items').length - 1 + (element[0].files.length)) == _product_constants.VALUES.ProductDetail_Max_Image) {
+                        parent.find('.list').find('.items').hide()
+                    }
+                    $(element[0].files).each(function (index, item) {
+
+                        var reader = new FileReader();
+                        reader.onload = function (e) {
+                            parent.find('.list').prepend(_product_constants.HTML.ProductDetail_Images_Item.replaceAll('{src}', e.target.result).replaceAll('{id}', '-1'))
+                            parent.find('.items').find('.count').html(parent.find('.list').find('.magnific_popup').length)
+
+                        }
+                        reader.readAsDataURL(item);
+                    });
+                    element.val(null)
+                } break
         }
         element.closest('.choose-wrap').find('.count').html(_product_function.Comma(element.closest('.list').find('.items').length))
 
@@ -1249,6 +1284,93 @@ var product_detail_new = {
 
         model.profit_value = parseFloat($('#main-profit-value input').val().replaceAll(',', ''))
         model.profit_value_type = parseInt($('#main-profit-value-type select').find(':selected').val().replaceAll(',', ''))
+
+        //-- Attachment:
+        model.attachment_root = []
+        $('#attachment-root .list .items').each(function (index, item) {
+            var element_image = $(this)
+            if (element_image.find('img').length > 0) {
+                //model.images.push(element_image.find('img').attr('src'))
+                var data_src = element_image.find('img').attr('src')
+                if (data_src == null || data_src == undefined || data_src.trim() == '') return true
+                if (_product_function.CheckIfImageVideoIsLocal(data_src)) {
+                    var result = _product_function.POSTSynchorus('/Product/SummitImages', { data_image: data_src })
+                    if (result != undefined && result.data != undefined && result.data.trim() != '') {
+                        model.attachment_root.push(result.data)
+                    } else {
+                        model.attachment_root.push(data_src)
+                    }
+                }
+                else {
+                    model.attachment_root.push(data_src)
+                }
+            }
+        })
+
+        model.attachment_product = []
+        $('#attachment-product .list .items').each(function (index, item) {
+            var element_image = $(this)
+            if (element_image.find('img').length > 0) {
+                //model.images.push(element_image.find('img').attr('src'))
+                var data_src = element_image.find('img').attr('src')
+                if (data_src == null || data_src == undefined || data_src.trim() == '') return true
+                if (_product_function.CheckIfImageVideoIsLocal(data_src)) {
+                    var result = _product_function.POSTSynchorus('/Product/SummitImages', { data_image: data_src })
+                    if (result != undefined && result.data != undefined && result.data.trim() != '') {
+                        model.attachment_product.push(result.data)
+                    } else {
+                        model.attachment_product.push(data_src)
+                    }
+                }
+                else {
+                    model.attachment_product.push(data_src)
+                }
+            }
+        })
+
+        model.attachment_supply = []
+        $('#attachment-supply .list .items').each(function (index, item) {
+            var element_image = $(this)
+            if (element_image.find('img').length > 0) {
+                //model.images.push(element_image.find('img').attr('src'))
+                var data_src = element_image.find('img').attr('src')
+                if (data_src == null || data_src == undefined || data_src.trim() == '') return true
+                if (_product_function.CheckIfImageVideoIsLocal(data_src)) {
+                    var result = _product_function.POSTSynchorus('/Product/SummitImages', { data_image: data_src })
+                    if (result != undefined && result.data != undefined && result.data.trim() != '') {
+                        model.attachment_supply.push(result.data)
+                    } else {
+                        model.attachment_supply.push(data_src)
+                    }
+                }
+                else {
+                    model.attachment_supply.push(data_src)
+                }
+            }
+        })
+        model.attachment_confirm = []
+        $('#attachment-confirm .list .items').each(function (index, item) {
+            var element_image = $(this)
+            if (element_image.find('img').length > 0) {
+                //model.images.push(element_image.find('img').attr('src'))
+                var data_src = element_image.find('img').attr('src')
+                if (data_src == null || data_src == undefined || data_src.trim() == '') return true
+                if (_product_function.CheckIfImageVideoIsLocal(data_src)) {
+                    var result = _product_function.POSTSynchorus('/Product/SummitImages', { data_image: data_src })
+                    if (result != undefined && result.data != undefined && result.data.trim() != '') {
+                        model.attachment_confirm.push(result.data)
+                    } else {
+                        model.attachment_confirm.push(data_src)
+                    }
+                }
+                else {
+                    model.attachment_confirm.push(data_src)
+                }
+            }
+        })
+
+
+
         _product_function.POST('/Product/Summit', { request: model }, function (result) {
             if (result.is_success) {
                 _global_function.RemoveLoading()

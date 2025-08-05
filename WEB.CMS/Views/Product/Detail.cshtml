@@ -846,6 +846,173 @@
             </div>
         </div>
     </div>
+    <div id="attachment" class="row-main container">
+        <div class="box-info bg-white p-3 mb-3">
+            <h5 class="title-box mb-2 text-uppercase">GIẤY TỜ CHỨNG NHẬN</h5>
+            <div id="attachment-root" class="item flex flex-lg-nowrap gap10 mb-2 w-100">
+                <label class="label">Giấy tờ thương hiệu gốc </label>
+                <div class="wrap_input">
+                    <div class="manage-color w-100">
+                        <div class="flex list w-100">
+                            @if (product != null && product.attachment_root != null && product.attachment_root.Count > 0)
+                            {
+                                foreach (var url in product.attachment_root)
+                                {
+                                    string url_fixed = url;
+                                    if (!url_fixed.Contains(static_url)
+                                    && !url_fixed.Contains("base64")
+                                    && !url_fixed.Contains("data:image"))
+                                    {
+                                        url_fixed = static_url + url;
+                                    }
+                                    <div class="items magnific_popup">
+                                        <button type="button" class="delete"><i class="icofont-close-line"></i></button>
+                                        <a class="thumb_img thumb_1x1 magnific_thumb">
+                                            <img src="@url_fixed">
+                                        </a>
+                                    </div>
+                                }
+                            }
+                            <div class="items import @(product != null && product.attachment_root != null && product.attachment_root.Count >= 9 ? "display:none;" : "")">
+                                <label class="choose choose-wrap">
+                                    <input type="file" name="myFile" multiple>
+                                    <div class="choose-content">
+                                        <i class="icofont-image"></i>
+                                        <span>Thêm hình ảnh <nw class="count">(@(product != null && product.attachment_root != null && product.attachment_root.Count > 0 ? product.attachment_root.Count : "0")</nw>/9)</span>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                        <p>
+                           
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div id="attachment-product" class="item flex flex-lg-nowrap gap10 mb-2 w-100">
+                <label class="label">Giấy tờ hàng hóa </label>
+                <div class="wrap_input">
+                    <div class="manage-color w-100">
+                        <div class="flex list w-100">
+                            @if (product != null && product.attachment_product != null && product.attachment_product.Count > 0)
+                            {
+                                foreach (var url in product.attachment_product)
+                                {
+                                    string url_fixed = url;
+                                    if (!url_fixed.Contains(static_url)
+                                    && !url_fixed.Contains("base64")
+                                    && !url_fixed.Contains("data:image"))
+                                    {
+                                        url_fixed = static_url + url;
+                                    }
+                                    <div class="items magnific_popup">
+                                        <button type="button" class="delete"><i class="icofont-close-line"></i></button>
+                                        <a class="thumb_img thumb_1x1 magnific_thumb">
+                                            <img src="@url_fixed">
+                                        </a>
+                                    </div>
+                                }
+                            }
+                            <div class="items import @(product != null && product.attachment_product != null && product.attachment_product.Count >= 9 ? "display:none;" : "")">
+                                <label class="choose choose-wrap">
+                                    <input type="file" name="myFile" multiple>
+                                    <div class="choose-content">
+                                        <i class="icofont-image"></i>
+                                        <span>Thêm hình ảnh <nw class="count">(@(product != null && product.attachment_product != null && product.attachment_product.Count > 0 ? product.attachment_product.Count : "0")</nw>/9)</span>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                        <p>
+                           
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div id="attachment-supply" class="item flex flex-lg-nowrap gap10 mb-2 w-100">
+                <label class="label">Giấy tờ nhà phân phối</label>
+                <div class="wrap_input">
+                    <div class="manage-color w-100">
+                        <div class="flex list w-100">
+                            @if (product != null && product.attachment_supply != null && product.attachment_supply.Count > 0)
+                            {
+                                foreach (var url in product.attachment_supply)
+                                {
+                                    string url_fixed = url;
+                                    if (!url_fixed.Contains(static_url)
+                                    && !url_fixed.Contains("base64")
+                                    && !url_fixed.Contains("data:image"))
+                                    {
+                                        url_fixed = static_url + url;
+                                    }
+                                    <div class="items magnific_popup">
+                                        <button type="button" class="delete"><i class="icofont-close-line"></i></button>
+                                        <a class="thumb_img thumb_1x1 magnific_thumb">
+                                            <img src="@url_fixed">
+                                        </a>
+                                    </div>
+                                }
+                            }
+                            <div class="items import @(product != null && product.attachment_supply != null && product.attachment_supply.Count >= 9 ? "display:none;" : "")">
+                                <label class="choose choose-wrap">
+                                    <input type="file" name="myFile" multiple>
+                                    <div class="choose-content">
+                                        <i class="icofont-image"></i>
+                                        <span>Thêm hình ảnh <nw class="count">(@(product != null && product.attachment_supply != null && product.attachment_supply.Count > 0 ? product.attachment_supply.Count : "0")</nw>/9)</span>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                        <p>
+
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div id="attachment-confirm" class="item flex flex-lg-nowrap gap10 mb-2 w-100">
+                <label class="label">Giấy tờ xác nhận</label>
+                <div class="wrap_input">
+                    <div class="manage-color w-100">
+                        <div class="flex list w-100">
+                            @if (product != null && product.attachment_confirm != null && product.attachment_confirm.Count > 0)
+                            {
+                                foreach (var url in product.attachment_confirm)
+                                {
+                                    string url_fixed = url;
+                                    if (!url_fixed.Contains(static_url)
+                                    && !url_fixed.Contains("base64")
+                                    && !url_fixed.Contains("data:image"))
+                                    {
+                                        url_fixed = static_url + url;
+                                    }
+                                    <div class="items magnific_popup">
+                                        <button type="button" class="delete"><i class="icofont-close-line"></i></button>
+                                        <a class="thumb_img thumb_1x1 magnific_thumb">
+                                            <img src="@url_fixed">
+                                        </a>
+                                    </div>
+                                }
+                            }
+                            <div class="items import @(product != null && product.attachment_confirm != null && product.attachment_confirm.Count >= 9 ? "display:none;" : "")">
+                                <label class="choose choose-wrap">
+                                    <input type="file" name="myFile" multiple>
+                                    <div class="choose-content">
+                                        <i class="icofont-image"></i>
+                                        <span>Thêm hình ảnh <nw class="count">(@(product != null && product.attachment_confirm != null && product.attachment_confirm.Count > 0 ? product.attachment_confirm.Count : "0")</nw>/9)</span>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                        <p>
+
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
     <div id="other-information" class="box-info bg-white p-3 mb-3">
         <h5 class="title-box mb-2 text-uppercase">Thông tin khác</h5>
         <div class="row">

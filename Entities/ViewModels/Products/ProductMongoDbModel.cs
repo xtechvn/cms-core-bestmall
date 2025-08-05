@@ -68,6 +68,11 @@ namespace Entities.ViewModels.Products
         public string description_delivery { get; set; }
         public string description_refund { get; set; }
 
+        public List<string>? attachment_root { get; set; }
+        public List<string>? attachment_product { get; set; }
+        public List<string>? attachment_supply { get; set; }
+        public List<string>? attachment_confirm { get; set; }
+
     }
     public class ProductMongoDbSpecification
     {
