@@ -2,6 +2,7 @@
 @using Entities.ViewModels.Label
 @using Entities.ViewModels.Products
 @using HuloToys_Service.Models.Label
+@using System.Globalization
 @using Utilities.Contants
 @using Utilities.Contants.ProductV2
 @using WEB.CMS.Service.Product
@@ -32,7 +33,9 @@
         manuafacter_location = product.specification.FirstOrDefault(x => x.attribute_id == 7);
         specific_requirement = product.specification.FirstOrDefault(x => x.attribute_id == 4);
     }
-
+    NumberFormatInfo nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+    nfi.NumberGroupSeparator = ","; // Dấu phẩy cho hàng nghìn
+    nfi.NumberDecimalSeparator = "."; // Dấu chấm cho thập phân
 }
 <style>
     .list-toys .active a {
@@ -248,7 +251,7 @@
                 <label class="label">Giá gốc</label>
                 <div class="wrap_input">
                     <div class="form-group namesp">
-                        <input type="text" class="form-control input-price" placeholder="Giá gốc" value="@(product != null && product.old_price!=null&& product.old_price>0 ? ((double)product.old_price).ToString("N0"):"")">
+                        <input type="text" class="form-control input-price" placeholder="Giá gốc" value="@(product != null && product.old_price!=null&& product.old_price>0 ? ((double)product.old_price).ToString("N0",nfi):"")">
 
                     </div>
                 </div>
@@ -625,7 +628,7 @@
                         <label class="label">Giá nhập <sup class="red">*</sup></label>
                         <div class="wrap_input">
                             <div id="main-price" class="form-group price">
-                                <input type="text" class="form-control input-price" placeholder="Nhập giá" value="@(product == null ? "0" : product.price.ToString("N0"))" readonly>
+                                <input type="text" class="form-control input-price" placeholder="Nhập giá" value="@(product == null ? "0" : product.price.ToString("N0",nfi))" readonly>
                                 <span class="note">đ</span>
                             </div>
                         </div>
@@ -636,10 +639,37 @@
                 <div class="col-md-6">
                     <div class="item flex flex-lg-nowrap gap10 mb-2 w-100 product-single-profit">
                         <label class="label">Lợi nhuận <sup class="red">*</sup></label>
-                        <div class="wrap_input">
-                            <div id="main-profit" class="form-group price">
-                                <input type="text" class="form-control input-price" placeholder="Nhập giá" value="@(product==null ?"0":product.profit.ToString("N0"))">
-                                <span class="note">đ</span>
+                        <div class="wrap_input" style="display:flex;">
+                            <div id="main-profit" class="form-group price" style="@(product != null && (product.profit_value_type == null || product.profit_value_type==0)?"":"display:none;")">
+                                <input type="text" class="form-control input-price" placeholder="Nhập giá" value="@(product==null ?"0":product.profit.ToString("N0",nfi))">
+                            </div>
+                            <div id="main-profit-value" class="form-group price" style=" @(product != null && (product.profit_value_type == null || product.profit_value_type == 0) ? "display:none;" : "")">
+                                <input type="text" class="form-control input-price" placeholder="Nhập giá" value="@(product == null || product.profit_value == null ? "0" : ((float)product.profit_value).ToString("N2"))">
+                            </div>
+                            <div id="main-profit-value-type" class="form-group" style="width:90px !important;">
+                                <select class="select2 w-100 form-control" style="width:100%">
+                                    @{
+                                        if (product == null || product.profit_value_type == 0)
+                                        {
+                                            <option value="0" selected>VNĐ</option>
+
+                                        }
+                                        else
+                                        {
+                                            <option value="0" selected>VNĐ</option>
+                                        }
+                                        if (product != null && product.profit_value_type == 1)
+                                        {
+                                            <option value="1" selected>%</option>
+
+                                        }
+                                        else
+                                        {
+                                            <option value="1">%</option>
+                                        }
+                                    }
+
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -651,7 +681,7 @@
                         <label class="label">Giá bán</label>
                         <div class="wrap_input">
                             <div id="main-amount" class="form-group price product-single-amount">
-                                <input type="text" class="form-control input-price" placeholder="Nhập giá" value="@(product==null ?"0":product.amount.ToString("N0"))" >
+                                <input type="text" class="form-control input-price" placeholder="Nhập giá" value="@(product==null ?"0":product.amount.ToString("N0",nfi))" >
                                 <span class="note">đ</span>
                             </div>
                         </div>
@@ -664,7 +694,7 @@
                         <label class="label">Kho hàng<sup class="red">*</sup></label>
                         <div id="main-stock" class="wrap_input">
                             <div class="form-group price">
-                                <input type="text" class="form-control input-price" placeholder="Nhập giá" value="@(product==null ?"0":product.quanity_of_stock.ToString("N0"))">
+                                <input type="text" class="form-control input-price" placeholder="Nhập giá" value="@(product==null ?"0":product.quanity_of_stock.ToString("N0",nfi))">
                             </div>
                         </div>
                     </div>
@@ -696,11 +726,11 @@
                                         <td>
                                             <div class="flex gap10 flex-nowrap align-items-center justify-content-center">
                                                 <div class="form-group mb-0">
-                                                    <input type="text" class="form-control input-price" placeholder="Từ sản phẩm" value="@item.from.ToString("N0")">
+                                                    <input type="text" class="form-control input-price" placeholder="Từ sản phẩm" value="@item.from.ToString("N0",nfi)">
                                                 </div>
                                                 <i class="icofont-arrow-right"></i>
                                                 <div class="form-group mb-0">
-                                                    <input type="text" class="form-control input-price" placeholder="Đến sản phẩm" value="@item.to.ToString("N0")">
+                                                    <input type="text" class="form-control input-price" placeholder="Đến sản phẩm" value="@item.to.ToString("N0",nfi)">
                                                 </div>
                                             </div>
 
@@ -712,7 +742,7 @@
                                                     <span class="checkmark"></span>
                                                 </label>
                                                 <div class="form-group mb-0 price mr-3">
-                                                    <input type="text" class="form-control input-price" placeholder="Nhập số" @(item.type == 0 ? "" : "readonly") value=" @(item.type == 0 ? item.discount.ToString("N0") : "") ">
+                                                    <input type="text" class="form-control input-price" placeholder="Nhập số" @(item.type == 0 ? "" : "readonly") value=" @(item.type == 0 ? item.discount.ToString("N0",nfi) : "") ">
                                                     <span class="note">đ</span>
                                                 </div>
                                                 <label class="radio mb-3">
@@ -721,7 +751,7 @@
 
                                                 </label>
                                                 <div class="form-group mb-0 price">
-                                                    <input type="text" class="form-control input-price" placeholder="Nhập số" @(item.type == 1 ? "" : "readonly") value="@(item.type == 1 ? item.discount.ToString("N0") : "")">
+                                                    <input type="text" class="form-control input-price" placeholder="Nhập số" @(item.type == 1 ? "" : "readonly") value="@(item.type == 1 ? item.discount.ToString("N0",nfi) : "")">
                                                     <span class="note">%</span>
                                                 </div>
                                             </div>
@@ -771,7 +801,7 @@
                     <div class="row">
                         <div class="col-lg-4 col-md-6">
                             <div class="form-group mb-0 price">
-                                <input type="text" class="form-control input-price weight" placeholder="Nhập cân nặng" value="@(product != null && product.weight != null ? ((float)product.weight).ToString("N0") : "")" @((product == null || product._id == null || (product != null && product.is_one_weight == true)) ? "" : "readonly")>
+                                <input type="text" class="form-control input-price weight" placeholder="Nhập cân nặng" value="@(product != null && product.weight != null ? ((float)product.weight).ToString("N0",nfi) : "")" @((product == null || product._id == null || (product != null && product.is_one_weight == true)) ? "" : "readonly")>
                                 <span class="note">gr</span>
                             </div>
                             <p class="mt-1">Sau khi đóng gói</p>
@@ -785,19 +815,19 @@
                     <div class="row">
                         <div class="col-lg-3 col-md-4">
                             <div class="form-group mb-0 price">
-                                <input type="text" class="form-control input-price dismenssion-height" placeholder="Nhập kích thước" value="@(product != null && product.package_height != null ? ((float)product.package_height).ToString("N0") : "")" @((product == null || product._id == null || (product != null && product.is_one_weight == true)) ? "" : "readonly")>
+                                <input type="text" class="form-control input-price dismenssion-height" placeholder="Nhập kích thước" value="@(product != null && product.package_height != null ? ((float)product.package_height).ToString("N0",nfi) : "")" @((product == null || product._id == null || (product != null && product.is_one_weight == true)) ? "" : "readonly")>
                                 <span class="note">cm</span>
                             </div>
                         </div>
                         <div class="col-lg-3 col-md-4">
                             <div class="form-group mb-0 price">
-                                <input type="text" class="form-control input-price dismenssion-width" placeholder="Nhập kích thước" value="@(product != null && product.package_width != null ? ((float)product.package_width).ToString("N0") : "")" @((product == null || product._id == null || (product != null && product.is_one_weight == true)) ? "" : "readonly")>
+                                <input type="text" class="form-control input-price dismenssion-width" placeholder="Nhập kích thước" value="@(product != null && product.package_width != null ? ((float)product.package_width).ToString("N0",nfi) : "")" @((product == null || product._id == null || (product != null && product.is_one_weight == true)) ? "" : "readonly")>
                                 <span class="note">cm</span>
                             </div>
                         </div>
                         <div class="col-lg-3 col-md-4">
                             <div class="form-group mb-0 price">
-                                <input type="text" class="form-control input-price dismenssion-depth" placeholder="Nhập kích thước" value="@(product != null && product.package_depth != null ? ((float)product.package_depth).ToString("N0") : "")" @((product == null || product._id == null || (product != null && product.is_one_weight == true)) ? "" : "readonly")>
+                                <input type="text" class="form-control input-price dismenssion-depth" placeholder="Nhập kích thước" value="@(product != null && product.package_depth != null ? ((float)product.package_depth).ToString("N0",nfi) : "")" @((product == null || product._id == null || (product != null && product.is_one_weight == true)) ? "" : "readonly")>
                                 <span class="note">cm</span>
                             </div>
                         </div>
@@ -886,7 +916,7 @@
                     <label class="label">Số lượng sản phẩm đã bán</label>
                     <div class="wrap_input">
                         <div class="form-group namesp">
-                            <input type="text" class="form-control input-price" placeholder="0" value="@(product != null && product.total_sold!=null&& product.total_sold>0 ? ((int)product.total_sold).ToString("N0"):"0")">
+                            <input type="text" class="form-control input-price" placeholder="0" value="@(product != null && product.total_sold!=null&& product.total_sold>0 ? ((int)product.total_sold).ToString("N0",nfi):"0")">
                         </div>
                     </div>
                 </div>
@@ -902,7 +932,7 @@
                     <label class="label">Số lượng đánh giá</label>
                     <div class="wrap_input">
                         <div class="form-group namesp">
-                            <input type="text" class="form-control input-price" placeholder="0" value="@(product != null && product.review_count!=null&& product.review_count>0 ? ((int)product.review_count).ToString("N0"):"0")">
+                            <input type="text" class="form-control input-price" placeholder="0" value="@(product != null && product.review_count!=null&& product.review_count>0 ? ((int)product.review_count).ToString("N0",nfi):"0")">
                         </div>
                     </div>
                 </div>
@@ -961,7 +991,7 @@
                                             </div>
                                         </td>
                                         <td>
-                                            đ @(item.amount_min == null ? item.amount.ToString("N0") : ((double)item.amount_min).ToString("N0"))
+                                            đ @(item.amount_min == null ? item.amount.ToString("N0",nfi) : ((double)item.amount_min).ToString("N0",nfi))
                                         </td>
                                         <td>@item.quanity_of_stock</td>
                                         <td class="text-center">
