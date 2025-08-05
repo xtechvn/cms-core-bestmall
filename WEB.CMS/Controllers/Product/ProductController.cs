@@ -333,6 +333,8 @@ namespace WEB.CMS.Controllers
                         product_by_variations.package_width = variation.package_width;
                         product_by_variations.created_date = currentTimeInUtcPlus7;
                         product_by_variations.updated_last = currentTimeInUtcPlus7;
+                        product_by_variations.profit_value = variation.profit_value;
+                        product_by_variations.profit_value_type = variation.profit_value_type;
                         if (variation._id != null && variation._id != "")
                         {
                             product_by_variations._id = variation._id;
