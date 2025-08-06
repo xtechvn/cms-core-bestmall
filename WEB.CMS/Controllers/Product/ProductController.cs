@@ -47,7 +47,7 @@ namespace WEB.CMS.Controllers
         public ProductController(IConfiguration configuration, RedisConn redisConn, IGroupProductRepository groupProductRepository, ILabelRepository labelRepository,
             ISupplierRepository supplierRepository, IAllCodeRepository allCodeRepository, ProductDetailMongoAccess productV2DetailMongoAccess,
             ProductSpecificationMongoAccess productSpecificationMongoAccess, ProductESRepository productESRepository, FlashSaleProductESRepository flashSaleProductRepository,
-            IWebHostEnvironment WebHostEnvironment, GroupProductESService groupProductESService)
+            IWebHostEnvironment WebHostEnvironment, GroupProductESService groupProductESService, IGroupProductRepository GroupProductRepository)
         {
             _productV2DetailMongoAccess = productV2DetailMongoAccess;
             _productSpecificationMongoAccess = productSpecificationMongoAccess;
@@ -66,6 +66,7 @@ namespace WEB.CMS.Controllers
             _flashSaleProductESRepository = flashSaleProductRepository;
             _WebHostEnvironment = WebHostEnvironment;
             _groupProductESService = groupProductESService;
+
         }
         public async Task<IActionResult> Index()
         {
@@ -788,6 +789,8 @@ namespace WEB.CMS.Controllers
                 }
             }
             catch { }
+            ViewBag.Badges = await _groupProductRepository.getCategoryByParentId(109);
+
             return View();
         }
         public async Task<IActionResult> AttributesPrice(

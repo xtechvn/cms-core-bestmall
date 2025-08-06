@@ -36,6 +36,8 @@
     NumberFormatInfo nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
     nfi.NumberGroupSeparator = ","; // Dấu phẩy cho hàng nghìn
     nfi.NumberDecimalSeparator = "."; // Dấu chấm cho thập phân
+    List<GroupProduct> badge = (List<GroupProduct>)ViewBag.Badges;
+
 }
 <style>
     .list-toys .active a {
@@ -262,6 +264,30 @@
                     <div class="form-group namesp">
                         <input type="text" class="form-control input-price" placeholder="0" disabled value="@(product != null && product.discount>0 ? product.discount.ToString("N2"):"0")">
                         <span class="note">%</span>
+                    </div>
+                </div>
+            </div>
+            <div id="badges" class="item flex flex-lg-nowrap gap10 mb-2 w-100">
+                <label class="label">Tag sản phẩm </label>
+                <div class="wrap_input">
+                    <div class="form-group namesp">
+                        <select class="select2 w-100">
+                            @if (badge != null && badge.Count>0)
+                            {
+                                foreach(var b in badge)
+                                {
+                                    if(product.flashsale_badge_type!=null && product.flashsale_badge_type == b.Id)
+                                    {
+                                        <option value="@b.Id" selected>@b.Name</option>
+
+                                    }
+                                    else
+                                    {
+                                        <option value="@b.Id" >@b.Name</option>
+                                    }
+                                }
+                            }
+                        </select>
                     </div>
                 </div>
             </div>
