@@ -8,6 +8,7 @@ namespace Utilities.Contants
     {
         COD = 1,
         BANK_TRANSFER = 2,//: Chuyển khoản ngân hàng
+        VNPAY=3,
     }
 
 }
