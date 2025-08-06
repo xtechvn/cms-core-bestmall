@@ -1107,7 +1107,7 @@ namespace WEB.CMS.Controllers
 
         public async Task<IActionResult> SearchGroupProduct(string keyword = "")
         {
-            int parent_id = 1;
+            int parent_id = 188;
             var list = _groupProductRepository.Search(keyword, parent_id);
             if (list == null) list = new List<GroupProduct>();
             var all_group = new GroupProduct { Id = 0, Name = "Tất cả nhóm hàng" };
