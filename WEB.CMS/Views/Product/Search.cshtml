@@ -68,15 +68,39 @@
                         case (int)ProductStatus.ON_WAITING_CONFIRM:
                             {
                                 <span class="status-oranger">Chờ duyệt</span>
-                            }
-                            break;
-                        case (int)ProductStatus.ACTIVE:
-                            {
-                                <span class="status-green">Hoạt động</span>
 
+                            }break;
+
+                        case (int)SUPPLIER_STATUS.CONFIRMED:
+                            {
+                                @switch (main.status)
+                                {
+                                    case (int)ProductStatus.ON_WAITING_CONFIRM:
+                                        {
+                                            <span class="status-oranger">Chờ duyệt</span>
+                                        }
+                                        break;
+                                    case (int)ProductStatus.ACTIVE:
+                                        {
+                                            <span class="status-green">Hoạt động</span>
+
+                                        }
+                                        break;
+                                    case (int)ProductStatus.DEACTIVE:
+                                        {
+                                            <span class="status-red">Ngưng hoạt động</span>
+
+                                        }
+                                        break;
+                                    default:
+                                        {
+                                            <span class="status-oranger">Chờ duyệt</span>
+                                        }
+                                        break;
+                                }
                             }
                             break;
-                        case (int)ProductStatus.DEACTIVE:
+                        case (int)SUPPLIER_STATUS.DELETED:
                             {
                                 <span class="status-red">Ngưng hoạt động</span>
 
