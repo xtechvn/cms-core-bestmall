@@ -166,7 +166,14 @@ namespace DAL
             {
                 using (var _DbContext = new EntityDataContext(_connection))
                 {
-                    return _DbContext.GroupProducts.Where(s => s.Name.Contains(keyword) && s.ParentId==parent_id && s.Status == (int)ArticleStatus.PUBLISH).ToList();
+                    //return _DbContext.GroupProducts.Where(s => s.Name.Contains(keyword) && s.ParentId == parent_id && s.Status == (int)ArticleStatus.PUBLISH).ToList();
+                    var list_tier1= _DbContext.GroupProducts.Where(s => s.Name.Contains(keyword) && s.ParentId==parent_id && s.Status == (int)ArticleStatus.PUBLISH).ToList();
+                    if(list_tier1 != null && list_tier1.Count>0)
+                    {
+                        var list_ids = list_tier1.Select(s => s.Id);
+                        list_tier1.AddRange(_DbContext.GroupProducts.Where(s => s.Name.Contains(keyword) && list_ids.Contains(s.Id) && s.Status == (int)ArticleStatus.PUBLISH).ToList());
+                    }
+                    return list_tier1;
                 }
             }
             catch (Exception ex)
