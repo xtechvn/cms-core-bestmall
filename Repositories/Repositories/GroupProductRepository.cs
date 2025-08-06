@@ -511,9 +511,9 @@ namespace Repositories.Repositories
             }
             return null;
         }
-        public List<GroupProduct> Search(string keyword, int parent_id = 1)
+        public async Task<List<GroupProduct>> Search(string keyword, int parent_id = 1)
         {
-            return  _GroupProductDAL.Search(keyword, parent_id);
+            return await  _GroupProductDAL.SearchSP(keyword, parent_id);
         }
 
     }

@@ -1,9 +1,13 @@
 ﻿using DAL.Generic;
+using DAL.StoreProcedure;
 using Entities.Models;
+using Entities.ViewModels;
 using Entities.ViewModels.GroupProducts;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using Utilities;
@@ -13,8 +17,12 @@ namespace DAL
 {
     public class GroupProductDAL : GenericService<GroupProduct>
     {
+        private static DbWorker _DbWorker;
+
         public GroupProductDAL(string connection) : base(connection)
         {
+            _DbWorker = new DbWorker(connection);
+
         }
 
         /// <summary>
@@ -200,6 +208,28 @@ namespace DAL
             {
                 LogHelper.InsertLogTelegram("GetByParentIdOrder - GroupProductDAL: " + ex);
 
+            }
+            return null;
+        }
+        public async Task<List<GroupProduct>> SearchSP(string keyword, int parent_id = 1)
+        {
+            try
+            {
+
+                SqlParameter[] objParam =
+                [
+                   new SqlParameter("@Keyword", keyword?? (object)DBNull.Value),
+                   new SqlParameter("@ParentId",parent_id),
+                ];
+                var dt = _DbWorker.GetDataTable("SP_GetListGroupProduct", objParam);
+                if (dt != null && dt.Rows.Count > 0)
+                {
+                    return dt.ToList<GroupProduct>();
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("SearchSP - GroupProductDAL: " + ex);
             }
             return null;
         }
