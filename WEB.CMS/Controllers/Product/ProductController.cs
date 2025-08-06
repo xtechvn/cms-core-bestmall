@@ -737,6 +737,8 @@ namespace WEB.CMS.Controllers
         public async Task<IActionResult> Detail(string id = "")
         {
             ViewBag.Static = _configuration["API:StaticURL"];
+            ViewBag.Badges = await _groupProductRepository.getCategoryByParentId(109);
+
             if (id == null || id.Trim() == "")
             {
                 ViewBag.GroupProduct = "";
@@ -794,7 +796,6 @@ namespace WEB.CMS.Controllers
                 }
             }
             catch { }
-            ViewBag.Badges = await _groupProductRepository.getCategoryByParentId(109);
 
             return View();
         }
