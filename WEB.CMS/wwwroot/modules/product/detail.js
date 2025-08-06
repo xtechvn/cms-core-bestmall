@@ -1369,7 +1369,7 @@ var product_detail_new = {
             }
         })
 
-
+        model.flashsale_badge_type = $('#badges select').find(':selected').val()
 
         _product_function.POST('/Product/Summit', { request: model }, function (result) {
             if (result.is_success) {
