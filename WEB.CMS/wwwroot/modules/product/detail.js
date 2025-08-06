@@ -225,9 +225,9 @@ var product_detail_new = {
                         element.get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
                         product_detail_new.ValidateProcessing = false;
                         return
-                    } else if (value.trim().length > 14) {
-                        element.val(value.substring(0, 14));
-                        _msgalert.error('Tên biến thể không được quá 14 ký tự')
+                    } else if (value.trim().length > 50) {
+                        element.val(value.substring(0, 50));
+                        _msgalert.error('Tên biến thể không được quá 50 ký tự')
                         element.get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
                         product_detail_new.ValidateProcessing = false;
                         return
@@ -1272,7 +1272,7 @@ var product_detail_new = {
         model.preorder_status = $('input[name="preorder_status"]:checked').val() == '1' ? 1 : 0
         model.condition_of_product = $('#condition_of_product').find(':selected').val()
         model.sku = $('#sku input').val()
-        
+
         model.products_buy_with = []
         $('#product-buy-with tbody tr').each(function (index, item) {
             var compare = $(this)
@@ -1576,8 +1576,8 @@ var product_detail_new = {
                     element_detail.get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
                     success = false
                     return false
-                } else if (value.trim().length > 14) {
-                    _msgalert.error('Tên biến thể không được quá 14 ký tự')
+                } else if (value.trim().length > 50) {
+                    _msgalert.error('Tên biến thể không được quá 50 ký tự')
                     element_detail.get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
                     success = false
                     return false
@@ -1927,7 +1927,7 @@ var product_detail_new = {
         }
         var discount_value = ((old_price - min_price) / old_price) * 100
         var discount = Math.round(discount_value <= 0 ? 0 : discount_value)
-        if (discount == undefined|| isNaN(discount)) discount = 0
+        if (discount == undefined || isNaN(discount)) discount = 0
         $('#discount input').val(discount).trigger('change')
     },
     AddNewProductBuyWith: function () {
