@@ -68,6 +68,12 @@
                     {
                         case (int)SUPPLIER_STATUS.ON_WAITING_CONFIRMATION:
                             {
+                                <span class="status-oranger">Chờ duyệt</span>
+
+                            }break;
+
+                        case (int)SUPPLIER_STATUS.CONFIRMED:
+                            {
                                 @switch (main.status)
                                 {
                                     case (int)ProductStatus.ON_WAITING_CONFIRM:
@@ -93,12 +99,6 @@
                                         }
                                         break;
                                 }
-                            }
-                            break;
-                        case (int)SUPPLIER_STATUS.CONFIRMED:
-                            {
-                                <span class="status-green">Đã duyệt</span>
-
                             }
                             break;
                         case (int)SUPPLIER_STATUS.DELETED:
