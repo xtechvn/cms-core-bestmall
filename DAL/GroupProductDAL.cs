@@ -179,7 +179,7 @@ namespace DAL
                     if(list_tier1 != null && list_tier1.Count>0)
                     {
                         var list_ids = list_tier1.Select(s => s.Id);
-                        list_tier1.AddRange(_DbContext.GroupProducts.Where(s => s.Name.Contains(keyword) && list_ids.Contains(s.Id) && s.Status == (int)ArticleStatus.PUBLISH).ToList());
+                        list_tier1.AddRange(_DbContext.GroupProducts.Where(s => s.Name.Contains(keyword) && list_ids.Contains(s.ParentId) && s.Status == (int)ArticleStatus.PUBLISH).ToList());
                     }
                     return list_tier1;
                 }
