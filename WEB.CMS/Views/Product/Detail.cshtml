@@ -823,13 +823,20 @@
             <label class="label">Sản phẩm có chung cân nặg và kích thước</label>
             <div class="wrap_input">
                 <label class="switch no-text switch-active">
-                    <input type="checkbox" class="switch-weight" @((product == null ||product._id == null || (product != null && product.is_one_weight == true)) ? "checked" : "")>
+                    @{
+                        var is_one_weight = true;
+                        if (product != null && product._id == null && product.is_one_weight != null && product.is_one_weight==false)
+                        {
+                            is_one_weight = false;
+                        }
+                    }
+                    <input type="checkbox" class="switch-weight" @(is_one_weight==true ? "checked" : "")>
                     <span class="slider round"></span>
                 </label>
 
             </div>
         </div>
-        <div class="box-input-ship" style="@((product == null || product._id == null || (product != null && product.is_one_weight == true)) ? "" : "display:none;"))">
+        <div class="box-input-ship" style="@(is_one_weight == true ? "" : "display:none;"))">
             <div class="item flex flex-lg-nowrap gap10 mb-2 w-100">
                 <label class="label">Cân nặng<sup class="red">*</sup></label>
                 <div class="wrap_input">
