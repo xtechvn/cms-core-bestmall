@@ -95,6 +95,7 @@ builder.Services.AddSingleton<ISupplierRepository, SupplierRepository>();
 builder.Services.AddSingleton<IFlashSaleRepository, FlashSaleRepository>();
 builder.Services.AddSingleton<IFlashSaleProductRepository, FlashSaleProductRepository>();
 builder.Services.AddSingleton<ICustomerManagerRepository, CustomerManagerRepository>();
+builder.Services.AddSingleton<IVoucherRepository, VoucherRepository>();
 
 // Đăng ký QueueService
 builder.Services.AddScoped<QueueService>();
@@ -174,5 +175,9 @@ app.MapControllerRoute(name: "FlashSale",
 app.MapControllerRoute(name: "FlashSale",
  pattern: "/flashsale/detail/{id?}",
  defaults: new { controller = "FlashSale", action = "Detail" });
+
+app.MapControllerRoute(name: "VoucherDetail",
+ pattern: "/voucher/detail/{id?}",
+ defaults: new { controller = "Voucher", action = "Detail" });
 
 app.Run();

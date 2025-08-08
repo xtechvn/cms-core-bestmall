@@ -213,7 +213,7 @@ label.switch input:checked+.slider {
 
   input:checked ~ .checkmark {
     border: 1px solid #fd5023;
-    background: #fd5023 !important;
+    background: #fd5023;
   }
 }
 
@@ -274,6 +274,7 @@ label.radio {
   border-color: #343e7a;
   color: #343e7a;
   border-radius: 100px;
+  background: none;
 }
 
 .btn-round {
@@ -1362,4 +1363,78 @@ label.switch {
 }
 .thumb_img img{
   object-position: center;
+}
+.list-product-order{
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  .item-pro{
+    padding: 5px;
+    position: relative;
+    border-radius:3px;
+    border: 0.5px solid  #F1F5F9;
+    background: #FFF;
+    .image{
+      img{
+        width: 100px;
+        height: 100px;
+        object-fit: contain;
+        display: block;
+      }
+      margin-bottom: 2px;
+    }
+    .icon-del{
+      position: absolute;
+      right: 0;
+      padding: 2px;
+      width: 20px;
+      height: 20px;
+      border-radius: 100%;
+      background: #B7CCD9;
+      top: 0;
+      z-index: 1;
+      cursor: pointer;
+      content: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M9.64028 9.10968C9.67512 9.14452 9.70276 9.18589 9.72161 9.23141C9.74047 9.27693 9.75017 9.32572 9.75017 9.375C9.75017 9.42427 9.74047 9.47306 9.72161 9.51858C9.70276 9.5641 9.67512 9.60547 9.64028 9.64031C9.60544 9.67515 9.56407 9.70279 9.51855 9.72164C9.47303 9.7405 9.42424 9.7502 9.37496 9.7502C9.32569 9.7502 9.2769 9.7405 9.23138 9.72164C9.18586 9.70279 9.14449 9.67515 9.10965 9.64031L5.99996 6.53015L2.89028 9.64031C2.81991 9.71067 2.72448 9.7502 2.62496 9.7502C2.52545 9.7502 2.43002 9.71067 2.35965 9.64031C2.28929 9.56994 2.24976 9.47451 2.24976 9.375C2.24976 9.27548 2.28929 9.18005 2.35965 9.10968L5.46981 5.99999L2.35965 2.89031C2.28929 2.81994 2.24976 2.72451 2.24976 2.62499C2.24976 2.52548 2.28929 2.43005 2.35965 2.35968C2.43002 2.28932 2.52545 2.24979 2.62496 2.24979C2.72448 2.24979 2.81991 2.28932 2.89028 2.35968L5.99996 5.46984L9.10965 2.35968C9.18002 2.28932 9.27545 2.24979 9.37496 2.24979C9.47448 2.24979 9.56991 2.28932 9.64028 2.35968C9.71064 2.43005 9.75017 2.52548 9.75017 2.62499C9.75017 2.72451 9.71064 2.81994 9.64028 2.89031L6.53012 5.99999L9.64028 9.10968Z" fill="white"/></svg>');
+    }
+    .number{
+      position: absolute;
+      left: 3px;
+      top: 0;
+      color: #773EFA;
+      font-size: 13px;
+      z-index: 1;
+    }
+    .name{
+      font-size: 9px;
+      font-weight: 500;
+      margin: 0;
+      margin-bottom: 3px;
+    }
+    .price{
+      color:  #FF4169;
+      font-size:8px;
+      font-weight: 800;
+      line-height: 150%; 
+      margin: 0;
+    }
+    .price-old{
+      color: #808285;
+      font-size: 7px;
+      line-height: 150%;
+      text-decoration: line-through;
+      margin: 0;
+    }
+    &.no-select{
+      border-radius: 4%;
+      border: 1px dashed #B7CCD9;
+      min-width: 100px;
+      cursor: pointer;
+      .number{
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+      }
+    }
+  }
+  
 }
