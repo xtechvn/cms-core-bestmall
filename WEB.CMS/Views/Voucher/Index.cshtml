@@ -1,0 +1,148 @@
+﻿﻿@{
+ViewData["Title"] = "Quản lý voucher";
+Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+<section class="main-container clearfix">
+
+    <div class="bg-white pd-16 radius10 mb24">
+        <div class="tab-menu-folder mb20" style="padding: 0;">
+            <a href="javascript:;" data-status="0" class="search-tab active">Tất cả</a>
+            <a href="javascript:;" data-status="1" class="search-tab">Đang diễn ra</a>
+            <a href="javascript:;" data-status="2" class="search-tab">Sắp diễn ra</a>
+            <a href="javascript:;" data-status="3" class="search-tab">Đã kết thúc</a>
+        </div>
+        <div class="flex gap10 flex-lg-nowrap justify-between">
+            <div class="flex gap10 flex-lg-nowrap">
+                <div class="form-group" style="width: 300px;">
+                    <div class="search-wrapper">
+                        <input id="search-keyword" type="text" class="input_search onclick-togle border" name="" value=""
+                               placeholder="Tìm kiếm voucher">
+                        <span class="search-btn">
+                            <button type="submit">
+                                <svg class="icon-svg">
+                                    <use xlink:href="images/icons/icon.svg#search"></use>
+                                </svg>
+                            </button>
+                        </span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button id="search-confirm" class="btn select-icon btn-round btn-outline-secondary">
+                        <i class="icofont-search"></i>
+                        Tìm kiếm
+                    </button>
+                </div>
+            </div>
+            <a id="voucher-addnew" href="/voucher/detail/" class="btn select-icon btn-round btn-outline-primary mb20">
+                <i class="fa fa-plus"></i> &nbsp; Thêm mới
+            </a>
+        </div>
+        <nw id="grid_data">
+
+
+        </nw>
+       @*  <div class="table-responsive table-default mb20">
+            <table class="table text-center table-voucher">
+                <thead>
+                    <tr>
+                        <th class="text-left">Tên Voucher | Mã voucher</th>
+                        <th>Loại mã</th>
+                        <th>Sản phẩm <br />áp dụng</th>
+                        <th>Người mua<br />mục tiêu</th>
+                        <th>Giảm giá</th>
+                        <th>Tổng lượt sử<br /> dụng tối đa</th>
+                        <th>Đã dùng</th>
+                        <th>Thời gian lưu mã giảm giá</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="text-left">
+                            <div class="img-voucher">
+                                <img src="images/graphics/voucher-product.png" alt="">
+                                <span>BestMall</span>
+                            </div>
+                            <label class="coming-soon">Sắp diễn ra</label>
+                            <h4 class="name">HULOST9: Giảm 19k đơn 499k</h4>
+                            <p class="code">Mã Voucher: HULOST9</p>
+                        </td>
+                        <td>Giảm giá trên sản phẩm</td>
+                        <td>1 sản phẩm</td>
+                        <td>Tất cả người mua</td>
+                        <td>50.000 đ</td>
+                        <td>15 &nbsp;<a href=""><i class="fa fa-edit"></i> </a></td>
+                        <td>0</td>
+                        <td>00:52 17/09/2024 - 23:59 25/09/2024</td>
+                        <td>
+                            <a class="blue" href="#"> Sao chép</a>
+                            <br />
+                            <a href="" class="blue">Chỉnh sửa</a>
+                            <br />
+                            <a href="" class="blue">Đơn hàng</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">
+                            <div class="img-voucher">
+                                <img src="images/graphics/voucher-all.png" alt="">
+                                <span>giảm</span>
+                                <span class="number">50%</span>
+                            </div>
+                            <label class="going-on">Đang diễn ra</label>
+                            <h4 class="name">HULOST9: Giảm 19k đơn 499k</h4>
+                            <p class="code">Mã Voucher: HULOST9</p>
+                        </td>
+                        <td>Giảm giá trên sản phẩm</td>
+                        <td>1 sản phẩm</td>
+                        <td>Tất cả người mua</td>
+                        <td>50.000 đ</td>
+                        <td>15 &nbsp;<a href=""><i class="fa fa-edit"></i> </a></td>
+                        <td>0</td>
+                        <td>00:52 17/09/2024 - 23:59 25/09/2024</td>
+                        <td>
+                            <a class="blue" href="#"> Sao chép</a>
+                            <br />
+                            <a href="" class="blue">Chỉnh sửa</a>
+                            <br />
+                            <a href="" class="blue">Đơn hàng</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">
+                            <div class="img-voucher">
+                                <img src="images/graphics/voucher-all.png" alt="">
+                                <span>giảm</span>
+                                <span class="number">50%</span>
+                            </div>
+                            <label class="end">Kết thúc</label>
+                            <h4 class="name">HULOST9: Giảm 19k đơn 499k</h4>
+                            <p class="code">Mã Voucher: HULOST9</p>
+                        </td>
+                        <td>Giảm giá trên sản phẩm</td>
+                        <td>1 sản phẩm</td>
+                        <td>Tất cả người mua</td>
+                        <td>50.000 đ</td>
+                        <td>15 &nbsp;<a href=""><i class="fa fa-edit"></i> </a></td>
+                        <td>0</td>
+                        <td>00:52 17/09/2024 - 23:59 25/09/2024</td>
+                        <td>
+                            <a class="blue" href="#"> Sao chép</a>
+                            <br />
+                            <a href="" class="blue">Chỉnh sửa</a>
+                            <br />
+                            <a href="" class="blue">Đơn hàng</a>
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div> *@
+
+    </div>
+</section>
+@section Scripts {
+    <script type="text/javascript" src="~/modules/voucher/index.js" asp-append-version="true"></script>
+}
