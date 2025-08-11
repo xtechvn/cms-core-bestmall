@@ -408,7 +408,7 @@ namespace WEB.CMS.Controllers.Order
 
                     order.UpdateLast = DateTime.Now;
                     order.UserUpdateId = _UserId;
-                    order.OrderStatus = (int)OrderStatus.CANCEL;
+                    order.OrderStatus = (int)OrderStatus.REFUND;
                     order.RefundStatus = (int)OrderRefundStatus.CONFIRM;
                     var updated = await _orderRepository.UpdateOrder(order);
                     _elasticService.PushToQueue("SP_GetOrder", order.OrderId);
