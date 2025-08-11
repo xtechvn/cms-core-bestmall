@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Telegram.Bot.Types.Payments;
 using Utilities;
 
 namespace Caching.Elasticsearch
@@ -261,7 +262,7 @@ namespace Caching.Elasticsearch
                     .Query(q =>
                     {
                         // Khởi tạo một Container cho các điều kiện query
-                        QueryContainer queryContainer = q.Term(m => m.VoucherId, voucher_id);
+                        QueryContainer queryContainer = q.Wildcard(w => w.Field(f => f.VoucherId).Value($"*{voucher_id}*"));
 
                         // Thêm điều kiện ClientId nếu client_id > 0
                         if (client_id > 0)
