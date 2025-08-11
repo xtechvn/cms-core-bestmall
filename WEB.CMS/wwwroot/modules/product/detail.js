@@ -850,7 +850,7 @@ var product_detail_new = {
                         _msgalert.error("Vui lòng chỉ upload các định dạng sau: " + _product_constants.VALUES.ImageExtension.join(', '));
                         return
                     }
-                    if ((parent.find('.list').find('.items').length - 1 + (element[0].files.length)) == _product_constants.VALUES.ProductDetail_Max_Image) {
+                    if ((parent.find('.list').find('.items').length - 1 + (element[0].files.length)) == _product_constants.VALUES.Attachment_Max_Image) {
                         parent.find('.list').find('.items').hide()
                     }
                     $(element[0].files).each(function (index, item) {
