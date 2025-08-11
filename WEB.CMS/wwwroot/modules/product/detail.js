@@ -568,8 +568,8 @@ var product_detail_new = {
         $('body').on('change', '#attachment input', function (e) {
             var element = $(this)
             var parent = element.closest('.wrap_input')
-            if ((parent.find('.list').find('.items').length - 1 + (element[0].files.length)) > _product_constants.VALUES.ProductDetail_Max_Image) {
-                _msgalert.error('Số lượng ảnh sản phẩm không được vượt quá ' + _product_function.Comma(_product_constants.VALUES.ProductDetail_Max_Image) + ' ảnh')
+            if ((parent.find('.list').find('.items').length - 1 + (element[0].files.length)) > _product_constants.VALUES.Attachment_Max_Image) {
+                _msgalert.error('Số lượng ảnh sản phẩm không được vượt quá ' + _product_function.Comma(_product_constants.VALUES.Attachment_Max_Image) + ' ảnh')
             }
             else {
 

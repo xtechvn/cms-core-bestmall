@@ -117,7 +117,9 @@ var _product_constants = {
         AvatarSize: {
             Width: 207,
             Height:207
-        }
+        },
+        Attachment_Max_Image: 50,
+
     },
     HTML: {
         Product: `
