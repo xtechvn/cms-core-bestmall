@@ -93,7 +93,7 @@ namespace ENTITIES.ViewModels.ElasticSearch
         public string Note { get; set; }
         [PropertyName("VoucherId")]
 
-        public int? VoucherId { get; set; }
+        public string VoucherId { get; set; }
         [PropertyName("IsDelete")]
 
         public int? IsDelete { get; set; }
