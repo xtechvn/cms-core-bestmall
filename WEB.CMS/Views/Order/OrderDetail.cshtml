@@ -117,6 +117,7 @@
                                             <span class="status-green">@Model.OrderStatusName </span>
                                         }
                                         break;
+                                    case ((int)(OrderStatus.REFUND)):
                                     case ((int)(OrderStatus.CANCEL)):
 
                                         {
@@ -243,6 +244,7 @@
                                                             <span class="status-red">Từ chối Trả hàng/Hoàn tiền </span>
                                                         }
                                                         break;
+
                                                 }
                                             </div>
                                         </li>
