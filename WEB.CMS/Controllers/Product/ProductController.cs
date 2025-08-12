@@ -81,6 +81,7 @@ namespace WEB.CMS.Controllers
 
             if (page_index < 1) page_index = 1;
             Console.WriteLine($"Controller received keyword: '{keyword}'");
+            //keyword = CommonHelper.RemoveSpecialCharacterExceptVietnameseCharacter(keyword);
 
             // Kiểm tra encoding
             var bytes = System.Text.Encoding.UTF8.GetBytes(keyword);
@@ -88,7 +89,6 @@ namespace WEB.CMS.Controllers
 
             var normalizedKeyword = keyword.Normalize(NormalizationForm.FormC);
             Console.WriteLine($"Normalized keyword: '{normalizedKeyword}'");
-
             var main_products = await _productV2DetailMongoAccess.Listing(keyword, group_id, status, page_index, page_size);
             List<ProductMongoDbModel> sub_products = new List<ProductMongoDbModel>();
             if (main_products != null && main_products.Count > 0)
