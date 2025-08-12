@@ -155,10 +155,10 @@
                                 </div>
                             </td>
                             <td class="td-profit" style="display:flex;">
-                                <div class="form-group mb-0 td-profit-vnd main-profit price" style="margin-bottom: 0!important; @(sub_selected != null && (sub_selected.profit_value_type == null || sub_selected.profit_value_type == 0) ? "" : "display:none;")">
+                                <div class="form-group mb-0 td-profit-vnd main-profit price" style="margin-bottom: 0!important; @(sub_selected==null ||(sub_selected != null && (sub_selected.profit_value_type == null || sub_selected.profit_value_type == 0)) ? "" : "display:none;")">
                                     <input type="text" class="form-control input-price" placeholder="Lợi nhuận" value="@(sub_selected != null && sub_selected.profit >= 0 ? sub_selected.profit.ToString("N0", nfi) : "")">
                                 </div>
-                                <div class="form-group main-profit-value price " style="margin-bottom: 0!important; @(sub_selected != null && (sub_selected.profit_value_type == null || sub_selected.profit_value_type == 0) ? "display:none;" : "")">
+                                <div class="form-group main-profit-value price " style="margin-bottom: 0!important; @(sub_selected==null ||(sub_selected != null && (sub_selected.profit_value_type == null || sub_selected.profit_value_type == 0)) ? "display:none;" : "")">
                                     <input type="text" class="form-control input-price" placeholder="Nhập giá" value="@(sub_selected == null || sub_selected.profit_value == null ? "0" : ((float)sub_selected.profit_value).ToString("N0", nfi))">
                                 </div>
                                 <div class="form-group main-profit-value-type price" style="width:90px !important;margin-bottom: 0!important;">
@@ -235,3 +235,4 @@
 
     </tbody>
 </table>
+
