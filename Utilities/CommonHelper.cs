@@ -317,8 +317,8 @@ namespace Utilities
         }
         public static string RemoveSpecialCharacterExceptVietnameseCharacter(string text)
         {
-            string pattern = "/[^a-zA-Z0-9àáãảạăằắẳẵặâầấẩẫậèéẻẽẹêềếểễệđùúủũụưừứửữựòóỏõọôồốổỗộơờớởỡợìíỉĩịäëïîöüûñçýỳỹỵỷ ]/g";
-            return Regex.Replace(text, pattern, "");
+            string pattern = "[^a-zA-Z0-9àáãảạăằắẳẵặâầấẩẫậèéẻẽẹêềếểễệđùúủũụưừứửữựòóỏõọôồốổỗộơờớởỡợìíỉĩịäëïîöüûñçýỳỹỵỷ]";
+            return Regex.Replace(text, pattern, " ").Replace("  "," ");
         }
         public static string RemoveAllSpecialCharacterinURL(string text)
         {

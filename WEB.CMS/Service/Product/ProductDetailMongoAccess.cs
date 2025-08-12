@@ -114,10 +114,14 @@ namespace WEB.CMS.Models.Product
         {
             try
             {
+                keyword = Regex.Escape(keyword.Trim());
+
+                var regex = new MongoDB.Bson.BsonRegularExpression(keyword.Trim(), "i");
+
                 var filter = Builders<ProductMongoDbModel>.Filter.Or(
-                                    Builders<ProductMongoDbModel>.Filter.Regex(p => p.name, new MongoDB.Bson.BsonRegularExpression(keyword.Trim().ToLower(), "i")),
-                                    Builders<ProductMongoDbModel>.Filter.Regex(p => p.sku, new MongoDB.Bson.BsonRegularExpression(keyword.Trim().ToLower(), "i")),
-                                    Builders<ProductMongoDbModel>.Filter.Regex(p => p.code, new MongoDB.Bson.BsonRegularExpression(keyword.Trim().ToLower(), "i"))
+                                    Builders<ProductMongoDbModel>.Filter.Regex(p => p.name, regex),
+                                    Builders<ProductMongoDbModel>.Filter.Regex(p => p.sku, regex),
+                                    Builders<ProductMongoDbModel>.Filter.Regex(p => p.code, regex)
 
                                     );
                 filter &= Builders<ProductMongoDbModel>.Filter.Or(
