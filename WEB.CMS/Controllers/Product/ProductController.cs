@@ -99,6 +99,16 @@ namespace WEB.CMS.Controllers
             ViewBag.Sub = sub_products;
             string static_domain = _configuration["DomainConfig:ImageStatic"];
             ViewBag.StaticDomain = static_domain != null && static_domain.EndsWith("/") ? static_domain : static_domain + "/";
+            var count = await _productV2DetailMongoAccess.CountListing(keyword, group_id, status);
+            if (count > 0) {
+                ViewBag.TotalPage= (int)Math.Ceiling((double)count / page_size);
+            }
+            else
+            {
+                ViewBag.TotalPage = 1;
+            }
+           ViewBag.CurrentPage = page_index;
+           ViewBag.PageSize = page_size;
             ViewBag.CountProduct = await _productV2DetailMongoAccess.CountListing(keyword, group_id, status);
             return View();
         }
