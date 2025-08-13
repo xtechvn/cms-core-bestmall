@@ -243,11 +243,11 @@ var product_index = {
             product_index.Listing();
         });
         //--scroll event
-        $(window).scroll(function () {
-            if ($(window).scrollTop() >= $('.main-products table').offset().top + $('.main-products table').outerHeight() - window.innerHeight) {
-                product_index.Listing()
-            }
-        });
+        //$(window).scroll(function () {
+        //    if ($(window).scrollTop() >= $('.main-products table').offset().top + $('.main-products table').outerHeight() - window.innerHeight) {
+        //        product_index.Listing()
+        //    }
+        //});
         //$('#product_list').on('scroll', function () {
         //    if ($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight) {
         //        product_index.Listing();
@@ -342,7 +342,7 @@ var product_index = {
         var request = product_index.GetSearchModel()
         _product_function.POST('/Product/Search', request, function (result) {
 
-            $('#product_list').append(result)
+            $('#product_list').html(result)
             $('#product_list').closest('.table-responsive').removeClass('placeholder')
             $('.hanmuc').closest('.flex-lg-nowrap').removeClass('placeholder')
             product_index.Model.on_excuting = false
@@ -433,7 +433,7 @@ var product_index = {
             keyword: product_index.normalizeText($('#input-search-product-name').val()), // Làm sạch từ khóa
             group_id: group_id_value,
             page_index: product_index.Model.page_index,
-            page_size: parseInt($('#item-per-page').find(':selected').val()),
+            page_size: parseInt($('#selectPaggingOptions').find(':selected').val()),
             status: status
         }
         return request
@@ -445,125 +445,16 @@ var product_index = {
             //.replace(/[()]/g, "")             // Loại bỏ dấu ngoặc đơn
             .replace(/\s+/g, ' ')             // Xóa khoảng trắng thừa
             .trim();
-    }
-    //RenderSearch: function (main_products, sub_products) {
-    //    var html = ''
-
-    //    $(main_products).each(function (index, item) {
-    //        var img_src = item.avatar
-    //        if (img_src != null && !img_src.includes(_product_constants.VALUES.StaticDomain)
-    //            && !img_src.includes("data:image")
-    //            && !img_src.includes("http"))
-    //            img_src = _product_constants.VALUES.StaticDomain + item.avatar
-
-    //        var html_item = _product_constants.HTML.Product
-    //        html_item = html_item.replaceAll('{id}', item._id)
-    //        html_item = html_item.replaceAll('{avatar}', img_src)
-    //        html_item = html_item.replaceAll('{name}', item.name)
-    //        html_item = html_item.replaceAll('{attribute}', '')
-    //        var amount_html = '0'
-    //        var stock_count = 0;
-    //        if (item.amount_max != undefined
-    //            && item.amount_max != null
-    //            && item.amount_min != undefined
-    //            && item.amount_min != null) {
-    //            amount_html = _product_function.Comma(item.amount_min) + ' - ' + _product_function.Comma(item.amount_max)
-    //        }
-    //        else if (item.amount != undefined
-    //            && item.amount != null && item.amount > 0) {
-    //            amount_html = _product_function.Comma(item.amount)
-
-    //        }
-    //        html_item = html_item.replaceAll('{amount}', amount_html)
-
-    //   /*     html_item = html_item.replaceAll('{stock}', _product_function.Comma(item.quanity_of_stock))*/
-
-    //        html_item = html_item.replaceAll('{order_count}', '')
-    //        var html_variations = ''
-
-    //        var variation = sub_products.filter(obj => {
-    //            return obj.parent_product_id.trim() == item._id
-    //        })
-    //        if (variation && variation.length > 0) {
-    //            var amount = []
-    //            var quanity_stock = []
-    //            $(variation).each(function (index, sub_item) {
-    //                var html_sub_item = _product_constants.HTML.SubProduct
-    //                    .replaceAll('{id}', item._id)
-    //                    .replaceAll('{main_id}', item.parent_product_id)
-    //                    .replaceAll('{name}', sub_item.name)
-    //                    .replaceAll('{sku}', sub_item.sku == null ? "" : sub_item.sku)
-    //                    .replaceAll('{amount}', _product_function.Comma(sub_item.amount) + ' đ')
-    //                    .replaceAll('{stock}', _product_function.Comma(sub_item.quanity_of_stock))
-    //                    .replaceAll('{order_count}', '')
-    //                    .replaceAll('{display}', index > 1 ? 'display:none;' : '')
-    //                var html_sub_attr = ''
-
-    //                //var result = jsObjects.filter(obj => {
-    //                //    return obj.b === 6
-    //                //})
-    //                var sub_attr_img = []
-    //                $(sub_item.variation_detail).each(function (index_variation_attributes, variation_attributes_item) {
-    //                    var attribute = sub_item.attributes.filter(obj => {
-    //                        return obj._id == variation_attributes_item.id
-    //                    })
-    //                    var attribute_detail = sub_item.attributes_detail.filter(obj => {
-    //                        return (obj.attribute_id == variation_attributes_item.id && obj.name == variation_attributes_item.name)
-    //                    })
-    //                    if (attribute != null && attribute.length > 0 && attribute[0].img != null && attribute[0].img != undefined && attribute[0].img.trim() != '') {
-    //                        sub_attr_img.push(attribute[0].img)
-    //                    }
-    //                    if (attribute_detail != null && attribute_detail.length > 0 && attribute_detail[0].img != null && attribute_detail[0].img != undefined && attribute_detail[0].img.trim() != '') {
-    //                        sub_attr_img.push(attribute_detail[0].img)
-    //                    }
-    //                    if (attribute != null && attribute.length > 0 && attribute_detail != null && attribute_detail.length > 0)
-    //                        html_sub_attr += '' + attribute[0].name + ': ' + attribute_detail[0].name
-    //                    if (index_variation_attributes < ($(sub_item.attributes_detail).length - 1)) {
-    //                        html_sub_attr += '<br /> '
-    //                    }
-
-    //                })
-    //                var img_src_sub = ''
-    //                if (sub_attr_img.length > 0) {
-    //                    img_src_sub = sub_attr_img[0]
-    //                    if (!img_src_sub.includes(_product_constants.VALUES.StaticDomain)
-    //                        && !img_src_sub.includes("data:image")
-    //                        && !img_src_sub.includes("http"))
-    //                        img_src_sub = _product_constants.VALUES.StaticDomain + sub_attr_img[0]
-    //                }
-
-    //                html_sub_item = html_sub_item.replaceAll('{attribute}', 'Phân loại hàng:')
-    //                html_sub_item = html_sub_item.replaceAll('{attribute_detail}', html_sub_attr)
-    //                html_sub_item = html_sub_item.replaceAll('{avatar}', sub_attr_img.length > 0 ? img_src_sub : img_src)
-    //                html_variations += html_sub_item
-    //                amount.push(sub_item.amount)
-    //                quanity_stock.push(sub_item.quanity_of_stock)
-    //            });
-    //            if ($(variation).length > 2) {
-    //                html_variations += _product_constants.HTML.SubProductViewMore
-    //                    .replaceAll('{count}', ($(variation).length - 2))
-    //                    .replaceAll('{count_item}', ($(variation).length - 2))
-    //                    .replaceAll('{main_id}', (item._id))
-
-    //            }
-    //            const sum_stock = quanity_stock.reduce((partialSum, a) => partialSum + a, 0);
-    //            stock_count = sum_stock;
-    //            var max = Math.max(...amount);
-    //            var min = Math.min(...amount);
-    //            html_item = html_item.replaceAll('{amount}', _product_function.Comma(min) + ' đ - ' + _product_function.Comma(max) + ' đ')
-    //            html_item = html_item.replaceAll('{stock}', _product_function.Comma(sum_stock))
-
-
-    //        }
-    //        if (stock_count == 0) {
-    //            html_item = html_item.replaceAll('{stock}', _product_function.Comma(item.quanity_of_stock))
-    //        }
-    //        html += html_item
-    //        html += html_variations
-
-    //    });
-    //    $('#product_list').append(html)
-
-    //}
-
+    },
+    OnPaging: function (value) {
+        pageSize = 1;
+        if (value > 0) {
+            product_index.Model.page_index = value;
+            this.Listing();
+        }
+    },
+    onSelectPageSize: function () {
+        product_index.Model.page_index = 1;
+        this.Listing();
+    },
 }

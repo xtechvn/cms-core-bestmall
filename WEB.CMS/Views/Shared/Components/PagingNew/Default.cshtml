@@ -4,13 +4,69 @@
     <div class="select-number">
         Hiển thị &nbsp;
         <select class="form-control" id="selectPaggingOptions" onchange="@string.Format(Model.PageSelectPageSize)">
-            <option value="10" >10</option>
-            <option value="20"selected>20</option>
-            <option value="30">30</option>
-            <option value="50">50</option>
-            <option value="100">100</option>
-            <option value="200">200</option>
-        </select>&nbsp; trong số &nbsp; <strong>@Model.TotalRecord</strong> &nbsp; kết quả lọc
+            @if (Model.PageSize <= 10)
+            {
+                <option value="10" selected>10</option>
+
+            }
+            else
+            {
+                <option value="10" >10</option>
+
+            }
+            @if (Model.PageSize > 10 && Model.PageSize <= 20)
+            {
+                <option value="20" selected>20</option>
+
+            }
+            else
+            {
+                <option value="20">20</option>
+
+            }
+            @if (Model.PageSize > 20 && Model.PageSize <= 30)
+            {
+                <option value="30" selected>30</option>
+
+            }
+            else
+            {
+                <option value="30">30</option>
+
+            }
+            @if (Model.PageSize > 30 && Model.PageSize <= 50)
+            {
+                <option value="50" selected>50</option>
+
+            }
+            else
+            {
+                <option value="50">50</option>
+
+            }
+            @if (Model.PageSize > 50 && Model.PageSize <= 100)
+            {
+                <option value="100" selected>100</option>
+
+            }
+            else
+            {
+                <option value="100">100</option>
+
+            }
+            @if (Model.PageSize > 100 && Model.PageSize <= 200)
+            {
+                <option value="200" selected>200</option>
+
+            }
+            else
+            {
+                <option value="200">200</option>
+
+            }
+
+        </select>
+        &nbsp; trong số &nbsp; <strong>@Model.TotalRecord</strong> &nbsp; kết quả lọc
     </div>
     @if (Model.TotalRecord > Model.PageSize)
     {
