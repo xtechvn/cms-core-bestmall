@@ -96,7 +96,7 @@ namespace DAL
                 new SqlParameter("@Profit", model.Profit ?? (object)DBNull.Value),
                 new SqlParameter("@Discount", model.Discount ?? (object)DBNull.Value),
                 new SqlParameter("@Amount", model.Amount ?? (object)DBNull.Value),
-                new SqlParameter("@OrderStatus", model.OrderStatus <= 0 ? (object)DBNull.Value : model.OrderStatus),
+                new SqlParameter("@OrderStatus", model.OrderStatus <= 0 ? 0 : model.OrderStatus),
                 new SqlParameter("@PaymentType", model.PaymentType < 1 ? 1 : model.PaymentType),
                 new SqlParameter("@PaymentStatus", model.PaymentStatus <= 0 ? 0 : model.PaymentStatus),
                 new SqlParameter("@UtmSource", model.UtmSource ?? (object)DBNull.Value),
