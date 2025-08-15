@@ -478,6 +478,8 @@ namespace WEB.CMS.Controllers.Order
 
                     order.UpdateLast = DateTime.Now;
                     order.UserUpdateId = _UserId;
+                    order.UserGroupIds = order.OrderStatus.ToString();
+
                     order.OrderStatus = (int)OrderStatus.REFUND;
                     order.RefundStatus = (int)OrderRefundStatus.CONFIRM;
                     var updated = await _orderRepository.UpdateOrder(order);
@@ -489,9 +491,93 @@ namespace WEB.CMS.Controllers.Order
                         var order_merge = _orderMergeRepository.GetById((long)order.OrderMergeId);
                         if (order_merge != null && order_merge.Id > 0)
                         {
+                            order_merge.UserGroupIds = order_merge.OrderStatus.ToString();
+
                             order_merge.OrderStatus = (int)OrderStatus.CANCEL;
                             order_merge.UpdateLast = DateTime.Now;
                             order_merge.RefundStatus = (int)OrderRefundStatus.CONFIRM;
+                            order_merge.UserUpdateId = _UserId;
+
+                            await _orderMergeRepository.UpdateOrderMerge(order_merge);
+                            _elasticService.PushToQueue("SP_GetOrderMerge", order_merge.Id);
+
+                        }
+                    }
+                    return Ok(new
+                    {
+                        is_success = true,
+                        msg = "Cập nhật đơn hàng thành công"
+                    });
+                }
+
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("OrderNoSuggestion - Refund: " + ex.ToString());
+
+            }
+            return Ok(new
+            {
+                is_success = true,
+                msg = "Xử lý đơn hàng không thành công, vui lòng liên hệ bộ phận IT"
+            });
+
+        }
+        [HttpPost]
+        public async Task<IActionResult> RefusedRefund(long id)
+        {
+
+            try
+            {
+                int _UserId = 0;
+                var data = new List<OrderElasticsearchViewModel>();
+                if (HttpContext.User.FindFirst(ClaimTypes.NameIdentifier) != null)
+                {
+                    _UserId = Convert.ToInt32(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+                }
+                if (id <= 0 || _UserId <= 0)
+                {
+                    return Ok(new
+                    {
+                        is_success = false,
+                        msg = "ID đơn không chính xác / Người dùng chưa được xác thực, vui lòng thử lại / liên hệ bộ phận IT"
+                    });
+                }
+
+                var order = await _orderRepository.GetByOrderId(id);
+                if (order != null && order.OrderId > 0 && order.PaymentStatus >= 0 && order.OrderStatus != (int)OrderStatus.CANCEL && order.OrderStatus != (int)OrderStatus.FINISHED)
+                {
+
+                    order.UpdateLast = DateTime.Now;
+                    order.UserUpdateId = _UserId;
+                    try
+                    {
+                        order.OrderStatus= Convert.ToInt32(order.UserGroupIds);
+                    }
+                    catch { order.OrderStatus = (int)OrderStatus.PROCESSING; }
+                    //order.OrderStatus = (int)OrderStatus.PROCESSING;
+                    order.RefundStatus = null;
+                    order.RefundDate = null;
+                    order.RefundReason = null;
+                    var updated = await _orderRepository.UpdateOrder(order);
+                    _elasticService.PushToQueue("SP_GetOrder", order.OrderId);
+                    LogHelper.InsertLogTelegram("Refund - order_merge: " + (order.OrderMergeId == null ? "NULL" : order.OrderMergeId));
+
+                    if (order.OrderMergeId != null && order.OrderMergeId > 0)
+                    {
+                        var order_merge = _orderMergeRepository.GetById((long)order.OrderMergeId);
+                        if (order_merge != null && order_merge.Id > 0)
+                        {
+                            try
+                            {
+                                order_merge.OrderStatus = Convert.ToInt32(order_merge.UserGroupIds);
+                            }
+                            catch { order_merge.OrderStatus = (int)OrderStatus.PROCESSING; }
+                            //order_merge.OrderStatus = (int)OrderStatus.PROCESSING;
+                            order_merge.UpdateLast = DateTime.Now;
+                            order_merge.RefundStatus = null;
+                            order_merge.RefundDate = null;
+                            order_merge.RefundReason = null;
                             order_merge.UserUpdateId = _UserId;
 
                             await _orderMergeRepository.UpdateOrderMerge(order_merge);
