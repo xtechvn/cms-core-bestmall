@@ -1,4 +1,5 @@
-﻿using Entities.Models;
+﻿using Aspose.Cells;
+using Entities.Models;
 using Entities.ViewModels;
 using Entities.ViewModels.Mongo;
 using Entities.ViewModels.Products;
@@ -136,9 +137,13 @@ namespace WEB.CMS.Controllers
                 {
                     _UserId = Convert.ToInt32(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
                 }
-                if (orderId != 0)
+                LogHelper.InsertLogTelegram("OrderDetail - orderId" + (orderId <=0 ? "0" : orderId));
+
+                if (orderId > 0)
                 {
                     var dataOrder = await _orderRepository.GetOrderDetailByOrderId(orderId);
+                    LogHelper.InsertLogTelegram("OrderDetail - dataOrder" + (dataOrder == null ? "NULL" : dataOrder.OrderId));
+
                     if (dataOrder != null)
                     {
                         ViewBag.ReceiverName = dataOrder.ReceiverName + " SDT: " + dataOrder.PhoneOrder;
@@ -241,7 +246,6 @@ namespace WEB.CMS.Controllers
             {
                 ViewBag.domainImg = _configuration["DomainConfig:ImageStatic"];
                 var list_OrderDetail = await _orderRepository.GetListOrderDetail(orderId);
-                LogHelper.InsertLogTelegram("Packages - OrderController: list_OrderDetail" + (list_OrderDetail==null?"NULL": list_OrderDetail.Count));
                 if (list_OrderDetail == null)
                 {
                     ViewBag.data = new List<ProductMongoDbModel>();

@@ -101,6 +101,9 @@
                                 </td>
                                 <td>@(((double)item.Profit).ToString("#,##"))</td>
                                 <td>
+                                    @{
+                                       
+                                    }
                                     @switch (item.StatusCode)
                                     {
                                         case (int)(OrderStatus.CREATED_ORDER):
@@ -119,6 +122,11 @@
                                             }
                                             break;
                                         case ((int)(OrderStatus.REFUND)):
+
+                                            {
+                                                <span class="status-red">Trả hàng / Hoàn tiền</span>
+                                            }
+                                            break;
                                         case ((int)(OrderStatus.CANCEL)):
 
                                             {
