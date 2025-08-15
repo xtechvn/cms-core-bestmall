@@ -337,7 +337,7 @@
 
                         }
 
-                        @if (Model.RefundStatus != null && Model.RefundStatus != (int)OrderRefundStatus.REQUESTED)
+                        @if (Model.OrderStatus != (int)OrderStatus.REFUND && Model.RefundStatus != 1)
                         {
                             <button id="orderdetail-confirm-refund" type="button" class="btn btn-default ml-1 " style="background-color:darkred;">Xác nhận trả hàng/ Hoàn tiền</button>
 
