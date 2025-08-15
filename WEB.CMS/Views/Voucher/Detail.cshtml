@@ -3,4 +3,321 @@
     ViewData["Title"] = "Chi tiết Voucher";
     Layout = "~/Views/Shared/_Layout.cshtml";
     Voucher voucher = (Voucher)ViewBag.Detail;
+    Supplier supplier = (Supplier)ViewBag.Supplier;
+
+}
+<div class="add-product">
+    <input id="voucher-id" style="display:none;" value="@((voucher == null  || voucher.Id <= 0) ? "0" : voucher.Id)" />
+
+    <div class="box-info bg-white p-3 mb-3 ">
+        <h5 class="title-box mb-2 text-uppercase">Thông tin cơ bản</h5>
+        <div class="item flex flex-lg-nowrap gap10 mb-2 w-100">
+            <label class="label">Loại mã</label>
+            <div class="wrap_input">
+                <div class="flex gap10 mb-1">
+                    <label class="radio mb0 ml5">
+                        @if(voucher==null ||voucher.RuleType==null || (voucher!=null && voucher.RuleType == 0))
+                        {
+                            <input type="radio" name="voucher-rule-type" value="0" checked>
+
+                        }
+                        else
+                        {
+                            <input type="radio" name="voucher-rule-type" value="0" >
+
+                        }
+                        <span class="checkmark"></span>
+                        Voucher giảm giá trên tổng tiền hàng 
+                    </label>
+                    <label class="radio mb0 ml5">
+                        @if ((voucher != null && voucher.RuleType == 1))
+                        {
+                            <input type="radio" name="voucher-rule-type" value="1" checked>
+
+                        }
+                        else
+                        {
+                            <input type="radio" name="voucher-rule-type" value="1">
+
+                        }
+                        <span class="checkmark"></span>
+                        Voucher giảm giá trên phí vận chuyển
+                    </label>
+                    <label class="radio mb0 ml5">
+                        @if ((voucher != null && voucher.RuleType == 2))
+                        {
+                            <input type="radio" name="voucher-rule-type" value="2" checked>
+
+                        }
+                        else
+                        {
+                            <input type="radio" name="voucher-rule-type" value="2">
+
+                        }
+                        <span class="checkmark"></span>
+                        Voucher giảm giá theo NCC
+
+                    </label>
+                </div>
+                <p class="text-secondary mt-1">
+                   
+
+
+                </p>
+            </div>
+        </div>
+        <div class="item flex flex-lg-nowrap gap10 mb-2 w-100" style="@((voucher != null && voucher.RuleType == 2)?"":"display:none;")">
+            <label class="label">Nhà cung cấp áp dụng</label>
+            <div class="wrap_input">
+                <div class="form-group mb-0 price">
+                    <select id="voucher-campaign_id" class="select2 w-100">
+                        @if (supplier != null && supplier.SupplierId > 0)
+                        {
+                            <option value="@supplier.SupplierId" selected> @supplier.FullName </option>
+
+                        }
+                    </select>
+
+                </div>
+                <p class="mt-1 text-secondary">Nhà cung cấp áp dụng</p>
+            </div>
+        </div>
+
+        <div class="item flex flex-lg-nowrap gap10 mb-2 w-100">
+            <label class="label">Bật / Tắt</label>
+            <div class="wrap_input">
+                <div class="form-group mb-0 price">
+                    <td>
+                        <label class="switch no-text">
+                            <input id="voucher-is-public" type="checkbox" @(voucher == null || voucher.IsPublic == null || voucher.IsPublic == false ? "" : "checked")>
+                            <span class="slider round"></span>
+                        </label>
+                    </td>
+
+                </div>
+            </div>
+        </div>
+        <div class="item flex flex-lg-nowrap gap10 mb-2 w-100">
+            <label class="label">Tên chương trình giảm giá</label>
+            <div class="wrap_input">
+                <div class="form-group mb-0 price">
+                    <input id="voucher-name" type="text" class="form-control" placeholder="Tên chương trình giảm giá" value="@((voucher == null || voucher.Name == null || voucher.Name.Trim() == "") ? "" : voucher.Name)">
+                    <span class="note"><nw class="count">@((voucher == null || voucher.Name == null || voucher.Name.Trim() == "") ? "0" : voucher.Name.Length)</nw>/200</span>
+                </div>
+                <p class="mt-1 text-secondary">Tên Voucher sẽ không được hiển thị cho Người mua</p>
+            </div>
+        </div>
+        <div class="item flex flex-lg-nowrap gap10 mb-2 w-100">
+            <label class="label">Mã voucher</label>
+            <div class="wrap_input">
+                <div class="form-group mb-0 price">
+@*                     <span class="note-left">HULO</span>
+ *@                    <input id="voucher-code" type="text" class="form-control" placeholder="Mã voucher" value="@((voucher == null || voucher.Code == null || voucher.Code.Trim() == "") ? "" : voucher.Code)">
+                    <span class="note"><nw class="count">@((voucher == null || voucher.Code == null || voucher.Code.Trim() == "") ? "0" : voucher.Code.Length)</nw>/50</span>
+                </div>
+                <p class="mt-1 text-secondary">
+                    Vui lòng chỉ nhập các kí tự chữ cái (A-Z), số (0-9), tối đa 50 kí
+                    tự.
+                </p>
+            </div>
+        </div>
+        <div class="item flex flex-lg-nowrap gap10 mb-2 w-100">
+            <label class="label">Thời gian sử dụng</label>
+            <div class="wrap_input">
+                <div class="row">
+                    <div class="col-lg-4 col-5">
+                        <div class="form-group mb-0">
+                            <input class="form-control date text-left filter_date_daterangepicker" id="voucher-from-date" type="text" name="voucher-from-date"
+                                   placeholder="Ngày bắt đầu" value="@((voucher == null || voucher.Udate == null || voucher.Udate <= DateTime.MinValue) ? DateTime.Now.ToString("dd/MM/yyyy HH:mm") : ((DateTime)voucher.Udate).ToString("dd/MM/yyyy HH:mm"))" />
+                        </div>
+                    </div>
+                    <span style="width: 20px;height: 1px; background: #222;margin-top: 20px;"></span>
+                    <div class="col-lg-4 col-5">
+                        <div class="form-group mb-0">
+                            <input class="form-control date text-left filter_date_daterangepicker" id="voucher-to-date" type="text" name="voucher-to-date"
+                                   placeholder="Ngày bắt đầu" value="@((voucher == null || voucher.EDate == null || voucher.EDate <= DateTime.MinValue) ? DateTime.Now.AddDays(7).ToString("dd/MM/yyyy HH:mm") : ((DateTime)voucher.EDate).ToString("dd/MM/yyyy HH:mm"))" />
+                        </div>
+                    </div>
+                </div>
+               @*  <div class="mb-3 mt-3">
+                    <label class="check-list">
+                        <input type="checkbox">
+                        <span class="checkmark"></span>
+                        Cho phép lưu mã trước Thời gian sử dụng
+                    </label>
+
+                </div>
+                <div class="form-group col-lg-4 col-5">
+                    <input type="date" class="form-control" placeholder="Nhập kích thước">
+                    <p class="mt-1 text-secondary">
+                        Khi voucher có hiệu lực sử dụng, mục này sẽ không được chỉnh
+                        sửa
+                    </p>
+                </div> *@
+
+            </div>
+        </div>
+        <div class="item flex flex-lg-nowrap gap10 mb-2 w-100">
+            <label class="label">Mô tả</label>
+            <div class="wrap_input">
+                <div class="form-group mb-0 price">
+                    <textarea id="voucher-description" rows="5" class="form-control" maxlength="4000">@(voucher != null && voucher.Description != null && voucher.Description.Trim() != "" ? voucher.Description : "")</textarea>
+@*                     <span class="note"><nw class="count">@((voucher == null || voucher.Description == null || voucher.Description.Trim() == "") ? "0" : voucher.Description.Length)</nw>/4000</span>
+ *@                </div>
+            </div>
+        </div>
+    </div>
+    <div class="box-info bg-white p-3 mb-3 ">
+        <h5 class="title-box mb-2 text-uppercase">Thiết lập mã giảm giá</h5>
+
+        <div class="item flex flex-lg-nowrap gap10 mb-2 w-100">
+            <label class="label">Loại giảm giá | mức giảm</label>
+            <div class="wrap_input">
+                <div class="flex gap10 flex-nowrap align-items-center">
+                   
+                    <label class="radio mb-3">
+                        @if (voucher == null || voucher.Unit == null || (voucher != null && voucher.Unit != null && voucher.Unit.Trim().ToLower() == "vnd"))
+                        {
+                            <input type="radio" name="voucher-unit" value="vnd" checked>
+
+                        }
+                        else
+                        {
+                            <input type="radio" name="voucher-unit" value="vnd">
+                        }
+                        <span class="checkmark"></span>
+
+                    </label>
+                    <div class="form-group mb-0 price w-100">
+                        @if (voucher == null ||voucher.Unit == null || (voucher != null && voucher.Unit != null && voucher.Unit.Trim().ToLower() == "vnd"))
+                        {
+                            <input id="voucher-price_sales-vnd" type="text" class="form-control" placeholder="Nhập số tiền" value="@((voucher == null || voucher.PriceSales == null || voucher.PriceSales <= 0) ? "0" : (Convert.ToDouble(voucher.PriceSales)).ToString("N0"))">
+
+                        }
+                        else
+                        {
+                            <input id="voucher-price_sales-vnd" type="text" class="form-control" placeholder="Nhập số tiền" value="0">
+                        }
+                        <span class="note">đ</span>
+                    </div>
+                    <label class="radio mb-3">
+                        @if ((voucher != null && voucher.Unit != null && voucher.Unit.Trim().ToLower() == "percent"))
+                        {
+                            <input type="radio" name="voucher-unit" value="percent" checked>
+
+                        }
+                        else
+                        {
+                            <input type="radio" name="voucher-unit" value="percent">
+                        }
+                        <span class="checkmark"></span>
+                    </label>
+                    <div class="form-group mb-0 price mr-3 w-100">
+                        @if ((voucher != null && voucher.Unit != null && voucher.Unit.Trim().ToLower() == "percent"))
+                        {
+                            <input id="voucher-price_sales-percent" type="text" class="form-control" placeholder="Nhập %" value="@((voucher == null || voucher.PriceSales == null || voucher.PriceSales <= 0) ? "0" : (Convert.ToDouble(voucher.PriceSales)).ToString("N0"))">
+
+                        }
+                        else
+                        {
+                            <input id="voucher-price_sales-percent" type="text" class="form-control" placeholder="Nhập %" value="0">
+                        }
+                        <span class="note">%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="item flex flex-lg-nowrap gap10 mb-2 w-100">
+            <label class="label">Tổng lượt sử dụng tối đa</label>
+            <div class="wrap_input">
+                <div class="form-group mb-0">
+                    <input id="voucher-limitUse-vnd" type="text" class="form-control" placeholder="Tổng lượt sử dụng tối đa" value="@((voucher == null || voucher.LimitUse == null || voucher.LimitUse <= 0) ? "0" : (voucher.LimitUse).ToString("N0"))">
+                </div>
+                <p class="mt-1 text-secondary">Tổng số Mã giảm giá có thể sử dụng</p>
+            </div>
+        </div>
+        <div class="item flex flex-lg-nowrap gap10 mb-2 w-100">
+            <label class="label">Voucher có giới hạn số tiền không?</label>
+            <div class="wrap_input">
+                <div class="flex gap10 mb-1">
+                    <label class="radio mb0 ml5">
+                        @if (  (voucher != null && voucher.IsLimitVoucher == true))
+                        {
+                            <input type="radio" name="voucher-is_limit_voucher" value="true" checked>
+
+                        }
+                        else
+                        {
+                            <input type="radio" name="voucher-is_limit_voucher" value="true">
+
+                        }
+                        <span class="checkmark"></span>
+                        Có
+                    </label>
+                    <label class="radio mb0 ml5">
+                        @if (voucher == null || voucher.IsLimitVoucher == null || (voucher != null && voucher.IsLimitVoucher == false))
+                        {
+                            <input type="radio" name="voucher-is_limit_voucher" value="false" checked>
+
+                        }
+                        else
+                        {
+                            <input type="radio" name="voucher-is_limit_voucher" value="false">
+
+                        }
+                        <span class="checkmark"></span>
+                        Không
+                    </label>
+                </div>
+            </div>
+
+        </div>
+        <div class="item flex flex-lg-nowrap gap10 mb-2 w-100" style="@((voucher != null && voucher.IsLimitVoucher == true)?"":"display:none;")">
+            <label class="label">Số tiền tối đa được giảm</label>
+            <div class="wrap_input">
+                <div class="form-group mb-0">
+                    <input id="voucher-limit_total_discount-vnd" type="text" class="form-control" placeholder="Số tiền tối đa được giảm" value="@((voucher == null || voucher.LimitTotalDiscount == null || voucher.LimitTotalDiscount <= 0) ? "0" : ((double)voucher.LimitTotalDiscount).ToString("N0"))">
+                </div>
+                <p class="mt-1 text-secondary">Số tiền tối đa có thể trừ theo mã</p>
+            </div>
+        </div>
+    </div>
+    <div class="box-info bg-white p-3 mb-3 ">
+        <div class="item flex flex-lg-nowrap gap10 mb-2 w-100">
+            <label class="label">Sản phẩm được áp dụng</label>
+            <div class="wrap_input">
+               @*  <p class="m-0"></p>
+                <p class="mt-1 text-warning">
+                  
+
+                </p> *@
+                <div class="flex justify-between">
+                    <p class="m-0"><nw id="voucher-product-count">0</nw> sản phẩm được chọn</p>
+                    <a id="voucher-store_apply-add" class="btn btn-add">+ Thêm sản phẩm</a>
+                    <input id="voucher-store_apply" style="display:none;" value="@((voucher == null || voucher.StoreApply == null || voucher.StoreApply.Trim()=="") ? "" : voucher.StoreApply)" />
+                </div>
+                <table id="product-buy-with" class="table table-nowrap table-product text-center mt-3">
+                    <thead>
+                        <tr class="bg-main2">
+                            <th class="text-left">Sản phẩm</th>
+                            <th>Giá gốc</th>
+                            <th>Số lượng hàng</th>
+                            <th>Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                      
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="text-right">
+    <a id="voucher-cancel" href="javascript:;" class="btn btn-round btn-outline-base" style="width: 120px;">Hủy</a>
+    <a id="voucher-confirm" href="javascript:;" class="btn btn-round btn-base" style="width: 120px;">Xác nhận</a>
+</div>
+@section Scripts {
+    <script src="/modules/voucher/detail.js"></script>
 }

@@ -97,6 +97,7 @@ namespace DAL
                 [
                     new SqlParameter("@keyword", keyword ?? (object)DBNull.Value),
                     new SqlParameter("@status", status),
+                    new SqlParameter("@is_public",  (object)DBNull.Value),
                     new SqlParameter("@page_index", pageIndex),
                     new SqlParameter("@page_size", pageSize),
                 ];
@@ -133,7 +134,8 @@ namespace DAL
                 new SqlParameter("@store_apply", model.StoreApply ?? (object)DBNull.Value),
                 new SqlParameter("@is_max_price_product", model.IsMaxPriceProduct),
                 new SqlParameter("@min_total_amount", model.MinTotalAmount ?? (object)DBNull.Value),
-                new SqlParameter("@campaign_id", model.CampaignId ?? (object)DBNull.Value)
+                new SqlParameter("@campaign_id", model.CampaignId ?? (object)DBNull.Value),
+                new SqlParameter("@name", model.Name ?? (object)DBNull.Value)
                 };
                 return  _DbWorker.ExecuteNonQuery("SP_InsertVoucher", objParam);
             }
@@ -155,21 +157,29 @@ namespace DAL
                 new SqlParameter("@Id", model.Id),
                 new SqlParameter("@code", model.Code),
                 new SqlParameter("@cdate", model.Cdate),
+
                 new SqlParameter("@udate", model.Udate),
                 new SqlParameter("@eDate", model.EDate),
                 new SqlParameter("@limitUse", model.LimitUse),
+
                 new SqlParameter("@price_sales", model.PriceSales),
                 new SqlParameter("@unit", model.Unit),
                 new SqlParameter("@rule_type", model.RuleType),
+
                 new SqlParameter("@group_user_priority", model.GroupUserPriority ?? (object)DBNull.Value),
                 new SqlParameter("@is_public", model.IsPublic),
                 new SqlParameter("@description", model.Description ?? (object)DBNull.Value),
+
                 new SqlParameter("@is_limit_voucher", model.IsLimitVoucher),
                 new SqlParameter("@limit_total_discount", model.LimitTotalDiscount ?? (object)DBNull.Value),
                 new SqlParameter("@store_apply", model.StoreApply ?? (object)DBNull.Value),
+
                 new SqlParameter("@is_max_price_product", model.IsMaxPriceProduct),
                 new SqlParameter("@min_total_amount", model.MinTotalAmount ?? (object)DBNull.Value),
-                new SqlParameter("@campaign_id", model.CampaignId ?? (object)DBNull.Value)
+                new SqlParameter("@campaign_id", model.CampaignId ?? (object)DBNull.Value),
+
+                new SqlParameter("@name", model.Name ?? (object)DBNull.Value)
+
             };
                 return  _DbWorker.ExecuteNonQuery("SP_UpdateVoucher", objParam);
             }

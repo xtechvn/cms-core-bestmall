@@ -535,7 +535,7 @@ namespace WEB.CMS.Models.Product
                 return null;
             }
         }
-        public async Task<List<ProductMongoDbModel>> ListingProductBuyWith(string keyword = "", int group_id = -1, List<string>? current_id = null)
+        public async Task<List<ProductMongoDbModel>> ListingProductBuyWith(string keyword = "", int group_id = -1, List<string>? current_id = null, bool main_product_requirement = false)
         {
             try
             {
@@ -552,49 +552,63 @@ namespace WEB.CMS.Models.Product
                 {
                     filter &= Builders<ProductMongoDbModel>.Filter.Regex(x => x.group_product_id, group_id.ToString());
                 }
-                // Điều kiện cho Trường hợp 1: parent_product_id là null hoặc rỗng, VÀ không có variation_detail
-                var condition1_ParentIdNullOrEmpty = Builders<ProductMongoDbModel>.Filter.Or(
-                    Builders<ProductMongoDbModel>.Filter.Eq(p => p.parent_product_id, null),
-                    Builders<ProductMongoDbModel>.Filter.Eq(p => p.parent_product_id, "")
-                );
+                if (main_product_requirement == false)
+                {
+                    // Điều kiện cho Trường hợp 1: parent_product_id là null hoặc rỗng, VÀ không có variation_detail
+                    var condition1_ParentIdNullOrEmpty = Builders<ProductMongoDbModel>.Filter.Or(
+                        Builders<ProductMongoDbModel>.Filter.Eq(p => p.parent_product_id, null),
+                        Builders<ProductMongoDbModel>.Filter.Eq(p => p.parent_product_id, "")
+                    );
 
-                // Trường hợp không có variation_detail (null hoặc rỗng)
-                var condition1_NoVariationDetail = Builders<ProductMongoDbModel>.Filter.Or(
-                    Builders<ProductMongoDbModel>.Filter.Eq(p => p.variation_detail, null),
-                    Builders<ProductMongoDbModel>.Filter.Size(p => p.variation_detail, 0)
-                );
-                // Hoặc cách này cũng hiệu quả và thường được dùng:
-                // var condition1_NoVariationDetail = Builders<ProductMongoDbModel>.Filter.Where(p => p.variation_detail == null || !p.variation_detail.Any());
-
-
-                var case1Filter = Builders<ProductMongoDbModel>.Filter.And(
-                    condition1_ParentIdNullOrEmpty,
-                    condition1_NoVariationDetail
-                );
-
-                // Điều kiện cho Trường hợp 2: Có parent_product_id VÀ cũng có variation_detail
-                var condition2_HasParentId = Builders<ProductMongoDbModel>.Filter.And(
-                    Builders<ProductMongoDbModel>.Filter.Ne(p => p.parent_product_id, null),
-                    Builders<ProductMongoDbModel>.Filter.Ne(p => p.parent_product_id, string.Empty)
-                );
-
-                // Trường hợp có variation_detail (không null và không rỗng)
-                var condition2_HasVariationDetail = Builders<ProductMongoDbModel>.Filter.ElemMatch(p => p.variation_detail, Builders<ProductDetailVariationAttributesMongoDbModel>.Filter.Exists(x => x.name));
-
-                // Hoặc cách này:
-                // var condition2_HasVariationDetail = Builders<ProductMongoDbModel>.Filter.Where(p => p.variation_detail != null && p.variation_detail.Any());
+                    // Trường hợp không có variation_detail (null hoặc rỗng)
+                    var condition1_NoVariationDetail = Builders<ProductMongoDbModel>.Filter.Or(
+                        Builders<ProductMongoDbModel>.Filter.Eq(p => p.variation_detail, null),
+                        Builders<ProductMongoDbModel>.Filter.Size(p => p.variation_detail, 0)
+                    );
+                    // Hoặc cách này cũng hiệu quả và thường được dùng:
+                    // var condition1_NoVariationDetail = Builders<ProductMongoDbModel>.Filter.Where(p => p.variation_detail == null || !p.variation_detail.Any());
 
 
-                var case2Filter = Builders<ProductMongoDbModel>.Filter.And(
-                    condition2_HasParentId,
-                    condition2_HasVariationDetail
-                );
+                    var case1Filter = Builders<ProductMongoDbModel>.Filter.And(
+                        condition1_ParentIdNullOrEmpty,
+                        condition1_NoVariationDetail
+                    );
 
-                // Kết hợp hai trường hợp bằng toán tử OR
-                filter &= Builders<ProductMongoDbModel>.Filter.Or(
-                    case1Filter,
-                    case2Filter
-                );
+                    // Điều kiện cho Trường hợp 2: Có parent_product_id VÀ cũng có variation_detail
+                    var condition2_HasParentId = Builders<ProductMongoDbModel>.Filter.And(
+                        Builders<ProductMongoDbModel>.Filter.Ne(p => p.parent_product_id, null),
+                        Builders<ProductMongoDbModel>.Filter.Ne(p => p.parent_product_id, string.Empty)
+                    );
+
+                    // Trường hợp có variation_detail (không null và không rỗng)
+                    var condition2_HasVariationDetail = Builders<ProductMongoDbModel>.Filter.ElemMatch(p => p.variation_detail, Builders<ProductDetailVariationAttributesMongoDbModel>.Filter.Exists(x => x.name));
+
+                    // Hoặc cách này:
+                    // var condition2_HasVariationDetail = Builders<ProductMongoDbModel>.Filter.Where(p => p.variation_detail != null && p.variation_detail.Any());
+
+
+                    var case2Filter = Builders<ProductMongoDbModel>.Filter.And(
+                        condition2_HasParentId,
+                        condition2_HasVariationDetail
+                    );
+
+                    // Kết hợp hai trường hợp bằng toán tử OR
+                    filter &= Builders<ProductMongoDbModel>.Filter.Or(
+                        case1Filter,
+                        case2Filter
+                    );
+                }
+                else
+                {
+                    var condition1_ParentIdNullOrEmpty = Builders<ProductMongoDbModel>.Filter.Or(
+                        Builders<ProductMongoDbModel>.Filter.Eq(p => p.parent_product_id, null),
+                        Builders<ProductMongoDbModel>.Filter.Eq(p => p.parent_product_id, "")
+                    );
+                    filter &= condition1_ParentIdNullOrEmpty;
+
+                }
+
+
                 filter &= Builders<ProductMongoDbModel>.Filter.Gt(p => p.amount, 0);
                 if (current_id != null && current_id.Count > 0)
                 {

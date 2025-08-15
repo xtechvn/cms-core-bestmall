@@ -1,5 +1,7 @@
-﻿using Entities.Models;
+﻿using DocumentFormat.OpenXml.Spreadsheet;
+using Entities.Models;
 using Entities.ViewModels;
+using Entities.ViewModels.Products;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Repositories.IRepositories;
@@ -44,17 +46,61 @@ namespace WEB.CMS.Controllers
 
             return PartialView();
         }
-        public async Task<IActionResult> Detail(int voucher_id=0)
+        public async Task<IActionResult> Detail(int id=0)
         {
             ViewBag.Detail = new Voucher();
-            if (voucher_id > 0) {
+            ViewBag.ListProduct = new List<ProductMongoDbModel>();
 
-                var detail = await voucherRepository.GetById(voucher_id);
+            if (id > 0) {
+
+                var detail = await voucherRepository.GetById(id);
                 if (detail != null && detail.Id>0) {
                     ViewBag.Detail = detail;
                 }
             }
             return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> Summit(Voucher request)
+        {
+            try
+            {
+                if (request.Id <= 0)
+                {
+                    request.Cdate= DateTime.Now;
+                    long id=await voucherRepository.InsertVoucher(request);
+                    return Ok(new
+                    {
+                        is_success = true,
+                        msg = "Tạo voucher ["+request.Code+"] thành công",
+                    });
+                }
+                else
+                {
+                    var exists=await voucherRepository.GetById(request.Id);
+                    if (exists != null && exists.Id>0)
+                    {
+                        request.Cdate = exists.Cdate;
+                        await voucherRepository.UpdateVoucher(request);
+                        return Ok(new
+                        {
+                            is_success = true,
+                            msg = "Cập nhật voucher [" + request.Code + "] thành công",
+                        });
+                    }
+                }
+
+               
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("Summit - VoucherController: " + ex);
+            }
+            return Ok(new
+            {
+                is_success = false,
+                msg = "Dữ liệu sản phẩm không chính xác, vui lòng chỉnh sửa và thử lại",
+            });
         }
     }
 }
