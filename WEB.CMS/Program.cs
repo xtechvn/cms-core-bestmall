@@ -96,6 +96,7 @@ builder.Services.AddSingleton<IFlashSaleRepository, FlashSaleRepository>();
 builder.Services.AddSingleton<IFlashSaleProductRepository, FlashSaleProductRepository>();
 builder.Services.AddSingleton<ICustomerManagerRepository, CustomerManagerRepository>();
 builder.Services.AddSingleton<IVoucherRepository, VoucherRepository>();
+builder.Services.AddSingleton<IOrderMergeRepository, OrderMergeRepository>();
 
 // Đăng ký QueueService
 builder.Services.AddScoped<QueueService>();

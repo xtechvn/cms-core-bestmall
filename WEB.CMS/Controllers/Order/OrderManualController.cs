@@ -1,6 +1,8 @@
 ﻿using APP_CHECKOUT.MongoDb;
+using Azure.Core;
 using Caching.Elasticsearch;
 using Caching.RedisWorker;
+using Entities.Models;
 using Entities.ViewModels.ElasticSearch;
 using Entities.ViewModels.OrderManual;
 using ENTITIES.ViewModels.ElasticSearch;
@@ -35,9 +37,10 @@ namespace WEB.CMS.Controllers.Order
         private RedisConn _redisConn;
         private ElasticService _elasticService;
         private ViettelPostService _viettelPostService;
+        private IOrderMergeRepository _orderMergeRepository;
         public OrderManualController(IConfiguration configuration, IAllCodeRepository allCodeRepository, IOrderRepository orderRepository, IIdentifierServiceRepository identifierServiceRepository,
             IAccountClientRepository accountClientRepository, IUserRepository userRepository, IClientRepository clientRepository, RedisConn redisConn,
-            OrderESRepository orderESRepository, LocationESService locationESService, ElasticService elasticService, ViettelPostService viettelPostService)
+            OrderESRepository orderESRepository, LocationESService locationESService, ElasticService elasticService, ViettelPostService viettelPostService, IOrderMergeRepository orderMergeRepository)
         {
             _configuration = configuration;
             _allCodeRepository = allCodeRepository;
@@ -52,6 +55,7 @@ namespace WEB.CMS.Controllers.Order
             _shippingCarrierService = new ShippingCarrierService(configuration, _redisConn, locationESService   );
             _elasticService = elasticService;
             _viettelPostService= viettelPostService;
+            _orderMergeRepository = orderMergeRepository;
         }
         [HttpPost]
         public IActionResult CreateOrderManual()
@@ -210,6 +214,20 @@ namespace WEB.CMS.Controllers.Order
                     }
                     var updated = await _orderRepository.UpdateOrder(order);
                     _elasticService.PushToQueue("SP_GetOrder", order.OrderId);
+                    if(order.OrderMergeId!=null && order.OrderMergeId > 0 && order.OrderStatus != (int)OrderStatus.DELIVERY)
+                    {
+                        var order_merge = _orderMergeRepository.GetById((long)order.OrderMergeId);
+                        if (order_merge != null && order_merge.Id > 0)
+                        {
+                            order_merge.OrderStatus = (int)OrderStatus.DELIVERY;
+                            order_merge.UpdateLast = DateTime.Now;
+                            order_merge.UserUpdateId = _UserId;
+
+                            await _orderMergeRepository.UpdateOrderMerge(order_merge);
+                            _elasticService.PushToQueue("SP_GetOrderMerge", order_merge.Id);
+
+                        }
+                    }
                     return Ok(new
                     {
                         is_success = true,
@@ -260,6 +278,20 @@ namespace WEB.CMS.Controllers.Order
                     order.OrderStatus = (int)OrderStatus.FINISHED_DELIVERY;
                     var updated=await _orderRepository.UpdateOrder(order);
                     _elasticService.PushToQueue("SP_GetOrder", order.OrderId);
+                    if (order.OrderMergeId != null && order.OrderMergeId > 0)
+                    {
+                        var order_merge = _orderMergeRepository.GetById((long)order.OrderMergeId);
+                        if (order_merge != null && order_merge.Id > 0 && order.OrderStatus != (int)OrderStatus.FINISHED_DELIVERY)
+                        {
+                            order_merge.OrderStatus = (int)OrderStatus.FINISHED_DELIVERY;
+                            order_merge.UpdateLast = DateTime.Now;
+                            order_merge.UserUpdateId = _UserId;
+
+                            await _orderMergeRepository.UpdateOrderMerge(order_merge);
+                            _elasticService.PushToQueue("SP_GetOrderMerge", order_merge.Id);
+
+                        }
+                    }
                     return Ok(new
                     {
                         is_success = true,
@@ -311,6 +343,20 @@ namespace WEB.CMS.Controllers.Order
                     order.OrderStatus = (int)OrderStatus.FINISHED;
                     var updated = await _orderRepository.UpdateOrder(order);
                     _elasticService.PushToQueue("SP_GetOrder", order.OrderId);
+                    if (order.OrderMergeId != null && order.OrderMergeId > 0)
+                    {
+                        var order_merge = _orderMergeRepository.GetById((long)order.OrderMergeId);
+                        if (order_merge != null && order_merge.Id > 0 && order.OrderStatus != (int)OrderStatus.FINISHED)
+                        {
+                            order_merge.OrderStatus = (int)OrderStatus.FINISHED;
+                            order_merge.UpdateLast = DateTime.Now;
+                            order_merge.UserUpdateId = _UserId;
+
+                            await _orderMergeRepository.UpdateOrderMerge(order_merge);
+                            _elasticService.PushToQueue("SP_GetOrderMerge", order_merge.Id);
+
+                        }
+                    }
                     return Ok(new
                     {
                         is_success = true,
@@ -361,6 +407,20 @@ namespace WEB.CMS.Controllers.Order
                     order.OrderStatus = (int)OrderStatus.CANCEL;
                     var updated = await _orderRepository.UpdateOrder(order);
                     _elasticService.PushToQueue("SP_GetOrder", order.OrderId);
+                    if (order.OrderMergeId != null && order.OrderMergeId > 0)
+                    {
+                        var order_merge = _orderMergeRepository.GetById((long)order.OrderMergeId);
+                        if (order_merge != null && order_merge.Id > 0 && order.OrderStatus != (int)OrderStatus.CANCEL)
+                        {
+                            order_merge.OrderStatus = (int)OrderStatus.CANCEL;
+                            order_merge.UpdateLast = DateTime.Now;
+                            order_merge.UserUpdateId = _UserId;
+
+                            await _orderMergeRepository.UpdateOrderMerge(order_merge);
+                            _elasticService.PushToQueue("SP_GetOrderMerge", order_merge.Id);
+
+                        }
+                    }
                     return Ok(new
                     {
                         is_success = true,
@@ -412,6 +472,21 @@ namespace WEB.CMS.Controllers.Order
                     order.RefundStatus = (int)OrderRefundStatus.CONFIRM;
                     var updated = await _orderRepository.UpdateOrder(order);
                     _elasticService.PushToQueue("SP_GetOrder", order.OrderId);
+                    if (order.OrderMergeId != null && order.OrderMergeId > 0)
+                    {
+                        var order_merge = _orderMergeRepository.GetById((long)order.OrderMergeId);
+                        if (order_merge != null && order_merge.Id > 0)
+                        {
+                            order_merge.OrderStatus = (int)OrderStatus.CANCEL;
+                            order_merge.UpdateLast = DateTime.Now;
+                            order_merge.RefundStatus = (int)OrderRefundStatus.CONFIRM;
+                            order_merge.UserUpdateId = _UserId;
+
+                            await _orderMergeRepository.UpdateOrderMerge(order_merge);
+                            _elasticService.PushToQueue("SP_GetOrderMerge", order_merge.Id);
+
+                        }
+                    }
                     return Ok(new
                     {
                         is_success = true,
