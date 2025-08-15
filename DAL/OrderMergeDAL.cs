@@ -2,11 +2,10 @@
 using DAL.StoreProcedure;
 using Entities.Models;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Utilities;
 
@@ -42,13 +41,13 @@ namespace DAL
                 new SqlParameter("@Profit", model.Profit ?? (object)DBNull.Value),
                 new SqlParameter("@Discount", model.Discount ?? (object)DBNull.Value),
                 new SqlParameter("@Amount", model.Amount ?? (object)DBNull.Value),
-                new SqlParameter("@OrderStatus", model.OrderStatus <= 0 ? (object)DBNull.Value : model.OrderStatus),
-                new SqlParameter("@PaymentType", model.PaymentType <= 0 ? (object)DBNull.Value : model.PaymentType),
-                new SqlParameter("@PaymentStatus", model.PaymentStatus <= 0 ? (object)DBNull.Value : model.PaymentStatus),
+                new SqlParameter("@OrderStatus", model.OrderStatus <0 ? (object)DBNull.Value : model.OrderStatus),
+                new SqlParameter("@PaymentType", model.PaymentType < 0 ? (object)DBNull.Value : model.PaymentType),
+                new SqlParameter("@PaymentStatus", model.PaymentStatus < 0 ? (object)DBNull.Value : model.PaymentStatus),
                 new SqlParameter("@UtmSource", model.UtmSource ?? (object)DBNull.Value),
                 new SqlParameter("@UtmMedium", model.UtmMedium ?? (object)DBNull.Value),
                 new SqlParameter("@Note", model.Note ?? (object)DBNull.Value),
-                new SqlParameter("@VoucherId", model.VoucherId==null? (object)DBNull.Value : model.VoucherId),
+                new SqlParameter("@VoucherId", model.VoucherId==null ? (object)DBNull.Value : model.VoucherId),
                 new SqlParameter("@IsDelete", model.IsDelete ?? (object)DBNull.Value),
                 new SqlParameter("@UserId", model.UserId <= 0 ? (object)DBNull.Value : model.UserId),
                 new SqlParameter("@UserGroupIds", model.UserGroupIds ?? (object)DBNull.Value),
@@ -58,10 +57,11 @@ namespace DAL
                 new SqlParameter("@DistrictId", model.DistrictId <= 0 ? (object)DBNull.Value : model.DistrictId),
                 new SqlParameter("@WardId", model.WardId <= 0 ? (object)DBNull.Value : model.WardId),
                 new SqlParameter("@Address", model.Address ?? (object)DBNull.Value),
-                new SqlParameter("@RefundStatus", model.RefundStatus <= 0 ? (object)DBNull.Value : model.RefundStatus),
+                new SqlParameter("@RefundStatus", model.RefundStatus < 0 ? (object)DBNull.Value : model.RefundStatus),
                 new SqlParameter("@RefundReason", model.RefundReason ?? (object)DBNull.Value),
                 new SqlParameter("@RefundDate", model.RefundDate ?? (object)DBNull.Value),
                 new SqlParameter("@ShippingFee", model.ShippingFee ?? (object)DBNull.Value)
+
                 };
 
                 // Giả sử SP_InsertOrderMerge trả về Id của bản ghi mới chèn
@@ -102,7 +102,7 @@ namespace DAL
                 new SqlParameter("@UtmSource", model.UtmSource ?? (object)DBNull.Value),
                 new SqlParameter("@UtmMedium", model.UtmMedium ?? (object)DBNull.Value),
                 new SqlParameter("@Note", model.Note ?? (object)DBNull.Value),
-                new SqlParameter("@VoucherId", model.VoucherId ==null ? (object)DBNull.Value : model.VoucherId),
+                new SqlParameter("@VoucherId", model.VoucherId==null ? (object)DBNull.Value : model.VoucherId),
                 new SqlParameter("@IsDelete", model.IsDelete ?? (object)DBNull.Value),
                 new SqlParameter("@UserId", model.UserId <= 0 ? (object)DBNull.Value : model.UserId),
                 new SqlParameter("@UserGroupIds", model.UserGroupIds ?? (object)DBNull.Value),
@@ -114,7 +114,8 @@ namespace DAL
                 new SqlParameter("@Address", model.Address ?? (object)DBNull.Value),
                 new SqlParameter("@RefundStatus", model.RefundStatus <= 0 ? (object)DBNull.Value : model.RefundStatus),
                 new SqlParameter("@RefundReason", model.RefundReason ?? (object)DBNull.Value),
-                new SqlParameter("@RefundDate", model.RefundDate ?? (object)DBNull.Value)
+                new SqlParameter("@RefundDate", model.RefundDate ?? (object)DBNull.Value),
+                new SqlParameter("@ShippingFee", model.ShippingFee ?? (object)DBNull.Value)
                 };
 
                 return _DbWorker.ExecuteNonQuery("sp_UpdateOrderMerge", objParam);
@@ -150,5 +151,22 @@ namespace DAL
                 return null;
             }
         }
+        public OrderMerge GetById(long OrderId)
+        {
+            try
+            {
+                using (var _DbContext = new EntityDataContext(_connection))
+                {
+
+                    return _DbContext.OrderMerges.AsNoTracking().FirstOrDefault(s => s.Id == OrderId);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("GetByOrderId - OrderDal: " + ex);
+                return null;
+            }
+        }
+
     }
 }
