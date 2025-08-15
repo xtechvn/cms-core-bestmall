@@ -231,6 +231,10 @@ var _orderDetail = {
             _orderDetail.ConfirmRefund()
 
         });
+        $('body').on('click', '#orderdetail-refused-refund', function () {
+            _orderDetail.RefusedRefund()
+
+        });
     },
     SendToCarrier: function () {
         var title = 'Chuyển đơn hàng sang cho ĐVVC';
@@ -335,6 +339,30 @@ var _orderDetail = {
             var id = $('#order_Id').val()
             $.ajax({
                 url: "/OrderManual/Refund",
+                type: "Post",
+                data: { id: id },
+                success: function (result) {
+                    if (result.is_success) {
+                        _msgalert.success(result.msg);
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 1500);
+                    } else {
+                        _msgalert.error(result.msg);
+                    }
+
+                }
+            });
+        });
+
+    },
+    ConfirmRefund: function () {
+        var title = 'Xác nhận từ chối trả hàng hoàn tiền?';
+        var description = 'Thực hiện thao tác này sẽ hủy quá trình trả hàng hoàn tiền, đơn hàng sẽ  được thực hiện tiếp, bạn có chắc chắn không?';
+        _msgconfirm.openDialog(title, description, function () {
+            var id = $('#order_Id').val()
+            $.ajax({
+                url: "/OrderManual/RefusedRefund",
                 type: "Post",
                 data: { id: id },
                 success: function (result) {
