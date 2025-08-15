@@ -221,3 +221,25 @@ $(document).ready(function () {
     _menu.Init();
 });
 
+function AddAllcode(type, CodeValue, Description, OrderNo) {
+    var request = {
+        Type: type,
+        CodeValue: CodeValue,
+        Description: Description,
+        OrderNo: OrderNo
+    }
+    $.ajax({
+        url: "/Allcode/AddAllCode",
+        type: "Post",
+        data: { request: request },
+        success: function (result) {
+            if (result.is_success) {
+                _msgalert.success(result.message);
+
+            } else {
+                _msgalert.error(result.message);
+            }
+
+        }
+    });
+}
