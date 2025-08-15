@@ -396,10 +396,10 @@ var voucher_detail = {
             Code: $('#voucher-code').val().trim(),
             Udate: voucher_detail.GetDayTextDotNet(from_date),
             EDate: voucher_detail.GetDayTextDotNet(to_date), // Date string, backend convert sang DateTime
-            LimitUse: parseInt($('#voucher-limitUse-vnd').val()) || 0,
+            LimitUse: parseInt($('#voucher-limitUse-vnd').val().replaceAll(',','')) || 0,
             PriceSales: unit === 'vnd'
-                ? parseFloat($('#voucher-price_sales-vnd').val()) || 0
-                : parseFloat($('#voucher-price_sales-percent').val()) || 0,
+                ? parseFloat($('#voucher-price_sales-vnd').val().replaceAll(',', '')) || 0
+                : parseFloat($('#voucher-price_sales-percent').val().replaceAll(',', '')) || 0,
             Unit: unit,
             RuleType: parseInt($('input[name="voucher-rule-type"]:checked').val()) || 0,
             GroupUserPriority: null,
@@ -407,7 +407,7 @@ var voucher_detail = {
             Description: $('#voucher-description').val(),
             IsLimitVoucher: isLimitVoucher,
             LimitTotalDiscount: isLimitVoucher
-                ? parseFloat($('#voucher-limit_total_discount-vnd').val()) || 0
+                ? parseFloat($('#voucher-limit_total_discount-vnd').val().replaceAll(',', '')) || 0
                 : null,
             StoreApply: $('#voucher-store_apply').val(),
             IsMaxPriceProduct: null,
@@ -415,7 +415,6 @@ var voucher_detail = {
             CampaignId: $('#voucher-campaign_id').val() || null,
             Name: $('#voucher-name').val().trim()
         };
-        debugger
         voucher_detail.POST('/Voucher/Summit', { request :input}, function (result) {
             if (result.is_success) {
                 _msgalert.success(result.msg);
