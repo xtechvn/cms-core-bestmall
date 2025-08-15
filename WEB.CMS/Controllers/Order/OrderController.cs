@@ -1,6 +1,7 @@
 ﻿using Entities.Models;
 using Entities.ViewModels;
 using Entities.ViewModels.Mongo;
+using Entities.ViewModels.Products;
 using ENTITIES.ViewModels.ElasticSearch;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -240,9 +241,17 @@ namespace WEB.CMS.Controllers
             {
                 ViewBag.domainImg = _configuration["DomainConfig:ImageStatic"];
                 var list_OrderDetail = await _orderRepository.GetListOrderDetail(orderId);
-                var ids = list_OrderDetail.Select(s => s.ProductId).ToList();
-                var List_product = await _productV2DetailMongoAccess.GetListByIds(string.Join(",", ids));
-                ViewBag.data = List_product;
+                LogHelper.InsertLogTelegram("Packages - OrderController: list_OrderDetail" + (list_OrderDetail==null?"NULL": list_OrderDetail.Count));
+                if (list_OrderDetail == null)
+                {
+                    ViewBag.data = new List<ProductMongoDbModel>();
+                }
+                else
+                {
+                    var ids = list_OrderDetail.Select(s => s.ProductId).ToList();
+                    var List_product = await _productV2DetailMongoAccess.GetListByIds(string.Join(",", ids));
+                    ViewBag.data = List_product;
+                }
                 var dataOrder = await _orderRepository.GetOrderDetailByOrderId(orderId);
                 ViewBag.dataOrder = dataOrder;
                 var data2 = await _contractPayRepository.GetContractPayByOrderId(orderId);
