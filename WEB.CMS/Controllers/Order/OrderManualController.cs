@@ -218,6 +218,8 @@ namespace WEB.CMS.Controllers.Order
                     if (order.OrderMergeId!=null && order.OrderMergeId > 0 && order.OrderStatus != (int)OrderStatus.DELIVERY)
                     {
                         var order_merge = _orderMergeRepository.GetById((long)order.OrderMergeId);
+                        LogHelper.InsertLogTelegram("SendToCarrier - order_merge: " + (order_merge == null ? "NULL" : order_merge.Id));
+
                         if (order_merge != null && order_merge.Id > 0)
                         {
                             order_merge.OrderStatus = (int)OrderStatus.DELIVERY;
