@@ -1,24 +1,10 @@
 ﻿using DAL;
-using DAL.StoreProcedure;
 using Entities.ConfigModels;
 using Entities.Models;
-using Entities.ViewModels;
-using HuloToys_Service.IRepositories;
-using HuloToys_Service.Models.Article;
-using HuloToys_Service.Models.Models;
-using HuloToys_Service.Models.Orders;
-using HuloToys_Service.Utilities.Lib;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Repositories.IRepositories;
 using System.Data;
-using System.Drawing.Printing;
-using System.Globalization;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
-using Utilities;
-using Utilities.Contants;
 
 namespace Repositories.Repositories
 {
