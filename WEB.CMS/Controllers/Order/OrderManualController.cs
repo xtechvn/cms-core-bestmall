@@ -214,11 +214,10 @@ namespace WEB.CMS.Controllers.Order
                     }
                     var updated = await _orderRepository.UpdateOrder(order);
                     _elasticService.PushToQueue("SP_GetOrder", order.OrderId);
-                    if(order.OrderMergeId!=null && order.OrderMergeId > 0 && order.OrderStatus != (int)OrderStatus.DELIVERY)
+                    LogHelper.InsertLogTelegram("SendToCarrier - order.OrderMergeId: " + (order.OrderMergeId == null ? "NULL" : order.OrderMergeId));
+                    if (order.OrderMergeId!=null && order.OrderMergeId > 0 && order.OrderStatus != (int)OrderStatus.DELIVERY)
                     {
                         var order_merge = _orderMergeRepository.GetById((long)order.OrderMergeId);
-                        LogHelper.InsertLogTelegram("SendToCarrier - order_merge: " + (order_merge == null ? "NULL" : order_merge.Id));
-
                         if (order_merge != null && order_merge.Id > 0)
                         {
                             order_merge.OrderStatus = (int)OrderStatus.DELIVERY;
@@ -280,11 +279,11 @@ namespace WEB.CMS.Controllers.Order
                     order.OrderStatus = (int)OrderStatus.FINISHED_DELIVERY;
                     var updated=await _orderRepository.UpdateOrder(order);
                     _elasticService.PushToQueue("SP_GetOrder", order.OrderId);
+                    LogHelper.InsertLogTelegram("OrderReceivedPackage - order.OrderMergeId: " + (order.OrderMergeId == null ? "NULL" : order.OrderMergeId));
+
                     if (order.OrderMergeId != null && order.OrderMergeId > 0)
                     {
                         var order_merge = _orderMergeRepository.GetById((long)order.OrderMergeId);
-                        LogHelper.InsertLogTelegram("OrderReceivedPackage - order_merge: " + (order_merge==null? "NULL": order_merge.Id));
-
                         if (order_merge != null && order_merge.Id > 0 && order.OrderStatus != (int)OrderStatus.FINISHED_DELIVERY)
                         {
                             order_merge.OrderStatus = (int)OrderStatus.FINISHED_DELIVERY;
@@ -347,10 +346,11 @@ namespace WEB.CMS.Controllers.Order
                     order.OrderStatus = (int)OrderStatus.FINISHED;
                     var updated = await _orderRepository.UpdateOrder(order);
                     _elasticService.PushToQueue("SP_GetOrder", order.OrderId);
+                    LogHelper.InsertLogTelegram("OrderFinished - order.OrderMergeId: " + (order.OrderMergeId == null ? "NULL" : order.OrderMergeId));
+
                     if (order.OrderMergeId != null && order.OrderMergeId > 0)
                     {
                         var order_merge = _orderMergeRepository.GetById((long)order.OrderMergeId);
-                        LogHelper.InsertLogTelegram("OrderFinished - order_merge: " + (order_merge == null ? "NULL" : order_merge.Id));
 
                         if (order_merge != null && order_merge.Id > 0 && order.OrderStatus != (int)OrderStatus.FINISHED)
                         {
@@ -413,11 +413,10 @@ namespace WEB.CMS.Controllers.Order
                     order.OrderStatus = (int)OrderStatus.CANCEL;
                     var updated = await _orderRepository.UpdateOrder(order);
                     _elasticService.PushToQueue("SP_GetOrder", order.OrderId);
+                    LogHelper.InsertLogTelegram("OrderCancel - order.OrderMergeId: " + (order.OrderMergeId == null ? "NULL" : order.OrderMergeId));
                     if (order.OrderMergeId != null && order.OrderMergeId > 0)
                     {
                         var order_merge = _orderMergeRepository.GetById((long)order.OrderMergeId);
-                        LogHelper.InsertLogTelegram("OrderCancel - order_merge: " + (order_merge == null ? "NULL" : order_merge.Id));
-
                         if (order_merge != null && order_merge.Id > 0 && order.OrderStatus != (int)OrderStatus.CANCEL)
                         {
                             order_merge.OrderStatus = (int)OrderStatus.CANCEL;
@@ -480,11 +479,11 @@ namespace WEB.CMS.Controllers.Order
                     order.RefundStatus = (int)OrderRefundStatus.CONFIRM;
                     var updated = await _orderRepository.UpdateOrder(order);
                     _elasticService.PushToQueue("SP_GetOrder", order.OrderId);
+                    LogHelper.InsertLogTelegram("Refund - order_merge: " + (order.OrderMergeId == null ? "NULL" : order.OrderMergeId));
+
                     if (order.OrderMergeId != null && order.OrderMergeId > 0)
                     {
                         var order_merge = _orderMergeRepository.GetById((long)order.OrderMergeId);
-                        LogHelper.InsertLogTelegram("Refund - order_merge: " + (order_merge == null ? "NULL" : order_merge.Id));
-
                         if (order_merge != null && order_merge.Id > 0)
                         {
                             order_merge.OrderStatus = (int)OrderStatus.CANCEL;
