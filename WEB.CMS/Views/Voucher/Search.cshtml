@@ -15,9 +15,9 @@
             <tr>
                 <th class="text-left">Tên Voucher | Mã voucher</th>
                 <th>Loại mã</th>
-               @*  <th>Sản phẩm <br />áp dụng</th> *@
-                <th>Người mua<br />mục tiêu</th>
-                <th>Giảm giá</th>
+                 <th>Bật / Tắt</th> 
+@*                 <th>Người mua<br />mục tiêu</th>
+ *@                <th>Giảm giá</th>
                 <th>Tổng lượt sử<br /> dụng tối đa</th>
 @*                 <th>Đã dùng</th>
  *@                <th>Thời gian lưu mã giảm giá</th>
@@ -51,7 +51,8 @@
                             {
                                 <label class="coming-soon">Sắp diễn ra</label>
                             }
-                            <h4 class="name">@item.Description</h4>
+                            <h4 class="name">@item.Name</h4>
+                            <p class="code">Nội dung: @item.Description</p>
                             <p class="code">Mã Voucher: @item.Code</p>
                         </td>
                         <td>
@@ -71,9 +72,14 @@
                             }
 
                         </td>
-                        @* <td>1 sản phẩm</td> *@
-                        <td>@(item.GroupUserPriority == null || item.GroupUserPriority.Trim() == "" ? "Tất cả người mua" : item.GroupUserPriority)</td>
-                        <td>@price_sale_text.Replace("-","")</td>
+                        <td>
+                            <label class="switch no-text">
+                                <input disabled type="checkbox" @(item == null || item.IsPublic == null || item.IsPublic == false ? "" : "checked")>
+                                <span class="slider round"></span>
+                            </label>
+                        </td>
+@*                         <td>@(item == null || item.GroupUserPriority == null || item.GroupUserPriority.Trim() == "" ? "Tất cả người mua" : item.GroupUserPriority)</td>
+ *@                        <td>@price_sale_text.Replace("-","")</td>
                         <td>@item.LimitUse</td>
                         @* <td>0</td>*@                        
                                  <td>@(((DateTime)item.Udate).ToString("HH:mm dd/MM/yyyy") + " - " + ((DateTime)item.EDate).ToString("HH:mm dd/MM/yyyy"))</td>

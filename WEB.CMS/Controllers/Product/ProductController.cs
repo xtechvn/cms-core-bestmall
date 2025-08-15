@@ -1099,25 +1099,28 @@ namespace WEB.CMS.Controllers
         }
         [HttpPost]
 
-        public async Task<IActionResult> ProductBuyWithSearch(string keyword = "", int group_id = -1, List<string>? current_id = null)
+        public async Task<IActionResult> ProductBuyWithSearch(string keyword = "", int group_id = -1, List<string>? current_id = null,bool main_product_requirement=false)
         {
             ViewBag.Main = new List<ProductMongoDbModel>();
 
             string static_domain = _configuration["DomainConfig:ImageStatic"];
             ViewBag.StaticDomain = static_domain != null && static_domain.EndsWith("/") ? static_domain : static_domain + "/";
-            var main_products = await _productV2DetailMongoAccess.ListingProductBuyWith(keyword, group_id, current_id);
+            var main_products = await _productV2DetailMongoAccess.ListingProductBuyWith(keyword, group_id, current_id, main_product_requirement);
             ViewBag.Main = main_products;
             return View();
         }
         [HttpPost]
 
-        public async Task<IActionResult> SearchGroupProduct(string keyword = "")
+        public async Task<IActionResult> SearchGroupProduct(string keyword = "",bool include_all=true)
         {
             int parent_id = 188;
             var list = await _groupProductRepository.Search(keyword, parent_id);
             if (list == null) list = new List<GroupProduct>();
-            var all_group = new GroupProduct { Id = 0, Name = "Tất cả nhóm hàng" };
-            list.Insert(0, all_group);
+            if (include_all == true)
+            {
+                var all_group = new GroupProduct { Id = 0, Name = "Tất cả nhóm hàng" };
+                list.Insert(0, all_group);
+            }
             return Ok(new
             {
                 is_success = list != null && list.Count > 0,

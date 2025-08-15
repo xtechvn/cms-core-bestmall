@@ -55,10 +55,10 @@
             </div>
             <div class="flex gap10 align-items-center mb-3">
                 <div class="w-200px">Bật / Tắt</div>
-                <div id="status" class="flex gap10 align-items-center" style="min-width:400px;">
+                <div  class="flex gap10 align-items-center" style="min-width:400px;">
                     <td>
                         <label class="switch no-text">
-                            <input type="checkbox" @(detail != null && detail.Status == 1 ? "checked" : "")>
+                            <input id="voucher-is-public" type="checkbox" @(detail != null && detail.Status == 1 ? "checked" : "")>
                             <span class="slider round"></span>
                         </label>
                     </td>

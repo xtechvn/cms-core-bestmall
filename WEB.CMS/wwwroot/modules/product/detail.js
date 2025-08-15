@@ -522,6 +522,8 @@ var product_detail_new = {
             var element = $(this)
             element.closest('tr').remove()
         });
+
+
         $('body').on('select2:select', '#main-profit-value-type select', function () {
             var element = $(this)
             var value = element.find(':selected').val()

@@ -1464,6 +1464,10 @@ public partial class DataMSContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("unit");
+            entity.Property(e => e.Name)
+                .HasMaxLength(2000)
+                .IsUnicode(false)
+                .HasColumnName("name");
         });
 
         modelBuilder.Entity<VoucherCampaign>(entity =>
