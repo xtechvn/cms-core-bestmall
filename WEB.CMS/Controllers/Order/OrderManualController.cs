@@ -215,19 +215,20 @@ namespace WEB.CMS.Controllers.Order
                     var updated = await _orderRepository.UpdateOrder(order);
                     _elasticService.PushToQueue("SP_GetOrder", order.OrderId);
                     LogHelper.InsertLogTelegram("SendToCarrier - order.OrderMergeId: " + (order.OrderMergeId == null ? "NULL" : order.OrderMergeId));
-                    if (order.OrderMergeId!=null && order.OrderMergeId > 0 && order.OrderStatus != (int)OrderStatus.DELIVERY)
+                    if (order.OrderMergeId!=null && order.OrderMergeId > 0)
                     {
                         var order_merge = _orderMergeRepository.GetById((long)order.OrderMergeId);
                         LogHelper.InsertLogTelegram("SendToCarrier - order_merge: " + (order_merge == null ? "NULL" : order_merge.Id));
-
                         if (order_merge != null && order_merge.Id > 0)
                         {
+                            LogHelper.InsertLogTelegram("SendToCarrier -  order_merge.Id > 0: " + (order_merge == null ? "NULL" : order_merge.Id));
                             order_merge.OrderStatus = (int)OrderStatus.DELIVERY;
                             order_merge.UpdateLast = DateTime.Now;
                             order_merge.UserUpdateId = _UserId;
 
                             await _orderMergeRepository.UpdateOrderMerge(order_merge);
                             _elasticService.PushToQueue("SP_GetOrderMerge", order_merge.Id);
+                            LogHelper.InsertLogTelegram("SendToCarrier -_elasticService.PushToQueue(\"SP_GetOrderMerge\", order_merge.Id): " + (order_merge == null ? "NULL" : order_merge.Id));
 
                         }
                     }
@@ -286,7 +287,7 @@ namespace WEB.CMS.Controllers.Order
                     if (order.OrderMergeId != null && order.OrderMergeId > 0)
                     {
                         var order_merge = _orderMergeRepository.GetById((long)order.OrderMergeId);
-                        if (order_merge != null && order_merge.Id > 0 && order.OrderStatus != (int)OrderStatus.FINISHED_DELIVERY)
+                        if (order_merge != null && order_merge.Id > 0)
                         {
                             order_merge.OrderStatus = (int)OrderStatus.FINISHED_DELIVERY;
                             order_merge.UpdateLast = DateTime.Now;
@@ -354,7 +355,7 @@ namespace WEB.CMS.Controllers.Order
                     {
                         var order_merge = _orderMergeRepository.GetById((long)order.OrderMergeId);
 
-                        if (order_merge != null && order_merge.Id > 0 && order.OrderStatus != (int)OrderStatus.FINISHED)
+                        if (order_merge != null && order_merge.Id > 0)
                         {
                             order_merge.OrderStatus = (int)OrderStatus.FINISHED;
                             order_merge.UpdateLast = DateTime.Now;
@@ -419,7 +420,7 @@ namespace WEB.CMS.Controllers.Order
                     if (order.OrderMergeId != null && order.OrderMergeId > 0)
                     {
                         var order_merge = _orderMergeRepository.GetById((long)order.OrderMergeId);
-                        if (order_merge != null && order_merge.Id > 0 && order.OrderStatus != (int)OrderStatus.CANCEL)
+                        if (order_merge != null && order_merge.Id > 0)
                         {
                             order_merge.OrderStatus = (int)OrderStatus.CANCEL;
                             order_merge.UpdateLast = DateTime.Now;
