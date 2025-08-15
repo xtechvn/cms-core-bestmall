@@ -21,6 +21,6 @@ namespace Repositories.IRepositories
         Task<Order> GetByOrderId(long order_id);
         Task<List<Entities.Models.OrderDetail>> GetDetailByOrderId(long order_id);
         public Task<string> ExportDeposit(OrderViewSearchModel searchModel, string FilePath);
-
+        Task<List<Order>> GetByOrderMergeId(long order_merge_id);
     }
 }
