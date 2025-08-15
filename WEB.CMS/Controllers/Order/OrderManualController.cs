@@ -357,12 +357,16 @@ namespace WEB.CMS.Controllers.Order
 
                         if (order_merge != null && order_merge.Id > 0)
                         {
-                            order_merge.OrderStatus = (int)OrderStatus.FINISHED;
-                            order_merge.UpdateLast = DateTime.Now;
-                            order_merge.UserUpdateId = _UserId;
+                            var orders=await _orderRepository.GetByOrderMergeId(order_merge.Id);
+                            if(orders != null && orders.Count>0 && !orders.Any(x=>x.OrderStatus != (int)OrderStatus.FINISHED))
+                            {
+                                order_merge.OrderStatus = (int)OrderStatus.FINISHED;
+                                order_merge.UpdateLast = DateTime.Now;
+                                order_merge.UserUpdateId = _UserId;
 
-                            await _orderMergeRepository.UpdateOrderMerge(order_merge);
-                            _elasticService.PushToQueue("SP_GetOrderMerge", order_merge.Id);
+                                await _orderMergeRepository.UpdateOrderMerge(order_merge);
+                                _elasticService.PushToQueue("SP_GetOrderMerge", order_merge.Id);
+                            }
 
                         }
                     }
