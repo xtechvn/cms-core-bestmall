@@ -137,13 +137,9 @@ namespace WEB.CMS.Controllers
                 {
                     _UserId = Convert.ToInt32(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
                 }
-                LogHelper.InsertLogTelegram("OrderDetail - orderId" + (orderId <=0 ? "0" : orderId));
-
                 if (orderId > 0)
                 {
                     var dataOrder = await _orderRepository.GetOrderDetailByOrderId(orderId);
-                    LogHelper.InsertLogTelegram("OrderDetail - dataOrder" + (dataOrder == null ? "NULL" : dataOrder.OrderId));
-
                     if (dataOrder != null)
                     {
                         ViewBag.ReceiverName = dataOrder.ReceiverName + " SDT: " + dataOrder.PhoneOrder;
