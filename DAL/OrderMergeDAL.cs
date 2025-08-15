@@ -163,7 +163,7 @@ namespace DAL
             }
             catch (Exception ex)
             {
-                LogHelper.InsertLogTelegram("GetByOrderId - OrderDal: " + ex);
+                LogHelper.InsertLogTelegram("GetByOrderId - OrderMergeDAL: " + ex);
                 return null;
             }
         }
