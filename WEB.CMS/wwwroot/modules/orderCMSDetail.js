@@ -356,7 +356,7 @@ var _orderDetail = {
         });
 
     },
-    ConfirmRefund: function () {
+    RefusedRefund: function () {
         var title = 'Xác nhận từ chối trả hàng hoàn tiền?';
         var description = 'Thực hiện thao tác này sẽ hủy quá trình trả hàng hoàn tiền, đơn hàng sẽ  được thực hiện tiếp, bạn có chắc chắn không?';
         _msgconfirm.openDialog(title, description, function () {
