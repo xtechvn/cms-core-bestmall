@@ -346,6 +346,8 @@ namespace WEB.CMS.Controllers
                         product_by_variations.updated_last = currentTimeInUtcPlus7;
                         product_by_variations.profit_value = variation.profit_value;
                         product_by_variations.profit_value_type = variation.profit_value_type;
+                        product_by_variations.profit_supplier = variation.profit_supplier;
+                        product_by_variations.profit_supplier_type = variation.profit_supplier_type;
                         if (variation._id != null && variation._id != "")
                         {
                             product_by_variations._id = variation._id;

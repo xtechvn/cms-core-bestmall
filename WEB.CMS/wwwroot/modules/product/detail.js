@@ -276,6 +276,8 @@ var product_detail_new = {
                 element.hide()
                 return
             }
+            $('#single-weight .switch-weight').closest('.item').show()
+
             _product_function.POST('/Product/AttributeDetail', { item_index: (++count) }, function (result) {
                 if (result != undefined) $('#product-attributes').append(result)
                 if ($('#product-attributes .attributes-list').length > 0) {
@@ -303,11 +305,15 @@ var product_detail_new = {
                 $('#product-attributes-table').show()
                 $('#product-attributes').show()
                 $('#single-product-amount').hide()
+                $('#single-weight .switch-weight').closest('.item').show()
             } else {
                 $('#product-attributes-table').hide()
                 $('#product-attributes').hide()
                 $('#single-product-amount').show()
+                $('#single-weight .switch-weight').closest('.item').hide()
+                $('#single-weight .switch-weight').prop('checked', false).trigger('click')
             }
+
         });
         $('body').on('click', '.attributes-list .delete-attribute-detail ', function () {
             var element = $(this)
@@ -329,6 +335,16 @@ var product_detail_new = {
                 var value_profit = amount / 100 * percent_value;
                 var rounded_value = Math.round(isNaN(value_profit) ? 0 : value_profit);
                 $('#product-attributes-apply .td-profit-vnd').find('input').val(_global_function.Comma(rounded_value)).trigger('change')
+            }
+            var profit_supplier_type = $('#product-attributes-apply .profit-supplier-type select').find(':selected').val()
+            if (profit_value.trim() == '1') {
+                var percent_value = isNaN(parseFloat($('#product-attributes-apply .profit-supplier').find('input').val().replaceAll(',', ''))) ? 0 : parseFloat($('#product-attributes-apply .profit-supplier').find('input').val().replaceAll(',', ''))
+                var value_profit = amount / 100 * percent_value;
+                var rounded_value = Math.round(isNaN(value_profit) ? 0 : value_profit);
+                $('#product-attributes-apply .profit-supplier').attr('data-price', rounded_value)
+            } else {
+                var rounded_value = $('#product-attributes-apply .profit-supplier').val()
+                $('#product-attributes-apply .profit-supplier').attr('data-price', rounded_value)
             }
             product_detail_new.ApplyAllPriceToTable()
             $('.btn-all').css('background-color', '')
@@ -465,7 +481,11 @@ var product_detail_new = {
                 $('#main-profit').find('input').val(_global_function.Comma(rounded_value))
             }
             var profit = isNaN(parseFloat($('#main-profit').find('input').val().replaceAll(',', ''))) ? 0 : parseFloat($('#main-profit').find('input').val().replaceAll(',', ''))
-            $('#main-price').find('input').val(_product_function.Comma(amount - profit))
+
+            var profit_supplier_type = $('#profit_supplier-type select').find(':selected').val()
+            var profit_supplier = $('#profit_supplier input').val()
+            var profit_supplier_value = product_detail_new.CalulateProfit(amount, profit_supplier, profit_supplier_type);
+            $('#main-price').find('input').val(_product_function.Comma(amount - profit - profit_supplier_value))
         });
         $('body').on('keyup', '#old-price input', function (e) {
             var element = $(this)
@@ -989,7 +1009,6 @@ var product_detail_new = {
     RenderRowData: function (tr) {
         var amount = isNaN(parseFloat(tr.find('.td-amount').find('input').val().replaceAll(',', ''))) ? 0 : parseFloat(tr.find('.td-amount').find('input').val().replaceAll(',', ''))
         var profit_value = tr.find('.main-profit-value-type').find('select').find(':selected').val()
-        debugger;
 
         if (profit_value.trim() == '1') {
             var percent_value = isNaN(parseFloat(tr.find('.main-profit-value').find('input').val().replaceAll(',', ''))) ? 0 : parseFloat((tr.find('.main-profit-value').find('input').val().replaceAll(',', '')))
@@ -998,13 +1017,18 @@ var product_detail_new = {
             tr.find('.td-profit-vnd').find('input').val(_global_function.Comma(rounded_value)).trigger('change')
         }
 
+       
+        var profit_supplier_type = tr.find('.profit-supplier-type').find('select').find(':selected').val()
+       
+        var profit_supplier = isNaN(parseFloat(tr.find('.profit-supplier').find('input').val().replaceAll(',', ''))) ? 0 : parseFloat(tr.find('.profit-supplier').find('input').val().replaceAll(',', ''))
+        var profit_supplier_value = product_detail_new.CalulateProfit(amount, profit_supplier, profit_supplier_type);
+
         if (tr.find('.td-price').length > 0 && tr.find('.td-profit-vnd').length > 0 && tr.find('.td-amount').length > 0) {
             var amount = isNaN(parseFloat(tr.find('.td-amount').find('input').val().replaceAll(',', ''))) ? 0 : parseFloat(tr.find('.td-amount').find('input').val().replaceAll(',', ''))
             var profit = isNaN(parseFloat(tr.find('.td-profit-vnd').find('input').val().replaceAll(',', ''))) ? 0 : parseFloat(tr.find('.td-profit-vnd').find('input').val().replaceAll(',', ''))
 
-            tr.find('.td-price').find('input').val(_product_function.Comma(amount - profit))
+            tr.find('.td-price').find('input').val(_product_function.Comma(amount - profit - profit_supplier_value))
         }
-
     },
     ApplyAllPriceToTable: function () {
         $('#product-attributes-prices .td-amount input').val(_product_function.Comma($('#product-attributes-apply .td-amount input').val()))
@@ -1020,7 +1044,6 @@ var product_detail_new = {
         $('#product-attributes-prices .main-profit-value-type select').val($('#product-attributes-apply .main-profit-value-type select').find(':selected').val())
         var amount = isNaN(parseFloat($('#product-attributes-apply .td-amount input').val().replaceAll(',', ''))) ? 0 : parseFloat($('#product-attributes-apply .td-amount input').val().replaceAll(',', ''))
         var profit = isNaN(parseFloat($('#product-attributes-apply .td-profit-vnd input').val().replaceAll(',', ''))) ? 0 : parseFloat($('#product-attributes-apply .td-profit input').val().replaceAll(',', ''))
-        $('#product-attributes-prices .td-price input').val(_product_function.Comma(amount - profit))
         var value = $('#product-attributes-apply .main-profit-value-type select').find(':selected').val()
 
         switch (value) {
@@ -1033,6 +1056,13 @@ var product_detail_new = {
                 $('#product-attributes-prices .main-profit-value').show()
             } break;
         }
+        var profit_supplier_type = $('#product-attributes-apply .profit-supplier-type select').find(':selected').val()
+        var profit_supplier = $('#product-attributes-apply .profit-supplier input').val()
+        var profit_supplier_value = product_detail_new.CalulateProfit(amount, profit_supplier, profit_supplier_type);
+        $('#product-attributes-prices .profit-supplier input').val(_product_function.Comma(profit_supplier)).trigger('change')
+        $('#product-attributes-prices .profit-supplier-type select').val(profit_supplier_type).trigger('change')
+        $('#product-attributes-prices .td-price input').val(_product_function.Comma(amount - profit - profit_supplier_value))
+
     },
     Summit: function () {
         var validate = product_detail_new.ValidateProduct()
@@ -1058,6 +1088,8 @@ var product_detail_new = {
             rating: $('#rating input').val() == undefined || $('#rating input').val().trim() == '' ? 0 : parseFloat($('#rating input').val().replaceAll(',', '')),
             total_sold: $('#total-sold input').val() == undefined || $('#total-sold input').val().trim() == '' ? 0 : parseInt($('#total-sold input').val().replaceAll(',', '')),
 
+            profit_supplier: $('#profit_supplier input').val() == undefined || $('#profit_supplier input').val().trim() == '' ? 0 : parseFloat($('#profit_supplier input').val().replaceAll(',', '')),
+            profit_supplier_type: parseInt($('#profit_supplier-type select').find(':selected').val().replaceAll(',', ''))
         }
         model.images = []
         $('#images .list .items').each(function (index, item) {
@@ -1233,6 +1265,10 @@ var product_detail_new = {
                 var package_depth = parseFloat(element.find('.td-dismenssion-depth').find('input').val().replaceAll(',', ''))
                 var profit_value = parseFloat(element.find('.main-profit-value').find('input').val().replaceAll(',', ''))
                 var profit_value_type = parseInt(element.find('.main-profit-value-type').find('select').find(':selected').val().replaceAll(',', ''))
+
+                var profit_supplier = parseFloat(element.find('.td-profit-supplier').find('input').val().replaceAll(',', ''))
+                var profit_supplier_type = parseInt(element.find('.profit-supplier-type').find('select').find(':selected').val().replaceAll(',', ''))
+
                 var variation = {
                     _id: var_id,
                     variation_attributes: [],
@@ -1246,7 +1282,9 @@ var product_detail_new = {
                     package_height: (package_height == undefined || isNaN(package_height) || package_height <= 0) ? model.package_height : package_height,
                     package_depth: (package_depth == undefined || isNaN(package_depth) || package_depth <= 0) ? model.package_depth : package_depth,
                     profit_value: profit_value,
-                    profit_value_type: profit_value_type
+                    profit_value_type: profit_value_type,
+                    profit_supplier: profit_supplier,
+                    profit_supplier_type: profit_supplier_type
                 }
                 if (model.is_one_weight == true) {
                     variation.weight = model.weight
@@ -1597,12 +1635,12 @@ var product_detail_new = {
                 $('#main-price').find('input').get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
                 success = false
             }
-            var profit = parseFloat($('#main-profit').find('input').val().replaceAll(',', ''))
-            if (profit == undefined || isNaN(profit) || profit <= 0) {
-                _msgalert.error('Vui lòng nhập đầy đủ giá nhập cho sản phẩm')
-                $('#main-profit').find('input').get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
-                success = false
-            }
+            //var profit = parseFloat($('#main-profit').find('input').val().replaceAll(',', ''))
+            //if (profit == undefined || isNaN(profit) || profit <= 0) {
+            //    _msgalert.error('Vui lòng nhập đầy đủ giá nhập cho sản phẩm')
+            //    $('#main-profit').find('input').get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
+            //    success = false
+            //}
             var stock = parseFloat($('#main-stock').find('input').val().replaceAll(',', ''))
             if (stock == undefined || isNaN(stock) || stock <= 0) {
                 _msgalert.error('Vui lòng nhập đầy đủ số lượng sản phẩm trong kho hàng cho sản phẩm')
@@ -1615,18 +1653,18 @@ var product_detail_new = {
             $('#product-attributes-prices tbody tr').each(function (index, index) {
                 var element = $(this)
                 var price = parseFloat(element.find('.td-price').find('input').val().replaceAll(',', ''))
-                var profit = parseFloat(element.find('.td-profit').find('input').val().replaceAll(',', ''))
+                //var profit = parseFloat(element.find('.td-profit').find('input').val().replaceAll(',', ''))
                 var amount = parseFloat(element.find('.td-amount').find('input').val().replaceAll(',', ''))
                 if (price == undefined || isNaN(price) || price <= 0) {
                     _msgalert.error('Vui lòng nhập đầy đủ Giá cho tất cả các biến thể của sản phẩm')
                     success = false
                     return false
                 }
-                if (profit == undefined || isNaN(profit) || profit < 0) {
-                    _msgalert.error('Vui lòng nhập đầy đủ Lợi nhuận cho tất cả các biến thể của sản phẩm')
-                    success = false
-                    return false
-                }
+                //if (profit == undefined || isNaN(profit) || profit < 0) {
+                //    _msgalert.error('Vui lòng nhập đầy đủ Lợi nhuận cho tất cả các biến thể của sản phẩm')
+                //    success = false
+                //    return false
+                //}
                 if (amount == undefined || isNaN(amount) || amount < 0) {
                     _msgalert.error('Vui lòng nhập đầy đủ Giá bán cho tất cả các biến thể của sản phẩm')
                     success = false
@@ -1641,27 +1679,27 @@ var product_detail_new = {
                         return false
                     }
 
-                    var package_width = parseFloat(element.find('.td-dismenssion-width').find('input').val().replaceAll(',', ''))
-                    if (package_width == undefined || isNaN(package_width) || package_width <= 0) {
-                        _msgalert.error('Vui lòng nhập đầy đủ Kích thước đóng gói - Chiều dài gói hàng cho tất cả các biến thể của sản phẩm')
-                        element.get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
-                        success = false
-                        return false
-                    }
-                    var package_height = parseFloat(element.find('.td-dismenssion-height').find('input').val().replaceAll(',', ''))
-                    if (package_height == undefined || isNaN(package_height) || package_height <= 0) {
-                        _msgalert.error('Vui lòng nhập đầy đủ Kích thước đóng gói - Chiều rộng gói hàng cho tất cả các biến thể của sản phẩm')
-                        element.get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
-                        success = false
-                        return false
-                    }
-                    var package_depth = parseFloat(element.find('.td-dismenssion-depth').find('input').val().replaceAll(',', ''))
-                    if (package_depth == undefined || isNaN(package_depth) || package_depth <= 0) {
-                        _msgalert.error('Vui lòng nhập đầy đủ Kích thước đóng gói - Chiều cao gói hàng cho tất cả các biến thể của sản phẩm')
-                        element.get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
-                        success = false
-                        return false
-                    }
+                    //var package_width = parseFloat(element.find('.td-dismenssion-width').find('input').val().replaceAll(',', ''))
+                    //if (package_width == undefined || isNaN(package_width) || package_width <= 0) {
+                    //    _msgalert.error('Vui lòng nhập đầy đủ Kích thước đóng gói - Chiều dài gói hàng cho tất cả các biến thể của sản phẩm')
+                    //    element.get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
+                    //    success = false
+                    //    return false
+                    //}
+                    //var package_height = parseFloat(element.find('.td-dismenssion-height').find('input').val().replaceAll(',', ''))
+                    //if (package_height == undefined || isNaN(package_height) || package_height <= 0) {
+                    //    _msgalert.error('Vui lòng nhập đầy đủ Kích thước đóng gói - Chiều rộng gói hàng cho tất cả các biến thể của sản phẩm')
+                    //    element.get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
+                    //    success = false
+                    //    return false
+                    //}
+                    //var package_depth = parseFloat(element.find('.td-dismenssion-depth').find('input').val().replaceAll(',', ''))
+                    //if (package_depth == undefined || isNaN(package_depth) || package_depth <= 0) {
+                    //    _msgalert.error('Vui lòng nhập đầy đủ Kích thước đóng gói - Chiều cao gói hàng cho tất cả các biến thể của sản phẩm')
+                    //    element.get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
+                    //    success = false
+                    //    return false
+                    //}
                     var quanity_of_stock = parseFloat(element.find('.td-stock').find('input').val().replaceAll(',', ''))
                     if (quanity_of_stock == undefined || isNaN(quanity_of_stock) || quanity_of_stock <= 0) {
                         _msgalert.error('Vui lòng nhập đầy đủ Kho hàng cho tất cả các biến thể của sản phẩm')
@@ -1683,27 +1721,27 @@ var product_detail_new = {
                 return false
             }
 
-            var package_width = parseFloat($('#single-weight').find('.dismenssion-width').val().replaceAll(',', ''))
-            if (package_width == undefined || isNaN(package_width) || package_width <= 0) {
-                _msgalert.error('Vui lòng nhập đầy đủ kích thước chiều dài gói hàng trong phần vận chuyển')
-                $('#single-weight').get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
-                success = false
-                return false
-            }
-            var package_height = parseFloat($('#single-weight').find('.dismenssion-height').val().replaceAll(',', ''))
-            if (package_height == undefined || isNaN(package_height) || package_height <= 0) {
-                _msgalert.error('Vui lòng nhập đầy đủ kích thước chiều rộng gói hàng trong phần vận chuyển')
-                $('#single-weight').get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
-                success = false
-                return false
-            }
-            var package_depth = parseFloat($('#single-weight').find('.dismenssion-depth').val().replaceAll(',', ''))
-            if (package_depth == undefined || isNaN(package_depth) || package_depth <= 0) {
-                _msgalert.error('Vui lòng nhập đầy đủ kích thước chiều cao gói hàng trong phần vận chuyển')
-                $('#single-weight').get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
-                success = false
-                return false
-            }
+            //var package_width = parseFloat($('#single-weight').find('.dismenssion-width').val().replaceAll(',', ''))
+            //if (package_width == undefined || isNaN(package_width) || package_width <= 0) {
+            //    _msgalert.error('Vui lòng nhập đầy đủ kích thước chiều dài gói hàng trong phần vận chuyển')
+            //    $('#single-weight').get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
+            //    success = false
+            //    return false
+            //}
+            //var package_height = parseFloat($('#single-weight').find('.dismenssion-height').val().replaceAll(',', ''))
+            //if (package_height == undefined || isNaN(package_height) || package_height <= 0) {
+            //    _msgalert.error('Vui lòng nhập đầy đủ kích thước chiều rộng gói hàng trong phần vận chuyển')
+            //    $('#single-weight').get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
+            //    success = false
+            //    return false
+            //}
+            //var package_depth = parseFloat($('#single-weight').find('.dismenssion-depth').val().replaceAll(',', ''))
+            //if (package_depth == undefined || isNaN(package_depth) || package_depth <= 0) {
+            //    _msgalert.error('Vui lòng nhập đầy đủ kích thước chiều cao gói hàng trong phần vận chuyển')
+            //    $('#single-weight').get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
+            //    success = false
+            //    return false
+            //}
         }
         if (!success) return success
         //-- discount
@@ -2067,5 +2105,21 @@ var product_detail_new = {
                 _msgalert.error('Sync ES Failed')
             }
         });
+    },
+    CalulateProfit: function (amount, profit_value, unit_type) {
+        var profit = 0;
+        switch (unit_type.trim()) {
+            case '1': {
+                var percent_value = profit_value
+                var value_profit = amount / 100 * percent_value;
+                profit = Math.round(isNaN(value_profit) ? 0 : value_profit);
+
+            } break;
+            case '0': {
+                profit = profit_value;
+
+            } break;
+        }
+        return profit
     }
 }

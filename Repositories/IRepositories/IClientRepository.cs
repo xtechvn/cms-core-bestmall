@@ -15,5 +15,6 @@ namespace Repositories.IRepositories
         Client GetClientByTaxNo(string Maso_id);
         int SetUpClient(Client model);
         Task<Client> GetClientByClientCode(string client_code);
+        List<Client> GetClientByIds(List<long> clientIds);
     }
 }

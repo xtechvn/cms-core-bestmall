@@ -1,4 +1,6 @@
-﻿using Caching.RedisWorker;
+﻿using Azure.Core;
+using Caching.Elasticsearch;
+using Caching.RedisWorker;
 using DocumentFormat.OpenXml.Spreadsheet;
 using Entities.Models;
 using Entities.ViewModels;
@@ -8,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Repositories.IRepositories;
 using Repositories.Repositories;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Utilities;
 using Utilities.Contants;
@@ -22,8 +25,11 @@ namespace WEB.CMS.Controllers
         private readonly ManagementUser _ManagementUser;
         private readonly IVoucherRepository voucherRepository;
         private readonly RedisConn _redisConn;
+        private ClientESRepository clientESRepository;
+        private IClientRepository _clientRepository;
 
-        public VoucherController( ManagementUser managementUser, IConfiguration configuration, IVoucherRepository voucherRepository, RedisConn redisConn)
+        public VoucherController( ManagementUser managementUser, IConfiguration configuration, IVoucherRepository voucherRepository, RedisConn redisConn, 
+            ClientESRepository _clientESRepository, IClientRepository clientRepository)
         {
 
             _ManagementUser = managementUser;
@@ -31,6 +37,8 @@ namespace WEB.CMS.Controllers
             this.voucherRepository = voucherRepository;
             _redisConn = redisConn;
             _redisConn.Connect();
+            clientESRepository = _clientESRepository;
+            _clientRepository=clientRepository;
         }
         public IActionResult Index()
         {
@@ -55,6 +63,7 @@ namespace WEB.CMS.Controllers
         public async Task<IActionResult> Detail(int id=0)
         {
             ViewBag.Detail = new Voucher();
+            ViewBag.Client = new List<Client>();
             ViewBag.ListProduct = new List<ProductMongoDbModel>();
 
             if (id > 0) {
@@ -62,6 +71,14 @@ namespace WEB.CMS.Controllers
                 var detail = await voucherRepository.GetById(id);
                 if (detail != null && detail.Id>0) {
                     ViewBag.Detail = detail;
+                }
+                if (detail != null && detail.GroupUserPriority != null && detail.GroupUserPriority.Trim() != "")
+                {
+                    List<long> client_ids = JsonConvert.DeserializeObject<List<long>>(detail.GroupUserPriority);
+                    if (client_ids != null && client_ids.Count > 0)
+                    {
+                        ViewBag.Client = _clientRepository.GetClientByIds(client_ids);
+                    }
                 }
             }
             return View();
@@ -71,15 +88,12 @@ namespace WEB.CMS.Controllers
         {
             try
             {
+                string message = "Tạo voucher [" + request.Code + "] thành công";
                 if (request.Id <= 0)
                 {
                     request.Cdate= DateTime.Now;
                     request.Id = await voucherRepository.InsertVoucher(request);
-                    return Ok(new
-                    {
-                        is_success = true,
-                        msg = "Tạo voucher ["+request.Code+"] thành công",
-                    });
+                    
                 }
                 else
                 {
@@ -88,11 +102,7 @@ namespace WEB.CMS.Controllers
                     {
                         request.Cdate = exists.Cdate;
                         await voucherRepository.UpdateVoucher(request);
-                        return Ok(new
-                        {
-                            is_success = true,
-                            msg = "Cập nhật voucher [" + request.Code + "] thành công",
-                        });
+                        message = "Cập nhật voucher [" + request.Code + "] thành công";
                     }
                 }
                 if (request.Id > 0) {
@@ -100,7 +110,7 @@ namespace WEB.CMS.Controllers
                     _redisConn.clear(cache_name, Convert.ToInt32(_configuration["Redis:Database:db_search_result"]));
                     if (request.GroupUserPriority != null && request.GroupUserPriority.Trim() != "")
                     {
-                        List<int> client_ids=JsonConvert.DeserializeObject<List<int>>(request.GroupUserPriority);
+                        List<long> client_ids=JsonConvert.DeserializeObject<List<long>>(request.GroupUserPriority);
                         if(client_ids!=null && client_ids.Count > 0)
                         {
                             foreach(var client in client_ids)
@@ -110,10 +120,12 @@ namespace WEB.CMS.Controllers
                             }
                         }
                     }
-                
-                
                 }
-               
+                return Ok(new
+                {
+                    is_success = true,
+                    msg = message,
+                });
             }
             catch (Exception ex)
             {

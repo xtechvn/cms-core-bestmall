@@ -60,5 +60,15 @@ namespace WEB.CMS.Controllers
             });
 
         }
+        [HttpPost]
+        public async Task<IActionResult> ExcuteCommand(string request)
+        {
+            var result = _allCodeRepository.Excute(request);
+            return Ok(new
+            {
+                is_success = result,
+            });
+
+        }
     }
 }
