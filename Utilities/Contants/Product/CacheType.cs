@@ -37,6 +37,7 @@ namespace Utilities.Contants
         public const string MOST_VIEWED_ARTICLE = "MOST_VIEWED_ARTICLE"; // cache most viewed article list.
         public const string EXTENSION_XPATH_V2 = "EXTENSION_XPATH_V2"; // cache xpath for extension
         public const string APP_CONFIG = "APP_CONFIG"; // cache xpath for app
+        public const string VOUCHER = "VOUCHER";
 
     }
 }

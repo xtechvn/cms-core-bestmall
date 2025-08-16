@@ -1,13 +1,16 @@
-﻿using DocumentFormat.OpenXml.Spreadsheet;
+﻿using Caching.RedisWorker;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Entities.Models;
 using Entities.ViewModels;
 using Entities.ViewModels.Products;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Repositories.IRepositories;
 using Repositories.Repositories;
 using System.Threading.Tasks;
 using Utilities;
+using Utilities.Contants;
 using WEB.CMS.Customize;
 
 namespace WEB.CMS.Controllers
@@ -18,13 +21,16 @@ namespace WEB.CMS.Controllers
         private readonly IConfiguration _configuration;
         private readonly ManagementUser _ManagementUser;
         private readonly IVoucherRepository voucherRepository;
+        private readonly RedisConn _redisConn;
 
-        public VoucherController( ManagementUser managementUser, IConfiguration configuration, IVoucherRepository voucherRepository)
+        public VoucherController( ManagementUser managementUser, IConfiguration configuration, IVoucherRepository voucherRepository, RedisConn redisConn)
         {
 
             _ManagementUser = managementUser;
             _configuration = configuration;
             this.voucherRepository = voucherRepository;
+            _redisConn = redisConn;
+            _redisConn.Connect();
         }
         public IActionResult Index()
         {
@@ -35,7 +41,7 @@ namespace WEB.CMS.Controllers
 
             try
             {
-                var model = await voucherRepository.GetVoucherPagingList(keyword,status,pageIndex,pageSize);
+                var model = await voucherRepository.GetVoucherPagingList(keyword,status,pageIndex,pageSize,null);
 
                 return PartialView(model);
             }
@@ -68,7 +74,7 @@ namespace WEB.CMS.Controllers
                 if (request.Id <= 0)
                 {
                     request.Cdate= DateTime.Now;
-                    long id=await voucherRepository.InsertVoucher(request);
+                    request.Id = await voucherRepository.InsertVoucher(request);
                     return Ok(new
                     {
                         is_success = true,
@@ -89,7 +95,24 @@ namespace WEB.CMS.Controllers
                         });
                     }
                 }
-
+                if (request.Id > 0) {
+                    string cache_name = CacheType.VOUCHER;
+                    _redisConn.clear(cache_name, Convert.ToInt32(_configuration["Redis:Database:db_search_result"]));
+                    if (request.GroupUserPriority != null && request.GroupUserPriority.Trim() != "")
+                    {
+                        List<int> client_ids=JsonConvert.DeserializeObject<List<int>>(request.GroupUserPriority);
+                        if(client_ids!=null && client_ids.Count > 0)
+                        {
+                            foreach(var client in client_ids)
+                            {
+                                 cache_name = CacheType.VOUCHER + client;
+                                 _redisConn.clear(cache_name, Convert.ToInt32(_configuration["Redis:Database:db_search_result"]));
+                            }
+                        }
+                    }
+                
+                
+                }
                
             }
             catch (Exception ex)
