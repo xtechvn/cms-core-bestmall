@@ -109,7 +109,7 @@
                     </select>
 
                 </div>
-                <p class="mt-1 text-secondary">Nhà cung cấp áp dụng</p>
+                <p class="mt-1 text-secondary">Khách hàng áp dụng</p>
             </div>
         </div>
         <div class="item flex flex-lg-nowrap gap10 mb-2 w-100">
@@ -270,7 +270,7 @@
             <label class="label">Giá trị đơn hàng tối thiểu</label>
             <div class="wrap_input">
                 <div class="form-group mb-0">
-                    <input id="voucher-min-product-amount" type="text" class="form-control input-price" placeholder="Giá trị đơn hàng tối thiểu" value="@((voucher == null || voucher.LimitTotalDiscount == null || voucher.LimitTotalDiscount <= 0) ? "0" : ((double)voucher.LimitTotalDiscount).ToString("N0"))">
+                    <input id="voucher-min-product-amount" type="text" class="form-control input-price" placeholder="Giá trị đơn hàng tối thiểu" value="@((voucher == null || voucher.MinTotalAmount == null || voucher.MinTotalAmount <= 0) ? "0" : ((double)voucher.MinTotalAmount).ToString("N0"))">
                 </div>
                 <p class="mt-1 text-secondary">SGiá trị đơn hàng tối thiểu để áp dụng được mã giảm giá</p>
             </div>
