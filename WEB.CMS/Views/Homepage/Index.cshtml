@@ -200,9 +200,9 @@
         <div class="box-info bg-white p-3 mb-3">
             <h5 class="title-box mb-2 text-uppercase">Triết khấu lợi nhuận</h5>
             <div id="vnpay" class="item flex flex-lg-nowrap gap10 mb-2 w-100" data-id="@(VnpayPercent != null && VnpayPercent.Id > 0?VnpayPercent.Id:"-1")">
-                <label class="label">Triết khấu lợi nhuận VNPAY (%)</label>
+                <label class="label" style=" margin-bottom: 0; place-self: center; ">Triết khấu lợi nhuận VNPAY (%)</label>
                 <div class="wrap_input">
-                    <div class="form-group namesp">
+                    <div class="form-group " style=" margin-bottom: 0; ">
                         <input type="text" class="form-control input-price" placeholder="Triết khấu lợi nhuận VNPAY (%)" value="@(VnpayPercent != null && VnpayPercent.CodeValue > 0 ? ((int)VnpayPercent.CodeValue).ToString("N0"):"")" />
                     </div>
                 </div>
