@@ -284,7 +284,13 @@ var homepage = {
         //        }
         //    }
         //})
-        var request = { banner_main: banner_main, banner_sub: banner_sub/*, trending_main: trending_main, trending_sub: trending_sub*/ }
+        var vnpay = {
+            Id: $('#vnpay').attr('data-id'),
+            CodeValue: $('#vnpay input').val(),
+            OrderNo:1,
+            Description: 'Triết khấu VNPAY đối với sản phẩm'
+        }
+        var request = { banner_main: banner_main, banner_sub: banner_sub, vnpay: vnpay }
         let url = "/homepage/summit";
         _global_function.AddLoading()
         _ajax_caller.post(url, request, function (result) {

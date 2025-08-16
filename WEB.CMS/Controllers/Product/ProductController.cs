@@ -333,7 +333,7 @@ namespace WEB.CMS.Controllers
                         product_by_variations.supplier_status = product_main.supplier_status;
                         product_by_variations.parent_product_id = product_main._id;
                         product_by_variations.price = variation.price;
-                        product_by_variations.profit = variation.profit;
+                        //product_by_variations.profit = variation.profit;
                         product_by_variations.amount = variation.amount;
                         product_by_variations.quanity_of_stock = variation.quanity_of_stock;
                         product_by_variations.sku = variation.sku;
