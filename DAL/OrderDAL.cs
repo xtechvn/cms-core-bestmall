@@ -171,7 +171,6 @@ namespace DAL
                 objParam[0] = new SqlParameter("@OrderId", OrderId);
 
                 DataTable dt = _DbWorker.GetDataTable(ProcedureConstants.SP_GetDetailOrderByOrderId, objParam);
-                LogHelper.InsertLogTelegram("GetDetailOrderByOrderId - OrderDal: ["+(dt==null ||dt.Rows.Count<=0?"NULL":dt.Rows) +"]");
                 if (dt != null && dt.Rows.Count > 0)
                 {
                     var data = dt.ToList<OrderDetailViewModel>();
