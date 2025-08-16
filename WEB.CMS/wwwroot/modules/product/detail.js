@@ -420,6 +420,11 @@ var product_detail_new = {
             var element = $(this)
             product_detail_new.RenderRowData(element.closest('tr'))
         });
+        $('body').on('change', '#product-attributes-prices tbody select', function () {
+            var element = $(this)
+            element.closest('td').find('input').val('0').trigger('change')
+            product_detail_new.RenderRowData(element.closest('tr'))
+        });
         $('body').on('click', '#product-detail-cancel', function () {
             let title = 'Xác nhận hủy';
             let description = 'Dữ liệu đã chỉnh sửa sẽ không được lưu, bạn có chắc chắn không?';
@@ -472,20 +477,12 @@ var product_detail_new = {
             });
         });
         $('body').on('keyup', '#single-product-amount input', function () {
-            var amount = isNaN(parseFloat($('#main-amount').find('input').val().replaceAll(',', ''))) ? 0 : parseFloat($('#main-amount').find('input').val().replaceAll(',', ''))
-            var profit_value = $('#main-profit-value-type select').find(':selected').val()
-            if (profit_value.trim() == '1') {
-                var percent_value = isNaN(parseFloat($('#main-profit-value').find('input').val().replaceAll(',', ''))) ? 0 : parseFloat($('#main-profit-value').find('input').val().replaceAll(',', ''))
-                var value_profit = amount / 100 * percent_value;
-                var rounded_value = Math.round(isNaN(value_profit) ? 0 : value_profit);
-                $('#main-profit').find('input').val(_global_function.Comma(rounded_value))
-            }
-            var profit = isNaN(parseFloat($('#main-profit').find('input').val().replaceAll(',', ''))) ? 0 : parseFloat($('#main-profit').find('input').val().replaceAll(',', ''))
-
-            var profit_supplier_type = $('#profit_supplier-type select').find(':selected').val()
-            var profit_supplier = $('#profit_supplier input').val()
-            var profit_supplier_value = product_detail_new.CalulateProfit(amount, profit_supplier, profit_supplier_type);
-            $('#main-price').find('input').val(_product_function.Comma(amount - profit - profit_supplier_value))
+            product_detail_new.RenderSingleAmountData()
+        });
+        $('body').on('select2:select', '#single-product-amount select', function () {
+            var element = $(this)
+            element.closest('.wrap_input').find('input').val('0').trigger('change')
+            product_detail_new.RenderSingleAmountData()
         });
         $('body').on('keyup', '#old-price input', function (e) {
             var element = $(this)
@@ -1019,17 +1016,33 @@ var product_detail_new = {
 
        
         var profit_supplier_type = tr.find('.profit-supplier-type').find('select').find(':selected').val()
-       
         var profit_supplier = isNaN(parseFloat(tr.find('.profit-supplier').find('input').val().replaceAll(',', ''))) ? 0 : parseFloat(tr.find('.profit-supplier').find('input').val().replaceAll(',', ''))
         var profit_supplier_value = product_detail_new.CalulateProfit(amount, profit_supplier, profit_supplier_type);
 
-        if (tr.find('.td-price').length > 0 && tr.find('.td-profit-vnd').length > 0 && tr.find('.td-amount').length > 0) {
-            var amount = isNaN(parseFloat(tr.find('.td-amount').find('input').val().replaceAll(',', ''))) ? 0 : parseFloat(tr.find('.td-amount').find('input').val().replaceAll(',', ''))
-            var profit = isNaN(parseFloat(tr.find('.td-profit-vnd').find('input').val().replaceAll(',', ''))) ? 0 : parseFloat(tr.find('.td-profit-vnd').find('input').val().replaceAll(',', ''))
+        var profit_type = tr.find('.main-profit-value-type').find('select').find(':selected').val()
+        var profit = isNaN(parseFloat(tr.find('.main-profit-value').find('input').val().replaceAll(',', ''))) ? 0 : parseFloat(tr.find('.main-profit-value').find('input').val().replaceAll(',', ''))
+        var profit_value = product_detail_new.CalulateProfit(amount, profit, profit_type);
 
-            tr.find('.td-price').find('input').val(_product_function.Comma(amount - profit - profit_supplier_value))
-        }
+        var price = amount - profit_value - profit_supplier_value
+        tr.find('.td-price').find('input').val(_product_function.Comma(price <= 0 ? 0 : price))
+
     },
+
+    RenderSingleAmountData: function () {
+        var amount = isNaN(parseFloat($('#main-amount').find('input').val().replaceAll(',', ''))) ? 0 : parseFloat($('#main-amount').find('input').val().replaceAll(',', ''))
+
+        var profit_type = $('#main-profit-value-type select').find(':selected').val()
+        var profit = isNaN(parseFloat($('#main-profit-value input').val().replaceAll(',', ''))) ? 0 : parseFloat($('#main-profit-value input').val().replaceAll(',', ''))
+        var profit_value = product_detail_new.CalulateProfit(amount, profit, profit_type);
+
+        var profit_supplier_type = $('#profit_supplier-type select').find(':selected').val()
+        var profit_supplier = isNaN(parseFloat($('#profit_supplier input').val().replaceAll(',', ''))) ? 0 : parseFloat($('#profit_supplier input').val().replaceAll(',', ''))
+        var profit_supplier_value = product_detail_new.CalulateProfit(amount, profit_supplier, profit_supplier_type);
+
+        var price = amount - profit_value - profit_supplier_value
+        $('#main-price').find('input').val(_product_function.Comma(price <= 0 ? 0 : price))
+    },
+
     ApplyAllPriceToTable: function () {
         $('#product-attributes-prices .td-amount input').val(_product_function.Comma($('#product-attributes-apply .td-amount input').val()))
         $('#product-attributes-prices .td-profit input').val(_product_function.Comma($('#product-attributes-apply .td-profit input').val()))
@@ -1043,25 +1056,32 @@ var product_detail_new = {
         $('#product-attributes-prices .main-profit-value input').val($('#product-attributes-apply .main-profit-value input').val()).trigger('change')
         $('#product-attributes-prices .main-profit-value-type select').val($('#product-attributes-apply .main-profit-value-type select').find(':selected').val())
         var amount = isNaN(parseFloat($('#product-attributes-apply .td-amount input').val().replaceAll(',', ''))) ? 0 : parseFloat($('#product-attributes-apply .td-amount input').val().replaceAll(',', ''))
-        var profit = isNaN(parseFloat($('#product-attributes-apply .td-profit-vnd input').val().replaceAll(',', ''))) ? 0 : parseFloat($('#product-attributes-apply .td-profit input').val().replaceAll(',', ''))
-        var value = $('#product-attributes-apply .main-profit-value-type select').find(':selected').val()
+       // var profit = isNaN(parseFloat($('#product-attributes-apply .td-profit-vnd input').val().replaceAll(',', ''))) ? 0 : parseFloat($('#product-attributes-apply .td-profit input').val().replaceAll(',', ''))
+        //var value = $('#product-attributes-apply .main-profit-value-type select').find(':selected').val()
 
-        switch (value) {
-            case '0': {
-                $('#product-attributes-prices .td-profit-vnd').show()
-                $('#product-attributes-prices .main-profit-value').hide()
-            } break;
-            case '1': {
-                $('#product-attributes-prices .td-profit-vnd').hide()
-                $('#product-attributes-prices .main-profit-value').show()
-            } break;
-        }
+        //switch (value) {
+        //    case '0': {
+        //        $('#product-attributes-prices .td-profit-vnd').show()
+        //        $('#product-attributes-prices .main-profit-value').hide()
+        //    } break;
+        //    case '1': {
+        //        $('#product-attributes-prices .td-profit-vnd').hide()
+        //        $('#product-attributes-prices .main-profit-value').show()
+        //    } break;
+        //}
+        var profit_type = $('#product-attributes-apply .main-profit-value-type select').find(':selected').val()
+        var profit = isNaN(parseFloat($('#product-attributes-apply .main-profit-value input').val().replaceAll(',', ''))) ? 0 : parseFloat($('#product-attributes-apply .main-profit-value input').val().replaceAll(',', ''))
+        var profit_value = product_detail_new.CalulateProfit(amount, profit, profit_type);
+        $('#product-attributes-prices .main-profit-value input').val(_product_function.Comma(profit)).trigger('change')
+        $('#product-attributes-prices .main-profit-value-type select').val(profit_type).trigger('change')
+
         var profit_supplier_type = $('#product-attributes-apply .profit-supplier-type select').find(':selected').val()
-        var profit_supplier = $('#product-attributes-apply .profit-supplier input').val()
+
+        var profit_supplier = isNaN(parseFloat($('#product-attributes-apply .profit-supplier input').val().replaceAll(',', ''))) ? 0 : parseFloat($('#product-attributes-apply .profit-supplier input').val().replaceAll(',', ''))
         var profit_supplier_value = product_detail_new.CalulateProfit(amount, profit_supplier, profit_supplier_type);
         $('#product-attributes-prices .profit-supplier input').val(_product_function.Comma(profit_supplier)).trigger('change')
         $('#product-attributes-prices .profit-supplier-type select').val(profit_supplier_type).trigger('change')
-        $('#product-attributes-prices .td-price input').val(_product_function.Comma(amount - profit - profit_supplier_value))
+        $('#product-attributes-prices .td-price input').val(_product_function.Comma(amount - profit_value - profit_supplier_value))
 
     },
     Summit: function () {

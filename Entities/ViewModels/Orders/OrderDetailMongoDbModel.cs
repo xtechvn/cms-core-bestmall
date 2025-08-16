@@ -47,6 +47,7 @@ namespace Entities.ViewModels.Orders
         public double? total_amount_product { get; set; }
         public List<OrderDetailMongoDbVoucherApply>? voucher_apply { get; set; }
         public List<OrderDetailMongoDbDelivery>? delivery_order { get; set; }
+        public double? profit_vnpay { get; set; }
 
     }
     public class OrderDetailMongoDbVoucherApply

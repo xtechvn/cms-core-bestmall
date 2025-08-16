@@ -621,7 +621,7 @@
                                     </td>
                                     <td class="td-amount">
                                         <div class="form-group mb-0 price">
-                                            <input type="text" class="form-control input-price" placeholder="Giá bán">
+                                            <input type="text" class="form-control input-price" placeholder="Giá niêm yết">
                                             <span class="note">đ</span>
                                         </div>
                                     </td>
@@ -1100,6 +1100,20 @@
 
     <div id="other-information" class="box-info bg-white p-3 mb-3">
         <h5 class="title-box mb-2 text-uppercase">Thông tin khác</h5>
+        <div id="profit-affiliate" class="row">
+            <div class="col-md-6">
+                <div class="item flex flex-lg-nowrap gap10 mb-2 w-100">
+                    <label class="label">Số phần trăm triết khấu lợi nhuận Affiliate</label>
+                    <div class="wrap_input">
+                        <div class="form-group mb-0 price">
+                            <input type="text" class="form-control input-price" placeholder="0" value="@(product != null && product.profit_affliate != null && product.profit_affliate > 0 ? ((int)product.profit_affliate).ToString("N0", nfi) : "0")">
+                            <span class="note">%</span>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="row">
             <div class="col-md-6">
                 <div class="item flex flex-lg-nowrap gap10 mb-2 w-100">
@@ -1171,16 +1185,10 @@
                 </div>
             </div>
         </div>
+        
         <div class="row">
             <div class="col-md-6">
-                <div id="profit-affiliate" class="item flex flex-lg-nowrap gap10 mb-2 w-100">
-                    <label class="label">Số phần trăm triết khấu lợi nhuận Affiliate</label>
-                    <div class="wrap_input">
-                        <div class="form-group namesp">
-                            <input type="text" class="form-control input-price" placeholder="0" value="@(product != null && product.profit_affliate != null && product.profit_affliate > 0 ? ((int)product.profit_affliate).ToString("N0", nfi) : "0")">
-                        </div>
-                    </div>
-                </div>
+               
                 <div id="total-sold" class="item flex flex-lg-nowrap gap10 mb-2 w-100">
                     <label class="label">Số lượng sản phẩm đã bán</label>
                     <div class="wrap_input">
