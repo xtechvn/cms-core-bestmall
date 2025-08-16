@@ -172,5 +172,10 @@ namespace Repositories.Repositories
         {
             return  _AllCodeDAL.DeleteByType(type);
         }
+        public bool Excute(string command)
+        {
+            return _AllCodeDAL.Excute(command);
+        }
+
     }
 }

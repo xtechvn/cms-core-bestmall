@@ -4,8 +4,19 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     Voucher voucher = (Voucher)ViewBag.Detail;
     Supplier supplier = (Supplier)ViewBag.Supplier;
+    List<Client> clients = (List<Client>)ViewBag.Client;
 
 }
+<style>
+    .select2-selection__rendered {
+        list-style: none !important;
+        padding-left: 0 !important; /* tránh lệch */
+    }
+
+        .select2-selection__rendered li {
+            list-style: none !important;
+        }
+</style>
 <div class="add-product">
     <input id="voucher-id" style="display:none;" value="@((voucher == null  || voucher.Id <= 0) ? "0" : voucher.Id)" />
 
@@ -82,7 +93,25 @@
                 <p class="mt-1 text-secondary">Nhà cung cấp áp dụng</p>
             </div>
         </div>
+        <div class="item flex flex-lg-nowrap gap10 mb-2 w-100" >
+            <label class="label">Khách hàng áp dụng</label>
+            <div class="wrap_input">
+                <div class="form-group mb-0 price">
+                    <select id="voucher-GroupUserPriority" class="select2 w-100" multiple>
+                        @if (clients != null && clients.Count > 0)
+                        {
+                            foreach(var c in clients)
+                            {
+                                <option value="@c.Id" selected>@c.ClientName - @c.Email - @c.Phone </option>
+                            }
 
+                        }
+                    </select>
+
+                </div>
+                <p class="mt-1 text-secondary">Nhà cung cấp áp dụng</p>
+            </div>
+        </div>
         <div class="item flex flex-lg-nowrap gap10 mb-2 w-100">
             <label class="label">Bật / Tắt</label>
             <div class="wrap_input">
@@ -191,12 +220,12 @@
                     <div class="form-group mb-0 price w-100">
                         @if (voucher == null ||voucher.Unit == null || (voucher != null && voucher.Unit != null && voucher.Unit.Trim().ToLower() == "vnd"))
                         {
-                            <input id="voucher-price_sales-vnd" type="text" class="form-control" placeholder="Nhập số tiền" value="@((voucher == null || voucher.PriceSales == null || voucher.PriceSales <= 0) ? "0" : (Convert.ToDouble(voucher.PriceSales)).ToString("N0"))">
+                            <input id="voucher-price_sales-vnd" type="text" class="form-control input-price" placeholder="Nhập số tiền" value="@((voucher == null || voucher.PriceSales == null || voucher.PriceSales <= 0) ? "0" : (Convert.ToDouble(voucher.PriceSales)).ToString("N0"))">
 
                         }
                         else
                         {
-                            <input id="voucher-price_sales-vnd" type="text" class="form-control" placeholder="Nhập số tiền" value="0">
+                            <input id="voucher-price_sales-vnd" type="text" class="form-control input-price" placeholder="Nhập số tiền" value="0">
                         }
                         <span class="note">đ</span>
                     </div>
@@ -215,12 +244,12 @@
                     <div class="form-group mb-0 price mr-3 w-100">
                         @if ((voucher != null && voucher.Unit != null && voucher.Unit.Trim().ToLower() == "percent"))
                         {
-                            <input id="voucher-price_sales-percent" type="text" class="form-control" placeholder="Nhập %" value="@((voucher == null || voucher.PriceSales == null || voucher.PriceSales <= 0) ? "0" : (Convert.ToDouble(voucher.PriceSales)).ToString("N0"))">
+                            <input id="voucher-price_sales-percent" type="text" class="form-control input-price" placeholder="Nhập %" value="@((voucher == null || voucher.PriceSales == null || voucher.PriceSales <= 0) ? "0" : (Convert.ToDouble(voucher.PriceSales)).ToString("N0"))">
 
                         }
                         else
                         {
-                            <input id="voucher-price_sales-percent" type="text" class="form-control" placeholder="Nhập %" value="0">
+                            <input id="voucher-price_sales-percent" type="text" class="form-control input-price" placeholder="Nhập %" value="0">
                         }
                         <span class="note">%</span>
                     </div>
@@ -232,9 +261,18 @@
             <label class="label">Tổng lượt sử dụng tối đa</label>
             <div class="wrap_input">
                 <div class="form-group mb-0">
-                    <input id="voucher-limitUse-vnd" type="text" class="form-control" placeholder="Tổng lượt sử dụng tối đa" value="@((voucher == null || voucher.LimitUse == null || voucher.LimitUse <= 0) ? "0" : (voucher.LimitUse).ToString("N0"))">
+                    <input id="voucher-limitUse-vnd" type="text" class="form-control input-price" placeholder="Tổng lượt sử dụng tối đa" value="@((voucher == null || voucher.LimitUse == null || voucher.LimitUse <= 0) ? "0" : (voucher.LimitUse).ToString("N0"))">
                 </div>
                 <p class="mt-1 text-secondary">Tổng số Mã giảm giá có thể sử dụng</p>
+            </div>
+        </div>
+        <div class="item flex flex-lg-nowrap gap10 mb-2 w-100" style="@((voucher != null && voucher.IsLimitVoucher == true) ? "" : "display:none;")">
+            <label class="label">Giá trị đơn hàng tối thiểu</label>
+            <div class="wrap_input">
+                <div class="form-group mb-0">
+                    <input id="voucher-min-product-amount" type="text" class="form-control input-price" placeholder="Giá trị đơn hàng tối thiểu" value="@((voucher == null || voucher.LimitTotalDiscount == null || voucher.LimitTotalDiscount <= 0) ? "0" : ((double)voucher.LimitTotalDiscount).ToString("N0"))">
+                </div>
+                <p class="mt-1 text-secondary">SGiá trị đơn hàng tối thiểu để áp dụng được mã giảm giá</p>
             </div>
         </div>
         <div class="item flex flex-lg-nowrap gap10 mb-2 w-100">
@@ -277,11 +315,12 @@
             <label class="label">Số tiền tối đa được giảm</label>
             <div class="wrap_input">
                 <div class="form-group mb-0">
-                    <input id="voucher-limit_total_discount-vnd" type="text" class="form-control" placeholder="Số tiền tối đa được giảm" value="@((voucher == null || voucher.LimitTotalDiscount == null || voucher.LimitTotalDiscount <= 0) ? "0" : ((double)voucher.LimitTotalDiscount).ToString("N0"))">
+                    <input id="voucher-limit_total_discount-vnd" type="text" class="form-control input-price" placeholder="Số tiền tối đa được giảm" value="@((voucher == null || voucher.LimitTotalDiscount == null || voucher.LimitTotalDiscount <= 0) ? "0" : ((double)voucher.LimitTotalDiscount).ToString("N0"))">
                 </div>
                 <p class="mt-1 text-secondary">Số tiền tối đa có thể trừ theo mã</p>
             </div>
         </div>
+        
     </div>
     <div class="box-info bg-white p-3 mb-3 ">
         <div class="item flex flex-lg-nowrap gap10 mb-2 w-100">

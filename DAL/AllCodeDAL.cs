@@ -124,6 +124,7 @@ namespace DAL
                 return null;
             }
         }
+        
         public async Task<AllCode> GetById(int id)
         {
             try
@@ -312,6 +313,21 @@ namespace DAL
                 LogHelper.InsertLogTelegram("GetByType - AllCodeDAL. " + ex);
             }
             return false;
+        }
+        public bool Excute(string command)
+        {
+            try
+            {
+                using (var context = new EntityDataContext(_connection))
+                {
+                    context.Database.ExecuteSqlRaw(command);
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
         }
     }
 }

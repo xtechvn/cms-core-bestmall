@@ -590,19 +590,34 @@
                             <tbody class="w-100 " style=" display: contents; ">
                                 <tr class="w-100 ">
 
-                                    <td class="td-profit" style="display:flex;">
-                                        <div class="form-group mb-0 td-profit-vnd price" style="margin-bottom:0!important;">
-                                            <input type="text" class="form-control input-price" placeholder="Lợi nhuận" value="">
-                                        </div>
-                                        <div class="form-group main-profit-value price " style="display:none;margin-bottom:0!important;">
-                                            <input type="text" class="form-control input-price" placeholder="Lợi nhuận" value="">
-                                        </div>
-                                        <div class="form-group main-profit-value-type price" style="width:90px !important;margin-bottom:0!important;">
-                                            <select class="select2 w-100 form-control" style="width:100%">
-                                                <option value="0" selected>VNĐ</option>
-                                                <option value="1">%</option>
-                                            </select>
-                                        </div>
+                                    <td class="td-profit">
+                                       <div style="display:flex;">
+                                            <div class="form-group mb-0 td-profit-vnd price" style="margin-bottom:0!important;">
+                                                <input type="text" class="form-control input-price" placeholder="Triết khấu lợi nhuận (vnd)" value="">
+                                            </div>
+                                            <div class="form-group main-profit-value price " style="display:none;margin-bottom:0!important;">
+                                                <input type="text" class="form-control input-price" placeholder="Triết khấu lợi nhuận (%)" value="">
+                                            </div>
+                                            <div class="form-group main-profit-value-type price" style="width:90px !important;margin-bottom:0!important;">
+                                                <select class="select2 w-100 form-control" style="width:100%">
+                                                    <option value="0" selected>VNĐ</option>
+                                                    <option value="1">%</option>
+                                                </select>
+                                            </div>
+                                       </div>
+                                    </td>
+                                    <td class="td-profit-supplier" >
+                                       <div style="display:flex;">
+                                            <div class="form-group profit-supplier price " style="margin-bottom:0!important;">
+                                                <input type="text" class="form-control input-price" placeholder="Triết khấu của nhà cung cấp" value="">
+                                            </div>
+                                            <div class="form-group profit-supplier-type price" style="width:90px !important;margin-bottom:0!important;">
+                                                <select class="select2 w-100 form-control" style="width:100%">
+                                                    <option value="0" selected>VNĐ</option>
+                                                    <option value="1">%</option>
+                                                </select>
+                                            </div>
+                                       </div>
                                     </td>
                                     <td class="td-amount">
                                         <div class="form-group mb-0 price">
@@ -673,7 +688,7 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="item flex flex-lg-nowrap gap10 mb-2 w-100 product-single-profit">
-                        <label class="label">Lợi nhuận <sup class="red">*</sup></label>
+                        <label class="label">Triết khấu lợi nhuận </label>
                         <div class="wrap_input" style="display:flex;">
                             <div id="main-profit" class="form-group price" style="@(product != null && (product.profit_value_type == null || product.profit_value_type==0)?"":"display:none;")">
                                 <input type="text" class="form-control input-price" placeholder="Nhập giá" value="@(product==null ?"0":product.profit.ToString("N0",nfi))">
@@ -712,8 +727,45 @@
             </div>
             <div class="row">
                 <div class="col-md-6">
+                    <div class="item flex flex-lg-nowrap gap10 mb-2 w-100 product-single-profit">
+                        <label class="label">Triết khấu nhà cung cấp</label>
+                        <div class="wrap_input" style="display:flex;">
+                            <div id="profit_supplier" class="form-group price">
+                                <input type="text" class="form-control input-price" placeholder="Triết khấu nhà cung cấp" value="@(product == null || product.profit_supplier == null || product.profit_supplier<=0 ? "0" : ((float)product.profit_supplier).ToString("N0", nfi))">
+                            </div>
+                            <div id="profit_supplier-type" class="form-group" style="width:90px !important;">
+                                <select class="select2 w-100 form-control" style="width:100%">
+                                    @{
+                                        if (product == null || product.profit_value_type == 0)
+                                        {
+                                            <option value="0" selected>VNĐ</option>
+
+                                        }
+                                        else
+                                        {
+                                            <option value="0" selected>VNĐ</option>
+                                        }
+                                        if (product != null && product.profit_value_type == 1)
+                                        {
+                                            <option value="1" selected>%</option>
+
+                                        }
+                                        else
+                                        {
+                                            <option value="1">%</option>
+                                        }
+                                    }
+
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
                     <div class="item flex flex-lg-nowrap gap10 mb-2 w-100">
-                        <label class="label">Giá bán</label>
+                        <label class="label">Giá niêm yết</label>
                         <div class="wrap_input">
                             <div id="main-amount" class="form-group price product-single-amount">
                                 <input type="text" class="form-control input-price" placeholder="Nhập giá" value="@(product==null ?"0":product.amount.ToString("N0",nfi))" >
@@ -836,7 +888,7 @@
 
             </div>
         </div>
-        <div class="box-input-ship" style="@(is_one_weight == true ? "" : "display:none;"))">
+        <div class="box-input-ship" style="@(is_one_weight == true ? "" : "display:none;")">
             <div class="item flex flex-lg-nowrap gap10 mb-2 w-100">
                 <label class="label">Cân nặng<sup class="red">*</sup></label>
                 <div class="wrap_input">
@@ -852,7 +904,7 @@
                 </div>
             </div>
             <div class="item flex flex-lg-nowrap gap10 mb-2 w-100">
-                <label class="label">Kích thước đóng gói <sup class="red">*</sup></label>
+                <label class="label">Kích thước đóng gói @* <sup class="red">*</sup> *@</label>
                 <div class="wrap_input box-kichthuoc">
                     <div class="row">
                         <div class="col-lg-3 col-md-4">

@@ -11,6 +11,7 @@ var voucher_detail = {
         voucher_detail.Select2Group($('#voucher-campaign_id'))
         voucher_detail.SingleDateTimePicker($('#voucher-from-date'))
         voucher_detail.SingleDateTimePicker($('#voucher-to-date'))
+        voucher_detail.ClientSelect2($('#voucher-GroupUserPriority'))
     },
     DynamicBind: function () {
         $('body').on('change', 'input[name="voucher-rule-type"]', function () {
@@ -341,9 +342,9 @@ var voucher_detail = {
         if (code.length === 0) {
             isValid = false;
             errors.push("Vui lòng nhập mã voucher");
-        } else if (!/^[A-Z0-9]+$/.test(code)) {
+        } else if (!/^[A-Za-z0-9]+$/.test(code)) {
             isValid = false;
-            errors.push("Mã voucher chỉ gồm chữ in hoa A-Z hoặc số 0-9");
+            errors.push("Mã voucher chỉ gồm chữ không dấu hoặc số");
         }
 
         // Thời gian sử dụng
@@ -357,15 +358,15 @@ var voucher_detail = {
         // Giá trị giảm
         let unit = $('input[name="voucher-unit"]:checked').val();
         let priceSales = unit === 'vnd'
-            ? parseFloat($('#voucher-price_sales-vnd').val())
-            : parseFloat($('#voucher-price_sales-percent').val());
+            ? parseFloat($('#voucher-price_sales-vnd').val().replaceAll(',', ''))
+            : parseFloat($('#voucher-price_sales-percent').val().replaceAll(',', ''));
         if (isNaN(priceSales) || priceSales <= 0) {
             isValid = false;
             errors.push("Vui lòng nhập mức giảm hợp lệ");
         }
 
         // Tổng lượt sử dụng
-        let limitUse = parseInt($('#voucher-limitUse-vnd').val());
+        let limitUse = parseInt($('#voucher-limitUse-vnd').val().replaceAll(',', ''));
         if (isNaN(limitUse) || limitUse <= 0) {
             isValid = false;
             errors.push("Vui lòng nhập tổng lượt sử dụng hợp lệ");
@@ -374,7 +375,7 @@ var voucher_detail = {
         // Nếu có giới hạn số tiền giảm
         let isLimitVoucher = $('input[name="voucher-is_limit_voucher"]:checked').val() === "true";
         if (isLimitVoucher) {
-            let limitTotalDiscount = parseFloat($('#voucher-limit_total_discount-vnd').val());
+            let limitTotalDiscount = parseFloat($('#voucher-limit_total_discount-vnd').val().replaceAll(',', ''));
             if (isNaN(limitTotalDiscount) || limitTotalDiscount <= 0) {
                 isValid = false;
                 errors.push("Vui lòng nhập số tiền tối đa được giảm hợp lệ");
@@ -391,6 +392,7 @@ var voucher_detail = {
         let isLimitVoucher = $('input[name="voucher-is_limit_voucher"]:checked').val() === "true";
         var from_date = $('#voucher-from-date').data('daterangepicker').startDate._d
         var to_date = $('#voucher-to-date').data('daterangepicker').startDate._d
+        var group_user = $('#voucher-GroupUserPriority').val() || []
         var input= {
             Id: $('#voucher-id').val(),
             Code: $('#voucher-code').val().trim(),
@@ -402,7 +404,7 @@ var voucher_detail = {
                 : parseFloat($('#voucher-price_sales-percent').val().replaceAll(',', '')) || 0,
             Unit: unit,
             RuleType: parseInt($('input[name="voucher-rule-type"]:checked').val()) || 0,
-            GroupUserPriority: null,
+            GroupUserPriority: JSON.stringify(group_user),
             IsPublic: $('#voucher-is-public').is(':checked'),
             Description: $('#voucher-description').val(),
             IsLimitVoucher: isLimitVoucher,
@@ -411,7 +413,7 @@ var voucher_detail = {
                 : null,
             StoreApply: $('#voucher-store_apply').val(),
             IsMaxPriceProduct: null,
-            MinTotalAmount: null,
+            MinTotalAmount: parseFloat($('#voucher-min-product-amount').val().replaceAll(',', '')) || 0,
             CampaignId: $('#voucher-campaign_id').val() || null,
             Name: $('#voucher-name').val().trim()
         };
@@ -431,5 +433,36 @@ var voucher_detail = {
     GetDayTextDotNet: function (date) {
         var text = ("0" + (date.getMonth() + 1)).slice(-2) + '/' + ("0" + date.getDate()).slice(-2) + '/' + date.getFullYear() + ' ' + ("0" + date.getHours()).slice(-2) + ':' + ("0" + date.getMinutes()).slice(-2);
         return text;
+    },
+    ClientSelect2: function (element) {
+        element.select2({
+            theme: 'bootstrap4',
+            placeholder: "Tên KH, Điện Thoại, Email",
+            hintText: "Nhập từ khóa tìm kiếm",
+            searchingText: "Đang tìm kiếm...",
+            ajax: {
+                url: "/client/ClientSuggestion",
+                type: "post",
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    var query = {
+                        txt_search: params.term,
+                    }
+                    return query;
+                },
+                processResults: function (response) {
+                    return {
+                        results: $.map(response.data, function (item) {
+                            return {
+                                text: item.clientName + ' - ' + item.email + ' - ' + item.phone,
+                                id: item.id,
+                            }
+                        })
+                    };
+                },
+                cache: true
+            }
+        });
     },
 }

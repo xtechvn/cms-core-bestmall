@@ -153,5 +153,17 @@ namespace Repositories.Repositories
                 return null;
             }
         }
+        public  List<Client> GetClientByIds(List<long> clientIds)
+        {
+            try
+            {
+                return  _ClientDAL.GetClientByIds(clientIds);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("GetClientByIds - ClientRepository: " + ex);
+                return null;
+            }
+        }
     }
 }
