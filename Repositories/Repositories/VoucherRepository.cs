@@ -33,13 +33,13 @@ namespace Repositories.Repositories
             voucherDAL = new VoucherDAL(dataBaseConfig.Value.SqlServer.ConnectionString);
 
         }
-        public async Task<GenericViewModel<Voucher>> GetVoucherPagingList(string keyword, int status, int pageIndex, int pageSize)
+        public async Task<GenericViewModel<Voucher>> GetVoucherPagingList(string keyword, int status, int pageIndex, int pageSize, long? client_id = null)
         {
             var model = new GenericViewModel<Voucher>();
 
             try
             {
-                DataTable dt = await voucherDAL.GetVoucherPagingList(keyword,status,pageIndex,pageSize);
+                DataTable dt = await voucherDAL.GetVoucherPagingList(keyword,status,pageIndex,pageSize, client_id);
                 if (dt != null && dt.Rows.Count > 0)
                 {
                     model.ListData = (from row in dt.AsEnumerable()
@@ -76,11 +76,11 @@ namespace Repositories.Repositories
             }
             return model;
         }
-        public async Task<long> InsertVoucher(Voucher model)
+        public async Task<int> InsertVoucher(Voucher model)
         {
             return await voucherDAL.InsertVoucher(model);
         }
-        public async Task<long> UpdateVoucher(Voucher model)
+        public async Task<int> UpdateVoucher(Voucher model)
         {
             return await voucherDAL.UpdateVoucher(model);
         }

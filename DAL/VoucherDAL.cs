@@ -89,7 +89,7 @@ namespace DAL
         /// <summary>
         /// Lấy danh sách voucher có phân trang và tìm kiếm.
         /// </summary>
-        public async Task<DataTable> GetVoucherPagingList(string keyword, int status, int pageIndex, int pageSize)
+        public async Task<DataTable> GetVoucherPagingList(string keyword, int status, int pageIndex, int pageSize, long? client_id=null)
         {
             try
             {
@@ -100,6 +100,8 @@ namespace DAL
                     new SqlParameter("@is_public",  (object)DBNull.Value),
                     new SqlParameter("@page_index", pageIndex),
                     new SqlParameter("@page_size", pageSize),
+                    new SqlParameter("@client_id", client_id??(object)DBNull.Value)
+
                 ];
                 return _DbWorker.GetDataTable("SP_GetListVoucher", objParam);
             }
@@ -113,7 +115,7 @@ namespace DAL
         /// <summary>
         /// Thêm mới một voucher.
         /// </summary>
-        public async Task<long> InsertVoucher(Voucher model)
+        public async Task<int> InsertVoucher(Voucher model)
         {
             try
             {
@@ -149,7 +151,7 @@ namespace DAL
         /// <summary>
         /// Cập nhật thông tin của một voucher.
         /// </summary>
-        public async Task<long> UpdateVoucher(Voucher model)
+        public async Task<int> UpdateVoucher(Voucher model)
         {
             try
             {
