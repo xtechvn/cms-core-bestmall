@@ -197,6 +197,24 @@ namespace WEB.CMS.Controllers.Homepage
 
                     }
                 }
+                if (vnpay != null )
+                {
+                    vnpay.Type = "PROFIT_VNPAY";
+                    vnpay.UpdateTime = DateTime.Now;
+                    vnpay.CreateDate = DateTime.Now;
+                    vnpay.CreatedBy = _UserId;
+                    vnpay.UpdatedBy = _UserId;
+                    if (vnpay.Description == null) vnpay.Description = "";
+                    if (vnpay.Id > 0)
+                    {
+                        await _allCodeRepository.Update(vnpay);
+                    }
+                    else
+                    {
+                        await _allCodeRepository.Create(vnpay);
+
+                    }
+                }
                 _allCodeRepository.DeleteEmptyAllcodeDescription("HOMEPAGE_TRENDINGSUB");
                 _allCodeRepository.DeleteEmptyAllcodeDescription("HOMEPAGE_TRENDINGMAIN");
                 _allCodeRepository.DeleteEmptyAllcodeDescription("HOMEPAGE_SLIDE");

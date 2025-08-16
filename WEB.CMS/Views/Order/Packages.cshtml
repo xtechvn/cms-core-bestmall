@@ -22,13 +22,14 @@
                     <th>STT</th>
                     <th style="width:350px">Tên sản phẩm</th>
                     <th style="width:150px">Giá nhập</th>
-                    <th style="width: 150px;">Giá bán sau khi Sale</th>
+                    <th style="width: 150px;">Giá bán cuối sau khi Sale</th>
                     <th style="width: 50px;">SL</th>
                     <th>
                         Thành tiền giá nhập
                     </th>
                     <th>
-                        Thành tiền sau khi Sale
+                        Thành tiền
+                        cuối sau khi Sale
                     </th>
                     <th>Lợi nhuận tạm tính sau sale</th>
                     <th>Lợi nhuận ròng sau sale</th>
@@ -67,7 +68,7 @@
                             <td>@item.TotalPrice.ToString("N0") đ</td>
                             <td>@item.TotalAmount.ToString("N0") đ</td>
                             <td>@item.TotalProfit.ToString("N0") đ</td>
-                            <td>@item.FinalProfit.ToString("N0") đ</td>
+                            <td>@item.TotalProfit.ToString("N0") đ</td>
 
                         </tr>
                     }
