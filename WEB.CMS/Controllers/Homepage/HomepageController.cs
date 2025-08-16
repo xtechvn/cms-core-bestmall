@@ -4,6 +4,7 @@ using Caching.RedisWorker;
 using Entities.Models;
 using Microsoft.AspNetCore.Mvc;
 using Repositories.IRepositories;
+using System.Reflection;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Utilities;
@@ -53,6 +54,7 @@ namespace WEB.CMS.Controllers.Homepage
             int max_sub = 2;
             ViewBag.BannerSlide =  new List<AllCode>();
             ViewBag.BannerSub =  new List<AllCode>();
+            ViewBag.VnpayPercent = new AllCode();
             ViewBag.MaxSlide = max_slide;
             ViewBag.MaxSub = max_sub;
             ViewBag.MaxTrending = 4;
@@ -65,7 +67,10 @@ namespace WEB.CMS.Controllers.Homepage
                 ViewBag.BannerSub = _allCodeRepository.GetListByType("HOMEPAGE_SUBBANNER");
                 ViewBag.BuyingTrendMain = _allCodeRepository.GetListByType("HOMEPAGE_TRENDINGMAIN");
                 ViewBag.BuyingTrendSub = _allCodeRepository.GetListByType("HOMEPAGE_TRENDINGSUB");
-
+                var data = _allCodeRepository.GetByType("PROFIT_VNPAY");
+                if (data != null && data.Id>0) {
+                    ViewBag.VnpayPercent = data;
+                }
             }
             catch
             {
@@ -74,7 +79,7 @@ namespace WEB.CMS.Controllers.Homepage
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> Summit(List<AllCode> banner_main, List<AllCode> banner_sub, List<AllCode> trending_main = null, List<AllCode> trending_sub = null)
+        public async Task<IActionResult> Summit(List<AllCode> banner_main, List<AllCode> banner_sub, List<AllCode> trending_main = null, List<AllCode> trending_sub = null, AllCode vnpay = null)
         {
 
             try
@@ -155,10 +160,29 @@ namespace WEB.CMS.Controllers.Homepage
 
                     }
                 }
+                if (vnpay != null )
+                {
+                    vnpay.Type = "PROFIT_VNPAY";
+                    vnpay.UpdateTime = DateTime.Now;
+                    vnpay.CreateDate = DateTime.Now;
+                    vnpay.CreatedBy = _UserId;
+                    vnpay.UpdatedBy = _UserId;
+                    if (vnpay.Description == null) vnpay.Description = "";
+                    if (vnpay.Id > 0)
+                    {
+                        await _allCodeRepository.Update(vnpay);
+                    }
+                    else
+                    {
+                        await _allCodeRepository.Create(vnpay);
+
+                    }
+                }
                 _allCodeRepository.DeleteEmptyAllcodeDescription("HOMEPAGE_TRENDINGSUB");
                 _allCodeRepository.DeleteEmptyAllcodeDescription("HOMEPAGE_TRENDINGMAIN");
                 _allCodeRepository.DeleteEmptyAllcodeDescription("HOMEPAGE_SLIDE");
                 _allCodeRepository.DeleteEmptyAllcodeDescription("HOMEPAGE_SUBBANNER");
+                _allCodeRepository.DeleteEmptyAllcodeDescription("PROFIT_VNPAY");
 
                 _redisConn.clear(CacheName.HOMEPAGE_SLIDE, Convert.ToInt32(_configuration["Redis:Database:db_common"]));
                 return Ok(new

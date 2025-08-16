@@ -544,49 +544,49 @@ var product_detail_new = {
         });
 
 
-        $('body').on('select2:select', '#main-profit-value-type select', function () {
-            var element = $(this)
-            var value = element.find(':selected').val()
-            switch (value) {
-                case '0': {
-                    $('#main-profit').show()
-                    $('#main-profit-value').hide()
-                } break;
-                case '1': {
-                    $('#main-profit').hide()
-                    $('#main-profit-value').show()
-                } break;
-            }
-        });
-        $('body').on('select2:select', '#product-attributes-apply .main-profit-value-type select', function () {
-            var element = $(this)
-            var value = element.find(':selected').val()
-            switch (value) {
-                case '0': {
-                    $('#product-attributes-apply .td-profit-vnd').show()
-                    $('#product-attributes-apply .main-profit-value').hide()
-                } break;
-                case '1': {
-                    $('#product-attributes-apply .td-profit-vnd').hide()
-                    $('#product-attributes-apply .main-profit-value').show()
-                } break;
-            }
-        });
-        $('body').on('change', '#product-attributes-prices .main-profit-value-type select', function () {
-            var element = $(this)
-            var value = element.find(':selected').val()
-            var row = element.closest('td')
-            switch (value) {
-                case '0': {
-                    row.find('.td-profit-vnd').show()
-                    row.find('.main-profit-value').hide()
-                } break;
-                case '1': {
-                    row.find('.td-profit-vnd').hide()
-                    row.find('.main-profit-value').show()
-                } break;
-            }
-        });
+        //$('body').on('select2:select', '#main-profit-value-type select', function () {
+        //    var element = $(this)
+        //    var value = element.find(':selected').val()
+        //    switch (value) {
+        //        case '0': {
+        //            $('#main-profit').show()
+        //            $('#main-profit-value').hide()
+        //        } break;
+        //        case '1': {
+        //            $('#main-profit').hide()
+        //            $('#main-profit-value').show()
+        //        } break;
+        //    }
+        //});
+        //$('body').on('select2:select', '#product-attributes-apply .main-profit-value-type select', function () {
+        //    var element = $(this)
+        //    var value = element.find(':selected').val()
+        //    switch (value) {
+        //        case '0': {
+        //            $('#product-attributes-apply .td-profit-vnd').show()
+        //            $('#product-attributes-apply .main-profit-value').hide()
+        //        } break;
+        //        case '1': {
+        //            $('#product-attributes-apply .td-profit-vnd').hide()
+        //            $('#product-attributes-apply .main-profit-value').show()
+        //        } break;
+        //    }
+        //});
+        //$('body').on('change', '#product-attributes-prices .main-profit-value-type select', function () {
+        //    var element = $(this)
+        //    var value = element.find(':selected').val()
+        //    var row = element.closest('td')
+        //    switch (value) {
+        //        case '0': {
+        //            row.find('.td-profit-vnd').show()
+        //            row.find('.main-profit-value').hide()
+        //        } break;
+        //        case '1': {
+        //            row.find('.td-profit-vnd').hide()
+        //            row.find('.main-profit-value').show()
+        //        } break;
+        //    }
+        //});
         $('body').on('change', '#attachment input', function (e) {
             var element = $(this)
             var parent = element.closest('.wrap_input')
@@ -1077,7 +1077,7 @@ var product_detail_new = {
             status: 1,
             code: $('#product_detail').attr('data-id') == undefined || $('#product_detail').attr('data-id').trim() == '' ? null : $('#product_detail').attr('data-id'),
             price: $('#main-price input').val() == undefined || $('#main-price input').val().trim() == '' ? 0 : parseFloat($('#main-price input').val().replaceAll(',', '')),
-            profit: $('#main-profit input').val() == undefined || $('#main-profit input').val().trim() == '' ? 0 : parseFloat($('#main-profit input').val().replaceAll(',', '')),
+           // profit: $('#main-profit input').val() == undefined || $('#main-profit input').val().trim() == '' ? 0 : parseFloat($('#main-profit input').val().replaceAll(',', '')),
             amount: $('#main-amount input').val() == undefined || $('#main-amount input').val().trim() == '' ? 0 : parseFloat($('#main-amount input').val().replaceAll(',', '')),
             discount: $('#discount input').val() == undefined || $('#discount input').val().trim() == '' ? 0 : parseFloat($('#discount input').val().replaceAll(',', '')),
             old_price: $('#old-price input').val() == undefined || $('#old-price input').val().trim() == '' ? 0 : parseFloat($('#old-price input').val().replaceAll(',', '')),
@@ -1256,7 +1256,7 @@ var product_detail_new = {
                 var var_id = element.attr('data-id')
                 if (var_id == undefined) var_id = ''
                 var price = parseFloat(element.find('.td-price').find('input').val().replaceAll(',', ''))
-                var profit = parseFloat(element.find('.td-profit-vnd').find('input').val().replaceAll(',', ''))
+                //var profit = parseFloat(element.find('.td-profit-vnd').find('input').val().replaceAll(',', ''))
                 var amount = parseFloat(element.find('.td-amount').find('input').val().replaceAll(',', ''))
                 var quanity_of_stock = parseFloat(element.find('.td-stock').find('input').val().replaceAll(',', ''))
                 var weight = parseFloat(element.find('.td-weight').find('input').val().replaceAll(',', ''))
@@ -1273,7 +1273,7 @@ var product_detail_new = {
                     _id: var_id,
                     variation_attributes: [],
                     price: (price == undefined || isNaN(price) || price <= 0) ? null : price,
-                    profit: (profit == undefined || isNaN(profit) || profit <= 0) ? null : profit,
+                    //profit: (profit == undefined || isNaN(profit) || profit <= 0) ? null : profit,
                     amount: (amount == undefined || isNaN(amount) || amount <= 0) ? null : amount,
                     quanity_of_stock: (quanity_of_stock == undefined || isNaN(quanity_of_stock) || quanity_of_stock <= 0) ? null : quanity_of_stock,
                     sku: element.find('.td-sku').find('input').val(),
@@ -1410,6 +1410,8 @@ var product_detail_new = {
         })
 
         model.flashsale_badge_type = $('#badges select').find(':selected').val()
+
+        model.profit_affliate = parseFloat($('#profit-affiliate input').val().replaceAll(',', ''))
 
         _product_function.POST('/Product/Summit', { request: model }, function (result) {
             if (result.is_success) {

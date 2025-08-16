@@ -592,11 +592,11 @@
 
                                     <td class="td-profit">
                                        <div style="display:flex;">
-                                            <div class="form-group mb-0 td-profit-vnd price" style="margin-bottom:0!important;">
+                                          @*   <div class="form-group mb-0 td-profit-vnd price" style="margin-bottom:0!important;">
                                                 <input type="text" class="form-control input-price" placeholder="Triết khấu lợi nhuận (vnd)" value="">
-                                            </div>
-                                            <div class="form-group main-profit-value price " style="display:none;margin-bottom:0!important;">
-                                                <input type="text" class="form-control input-price" placeholder="Triết khấu lợi nhuận (%)" value="">
+                                            </div> *@
+                                            <div class="form-group main-profit-value price " style="margin-bottom:0!important;">
+                                                <input type="text" class="form-control input-price" placeholder="Triết khấu lợi nhuận" value="">
                                             </div>
                                             <div class="form-group main-profit-value-type price" style="width:90px !important;margin-bottom:0!important;">
                                                 <select class="select2 w-100 form-control" style="width:100%">
@@ -690,11 +690,11 @@
                     <div class="item flex flex-lg-nowrap gap10 mb-2 w-100 product-single-profit">
                         <label class="label">Triết khấu lợi nhuận </label>
                         <div class="wrap_input" style="display:flex;">
-                            <div id="main-profit" class="form-group price" style="@(product != null && (product.profit_value_type == null || product.profit_value_type==0)?"":"display:none;")">
+                            @* <div id="main-profit" class="form-group price" style="@(product != null && (product.profit_value_type == null || product.profit_value_type==0)?"":"display:none;")">
                                 <input type="text" class="form-control input-price" placeholder="Nhập giá" value="@(product==null ?"0":product.profit.ToString("N0",nfi))">
-                            </div>
-                            <div id="main-profit-value" class="form-group price" style=" @(product != null && (product.profit_value_type == null || product.profit_value_type == 0) ? "display:none;" : "")">
-                                <input type="text" class="form-control input-price" placeholder="Nhập giá" value="@(product == null || product.profit_value == null ? "0" : ((float)product.profit_value).ToString("N0", nfi))">
+                            </div> *@
+                            <div id="main-profit-value" class="form-group price" style="">
+                                <input type="text" class="form-control input-price" placeholder="Triết khấu lợi nhuận" value="@(product == null || product.profit_value == null ? "0" : ((float)product.profit_value).ToString("N0", nfi))">
                             </div>
                             <div id="main-profit-value-type" class="form-group" style="width:90px !important;">
                                 <select class="select2 w-100 form-control" style="width:100%">
@@ -1173,6 +1173,14 @@
         </div>
         <div class="row">
             <div class="col-md-6">
+                <div id="profit-affiliate" class="item flex flex-lg-nowrap gap10 mb-2 w-100">
+                    <label class="label">Số phần trăm triết khấu lợi nhuận Affiliate</label>
+                    <div class="wrap_input">
+                        <div class="form-group namesp">
+                            <input type="text" class="form-control input-price" placeholder="0" value="@(product != null && product.profit_affliate != null && product.profit_affliate > 0 ? ((int)product.profit_affliate).ToString("N0", nfi) : "0")">
+                        </div>
+                    </div>
+                </div>
                 <div id="total-sold" class="item flex flex-lg-nowrap gap10 mb-2 w-100">
                     <label class="label">Số lượng sản phẩm đã bán</label>
                     <div class="wrap_input">
@@ -1197,6 +1205,7 @@
                         </div>
                     </div>
                 </div>
+              
             </div>
 
         </div>
