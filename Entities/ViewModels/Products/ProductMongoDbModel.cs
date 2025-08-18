@@ -91,5 +91,8 @@ namespace Entities.ViewModels.Products
         public double? amount_after_flashsale { get; set; }
         public DateTime? flash_sale_fromdate { get; set; }
         public DateTime? flash_sale_todate { get; set; }
+        public decimal? flash_sale_price_sales { get; set; }
+
+        public int? flash_sale_unit { get; set; }
     }
 }
