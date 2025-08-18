@@ -255,7 +255,7 @@ namespace DAL.StoreProcedure
             }
             catch (Exception ex)
             {
-                LogHelper.InsertLogTelegram("ExecuteNonQuery ["+procedureName+"]- DbWorker: " + ex);
+                LogHelper.InsertLogTelegram("BE ExecuteNonQuery ["+procedureName+"]- DbWorker: " + ex);
                 return -1;
             }
         }
