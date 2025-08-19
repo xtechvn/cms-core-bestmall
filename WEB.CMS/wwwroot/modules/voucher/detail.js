@@ -97,6 +97,12 @@ var voucher_detail = {
             voucher_detail.RenderStoreApplyValue()
 
         });
+        $('body').on('keyup', '.input-price', function () {
+            var element = $(this)
+            var value = parseFloat(element.val().replaceAll(',', ''))
+            if (isNaN(value)) value = 0
+            element.val(_product_function.Comma(value))
+        });
     },
     AddNewProductBuyWith: function () {
         $('#add-product-buy-with').show()
