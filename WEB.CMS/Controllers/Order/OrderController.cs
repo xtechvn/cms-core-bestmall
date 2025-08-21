@@ -1,4 +1,5 @@
 ﻿using Aspose.Cells;
+using DocumentFormat.OpenXml.Drawing.Charts;
 using Entities.Models;
 using Entities.ViewModels;
 using Entities.ViewModels.Mongo;
@@ -6,11 +7,13 @@ using Entities.ViewModels.Products;
 using ENTITIES.ViewModels.ElasticSearch;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Nest;
 using Repositories.IRepositories;
 using StackExchange.Redis;
 using System.Security.Claims;
 using Utilities;
 using Utilities.Contants;
+using WEB.Adavigo.CMS.Service;
 using WEB.CMS.Controllers.Elastic.Bussiness;
 using WEB.CMS.Customize;
 using WEB.CMS.Models.Product;
@@ -28,6 +31,7 @@ namespace WEB.CMS.Controllers
         private readonly IContractPayRepository _contractPayRepository;
         private readonly IPaymentRequestRepository _paymentRequestRepository;
         private readonly ProductDetailMongoAccess _productV2DetailMongoAccess;
+        private APIService apiService;
         private readonly ICommonRepository _commonRepository;
         private ElasticService _elasticService;
         private readonly IWebHostEnvironment _WebHostEnvironment;
@@ -47,6 +51,7 @@ namespace WEB.CMS.Controllers
             _commonRepository = commonRepository;
             _elasticService = elasticService;
             _WebHostEnvironment = webHostEnvironment;
+            apiService = new APIService(configuration, userRepository);
         }
         public IActionResult Index()
         {
@@ -89,8 +94,8 @@ namespace WEB.CMS.Controllers
             try
             {
                 ViewBag.domainImg = _configuration["DomainConfig:ImageStatic"];
-               // searchModel.pageSize = (int)pageSize;
-              //  searchModel.PageIndex = (int)currentPage;
+                // searchModel.pageSize = (int)pageSize;
+                //  searchModel.PageIndex = (int)currentPage;
                 var model = new GenericViewModel<OrderViewModel>();
                 var model2 = new TotalCountSumOrder();
                 if (searchModel.Status != null && searchModel.Status.Contains(-1))
@@ -105,7 +110,9 @@ namespace WEB.CMS.Controllers
                         item.ListProduct = await _productV2DetailMongoAccess.GetListByIds(item.ListProductId);
                     }
                 }
+
                 model2 = await _orderRepository.GetTotalCountSumOrder(searchModel);
+                //apiService.SendMessage("1", "Đăng", ((int)ActionType1.TAO_DON).ToString(), "23", "/Order/");
                 ViewBag.TotalValueOrder = new TotalValueOrder()
                 {
                     //theo All
@@ -129,7 +136,6 @@ namespace WEB.CMS.Controllers
         {
             ViewBag.orderId = orderId;
             ViewBag.editsale = false;
-            ViewBag.CarrierTypeName = "";
             try
             {
                 int _UserId = 0;
@@ -183,6 +189,7 @@ namespace WEB.CMS.Controllers
                                 ViewBag.client = UserCreateclient;
                             }
                         }
+
                         return View(dataOrder);
                     }
 
@@ -352,7 +359,7 @@ namespace WEB.CMS.Controllers
                     order.UserId = saleid > 0 ? saleid : _UserId;
                     order.UserUpdateId = _UserId;
                     order.OrderStatus = (order.OrderStatus == (int)OrderStatus.PAID) ? (int)OrderStatus.PROCESSING : order.OrderStatus;
-                  
+
                     var updated = await _orderRepository.UpdateOrder(order);
                     _elasticService.PushToQueue("SP_GetOrder", order.OrderId);
                 }
@@ -522,7 +529,7 @@ namespace WEB.CMS.Controllers
                 }
                 string FilePath = Path.Combine(_UploadDirectory, _FileName);
                 searchModel.pageSize = 500000;
-                searchModel.PageIndex = -1; 
+                searchModel.PageIndex = -1;
                 var rsPath = await _orderRepository.ExportDeposit(searchModel, FilePath);
 
                 if (!string.IsNullOrEmpty(rsPath))
