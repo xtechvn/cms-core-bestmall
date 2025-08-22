@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Configuration;
 using Repositories.IRepositories;
 using Repositories.Repositories;
+using WEB.Adavigo.CMS.Service;
 using WEB.CMS.Controllers.Elastic.Bussiness;
 using WEB.CMS.Customize;
 using WEB.CMS.Models.Product;
@@ -125,6 +126,7 @@ builder.Services.AddSingleton<SupplierESRepository>();
 builder.Services.AddSingleton<RedisConn>();
 builder.Services.AddSingleton<ManagementUser>();
 builder.Services.AddSingleton<ViettelPostService>();
+builder.Services.AddSingleton<APIService>();
 
 
 var app = builder.Build();

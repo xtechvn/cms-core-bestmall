@@ -14,6 +14,7 @@ using Repositories.Repositories;
 using System.Security.Claims;
 using Utilities;
 using Utilities.Contants;
+using WEB.Adavigo.CMS.Service;
 using WEB.BestMall.CMS.Service;
 using WEB.CMS.Controllers.Elastic.Bussiness;
 using WEB.CMS.Controllers.Order.Bussiness;
@@ -38,9 +39,11 @@ namespace WEB.CMS.Controllers.Order
         private ElasticService _elasticService;
         private ViettelPostService _viettelPostService;
         private IOrderMergeRepository _orderMergeRepository;
+        private APIService _aPIService;
         public OrderManualController(IConfiguration configuration, IAllCodeRepository allCodeRepository, IOrderRepository orderRepository, IIdentifierServiceRepository identifierServiceRepository,
             IAccountClientRepository accountClientRepository, IUserRepository userRepository, IClientRepository clientRepository, RedisConn redisConn,
-            OrderESRepository orderESRepository, LocationESService locationESService, ElasticService elasticService, ViettelPostService viettelPostService, IOrderMergeRepository orderMergeRepository)
+            OrderESRepository orderESRepository, LocationESService locationESService, ElasticService elasticService, ViettelPostService viettelPostService, 
+            IOrderMergeRepository orderMergeRepository, APIService aPIService)
         {
             _configuration = configuration;
             _allCodeRepository = allCodeRepository;
@@ -56,6 +59,7 @@ namespace WEB.CMS.Controllers.Order
             _elasticService = elasticService;
             _viettelPostService= viettelPostService;
             _orderMergeRepository = orderMergeRepository;
+            _aPIService = aPIService;
         }
         [HttpPost]
         public IActionResult CreateOrderManual()
@@ -221,7 +225,7 @@ namespace WEB.CMS.Controllers.Order
                         LogHelper.InsertLogTelegram("SendToCarrier - order_merge: " + (order_merge == null ? "NULL" : order_merge.Id));
                         if (order_merge != null && order_merge.Id > 0)
                         {
-                            LogHelper.InsertLogTelegram("SendToCarrier -  order_merge.Id > 0: " + (order_merge == null ? "NULL" : order_merge.Id));
+                            //LogHelper.InsertLogTelegram("SendToCarrier -  order_merge.Id > 0: " + (order_merge == null ? "NULL" : order_merge.Id));
                             order_merge.OrderStatus = (int)OrderStatus.DELIVERY;
                             order_merge.UpdateLast = DateTime.Now;
                             order_merge.UserUpdateId = _UserId;
@@ -229,7 +233,8 @@ namespace WEB.CMS.Controllers.Order
                             await _orderMergeRepository.UpdateOrderMerge(order_merge);
                             _elasticService.PushToQueue("SP_GetOrderMerge", order_merge.Id);
                             LogHelper.InsertLogTelegram("SendToCarrier -_elasticService.PushToQueue(\"SP_GetOrderMerge\", order_merge.Id): " + (order_merge == null ? "NULL" : order_merge.Id));
-
+                            var user = await _userRepository.GetById(_UserId);
+                           await _aPIService.SendMessage(_UserId.ToString(), (user == null || user.FullName == null ? "" : user.FullName), ((int)ActionType1.VAN_CHUYEN).ToString(), order_merge.OrderNo, "/Order/");
                         }
                     }
                     return Ok(new
@@ -295,7 +300,8 @@ namespace WEB.CMS.Controllers.Order
 
                             await _orderMergeRepository.UpdateOrderMerge(order_merge);
                             _elasticService.PushToQueue("SP_GetOrderMerge", order_merge.Id);
-
+                            var user = await _userRepository.GetById(_UserId);
+                            await _aPIService.SendMessage(_UserId.ToString(), (user == null || user.FullName == null ? "" : user.FullName), ((int)ActionType1.THANH_CONG).ToString(), order_merge.OrderNo, "/Order/");
                         }
                     }
                     return Ok(new
@@ -366,6 +372,7 @@ namespace WEB.CMS.Controllers.Order
 
                                 await _orderMergeRepository.UpdateOrderMerge(order_merge);
                                 _elasticService.PushToQueue("SP_GetOrderMerge", order_merge.Id);
+
                             }
 
                         }
@@ -432,6 +439,8 @@ namespace WEB.CMS.Controllers.Order
 
                             await _orderMergeRepository.UpdateOrderMerge(order_merge);
                             _elasticService.PushToQueue("SP_GetOrderMerge", order_merge.Id);
+                            var user = await _userRepository.GetById(_UserId);
+                            await _aPIService.SendMessage(_UserId.ToString(), (user == null || user.FullName == null ? "" : user.FullName), ((int)ActionType1.HUY).ToString(), order_merge.OrderNo, "/Order/");
 
                         }
                     }
@@ -504,6 +513,8 @@ namespace WEB.CMS.Controllers.Order
 
                             await _orderMergeRepository.UpdateOrderMerge(order_merge);
                             _elasticService.PushToQueue("SP_GetOrderMerge", order_merge.Id);
+                            var user = await _userRepository.GetById(_UserId);
+                            await _aPIService.SendMessage(_UserId.ToString(), (user == null || user.FullName == null ? "" : user.FullName), ((int)ActionType1.TRA_HANG).ToString(), order_merge.OrderNo, "/Order/");
 
                         }
                     }
@@ -586,6 +597,8 @@ namespace WEB.CMS.Controllers.Order
 
                             await _orderMergeRepository.UpdateOrderMerge(order_merge);
                             _elasticService.PushToQueue("SP_GetOrderMerge", order_merge.Id);
+                            var user = await _userRepository.GetById(_UserId);
+                            await _aPIService.SendMessage(_UserId.ToString(), (user == null || user.FullName == null ? "" : user.FullName), ((int)ActionType1.TRA_HANG).ToString(), order_merge.OrderNo, "/Order/");
 
                         }
                     }
