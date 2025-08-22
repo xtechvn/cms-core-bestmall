@@ -373,7 +373,7 @@ var voucher_detail = {
 
         // Tổng lượt sử dụng
         let limitUse = parseInt($('#voucher-limitUse-vnd').val().replaceAll(',', ''));
-        if (isNaN(limitUse) || limitUse <= 0) {
+        if (isNaN(limitUse) || limitUse < 0) {
             isValid = false;
             errors.push("Vui lòng nhập tổng lượt sử dụng hợp lệ");
         }
