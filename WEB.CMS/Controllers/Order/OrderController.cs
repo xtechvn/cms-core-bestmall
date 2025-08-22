@@ -1,4 +1,5 @@
 ﻿using Aspose.Cells;
+using DocumentFormat.OpenXml.Drawing.Charts;
 using Entities.Models;
 using Entities.ViewModels;
 using Entities.ViewModels.Mongo;
@@ -6,11 +7,13 @@ using Entities.ViewModels.Products;
 using ENTITIES.ViewModels.ElasticSearch;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Nest;
 using Repositories.IRepositories;
 using StackExchange.Redis;
 using System.Security.Claims;
 using Utilities;
 using Utilities.Contants;
+using WEB.Adavigo.CMS.Service;
 using WEB.CMS.Controllers.Elastic.Bussiness;
 using WEB.CMS.Customize;
 using WEB.CMS.Models.Product;
@@ -28,6 +31,7 @@ namespace WEB.CMS.Controllers
         private readonly IContractPayRepository _contractPayRepository;
         private readonly IPaymentRequestRepository _paymentRequestRepository;
         private readonly ProductDetailMongoAccess _productV2DetailMongoAccess;
+        private APIService apiService;
         private readonly ICommonRepository _commonRepository;
         private ElasticService _elasticService;
         private readonly IWebHostEnvironment _WebHostEnvironment;
@@ -47,6 +51,7 @@ namespace WEB.CMS.Controllers
             _commonRepository = commonRepository;
             _elasticService = elasticService;
             _WebHostEnvironment = webHostEnvironment;
+            apiService = new APIService(configuration, userRepository);
         }
         public IActionResult Index()
         {
@@ -105,7 +110,9 @@ namespace WEB.CMS.Controllers
                         item.ListProduct = await _productV2DetailMongoAccess.GetListByIds(item.ListProductId);
                     }
                 }
+
                 model2 = await _orderRepository.GetTotalCountSumOrder(searchModel);
+                apiService.SendMessage("1", "50",((int)ModuleType.DON_HANG).ToString(), "23", "/Order/" );
                 ViewBag.TotalValueOrder = new TotalValueOrder()
                 {
                     //theo All
