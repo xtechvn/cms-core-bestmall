@@ -234,7 +234,7 @@ namespace WEB.CMS.Controllers.Order
                             _elasticService.PushToQueue("SP_GetOrderMerge", order_merge.Id);
                             LogHelper.InsertLogTelegram("SendToCarrier -_elasticService.PushToQueue(\"SP_GetOrderMerge\", order_merge.Id): " + (order_merge == null ? "NULL" : order_merge.Id));
                             var user = await _userRepository.GetById(_UserId);
-                           await _aPIService.SendMessage(_UserId.ToString(), (user == null || user.FullName == null ? "" : user.FullName), ((int)ActionType1.VAN_CHUYEN).ToString(), order_merge.OrderNo, "/Order/");
+                           await _aPIService.SendMessage(_UserId.ToString(), order_merge.ClientId.ToString(), ((int)ActionType1.VAN_CHUYEN).ToString(), order_merge.OrderNo, "/Order/");
                         }
                     }
                     return Ok(new
@@ -301,7 +301,7 @@ namespace WEB.CMS.Controllers.Order
                             await _orderMergeRepository.UpdateOrderMerge(order_merge);
                             _elasticService.PushToQueue("SP_GetOrderMerge", order_merge.Id);
                             var user = await _userRepository.GetById(_UserId);
-                            await _aPIService.SendMessage(_UserId.ToString(), (user == null || user.FullName == null ? "" : user.FullName), ((int)ActionType1.THANH_CONG).ToString(), order_merge.OrderNo, "/Order/");
+                            await _aPIService.SendMessage(_UserId.ToString(), order_merge.ClientId.ToString(), ((int)ActionType1.THANH_CONG).ToString(), order_merge.OrderNo, "/Order/");
                         }
                     }
                     return Ok(new
@@ -440,7 +440,7 @@ namespace WEB.CMS.Controllers.Order
                             await _orderMergeRepository.UpdateOrderMerge(order_merge);
                             _elasticService.PushToQueue("SP_GetOrderMerge", order_merge.Id);
                             var user = await _userRepository.GetById(_UserId);
-                            await _aPIService.SendMessage(_UserId.ToString(), (user == null || user.FullName == null ? "" : user.FullName), ((int)ActionType1.HUY).ToString(), order_merge.OrderNo, "/Order/");
+                            await _aPIService.SendMessage(_UserId.ToString(), order_merge.ClientId.ToString(), ((int)ActionType1.HUY).ToString(), order_merge.OrderNo, "/Order/");
 
                         }
                     }
@@ -514,7 +514,7 @@ namespace WEB.CMS.Controllers.Order
                             await _orderMergeRepository.UpdateOrderMerge(order_merge);
                             _elasticService.PushToQueue("SP_GetOrderMerge", order_merge.Id);
                             var user = await _userRepository.GetById(_UserId);
-                            await _aPIService.SendMessage(_UserId.ToString(), (user == null || user.FullName == null ? "" : user.FullName), ((int)ActionType1.TRA_HANG).ToString(), order_merge.OrderNo, "/Order/");
+                            await _aPIService.SendMessage(_UserId.ToString(), order_merge.ClientId.ToString(), ((int)ActionType1.TRA_HANG).ToString(), order_merge.OrderNo, "/Order/");
 
                         }
                     }
@@ -598,7 +598,7 @@ namespace WEB.CMS.Controllers.Order
                             await _orderMergeRepository.UpdateOrderMerge(order_merge);
                             _elasticService.PushToQueue("SP_GetOrderMerge", order_merge.Id);
                             var user = await _userRepository.GetById(_UserId);
-                            await _aPIService.SendMessage(_UserId.ToString(), (user == null || user.FullName == null ? "" : user.FullName), ((int)ActionType1.TRA_HANG).ToString(), order_merge.OrderNo, "/Order/");
+                            await _aPIService.SendMessage(_UserId.ToString(), order_merge.ClientId.ToString(), ((int)ActionType1.TRA_HANG).ToString(), order_merge.OrderNo, "/Order/");
 
                         }
                     }
