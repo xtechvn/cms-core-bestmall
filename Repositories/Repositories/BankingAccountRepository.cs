@@ -21,7 +21,7 @@ namespace Repositories.Repositories
             dataBaseConfig = _dataBaseConfig;
         }
 
-        public List<BankingAccount> GetBankAccountByClientId(int clientId)
+        public List<BankingAccount> GetBankAccountByClientId(long clientId)
         {
             List<BankingAccount> data;
             try

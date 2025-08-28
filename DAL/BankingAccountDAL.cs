@@ -134,7 +134,7 @@ namespace DAL
             }
         }
 
-        public DataTable GetBankAccountByClientId(int clientId)
+        public DataTable GetBankAccountByClientId(long clientId)
         {
             try
             {
