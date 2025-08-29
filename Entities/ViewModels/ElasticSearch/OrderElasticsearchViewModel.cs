@@ -134,7 +134,9 @@ namespace ENTITIES.ViewModels.ElasticSearch
         [PropertyName("ShippingFee")]
 
         public double? ShippingFee { get; set; }
+        [PropertyName("ProfitAffiliate")]
 
+        public double? ProfitAffiliate { get; set; }
     }
 
 }
