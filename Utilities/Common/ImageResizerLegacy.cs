@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -74,82 +73,6 @@ namespace Utilities.Common
             catch (Exception ex)
             {
                 throw new Exception($"An error occurred during image resizing: {ex.Message}", ex);
-            }
-        }
-        public static string AutoReduceImageQualityBase64(string base64Input, int maxKb=600)
-        {
-            try
-            {
-                byte[] imageBytes = Convert.FromBase64String(base64Input);
-
-                using (var msInput = new MemoryStream(imageBytes))
-                using (Bitmap bmp = new Bitmap(msInput))
-                {
-                    ImageCodecInfo jpgEncoder = GetEncoder(ImageFormat.Jpeg);
-
-                    long quality = 90; // bắt đầu từ chất lượng cao
-                    const long minQuality = 10; // không giảm quá thấp để tránh ảnh nát
-
-                    while (quality >= minQuality)
-                    {
-                        using (var ms = new MemoryStream())
-                        {
-                            EncoderParameters encoderParams = new EncoderParameters(1);
-                            encoderParams.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, quality);
-                            bmp.Save(ms, jpgEncoder, encoderParams);
-
-                            long sizeKb = ms.Length / 1024;
-                            if (sizeKb <= maxKb)
-                            {
-                                return Convert.ToBase64String(ms.ToArray());
-                            }
-                        }
-                        quality -= 5; // giảm dần chất lượng
-                    }
-
-                    // Nếu vẫn không đạt, lưu ở minQuality
-                    using (var ms = new MemoryStream())
-                    {
-                        EncoderParameters finalParams = new EncoderParameters(1);
-                        finalParams.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, minQuality);
-                        bmp.Save(ms, jpgEncoder, finalParams);
-                        return Convert.ToBase64String(ms.ToArray());
-                    }
-                }
-            }
-            catch
-            {
-
-            }
-            return base64Input;
-        }
-
-        private static ImageCodecInfo GetEncoder(ImageFormat format)
-        {
-            ImageCodecInfo[] codecs = ImageCodecInfo.GetImageDecoders();
-            foreach (ImageCodecInfo codec in codecs)
-            {
-                if (codec.FormatID == format.Guid)
-                    return codec;
-            }
-            return null;
-        }
-        public static async Task<string> DownloadAndOptimizeImageAsync(string url, int maxKb=600)
-        {
-            using (HttpClient client = new HttpClient())
-            {
-                byte[] imageBytes = await client.GetByteArrayAsync(url);
-
-                long sizeKb = imageBytes.Length / 1024;
-                string base64 = Convert.ToBase64String(imageBytes);
-
-                if (sizeKb > maxKb)
-                {
-                    // Gọi hàm giảm chất lượng
-                    return AutoReduceImageQualityBase64(base64, maxKb);
-                }
-
-                return base64;
             }
         }
     }
