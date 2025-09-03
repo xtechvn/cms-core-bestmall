@@ -1,13 +1,16 @@
 ﻿using Caching.Elasticsearch;
 using Caching.Elasticsearch.FlashSale;
 using Caching.RedisWorker;
+using Entities.ConfigModels;
 using Entities.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Repositories.IRepositories;
 using System.Reflection;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Utilities;
+using Utilities.Common;
 using Utilities.Contants;
 using WEB.BestMall.CMS.Service;
 using WEB.CMS.Controllers.Product.Bussiness;
@@ -31,9 +34,11 @@ namespace WEB.CMS.Controllers.Homepage
         private readonly ProductESRepository _productESRepository;
         private readonly ISupplierRepository _supplierRepository;
         private readonly IAllCodeRepository _allCodeRepository;
+        private readonly string _UrlStaticImage;
+
         public HomepageController(IConfiguration configuration, RedisConn redisConn, IGroupProductRepository groupProductRepository, ILabelRepository labelRepository,
             ISupplierRepository supplierRepository, IAllCodeRepository allCodeRepository, ProductDetailMongoAccess productV2DetailMongoAccess, ProductSpecificationMongoAccess productSpecificationMongoAccess,
-            ProductESRepository productESRepository)
+            ProductESRepository productESRepository, IOptions<DomainConfig> domainConfig)
         {
             _productV2DetailMongoAccess = productV2DetailMongoAccess;
             _productSpecificationMongoAccess = productSpecificationMongoAccess;
@@ -47,6 +52,8 @@ namespace WEB.CMS.Controllers.Homepage
             _labelRepository = labelRepository;
             _supplierRepository = supplierRepository;
             _allCodeRepository = allCodeRepository;
+            _UrlStaticImage = domainConfig.Value.ImageStatic;
+
         }
         public async Task<IActionResult> Index()
         {
@@ -100,6 +107,8 @@ namespace WEB.CMS.Controllers.Homepage
                         if (banner.Description == null) banner.Description = "";
                         string static_domain = _configuration["DomainConfig:ImageStatic"];
                         banner.Description = banner.Description.Replace(static_domain, "");
+                        banner.Description = await ImageResizerLegacy.DownloadAndOptimizeImageAsync(banner.Description, _UrlStaticImage);
+
                         if (banner.Id > 0)
                         {
                             await _allCodeRepository.Update(banner);
@@ -116,6 +125,8 @@ namespace WEB.CMS.Controllers.Homepage
                         if (banner.Description == null) banner.Description = "";
                         string static_domain = _configuration["DomainConfig:ImageStatic"];
                         banner.Description = banner.Description.Replace(static_domain, "");
+                        banner.Description = await ImageResizerLegacy.DownloadAndOptimizeImageAsync(banner.Description, _UrlStaticImage);
+
                         if (banner.Id > 0)
                         {
                             await _allCodeRepository.Update(banner);
@@ -134,6 +145,8 @@ namespace WEB.CMS.Controllers.Homepage
                         if (banner.Description == null) banner.Description = "";
                         string static_domain = _configuration["DomainConfig:ImageStatic"];
                         banner.Description = banner.Description.Replace(static_domain, "");
+                        banner.Description = await ImageResizerLegacy.DownloadAndOptimizeImageAsync(banner.Description, _UrlStaticImage);
+
                         if (banner.Id > 0)
                         {
                             await _allCodeRepository.Update(banner);
@@ -152,6 +165,8 @@ namespace WEB.CMS.Controllers.Homepage
                         if (banner.Description == null) banner.Description = "";
                         string static_domain = _configuration["DomainConfig:ImageStatic"];
                         banner.Description = banner.Description.Replace(static_domain, "");
+                        banner.Description = await ImageResizerLegacy.DownloadAndOptimizeImageAsync(banner.Description, _UrlStaticImage);
+
                         if (banner.Id > 0)
                         {
                             await _allCodeRepository.Update(banner);
