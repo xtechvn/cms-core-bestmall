@@ -5,6 +5,7 @@ using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Utilities.Common
 {
@@ -139,25 +140,27 @@ namespace Utilities.Common
         {
             using (HttpClient client = new HttpClient())
             {
-                HttpResponseMessage response = await client.GetAsync(url);
-                response.EnsureSuccessStatusCode();
-
-                byte[] imageBytes = await response.Content.ReadAsByteArrayAsync();
-                string contentType = response.Content.Headers.ContentType?.MediaType ?? "image/jpeg"; // fallback jpeg
-
-                long sizeKb = imageBytes.Length / 1024;
-                string base64 = Convert.ToBase64String(imageBytes);
-
-                if (sizeKb > maxKb)
+                try
                 {
-                    // Gọi hàm giảm chất lượng
-                    base64 = AutoReduceImageQualityBase64(base64, maxKb);
-                    return await UpLoadHelper.UploadBase64Src(base64, _UrlStaticImage);
+                    string url_fixed = url.Contains("http") ? url : _UrlStaticImage + url;
+                    HttpResponseMessage response = await client.GetAsync(url);
+                    response.EnsureSuccessStatusCode();
+                    byte[] imageBytes = await response.Content.ReadAsByteArrayAsync();
+                    string contentType = response.Content.Headers.ContentType?.MediaType ?? "image/jpeg"; // fallback jpeg
+
+                    long sizeKb = imageBytes.Length / 1024;
+                    string base64 = Convert.ToBase64String(imageBytes);
+
+                    if (sizeKb > maxKb)
+                    {
+                        // Gọi hàm giảm chất lượng
+                        base64 = AutoReduceImageQualityBase64(base64, maxKb);
+                        return await UpLoadHelper.UploadBase64Src(base64, _UrlStaticImage);
+                    }
                 }
-                else
-                {
-                    return url;
-                }
+                catch (Exception ex) { }
+                return url;
+               
             }
         }
     }
