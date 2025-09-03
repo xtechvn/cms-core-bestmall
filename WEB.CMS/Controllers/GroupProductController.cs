@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Utilities;
+using Utilities.Common;
 using Utilities.Contants;
 using WEB.CMS.Customize;
 using WEB.CMS.Models.Product;
@@ -133,10 +134,12 @@ namespace WEB.CMS.Controllers
                 };
                 if (model.ImagePath == null|| model.ImagePath.Trim()=="")
                 {
+                    model.ImageBase64= ImageResizerLegacy.AutoReduceImageQualityBase64(model.ImageBase64);
                     upsertModel.ImagePath = await UpLoadHelper.UploadBase64Src(model.ImageBase64, _UrlStaticImage);
                 }
                 else if(model.ImagePath.Contains("base64") || model.ImagePath.Contains("data:video"))
                 {
+                    model.ImagePath = ImageResizerLegacy.AutoReduceImageQualityBase64(model.ImagePath);
                     upsertModel.ImagePath = await UpLoadHelper.UploadBase64Src(model.ImagePath, _UrlStaticImage);
 
                 }
@@ -151,8 +154,11 @@ namespace WEB.CMS.Controllers
                     {
                         upsertModel.ImagePath = static_url + upsertModel.ImagePath;
                     }
+                    string optimize_path = await ImageResizerLegacy.DownloadAndOptimizeImageAsync(model.ImagePath);
+                    upsertModel.ImagePath = await UpLoadHelper.UploadBase64Src(optimize_path, _UrlStaticImage);
+
                 }
-                    var rs = await _GroupProductRepository.UpSert(upsertModel);
+                var rs = await _GroupProductRepository.UpSert(upsertModel);
                 if (rs > 0)
                 {
                     _redisService.clear(CacheName.ARTICLE_B2C_CATEGORY_MENU + rs, Convert.ToInt32(_configuration["Redis:Database:db_common"]));
