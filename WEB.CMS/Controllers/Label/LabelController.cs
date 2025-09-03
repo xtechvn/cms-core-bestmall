@@ -1,12 +1,16 @@
 ﻿using Caching.RedisWorker;
+using Entities.ConfigModels;
 using Entities.Models;
 using Entities.ViewModels;
 using Entities.ViewModels.Label;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Repositories.IRepositories;
+using Repositories.Repositories;
 using System.Security.Claims;
 using Utilities;
+using Utilities.Common;
 using Utilities.Contants;
 using WEB.CMS.Controllers.Bussiness;
 using WEB.CMS.Customize;
@@ -24,8 +28,9 @@ namespace WEB.CMS.Controllers
         private readonly int db_index = 9;
         private readonly ProductDetailMongoAccess _productV2DetailMongoAccess;
         private readonly LabelService labelService;
+        private readonly string _UrlStaticImage;
 
-        public LabelController(IConfiguration configuration, RedisConn redisService, ILabelRepository labelRepository, ProductDetailMongoAccess productV2DetailMongoAccess)
+        public LabelController(IConfiguration configuration, RedisConn redisService, ILabelRepository labelRepository, IOptions<DomainConfig> domainConfig, ProductDetailMongoAccess productV2DetailMongoAccess)
         {
             _configuration = configuration;
             _redisService = new RedisConn(configuration);
@@ -36,6 +41,8 @@ namespace WEB.CMS.Controllers
             db_index = Convert.ToInt32(configuration["Redis:Database:db_search_result"]);
             _productV2DetailMongoAccess = productV2DetailMongoAccess;
             labelService = new LabelService(configuration, productV2DetailMongoAccess);
+            _UrlStaticImage = domainConfig.Value.ImageStatic;
+
         }
         [HttpPost]
         public async Task<IActionResult> SearchLabel(string txt_search)
@@ -216,6 +223,53 @@ namespace WEB.CMS.Controllers
             {
                 isSuccess = false,
                 msg = (is_add_new ? "Cập nhật" : "Thêm mới") + " thương hiệu thất bại, vui lòng xem lại thông tin hoặc liên hệ admin"
+            });
+        }
+        [HttpPost]
+        public async Task<IActionResult> CorrectImages()
+        {
+            try
+            {
+                var listGroup = await _labelRepository.GetAll();
+                if (listGroup != null && listGroup.Count > 0)
+                {
+                    foreach (var updated_model in listGroup)
+                    {
+                        if (updated_model.Icon != null && updated_model.Icon.Trim() != "")
+                        {
+                            updated_model.Icon = await ImageResizerLegacy.DownloadAndOptimizeImageAsync(updated_model.Icon, _UrlStaticImage);
+
+                        }
+                        if (updated_model.Banner != null && updated_model.Banner.Trim() != "")
+                        {
+                            updated_model.Banner = await ImageResizerLegacy.DownloadAndOptimizeImageAsync(updated_model.Banner, _UrlStaticImage);
+
+                        }
+                        if (updated_model.Avatar != null && updated_model.Avatar.Trim() != "")
+                        {
+                            updated_model.Avatar = await ImageResizerLegacy.DownloadAndOptimizeImageAsync(updated_model.Avatar, _UrlStaticImage);
+
+                        }
+                        _labelRepository.Update(updated_model);
+                    }
+                    _redisConn.clear(CacheName.LABEL, db_index);
+                    _redisConn.clear(CacheName.LABEL_SHOPMALL, db_index);
+                    _redisConn.DeleteCacheByKeyword(CacheName.PRODUCT_LISTING, db_index);
+                    _redisConn.DeleteCacheByKeyword(CacheName.PRODUCT_DETAIL, db_index);
+                }
+                return new JsonResult(new
+                {
+                    is_success = true,
+                });
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("CorrectImages: " + ex);
+
+            }
+            return new JsonResult(new
+            {
+                is_success = false,
             });
         }
     }
