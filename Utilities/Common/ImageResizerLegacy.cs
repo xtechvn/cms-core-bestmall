@@ -152,8 +152,7 @@ namespace Utilities.Common
                 {
                     // Gọi hàm giảm chất lượng
                     base64 = AutoReduceImageQualityBase64(base64, maxKb);
-                    var data = $"data:{contentType};base64,{base64}";
-                    return await UpLoadHelper.UploadBase64Src(data, _UrlStaticImage);
+                    return await UpLoadHelper.UploadBase64Src(base64, _UrlStaticImage);
                 }
                 else
                 {
