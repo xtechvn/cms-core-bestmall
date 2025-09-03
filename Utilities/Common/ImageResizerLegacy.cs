@@ -143,7 +143,7 @@ namespace Utilities.Common
                 try
                 {
                     string url_fixed = url.Contains("http") ? url : _UrlStaticImage + url;
-                    HttpResponseMessage response = await client.GetAsync(url);
+                    HttpResponseMessage response = await client.GetAsync(url_fixed);
                     response.EnsureSuccessStatusCode();
                     byte[] imageBytes = await response.Content.ReadAsByteArrayAsync();
                     string contentType = response.Content.Headers.ContentType?.MediaType ?? "image/jpeg"; // fallback jpeg
