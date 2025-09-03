@@ -75,7 +75,7 @@
                                     && !url_fixed.Contains("base64")
                                     && !url_fixed.Contains("data:image"))
                                     {
-                                        url_fixed = static_url + url;
+                                        url_fixed = static_url + url.Replace(@"//", @"/");
                                     }
                                     <div class="items magnific_popup">
                                         <button type="button" class="delete"><i class="icofont-close-line"></i></button>
@@ -116,7 +116,7 @@
                                 && !url_fixed.Contains("base64")
                                 && !url_fixed.Contains("data:image"))
                                 {
-                                    url_fixed = static_url + product.avatar;
+                                    url_fixed = static_url + product.avatar.Replace(@"//", @"/");
                                 }
                                 <div class="items magnific_popup">
                                     <button type="button" class="delete"><i class="icofont-close-line"></i></button>
@@ -161,7 +161,7 @@
                                     && !url_fixed.Contains("base64")
                                     && !url_fixed.Contains("data:video"))
                                     {
-                                        url_fixed = static_url + url;
+                                        url_fixed = static_url + url.Replace(@"//", @"/");
                                     }
                                     <div class="items magnific_popup">
                                         <button type="button" class="delete"><i class="icofont-close-line"></i></button>
