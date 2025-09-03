@@ -101,7 +101,7 @@ namespace Utilities.Common
                             long sizeKb = ms.Length / 1024;
                             if (sizeKb <= maxKb)
                             {
-                                return Convert.ToBase64String(ms.ToArray());
+                                return $"data:image/jpeg;base64,{Convert.ToBase64String(ms.ToArray())}";
                             }
                         }
                         quality -= 5; // giảm dần chất lượng
@@ -113,7 +113,8 @@ namespace Utilities.Common
                         EncoderParameters finalParams = new EncoderParameters(1);
                         finalParams.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, minQuality);
                         bmp.Save(ms, jpgEncoder, finalParams);
-                        return Convert.ToBase64String(ms.ToArray());
+                        return $"data:image/jpeg;base64,{Convert.ToBase64String(ms.ToArray())}";
+
                     }
                 }
             }
