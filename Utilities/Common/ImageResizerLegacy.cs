@@ -134,11 +134,15 @@ namespace Utilities.Common
             }
             return null;
         }
-        public static async Task<string> DownloadAndOptimizeImageAsync(string url, int maxKb=600)
+        public static async Task<string> DownloadAndOptimizeImageAsync(string url,string _UrlStaticImage, int maxKb=500)
         {
             using (HttpClient client = new HttpClient())
             {
-                byte[] imageBytes = await client.GetByteArrayAsync(url);
+                HttpResponseMessage response = await client.GetAsync(url);
+                response.EnsureSuccessStatusCode();
+
+                byte[] imageBytes = await response.Content.ReadAsByteArrayAsync();
+                string contentType = response.Content.Headers.ContentType?.MediaType ?? "image/jpeg"; // fallback jpeg
 
                 long sizeKb = imageBytes.Length / 1024;
                 string base64 = Convert.ToBase64String(imageBytes);
@@ -146,10 +150,14 @@ namespace Utilities.Common
                 if (sizeKb > maxKb)
                 {
                     // Gọi hàm giảm chất lượng
-                    return AutoReduceImageQualityBase64(base64, maxKb);
+                    base64 = AutoReduceImageQualityBase64(base64, maxKb);
+                    var data = $"data:{contentType};base64,{base64}";
+                    return await UpLoadHelper.UploadBase64Src(data, _UrlStaticImage);
                 }
-
-                return base64;
+                else
+                {
+                    return url;
+                }
             }
         }
     }

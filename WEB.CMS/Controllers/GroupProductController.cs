@@ -154,8 +154,7 @@ namespace WEB.CMS.Controllers
                     {
                         upsertModel.ImagePath = static_url + upsertModel.ImagePath;
                     }
-                    string optimize_path = await ImageResizerLegacy.DownloadAndOptimizeImageAsync(model.ImagePath);
-                    upsertModel.ImagePath = await UpLoadHelper.UploadBase64Src(optimize_path, _UrlStaticImage);
+                    upsertModel.ImagePath = await ImageResizerLegacy.DownloadAndOptimizeImageAsync(model.ImagePath, _UrlStaticImage);
 
                 }
                 var rs = await _GroupProductRepository.UpSert(upsertModel);

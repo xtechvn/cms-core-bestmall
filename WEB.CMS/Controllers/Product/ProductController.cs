@@ -1,10 +1,12 @@
 ﻿using Caching.Elasticsearch;
 using Caching.Elasticsearch.FlashSale;
 using Caching.RedisWorker;
+using Entities.ConfigModels;
 using Entities.Models;
 using Entities.ViewModels.Products;
 using HuloToys_Service.ElasticSearch.NewEs;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using OfficeOpenXml;
 using Repositories.IRepositories;
@@ -43,11 +45,12 @@ namespace WEB.CMS.Controllers
         private readonly FlashSaleProductESRepository _flashSaleProductESRepository;
         private readonly IWebHostEnvironment _WebHostEnvironment;
         private readonly GroupProductESService _groupProductESService;
+        private readonly string _UrlStaticImage;
 
         public ProductController(IConfiguration configuration, RedisConn redisConn, IGroupProductRepository groupProductRepository, ILabelRepository labelRepository,
             ISupplierRepository supplierRepository, IAllCodeRepository allCodeRepository, ProductDetailMongoAccess productV2DetailMongoAccess,
             ProductSpecificationMongoAccess productSpecificationMongoAccess, ProductESRepository productESRepository, FlashSaleProductESRepository flashSaleProductRepository,
-            IWebHostEnvironment WebHostEnvironment, GroupProductESService groupProductESService, IGroupProductRepository GroupProductRepository)
+            IWebHostEnvironment WebHostEnvironment, GroupProductESService groupProductESService, IGroupProductRepository GroupProductRepository, IOptions<DomainConfig> domainConfig)
         {
             _productV2DetailMongoAccess = productV2DetailMongoAccess;
             _productSpecificationMongoAccess = productSpecificationMongoAccess;
@@ -66,6 +69,7 @@ namespace WEB.CMS.Controllers
             _flashSaleProductESRepository = flashSaleProductRepository;
             _WebHostEnvironment = WebHostEnvironment;
             _groupProductESService = groupProductESService;
+            _UrlStaticImage = domainConfig.Value.ImageStatic;
 
         }
         public async Task<IActionResult> Index()
@@ -297,14 +301,14 @@ namespace WEB.CMS.Controllers
                 product_main.created_date = currentTimeInUtcPlus7;
                 product_main.updated_last = currentTimeInUtcPlus7;
                 if (product_main.avatar != null && product_main.avatar.Trim()!="") {
-                    product_main.avatar= await ImageResizerLegacy.DownloadAndOptimizeImageAsync(product_main.avatar);
+                    product_main.avatar= await ImageResizerLegacy.DownloadAndOptimizeImageAsync(product_main.avatar, _UrlStaticImage);
                 }
                 if (product_main.images != null && product_main.images.Count>0)
                 {
                    List<string> images = new List<string>();
                    foreach(var image in product_main.images)
                    {
-                        images.Add( await ImageResizerLegacy.DownloadAndOptimizeImageAsync(image));
+                        images.Add( await ImageResizerLegacy.DownloadAndOptimizeImageAsync(image, _UrlStaticImage));
                    }
                    product_main.images = images;
                 }
