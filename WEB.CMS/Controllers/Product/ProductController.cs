@@ -1179,6 +1179,20 @@ namespace WEB.CMS.Controllers
                         await _productESRepository.InsertAsync(product_es);
                         //-- ES FlashsalePRoduct:
                         await _flashSaleProductESRepository.UpdateFlashSaleGroup(product._id, product.group_product_id);
+                        if (product.avatar != null && product.avatar.Trim() != "")
+                        {
+                            product.avatar = await ImageResizerLegacy.DownloadAndOptimizeImageAsync(product.avatar, _UrlStaticImage);
+                        }
+                        if (product.images != null && product.images.Count > 0)
+                        {
+                            List<string> images = new List<string>();
+                            foreach (var image in product.images)
+                            {
+                                images.Add(await ImageResizerLegacy.DownloadAndOptimizeImageAsync(image, _UrlStaticImage));
+                            }
+                            product.images = images;
+                        }
+                        await _productV2DetailMongoAccess.UpdateAsync(product);
                     }
                 }
             }

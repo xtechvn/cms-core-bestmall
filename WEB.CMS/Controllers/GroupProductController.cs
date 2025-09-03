@@ -513,9 +513,48 @@ namespace WEB.CMS.Controllers
                 {
                     is_success = false,
                     data = new List<GroupProduct>()
-                }); ;
+                });
             }
         }
+        [HttpPost]
+        public async Task<IActionResult> CorrectImages()
+        {
+            try
+            {
+                var listGroup = await _GroupProductRepository.GetAll();
+                if(listGroup!=null && listGroup.Count > 0)
+                {
+                    foreach(var group in listGroup)
+                    {
+                        group.ImagePath = await ImageResizerLegacy.DownloadAndOptimizeImageAsync(group.ImagePath, _UrlStaticImage);
+                        await _GroupProductRepository.UpSert(group);
+                    }
+                    var j_param = new Dictionary<string, object>
+                                {
+                                     { "store_name", "SP_GetGroupProduct" },
+                                    { "index_es", "hulotoys_sp_getgroupproduct" },
+                                    {"project_type", Convert.ToInt16(ProjectType.HULOTOYS) },
+                                      {"id" , -1 }
 
+                                };
+                    var _data_push = JsonConvert.SerializeObject(j_param);
+                    // Push message vào queue
+                    var response_queue = work_queue.InsertQueueSimpleSyncES(_data_push);
+                }
+                return new JsonResult(new
+                {
+                    is_success = true,
+                });
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("CorrectImages: " + ex);
+               
+            }
+            return new JsonResult(new
+            {
+                is_success = false,
+            });
+        }
     }
 }
