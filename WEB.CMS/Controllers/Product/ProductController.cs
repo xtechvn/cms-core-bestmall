@@ -296,6 +296,18 @@ namespace WEB.CMS.Controllers
                 product_main.parent_product_id = "";
                 product_main.created_date = currentTimeInUtcPlus7;
                 product_main.updated_last = currentTimeInUtcPlus7;
+                if (product_main.avatar != null && product_main.avatar.Trim()!="") {
+                    product_main.avatar= await ImageResizerLegacy.DownloadAndOptimizeImageAsync(product_main.avatar);
+                }
+                if (product_main.images != null && product_main.images.Count>0)
+                {
+                   List<string> images = new List<string>();
+                   foreach(var image in product_main.images)
+                   {
+                        images.Add( await ImageResizerLegacy.DownloadAndOptimizeImageAsync(image));
+                   }
+                   product_main.images = images;
+                }
                 if (product_main.supplier_id != null && product_main.supplier_id > 0)
                 {
                     var suplier = _supplierRepository.GetSuplierById((int)product_main.supplier_id);
@@ -463,17 +475,17 @@ namespace WEB.CMS.Controllers
 
                     });
                 }
+                var resized = ImageResizerLegacy.AutoReduceImageQualityBase64(data_image);
                 try
                 {
                     if (width > 20 && height > 20)
                     {
-                        var resized = ImageResizerLegacy.ResizeImageBase64Legacy(data_image, width, height);
-                        var base64Data = data_image.Split(',')[0];
+                        var base64Data = resized.Split(',')[0];
                         if (resized != null && resized.Trim() != "") data_image = base64Data + "," + resized;
                     }
                 }
                 catch { }
-                var data_img = _staticAPIService.GetImageSrcBase64Object(data_image);
+                var data_img = _staticAPIService.GetImageSrcBase64Object(resized);
                 if (data_img != null)
                 {
                     var url = await _staticAPIService.UploadImageBase64(data_img);

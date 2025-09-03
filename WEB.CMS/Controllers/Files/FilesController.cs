@@ -88,19 +88,22 @@ namespace HuloToys_Front_End.Controllers.Files
 
                     });
                 }
+                var resized = ImageResizerLegacy.AutoReduceImageQualityBase64(data_image);
+
                 try
                 {
                     if (width > 20 && height > 20)
                     {
-                        var resized = ImageResizerLegacy.ResizeImageBase64Legacy(data_image, width, height);
                         var base64Data = data_image.Split(',')[0];
                         if (resized != null && resized.Trim() != "") data_image = base64Data + "," + resized;
                     }
                 }
                 catch { }
-                var data_img = _staticAPIService.GetImageSrcBase64Object(data_image);
+
+                var data_img = _staticAPIService.GetImageSrcBase64Object(resized);
                 if (data_img != null)
                 {
+
                     var url = await _staticAPIService.UploadImageBase64(data_img);
                     return Ok(new
                     {
