@@ -88,8 +88,8 @@ namespace Utilities.Common
                 {
                     ImageCodecInfo jpgEncoder = GetEncoder(ImageFormat.Jpeg);
 
-                    long quality = 90; // bắt đầu từ chất lượng cao
-                    const long minQuality = 10; // không giảm quá thấp để tránh ảnh nát
+                    long quality = 100; 
+                    const long minQuality = 50; 
 
                     while (quality >= minQuality)
                     {
@@ -105,18 +105,18 @@ namespace Utilities.Common
                                 return $"data:image/jpeg;base64,{Convert.ToBase64String(ms.ToArray())}";
                             }
                         }
-                        quality -= 5; // giảm dần chất lượng
+                        quality -= 1; // giảm dần chất lượng
                     }
 
-                    // Nếu vẫn không đạt, lưu ở minQuality
-                    using (var ms = new MemoryStream())
-                    {
-                        EncoderParameters finalParams = new EncoderParameters(1);
-                        finalParams.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, minQuality);
-                        bmp.Save(ms, jpgEncoder, finalParams);
-                        return $"data:image/jpeg;base64,{Convert.ToBase64String(ms.ToArray())}";
+                    //// Nếu vẫn không đạt, lưu ở minQuality
+                    //using (var ms = new MemoryStream())
+                    //{
+                    //    EncoderParameters finalParams = new EncoderParameters(1);
+                    //    finalParams.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, minQuality);
+                    //    bmp.Save(ms, jpgEncoder, finalParams);
+                    //    return $"data:image/jpeg;base64,{Convert.ToBase64String(ms.ToArray())}";
 
-                    }
+                    //}
                 }
             }
             catch
