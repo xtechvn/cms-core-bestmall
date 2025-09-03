@@ -37,7 +37,7 @@ namespace Utilities.Common
 
                 using (MemoryStream ms = new MemoryStream(imageBytes))
                 {
-                    using (Image originalImage = Image.FromStream(ms))
+                    using (System.Drawing.Image originalImage = System.Drawing.Image.FromStream(ms))
                     {
                         // Tạo một Bitmap mới với kích thước mong muốn
                         using (Bitmap resizedImage = new Bitmap(width, height))
