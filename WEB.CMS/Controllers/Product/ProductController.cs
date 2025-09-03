@@ -1165,6 +1165,10 @@ namespace WEB.CMS.Controllers
                     products = products.GroupBy(x => x.name).Select(x => x.First()).ToList();
                     foreach (var product in products)
                     {
+                        if (product.avatar != null && product.avatar.Trim() != "")
+                        {
+                            product.avatar = await ImageResizerLegacy.DownloadAndOptimizeImageAsync(product.avatar, _UrlStaticImage);
+                        }
                         ProductESModel product_es = new ProductESModel()
                         {
                             id = _productESRepository.GenerateId(),
@@ -1181,13 +1185,8 @@ namespace WEB.CMS.Controllers
                             supplier_id = product.supplier_id,
 
                         };
-                        await _productESRepository.InsertAsync(product_es);
-                        //-- ES FlashsalePRoduct:
-                        await _flashSaleProductESRepository.UpdateFlashSaleGroup(product._id, product.group_product_id);
-                        if (product.avatar != null && product.avatar.Trim() != "")
-                        {
-                            product.avatar = await ImageResizerLegacy.DownloadAndOptimizeImageAsync(product.avatar, _UrlStaticImage);
-                        }
+                      
+                        
                         if (product.images != null && product.images.Count > 0)
                         {
                             List<string> images = new List<string>();
@@ -1198,6 +1197,9 @@ namespace WEB.CMS.Controllers
                             product.images = images;
                         }
                         await _productV2DetailMongoAccess.UpdateAsync(product);
+                        await _productESRepository.InsertAsync(product_es);
+                        //-- ES FlashsalePRoduct:
+                        await _flashSaleProductESRepository.UpdateFlashSaleGroup(product._id, product.group_product_id);
                     }
                 }
             }
