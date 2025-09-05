@@ -238,7 +238,12 @@ namespace WEB.CMS.Controllers
                 var data_encode = JsonConvert.SerializeObject(user_role_cache);
                 string token = CommonHelper.Encode(data_encode, _configuration["DataBaseConfig:key_api:api_manual"]);
                 //string token = data_encode;
-                _redisConn.Set(CacheName.USER_ROLE + model.Entity.Id + "_" + _configuration["CompanyType"], token, Convert.ToInt32(_configuration["Redis:Database:db_common"]));
+                try
+                {
+                    _redisConn.Set(CacheName.USER_ROLE + model.Entity.Id + "_" + _configuration["CompanyType"], token, Convert.ToInt32(_configuration["Redis:Database:db_common"]));
+
+                }
+                catch { }
 
 
                 //-- Login:
