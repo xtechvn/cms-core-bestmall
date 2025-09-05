@@ -45,8 +45,14 @@ namespace WEB.CMS.Customize
                 //-- Get From Cache
                 permissions = Enumerable.Empty<PermissionData>();
                 UserRoleCacheModel user_role_cache = new UserRoleCacheModel();
-                string data_json = _redisConn.Get(CacheName.USER_ROLE + user_id + "_" + _configuration["CompanyType"], Convert.ToInt32(_configuration["Redis:Database:db_common"]));
-                if(data_json!=null && data_json.Trim() != "")
+                string data_json = "";
+                try
+                {
+                    data_json = _redisConn.Get(CacheName.USER_ROLE + user_id + "_" + _configuration["CompanyType"], Convert.ToInt32(_configuration["Redis:Database:db_common"]));
+
+                }
+                catch { }
+                if (data_json!=null && data_json.Trim() != "")
                 {
                     JArray objParr = null;
                     if (CommonHelper.GetParamWithKey(data_json, out objParr, _configuration["DataBaseConfig:key_api:api_manual"]))
@@ -80,7 +86,12 @@ namespace WEB.CMS.Customize
                     var data_encode = JsonConvert.SerializeObject(user_role_cache);
                     string token = CommonHelper.Encode(data_encode, _configuration["DataBaseConfig:key_api:api_manual"]);
                     //string token = data_encode;
-                    _redisConn.Set(CacheName.USER_ROLE + user_id + "_" + _configuration["CompanyType"], token,Convert.ToInt32(_configuration["Redis:Database:db_common"]));
+                    try
+                    {
+                        _redisConn.Set(CacheName.USER_ROLE + user_id + "_" + _configuration["CompanyType"], token, Convert.ToInt32(_configuration["Redis:Database:db_common"]));
+
+                    }
+                    catch { }
                 }
                 //-- Return model
                 return new SysUserModel
