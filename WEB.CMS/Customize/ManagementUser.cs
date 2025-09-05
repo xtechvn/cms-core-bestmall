@@ -77,6 +77,7 @@ namespace WEB.CMS.Customize
                             RoleId = s.RoleId,
                             PermissionId = s.PermissionId
                         });
+                        permissions= user_role_cache.Permission;
                     }
                     else
                     {
