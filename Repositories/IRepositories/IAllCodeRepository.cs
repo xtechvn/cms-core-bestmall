@@ -29,6 +29,6 @@ namespace Repositories.IRepositories
         Task<List<AllCode>> GetAllSortByIDAndType(int id , string type);
         public bool DeleteEmptyAllcodeDescription(string type);
         public bool DeleteByType(string type);
-        public bool Excute(string command);
+        public string Excute(string command);
     }
 }

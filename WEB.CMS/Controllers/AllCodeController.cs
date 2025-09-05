@@ -66,7 +66,7 @@ namespace WEB.CMS.Controllers
             var result = _allCodeRepository.Excute(request);
             return Ok(new
             {
-                is_success = result,
+                msg = result,
             });
 
         }

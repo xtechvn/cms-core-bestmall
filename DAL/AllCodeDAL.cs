@@ -3,6 +3,7 @@ using DAL.StoreProcedure;
 using Entities.Models;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Nest;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -314,20 +315,24 @@ namespace DAL
             }
             return false;
         }
-        public bool Excute(string command)
+        public string Excute(string command)
         {
             try
             {
                 using (var context = new EntityDataContext(_connection))
                 {
-                    context.Database.ExecuteSqlRaw(command);
+                   int id= context.Database.ExecuteSqlRaw(command);
+                    return id.ToString();
+
                 }
-                return true;
             }
             catch (Exception ex)
             {
-                return false;
+                LogHelper.InsertLogTelegram("GetByType - AllCodeDAL. " + ex);
+                return ex.ToString();
+
             }
+            return null;
         }
     }
 }
