@@ -41,7 +41,13 @@ namespace Repositories.Repositories.BaseRepos
             };
             try
             {
-                string data_json = _redisConn.Get(CacheName.USER_ROLE + user_id + "_" + configuration["CompanyType"], Convert.ToInt32(configuration["Redis:Database:db_common"]));
+                string data_json = null; 
+                try
+                {
+                    data_json = _redisConn.Get(CacheName.USER_ROLE + user_id + "_" + configuration["CompanyType"], Convert.ToInt32(configuration["Redis:Database:db_common"]));
+
+                }
+                catch { }
                 if (data_json != null && data_json.Trim() != "")
                 {
                     JArray objParr = null;
@@ -73,7 +79,12 @@ namespace Repositories.Repositories.BaseRepos
                     user_role_cache.UserUnderList = _UserRepository.GetListUserByUserId(user_id);
                     string token = CommonHelper.Encode(JsonConvert.SerializeObject(user_role_cache), configuration["DataBaseConfig:key_api:api_manual"]);
                     //string token = data_encode;
-                    _redisConn.Set(CacheName.USER_ROLE + user_id + "_" + configuration["CompanyType"], token, Convert.ToInt32(configuration["Redis:Database:db_common"]));
+                    try
+                    {
+                        _redisConn.Set(CacheName.USER_ROLE + user_id + "_" + configuration["CompanyType"], token, Convert.ToInt32(configuration["Redis:Database:db_common"]));
+
+                    }
+                    catch { }
                 }
             }
             catch
