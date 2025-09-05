@@ -3,6 +3,7 @@ using System;
 using StackExchange.Redis;
 using System.Threading.Tasks;
 using System.Linq;
+using Utilities;
 
 
 namespace Caching.RedisWorker
@@ -43,8 +44,15 @@ namespace Caching.RedisWorker
 
         public void Set(string key, string value, int db_index)
         {
-            var db = _redis.GetDatabase(db_index);
-            db.StringSet(key, value);
+            try
+            {
+                var db = _redis.GetDatabase(db_index);
+                db.StringSet(key, value);
+            }
+            catch (RedisConnectionException err)
+            {
+                LogHelper.InsertLogTelegram("Connect RedisConn.Set [" + key + "][" + value + "][" + db_index + "] " + err);
+            }
         }
         public void Set(string key, string value, DateTime expires, int db_index)
         {
