@@ -328,11 +328,9 @@ namespace DAL
             }
             catch (Exception ex)
             {
-                LogHelper.InsertLogTelegram("GetByType - AllCodeDAL. " + ex);
                 return ex.ToString();
 
             }
-            return null;
         }
     }
 }
