@@ -394,5 +394,14 @@ namespace Utilities.Contants
         public static string SP_InsertFlashSaleProduct = "SP_InsertFlashSaleProduct";
         public static string SP_UpdateFlashSaleProduct = "SP_UpdateFlashSaleProduct";
         public static string SP_GetListFlashSale = "SP_GetListFlashSale";
+
+
+
+        public const string SP_CheckExistsPaymentVoucherByRequestId = "SP_CheckExistsPaymentVoucherByRequestId";
+        public const string SP_GetListPaymentRequestBySupplierId = "SP_GetListPaymentRequestBySupplierId";
+        public const string sp_GetListPaymentRequestByServiceId = "sp_GetListPaymentRequestByServiceId";
+        public const string SP_GetListPaymentVoucher = "SP_GetListPaymentVoucher";
+        public const string sp_GetDetailPaymentVoucher = "sp_GetDetailPaymentVoucher";
+
     }
 }

@@ -1,0 +1,219 @@
+﻿@{
+    ViewData["Title"] = "Chi tiết phiếu chi";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using Utilities
+@using Utilities.Contants
+@using Entities.ViewModels
+@using Entities.ViewModels.Funding
+@using Entities.ConfigModels
+@using Microsoft.Extensions.Options
+@using System.Linq
+@inject IOptions<DomainConfig> domainConfig;
+
+@model PaymentVoucherViewModel
+@{
+    var counter = 1;
+    var URL_STATIC_IMAGE = domainConfig.Value.ImageStatic;
+}
+<section class="main-container">
+    <input type="text" name="paymentVoucherId" value="@Model.Id" id="paymentVoucherId" hidden style="display: none" />
+    <input type="text" name="paymentCode" value="@Model.PaymentCode" id="paymentCode" hidden style="display: none" />
+    <div class="row-main container">
+        <h2 class="txt_18 bold mb20" style="color: #FF9966 !important;">
+            <a href="/PaymentVoucher/Index" style="color: #FF9966 !important;">Danh sách phiếu chi</a> / Chi tiết phiếu chi @Model.PaymentCode
+        </h2>
+        <div class="table-responsive table-white">
+            <table class="table table-nowrap">
+                <tbody>
+                    <tr>
+                        <td colspan="3">
+                            <strong>Mã  phiếu chi: @Model.PaymentCode</strong>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 45%;">
+                            <div class="row">
+                                <div class="col-5 mb10">Loại nghiệp vụ</div>
+                                <div class="col-7 mb10">: @Model.PaymentVoucherType</div>
+                                <div class="col-5 mb10">Hình thức</div>
+                                <div class="col-7 mb10">: @Model.PaymentTypeStr</div>
+                                @if (Model.Type == (int)PAYMENT_VOUCHER_TYPE.HOAN_TRA_KHACH_HANG)
+                                {
+                                    <div class="col-5 mb10">Khách hàng</div>
+                                    <div class="col-7 mb10">: @Model.ClientName</div>
+                                }
+                                @if (Model.Type != (int)PAYMENT_VOUCHER_TYPE.HOAN_TRA_KHACH_HANG)
+                                {
+                                    <div class="col-5 mb10">Nhà cung cấp</div>
+                                    <div class="col-7 mb10">: @Model.SupplierName</div>
+                                }
+                                <div class="col-5 mb10">Số tiền</div>
+                                <div class="col-7 mb10">
+                                    : @Model.Amount.ToString("N0")
+                                </div>
+                                <div class="col-5 mb10">Tài khoản nguồn xuất tiền</div>
+                                <div class="col-7 mb10">:@Model.BankIdSource - @Model.AccountNumberSource (@Model.AccountNameSource)</div>
+                                @if (Model.BankingAccountId != 0)
+                                {
+                                    <div class="col-5 mb10">Tài khoản ngân hàng nhận</div>
+                                    <div class="col-7 mb10">: @Model.BankIdName (@Model.AccountNumber)</div>
+                                    <div class="col-5 mb10">Tên người thụ hưởng</div>
+                                    <div class="col-7 mb10">: @Model.BankName</div>
+                                }
+                                else
+                                {
+                                    <div class="col-5 mb10">Số tài khoản nhận</div>
+                                    <div class="col-7 mb10">: @Model.BankAccount</div>
+                                    <div class="col-5 mb10">Tên người thụ hưởng</div>
+                                    <div class="col-7 mb10">: @Model.BankName</div>
+                                }
+                                <div class="col-5 mb10">Nội dung</div>
+                                <div class="col-7 mb10">: @Model.Note</div>
+                                <div class="col-5 mb10">Ghi chú</div>
+                                <div class="col-7 mb10">: @Model.Description</div>
+                                @if (!string.IsNullOrEmpty(Model.AttachFiles))
+                                {
+                                    <div class="col-5 mb10">Ảnh đính kèm</div>
+                                    <div class="col-7 mb10">
+                                        @if (!string.IsNullOrEmpty(Model.AttachFiles))
+                                        {
+                                            <a href="@Model.AttachFiles" class="blue" style="color: #056BD3 !important; cursor:pointer;"
+                                               target="_blank">Xem</a>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="col-7 mb10">
+                                        <div id="attachment-detail" class="attachment-detail"></div>
+                                    </div>
+                                }
+                            </div>
+                        </td>
+                        <td>
+                            <div class="row">
+                                <div class="col-12 row">
+                                    <div class="col-6 row">
+                                        <div class="col-5 mb10">Ngày tạo</div>
+                                        <div class="col-7 mb10">
+                                            :  @if (Model.CreatedDate != null)
+                                            {
+                                                @Model.CreatedDate.Value.ToString("dd-MM-yyyy HH:mm")
+                                            }
+                                        </div>
+                                        <div class="col-5 mb10">Người tạo</div>
+                                        <div class="col-7 mb10">
+                                            :  @Model.CreatedByName
+                                        </div>
+                                    </div>
+                                    <div class="col-6 row">
+                                        <div class="col-5 mb10">Ngày cập nhật</div>
+                                        <div class="col-7 mb10">
+                                            :  @if (Model.UpdatedDate != null)
+                                            {
+                                                @Model.UpdatedDate.Value.ToString("dd-MM-yyyy HH:mm")
+                                            }
+                                        </div>
+                                        <div class="col-5 mb10">Người cập nhật</div>
+                                        <div class="col-7 mb10">
+                                            :  @Model.UserUpdateName
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="mb10">Phiếu yêu cầu chi liên quan</div>
+                                    <div class="table-responsive table-gray">
+                                        <table class="table table-nowrap">
+                                            <thead>
+                                                <tr>
+                                                    <th>STT</th>
+                                                    <th>Mã phiếu</th>
+                                                    <th>Thời hạn thanh toán</th>
+                                                    <th>Người tạo</th>
+                                                    <th class="text-right">Số tiền</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="">
+                                                @foreach (var item in Model.PaymentRequestDetails)
+                                                {
+                                                    <tr>
+                                                        <td>@counter</td>
+                                                        <td>
+                                                            <a class="blue" href="/PaymentRequest/Detail?paymentRequestId=@item.PaymentRequestId">
+                                                                @item.PaymentRequestCode
+                                                            </a>
+                                                        </td>
+                                                        <td>
+                                                            @if (item.PaymentDate != null)
+                                                            {
+                                                                @item.PaymentDate.Value.ToString("dd/MM/yyyy")
+                                                            }
+                                                            @if (item.Status == (int)(PAYMENT_REQUEST_STATUS.CHO_CHI) || item.Status == (int)(PAYMENT_REQUEST_STATUS.DA_CHI))
+                                                            {
+                                                                @if (item.PaymentDate < DateTime.Today)
+                                                                {
+                                                                    <div style="color: red">@item.PaymentDateRemind</div>
+                                                                }
+                                                                @if (item.PaymentDate >= DateTime.Today)
+                                                                {
+                                                                    <div>@item.PaymentDateRemind</div>
+                                                                }
+                                                            }
+                                                        </td>
+                                                        <td>@item.UserCreatePaymentRequest</td>
+                                                        <td class="text-right">@item.AmountPaymentRequest.ToString("N0")</td>
+                                                    </tr>
+                                                    counter++;
+                                                }
+                                                <tr class="font-weight-bold">
+                                                    <td class="text-right" colspan="4">
+                                                        Tổng
+                                                    </td>
+                                                    <td class="text-right">
+                                                        @Model.PaymentRequestDetails.Sum(n => n.AmountPaymentRequest).ToString("N0")
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="flex flex-end">
+            @if (Model.Type == (int)PAYMENT_VOUCHER_TYPE.THANH_TOAN_DICH_VU)
+            {
+                <button class="btn btn-default bg-main ml-1" id="summit-email" onclick="_payment_voucher_service.EmalPaymentVoucher()">Gửi Email UNC</button>
+            }
+            <button type="submit" class="btn btn-default cancel ml-1" onclick="_payment_voucher_service.BackToList()">Quay lại</button>
+            <button type="button" class="btn btn-default bg-main ml-1" onclick="_payment_voucher_service.EditPaymentVoucher(@Model.Id)">Chỉnh sửa</button>
+        </div>
+    </div>
+</section>
+<style>
+    .white-popup {
+        max-width: 900px !important;
+    }
+
+    .content_lightbox .head {
+        font-weight: 500 !important;
+        font-size: 16px !important;
+        margin-bottom: 20px !important;
+    }
+
+    .content_lightbox {
+        padding: 20px !important;
+    }
+</style>
+@section scripts {
+    <script type="text/javascript" src="~/modules/payment_voucher.js"></script>
+    <script>
+        _global_function.RenderFileAttachment($('#attachment-detail'), @Model.Id, @((int)AttachmentType.Payment_Voucher), false)
+    </script>
+}

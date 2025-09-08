@@ -1,0 +1,211 @@
+﻿@{
+    ViewData["Title"] = "Danh sách phiếu chi";
+}
+@using Entities.Models
+@{
+    var allCode_PAY_TYPE = (List<AllCode>)ViewBag.allCode_PAY_TYPE;
+    var allCode_PAYMENT_VOUCHER_TYPE = (List<AllCode>)ViewBag.allCode_PAYMENT_VOUCHER_TYPE;
+    var listBankingAccountAdavigo = (List<BankingAccount>)ViewBag.listBankingAccountAdavigo;
+}
+
+<section style=" overflow-x: hidden;">
+    <div class="main-container">
+        <div class="row-main container">
+            <h2 class="txt_18 bold mb20">Danh sách phiếu chi</h2>
+            <div class="flex fillter-donhang">
+                <div class="form-group mb10 mr-2">
+                    <input type="text" class="form-control" id="billNo" placeholder="Mã phiếu" style=" width: 200px;">
+                </div>
+                <div class="form-group mb10 mr-2">
+                    <input type="text" class="form-control" id="content" placeholder="Phiếu yêu cầu chi liên quan" style=" width: 200px;">
+                </div>
+                <div class="form-group mb10 mr-2">
+                    <div class="multiple-select form-group mb10 mr-2" style="width: 200px;    margin-top: 10px;">
+                        <div class="select-btn select-btn-service-type" id="select-btn-service-type">
+                            <span class="btn-text-service-type">Tất cả loại nghiệp vụ</span>
+                            <span class="arrow-dwn">
+                                <i class="fa fa-angle-down"></i>
+                            </span>
+                        </div>
+
+                        <ul class="list-items" id="list-item-service">
+                            @foreach (var item in allCode_PAYMENT_VOUCHER_TYPE)
+                            {
+                                <li class="item item-service-type" id="service_type_@item.CodeValue">
+                                    <span class="checkbox" id="checkbox_service_type_@item.CodeValue">
+                                        <i class="fa fa-check"></i>
+                                    </span>
+                                    <span class="item-text" id="service_type_text_@item.CodeValue">@item.Description</span>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-group mb10  mr-2">
+                    <div class="multiple-select form-group mb10 mr-2" style="width: 200px;    margin-top: 10px;">
+                        <div class="select-btn select-btn-payment-type" id="select-btn-payment-type">
+                            <span class="btn-text-payment-type">Tất cả hình thức</span>
+                            <span class="arrow-dwn">
+                                <i class="fa fa-angle-down"></i>
+                            </span>
+                        </div>
+
+                        <ul class="list-items" id="list-item-payment">
+                            @foreach (var item in allCode_PAY_TYPE)
+                            {
+                                <li class="item item-payment-type" id="payment_type_@item.CodeValue">
+                                    <span class="checkbox" id="checkbox_payment_type_@item.CodeValue">
+                                        <i class="fa fa-check"></i>
+                                    </span>
+                                    <span class="item-text" id="payment_type_text_@item.CodeValue">@item.Description</span>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="form-group mb10 mr-2" style="min-width: 300px;" id="divClient">
+                    <select class="select2" id="token-input-client" style="width:100% !important" multiple="multiple">
+                    </select>
+                </div>
+                <div class="form-group mb10 mr-2" style="min-width: 300px;" id="divSupplier">
+                    <select class="select2" id="token-input-supplier" style="width:100% !important" multiple="multiple">
+                    </select>
+                </div>
+                <div class="form-group mb10 mr-2" style="min-width: 200px;">
+                    <select class="form-control select2" id="bankingAccountSource">
+                        <option value="-1" disabled selected>Tất cả tài khoản nguồn </option>
+                        @foreach (var item in listBankingAccountAdavigo)
+                        {
+                            <option value="@item.Id">@item.BankId - @item.AccountNumber - @item.AccountName</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group mb10 mr-2">
+                    <div class="datepicker-wrap" style="width:100%">
+                        <input class="form-control date text-left filter_date_daterangepicker" id="filter_date_create_daterangepicker" type="text"
+                               name="datetimeCreate" style="        min-width: 200px !important" placeholder="Ngày tạo" />
+                    </div>
+                </div>
+                <div class="form-group mb10 mr-2" style="min-width: 200px;">
+                    <select class="select2 client-select main-staff-select" id="createdBy" multiple="multiple" style="width:100% !important">
+                    </select>
+                </div>
+                <div class="mb10 mr-2">
+                    <button class="btn-search btn-default" type="button" onclick="_payment_voucher_service.Export()" id="btnExport">
+                        <i class="fa fa-file-excel-o" id="icon-export"></i>
+                    </button>
+                    <button type="button" class="btn btn-default bg-main" onclick="_payment_voucher_service.OnPaging(1)">
+                        <svg class="icon-svg" style="vertical-align: sub;">
+                            <use xlink:href="/images/icons/icon.svg#search"></use>
+                        </svg>
+                        Tìm kiếm
+                    </button>
+                </div>
+            </div>
+            <div class="line-bottom mb20">
+                <div class="flex row-main-head">
+
+                    <div class="btn-right text-right ">
+                        <button type="button" class="btn btn-default bg-main mb10 mr-2" onclick="_payment_voucher_service.AddPaymentVoucher()"><i class="fa fa-plus-circle"></i>Thêm phiếu chi</button>
+                        <div class="row-main-head mb10 mr-2" style="display: none;">
+                            <div class="down-up">
+                                <a class="btn btn-default onclick" href="javascript:;">
+                                    <i class="fa fa-bars"></i>
+                                    <i class="fa fa-caret-down"></i>
+                                </a>
+                                <div class="form-down text-nowrap">
+                                    <div class="grid-slide">
+                                        <label class="check-list mb10 mr25">
+                                            <input type="checkbox" id="STT" onclick="_customer_manager.ChangeSetting(1)" class="checkbox-tb-column" data-id="1">
+                                            <span class="checkmark"></span>
+                                            STT
+                                        </label>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="grid_data" class="wrap_bg wrap_bg_no-padding mb20">
+                <div class="col-xl-12 text-center" style="margin-top:200px">
+                    <img src="~/images/icons/loading.gif" style=" width: 100px; height: 100px; display:none;"
+                         id="imgLoading" />
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+@section scripts {
+    <script type="text/javascript" src="~/js/zebra_datepicker.min.js"></script>
+    <script type="text/javascript" src="~/modules/payment_voucher.js"></script>
+    <script>
+
+        $('input[name="datetimeCreate"]').daterangepicker({
+            autoUpdateInput: false,
+            locale: {
+                cancelLabel: 'Clear'
+            }
+        });
+        $('input[name="datetimeCreate"]').on('cancel.daterangepicker', function (ev, picker) {
+            $(this).val('');
+            isPickerCreate_payment = false;
+        });
+        $('input[name="datetimeCreate"]').on('apply.daterangepicker', function (ev, picker) {
+            $(this).val(picker.startDate.format('DD/MM/YYYY') + ' - ' + picker.endDate.format('DD/MM/YYYY'));
+            isPickerCreate_payment = true;
+        });
+    </script>
+}
+<style scoped>
+
+    .multiple-select {
+        position: relative;
+        max-width: 200px !important;
+        width: 100%;
+    }
+
+    .select2-selection .select2-selection--single {
+        height: 34px !important;
+    }
+
+    .token-input-input-token {
+        min-width: 200px !important;
+    }
+
+        .token-input-input-token input {
+            background: #fff !important;
+            width: 100% !important;
+            font-size: 13px !important;
+            height: 30px !important;
+            line-height: 30px !important;
+            border: 1px solid #ccc !important;
+            padding: 0 5px !important;
+            outline: 0 !important;
+            box-shadow: none !important;
+            color: #000 !important;
+            border-radius: 0.25rem !important;
+        }
+
+    .row-main-head .down-up .form-down {
+        width: 345px !important;
+    }
+
+    .form-control {
+        background: #fff;
+        width: 100%;
+        font-size: 13px;
+        height: 30px;
+        line-height: 30px;
+        border: 1px solid #ccc;
+        padding: 0 5px;
+        outline: 0;
+        box-shadow: none;
+        color: #000;
+        border-radius: 0.25rem !important;
+    }
+</style>

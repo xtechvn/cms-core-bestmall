@@ -1,0 +1,304 @@
+﻿@using Entities.Models
+@using Entities.ConfigModels
+@using Microsoft.Extensions.Options
+@inject IOptions<DomainConfig> domainConfig;
+
+@{
+    var allCode_PAY_TYPE = (List<AllCode>)ViewBag.allCode_PAY_TYPE;
+    var allCode_PAYMENT_VOUCHER_TYPE = (List<AllCode>)ViewBag.allCode_PAYMENT_VOUCHER_TYPE;
+    var listBankingAccountAdavigo = (List<BankingAccount>)ViewBag.listBankingAccountAdavigo;
+    var listBankingAccount = (List<BankingAccount>)ViewBag.listBankingAccount;
+    var clientId = 0;
+    long bankingAccountId = Model.BankingAccountId;
+    long supplierId = 0;
+    if (Model.ClientId != null && Model.ClientId != 0)
+    {
+        clientId = Model.ClientId.Value;
+    }
+    supplierId = Model.SupplierId;
+    var URL_STATIC_IMAGE = domainConfig.Value.ImageStatic;
+    var ManageUser = (int)ViewBag.UserId;
+}
+@using Utilities
+@using Utilities.Contants
+@using Entities.ViewModels.Funding
+@model PaymentVoucherViewModel
+<style>
+    .white-popup {
+        max-width: 850px !important;
+    }
+
+    .content_lightbox .head {
+        font-weight: 500 !important;
+        font-size: 16px !important;
+        margin-bottom: 20px !important;
+    }
+
+    .content_lightbox {
+        padding: 20px !important;
+    }
+
+    .background-disabled {
+        background: #eee !important;
+    }
+</style>
+
+<div class="grid grid__2 grid-don-hang gap10 mb20">
+    <input type="text" name="paymentVoucherId" id="paymentVoucherId" value="@Model.Id" style="display: none" />
+    <input type="text" name="paymentCode" id="paymentCode" value="@Model.PaymentCode" style="display: none" />
+    <input type="text" name="client_name_hide" id="client_name_hide" value="@Model.ClientName" style="display: none" />
+    <input type="text" name="supplier_name_hide" id="supplier_name_hide" value="@Model.SupplierName" style="display: none" />
+    <input type="text" name="attachmentFile" id="attachmentFile" value="@Model.AttachFiles" style="display: none" />
+    <div class="grid-item border">
+
+        <div class="col-md-6 mb10"><label class="lbl mt5 mb0">Loại nghiệp vụ <sup class="red">*</sup></label></div>
+        <div class="col-md-12 mb10">
+            <select class="form-control background-disabled" style="width: 100%; height: 34px ;" id="payment-voucher-type" disabled
+                    onchange="_add_payment_voucher.OnChooseType()" asp-for="@Model.Type">
+                <option value="-1" disabled selected>Chọn</option>
+                @foreach (var item in allCode_PAYMENT_VOUCHER_TYPE)
+                {
+                    <option value="@item.CodeValue">@item.Description</option>
+                }
+            </select>
+            <div class="validate-payment-voucher-type"></div>
+        </div>
+
+    </div>
+    <div class="grid-item border">
+
+        <div class="col-md-6 mb10"> <label class="lbl mt5 mb0"> Hình thức <sup class="red">*</sup></label></div>
+        <div class="col-md-12 mb10">
+            <select class="form-control" style="width: 100%; height: 34px ;" id="payment-voucher-pay-type"
+                    onchange="_add_payment_voucher.OnChoosePaymentType()" asp-for="@Model.PaymentType">
+                <option value="0" disabled selected>Chọn</option>
+                @foreach (var item in allCode_PAY_TYPE)
+                {
+                    <option value="@item.CodeValue">@item.Description</option>
+                }
+            </select>
+            <div class="validate-payment-voucher-pay-type"></div>
+        </div>
+
+    </div>
+</div>
+
+<div class="row m-0 p-0">
+    <div class="col-md-6 mb10" id="lblSupplier"><label class="lbl mt5 mb0">Tên nhà cung cấp <sup class="red">*</sup></label></div>
+    <div class="col-md-12 mb10" id="divSupplier">
+        <select class="select2 supplier-select" id="supplier-select" style="width:100% !important" multiple="multiple" disabled
+                onchange="_add_payment_voucher.OnChooseType()">
+        </select>
+        <div class="validate-supplier-select"></div>
+    </div>
+
+    <div class="col-md-6 mb10" id="lblCustomer"><label class="lbl mt5 mb0">Tên khách hàng <sup class="red">*</sup></label></div>
+    <div class="col-md-12 mb10" id="divCustomer">
+        <select class="select2 client-select" id="client-select" style="width:100% !important" multiple="multiple" disabled
+                onchange="_add_payment_voucher.OnChooseType()">
+        </select>
+        <div class="validate-client-select"></div>
+    </div>
+</div>
+
+<div class="grid grid__2 grid-don-hang gap10 mb20">
+    <div class="grid-item border">
+
+        @if (Model.BankingAccountId != null && Model.BankingAccountId != 0)
+        {
+            <div class="col-md-6 mb10 hidden">
+                <label class="lbl mt5 mb0" id="lblBankAccountRequired">Tài khoản ngân hàng nhận <sup class="red">*</sup></label>
+                <label class="lbl mt5 mb0" id="lblBankAccount">Tài khoản ngân hàng nhận</label>
+            </div>
+            <div class="col-md-12 mb10 hidden">
+                <select class="form-control" style="width: 100%; height: 34px ;" id="bankingAccount" asp-for="@Model.BankingAccountId"
+                        onchange="_add_payment_voucher.GetAccountName()">
+                    <option value="-1" disabled selected>Chọn</option>
+                </select>
+                <div class="validate-bankingAccount"></div>
+            </div>
+            <div class="col-md-6 mb10">
+                <label class="lbl mt5 mb0">Tên người thụ hưởng</label>
+            </div>
+            <div class="col-md-12 mb10">
+                <input class="form-control background-disabled" type="text" name="bankName" id="bankName" asp-for="@Model.BankName" disabled>
+            </div>
+        }
+        else
+        {
+            <div class="col-md-6 mb10">
+                <label class="lbl mt5 mb0" id="lblBankAccountRequired">Số tài khoản nhận <sup class="red">*</sup></label>
+                <label class="lbl mt5 mb0" id="lblBankAccount">Số tài khoản nhận</label>
+            </div>
+            <div class="col-md-12 mb10">
+                <select class="form-control" style="width: 100%; height: 34px ;" id="bankingAccount" asp-for="@Model.BankingAccountId"
+                        onchange="_add_payment_voucher.GetAccountName()">
+                    <option value="-1" disabled selected>Chọn</option>
+                </select>
+                
+                <div class="validate-bankingAccount"></div>
+            </div>
+
+            <div class="col-md-6 mb10">
+                <label class="lbl mt5 mb0" id="lblBankNameRequired">Tên người thụ hưởng <sup class="red">*</sup></label>
+                <label class="lbl mt5 mb0" id="lblBankName">Tên người thụ hưởng</label>
+            </div>
+            <div class="col-md-12 mb10">
+                <input class="form-control" type="text" name="bankName" id="bankName" asp-for="@Model.BankName">
+                <div class="validate-bankingName"></div>
+            </div>
+        }
+
+    </div>
+    <div class="grid-item border">
+        <div class="col-md-6 mb10 ">
+            <label class="lbl mt5 mb0">Tài khoản nguồn xuất tiền<sup class="red">*</sup></label>
+        </div>
+        <div class="col-md-12 mb10 ">
+            <select class="form-control" style="width: 100%; height: 34px ;" id="bankingAccountSource" asp-for="@Model.SourceAccount">
+                <option value="-1" disabled selected>Chọn</option>
+                @foreach (var item in listBankingAccountAdavigo)
+                {
+                    <option value="@item.Id">@item.BankId - @item.AccountNumber - @item.AccountName</option>
+                }
+            </select>
+            <div class="validate-bankingAccountSource"></div>
+        </div>
+        <div class="col-md-6 mb10"><label class="lbl mt5 mb0"> Số tiền <sup class="red">*</sup></label></div>
+        <div class="col-md-12 mb10">
+            <input type="text" class="form-control background-disabled " id="amount" maxlength="15"
+                   disabled asp-for="@Model.Amount" value="@Model.Amount.ToString("N0")">
+            <div class="validate-amount"></div>
+        </div>
+
+    </div>
+</div>
+
+<div class="row m-0 p-0">
+    <div class="col-md-12 mb10"> <label class="lbl mt5 mb0"> Nội dung <sup class="red">*</sup></label></div>
+    <div class="col-md-12 mb10">
+        <input type="text" id="content" maxlength="500" name="name" placeholder="Nhập text(tối đa 500 kí tự)" autocomplete="off"
+               asp-for="@Model.Note" />
+        <div class="validate-content"></div>
+    </div>
+
+
+</div>
+
+<div class="grid grid__2 grid-don-hang gap10 mb20">
+    <div class="grid-item border">
+
+        <div class="col-md-12 mb10"> Ghi chú</div>
+        <div class="col-md-12 mb10">
+            <textarea class="form-control" id="description" maxlength="3000" style="height: 100px;" autocomplete="off"
+                      asp-for="@Model.Description"></textarea>
+            <div class="validate-description"></div>
+        </div>
+
+    </div>
+    <div class="grid-item border attachment-edit">
+       
+    </div>
+</div>
+
+<div class="row m-0 p-0">
+    <div class="bg-white border pd10" id="service-relate" style="width: 100% !important;">
+        <div class="bold mb10">Phiếu yêu cầu chi liên quan</div>
+        <div class="w-100 mb15" style=" padding-right: 15px !important;">
+            <select class="select2 paymentRequestCode" id="paymentRequestCode"
+                    onchange="_add_payment_voucher.OnCheckedRequest()" multiple="multiple" style="width: 100% !important"> </select>
+        </div>
+        <div class="table-responsive table-default table-gray table-modal scroll-inner">
+            <table class="table table-nowrap" id="request-relate-table">
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Mã phiếu</th>
+                        <th>Thời hạn thanh toán</th>
+                        <th>Người tạo</th>
+                        <th class="text-right" style="min-width: 130px;">Số tiền</th>
+                    </tr>
+                </thead>
+                <tbody id="body_payment_requests">
+                </tbody>
+            </table>
+        </div>
+        <div class="flex flex-end">
+        </div>
+    </div>
+</div>
+
+
+<div class="text-center" style="margin-top: 20px; margin-bottom: 20px;">
+    <button type="submit" class="btn btn-default btn btn-default cancel" onclick="$.magnificPopup.close();">Bỏ qua</button>
+    <button type="submit" class="btn btn-default" onclick="_add_payment_voucher.EditPaymentVoucher()" style="background: #5cb566 !important;">Cập nhật</button>
+</div>
+
+<script type="text/javascript" src="~/modules/add_payment_voucher.js?v=1"></script>
+<script>
+    _add_payment_voucher.Initialization();
+    $(document).ready(function () {
+        _add_payment_voucher.OnChooseTypeEdit(@clientId, @supplierId, @bankingAccountId)
+        _global_function.RenderFileAttachment($('.attachment-edit'),@Model.Id, @((int)AttachmentType.Payment_Voucher))
+
+    })
+
+</script>
+@section scripts {
+    <script>
+        $().ready(function () {
+            $('input').attr('autocomplete', 'off');
+            setTimeout(function () {
+                $('#order-relate').hide()
+                $('#deposit-relate').hide()
+            }, 1000)
+        })
+    </script>
+}
+<style scoped>
+    .multiple-select {
+        position: relative;
+        max-width: 200px !important;
+        width: 100%;
+    }
+
+    .select2-selection .select2-selection--single {
+        height: 34px !important;
+    }
+
+    .token-input-client-add {
+        min-width: 200px !important;
+    }
+
+        .token-input-client-add input {
+            background: #fff !important;
+            width: 100% !important;
+            font-size: 13px !important;
+            height: 30px !important;
+            line-height: 30px !important;
+            border: 1px solid #ccc !important;
+            padding: 0 5px !important;
+            outline: 0 !important;
+            box-shadow: none !important;
+            color: #000 !important;
+            border-radius: 0.25rem !important;
+        }
+
+    .row-main-head .down-up .form-down {
+        width: 345px !important;
+    }
+
+    .form-control {
+        background: #fff;
+        width: 100%;
+        font-size: 13px;
+        height: 30px;
+        line-height: 30px;
+        border: 1px solid #ccc;
+        padding: 0 5px;
+        outline: 0;
+        box-shadow: none;
+        color: #000;
+        border-radius: 0.25rem !important;
+    }
+</style>
