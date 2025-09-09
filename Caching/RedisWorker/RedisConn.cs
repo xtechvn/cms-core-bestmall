@@ -84,7 +84,7 @@ namespace Caching.RedisWorker
         {
             var db = _redis.GetDatabase(db_index);
             await db.KeyDeleteAsync(key);
-            LogHelper.InsertLogTelegram("RedisConn.clear [" + key + "][" + db_index + "]");
+           // LogHelper.InsertLogTelegram("RedisConn.clear [" + key + "][" + db_index + "]");
         }
         public async void FlushDatabaseByIndex( int db_index)
         {
