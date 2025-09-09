@@ -1,8 +1,9 @@
-﻿using Microsoft.Extensions.Configuration;
-using System;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.Extensions.Configuration;
 using StackExchange.Redis;
-using System.Threading.Tasks;
+using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Utilities;
 
 
@@ -83,6 +84,7 @@ namespace Caching.RedisWorker
         {
             var db = _redis.GetDatabase(db_index);
             await db.KeyDeleteAsync(key);
+            LogHelper.InsertLogTelegram("RedisConn.clear [" + key + "][" + db_index + "]");
         }
         public async void FlushDatabaseByIndex( int db_index)
         {
@@ -93,6 +95,7 @@ namespace Caching.RedisWorker
             var db = _redis.GetDatabase(db_index);
             var server = _redis.GetServer(_redisHost, _redisPort);
             var keys = server.Keys(db_index, pattern: "*" + keyword + "*").ToList();
+
             foreach (var key in keys)
             {
                 try

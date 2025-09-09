@@ -444,7 +444,7 @@ namespace WEB.CMS.Controllers
 
                     foreach (var category in category_ids)
                     {
-                        await  _redisConn.DeleteCacheByKeyword(CacheName.ARTICLE_CATEGORY + category, db_index);
+                          _redisConn.clear(CacheName.ARTICLE_CATEGORY + category, db_index);
                         var exists = await _ArticleRepository.FindCategoryByArticleIdAndCategoryId(articleId, category);
                         if (exists != null && exists.Id > 0)
                         {
