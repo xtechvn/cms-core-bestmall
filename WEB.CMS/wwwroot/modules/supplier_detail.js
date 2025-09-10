@@ -107,7 +107,7 @@ var _supplier_detail = {
         });
     },
     SyncES: function () {
-        flashsale_detail.POST('/Supplier/SyncES', {}, function (result) {
+        _supplier_detail.POST('/Supplier/SyncES', {}, function (result) {
             if (result.is_success) {
                 _msgalert.success('Sync ES Successfully')
             }
@@ -115,7 +115,20 @@ var _supplier_detail = {
                 _msgalert.error('Sync ES Failed')
             }
         });
-    }
+    },
+    POST: function (url, model, callback) {
+        $.ajax({
+            url: url,
+            type: "POST",
+            data: model,
+            success: function (result) {
+                callback(result)
+            },
+            error: function (err) {
+                console.log(err)
+            }
+        });
+    },
    
 
 }

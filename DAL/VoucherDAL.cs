@@ -100,7 +100,8 @@ namespace DAL
                     new SqlParameter("@is_public",  (object)DBNull.Value),
                     new SqlParameter("@page_index", pageIndex),
                     new SqlParameter("@page_size", pageSize),
-                    new SqlParameter("@client_id", client_id??(object)DBNull.Value)
+                    new SqlParameter("@client_id", client_id??(object)DBNull.Value),
+                    new SqlParameter("@limit_use", (object)DBNull.Value),
 
                 ];
                 return _DbWorker.GetDataTable("SP_GetListVoucher", objParam);

@@ -17,7 +17,5 @@ public partial class AllotmentFund
 
     public DateTime? UpdateTime { get; set; }
 
-    public virtual ICollection<AllotmentHistory> AllotmentHistories { get; set; } = new List<AllotmentHistory>();
-
     public virtual ICollection<AllotmentUse> AllotmentUses { get; set; } = new List<AllotmentUse>();
 }

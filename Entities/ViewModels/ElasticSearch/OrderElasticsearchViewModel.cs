@@ -73,13 +73,13 @@ namespace ENTITIES.ViewModels.ElasticSearch
         public double? Amount { get; set; }
         [PropertyName("OrderStatus")]
 
-        public int? OrderStatus { get; set; }
+        public int OrderStatus { get; set; }
         [PropertyName("PaymentType")]
 
-        public short? PaymentType { get; set; }
+        public short PaymentType { get; set; }
         [PropertyName("PaymentStatus")]
 
-        public int? PaymentStatus { get; set; }
+        public int PaymentStatus { get; set; }
         [PropertyName("UtmSource")]
 
         public string UtmSource { get; set; }
@@ -134,7 +134,9 @@ namespace ENTITIES.ViewModels.ElasticSearch
         [PropertyName("ShippingFee")]
 
         public double? ShippingFee { get; set; }
+        [PropertyName("ProfitAffiliate")]
 
+        public double? ProfitAffiliate { get; set; }
     }
 
 }

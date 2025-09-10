@@ -55,10 +55,10 @@ namespace Utilities.Contants
 
     public enum PAYMENT_VOUCHER_TYPE
     {
-        THANH_TOAN_DICH_VU = 1,
-        THANH_TOAN_KHAC = 2,
-        HOAN_TRA_KHACH_HANG = 3,
-        CHI_PHI_MARKETING = 4,
+        REFUND = 1,
+        AFFILIATE = 2,
+        THANH_TOAN_NCC = 3,
+        //CHI_PHI_MARKETING = 4,
     }
 
     public enum INVOICE_REQUEST_STATUS

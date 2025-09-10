@@ -1,6 +1,10 @@
 ﻿using Caching.Elasticsearch;
+using Entities.ViewModels.Funding;
+using Entities.ViewModels.SupplierConfig;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Repositories.IRepositories;
+using Utilities;
 using WEB.CMS.Controllers.Elastic.Bussiness;
 using WEB.CMS.Customize;
 using WEB.CMS.Models;
@@ -56,6 +60,74 @@ namespace WEB.CMS.Controllers.PaymentRequest
         public IActionResult Index()
         {
             return View();
+        }
+        public async Task<string> GetSuppliersSuggest(string name)
+        {
+            try
+            {
+                var supplierList = await _supplierRepository.GetSuggestionList(name);
+                var suggestionlist = supplierList.Select(s => new SupplierViewModel
+                {
+                    id = s.SupplierId,
+                    fullname = s.FullName,
+                    Email = s.Email,
+                    Phone = s.Phone,
+                }).ToList();
+                return JsonConvert.SerializeObject(suggestionlist);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("GetSuppliersSuggest - PaymentRequestController: " + ex + ". Đã có lỗi xảy ra");
+                return null;
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> GetListBankAccountByClientID(int clientId)
+        {
+            try
+            {
+                var listPayment = _bankingAccountRepository.GetBankAccountByClientId(clientId);
+                return Ok(new
+                {
+                    isSuccess = true,
+                    message = "Thành công",
+                    data = listPayment
+                });
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("GetListBankAccountBySupplierId - PaymentRequestController: " + ex + ". Đã có lỗi xảy ra");
+                return Ok(new
+                {
+                    isSuccess = false,
+                    message = "Thất bại",
+                    data = new List<SupplierPaymentViewModel>()
+                });
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> GetListBankAccountBySupplierId(int supplierId)
+        {
+            try
+            {
+                var listPayment = _supplierRepository.GetSupplierPaymentList(supplierId);
+                return Ok(new
+                {
+                    isSuccess = true,
+                    message = "Thành công",
+                    data = listPayment
+                });
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("GetListBankAccountBySupplierId - PaymentRequestController: " + ex + ". Đã có lỗi xảy ra");
+                return Ok(new
+                {
+                    isSuccess = false,
+                    message = "Thất bại",
+                    data = new List<SupplierPaymentViewModel>()
+                });
+            }
         }
     }
 }

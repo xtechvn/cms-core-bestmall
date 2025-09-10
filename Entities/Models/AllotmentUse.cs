@@ -25,7 +25,7 @@ public partial class AllotmentUse
     /// <summary>
     /// Thông tin số tiền của quỹ đã được phân bổ
     /// </summary>
-    public int AllomentFundId { get; set; }
+    public int AllotmentFundId { get; set; }
 
     public long AccountClientId { get; set; }
 
@@ -33,5 +33,23 @@ public partial class AllotmentUse
 
     public long ClientId { get; set; }
 
-    public virtual AllotmentFund AllomentFund { get; set; }
+    public int? PaymentStatus { get; set; }
+
+    public string Description { get; set; }
+
+    public double? TotalAmoutCalculate { get; set; }
+
+    public DateTime? PaymentFromDate { get; set; }
+
+    public DateTime? PaymentToDate { get; set; }
+
+    public string BankId { get; set; }
+
+    public string AccountNumber { get; set; }
+
+    public string AccountName { get; set; }
+
+    public string Branch { get; set; }
+
+    public virtual AllotmentFund AllotmentFund { get; set; }
 }

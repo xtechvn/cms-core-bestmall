@@ -304,5 +304,21 @@ var homepage = {
             }
 
         });
+    },
+    DeleteById: function (id) {
+        var request = { id: id }
+        let url = "/homepage/DeleteById";
+        _global_function.AddLoading()
+        _ajax_caller.post(url, request, function (result) {
+            _global_function.RemoveLoading()
+
+            if (result.is_success) {
+                _msgalert.success(result.message);
+
+            } else {
+                _msgalert.error(result.message);
+            }
+
+        });
     }
 }

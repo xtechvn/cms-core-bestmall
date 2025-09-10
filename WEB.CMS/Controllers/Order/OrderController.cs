@@ -94,8 +94,8 @@ namespace WEB.CMS.Controllers
             try
             {
                 ViewBag.domainImg = _configuration["DomainConfig:ImageStatic"];
-               // searchModel.pageSize = (int)pageSize;
-              //  searchModel.PageIndex = (int)currentPage;
+                // searchModel.pageSize = (int)pageSize;
+                //  searchModel.PageIndex = (int)currentPage;
                 var model = new GenericViewModel<OrderViewModel>();
                 var model2 = new TotalCountSumOrder();
                 if (searchModel.Status != null && searchModel.Status.Contains(-1))
@@ -112,7 +112,7 @@ namespace WEB.CMS.Controllers
                 }
 
                 model2 = await _orderRepository.GetTotalCountSumOrder(searchModel);
-                apiService.SendMessage("1", "50",((int)ModuleType.DON_HANG).ToString(), "23", "/Order/" );
+                //apiService.SendMessage("1", "Đăng", ((int)ActionType1.TAO_DON).ToString(), "23", "/Order/");
                 ViewBag.TotalValueOrder = new TotalValueOrder()
                 {
                     //theo All
@@ -359,7 +359,7 @@ namespace WEB.CMS.Controllers
                     order.UserId = saleid > 0 ? saleid : _UserId;
                     order.UserUpdateId = _UserId;
                     order.OrderStatus = (order.OrderStatus == (int)OrderStatus.PAID) ? (int)OrderStatus.PROCESSING : order.OrderStatus;
-                  
+
                     var updated = await _orderRepository.UpdateOrder(order);
                     _elasticService.PushToQueue("SP_GetOrder", order.OrderId);
                 }
@@ -529,7 +529,7 @@ namespace WEB.CMS.Controllers
                 }
                 string FilePath = Path.Combine(_UploadDirectory, _FileName);
                 searchModel.pageSize = 500000;
-                searchModel.PageIndex = -1; 
+                searchModel.PageIndex = -1;
                 var rsPath = await _orderRepository.ExportDeposit(searchModel, FilePath);
 
                 if (!string.IsNullOrEmpty(rsPath))

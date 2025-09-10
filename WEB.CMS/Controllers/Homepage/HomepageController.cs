@@ -113,11 +113,6 @@ namespace WEB.CMS.Controllers.Homepage
                         {
                             await _allCodeRepository.Update(banner);
                         }
-                        else if (banner.Description != null && banner.Description.Trim() != "")
-                        {
-                            await _allCodeRepository.Create(banner);
-
-                        }
                     }
                 }
                 if (banner_sub != null && banner_sub.Count>0) {
@@ -135,11 +130,6 @@ namespace WEB.CMS.Controllers.Homepage
                         if (banner.Id > 0)
                         {
                             await _allCodeRepository.Update(banner);
-                        }
-                        else if (banner.Description != null && banner.Description.Trim() != "")
-                        {
-                            await _allCodeRepository.Create(banner);
-
                         }
                     }
                 }
@@ -161,11 +151,6 @@ namespace WEB.CMS.Controllers.Homepage
                         {
                             await _allCodeRepository.Update(banner);
                         }
-                        else if(banner.Description != null && banner.Description.Trim() != "")
-                        {
-                            await _allCodeRepository.Create(banner);
-
-                        }
                     }
                 }
                 if (trending_sub != null && trending_sub.Count > 0)
@@ -186,29 +171,7 @@ namespace WEB.CMS.Controllers.Homepage
                         {
                             await _allCodeRepository.Update(banner);
                         }
-                        else if(banner.Description!=null &&banner.Description.Trim()!="")
-                        {
-                            await _allCodeRepository.Create(banner);
-
-                        }
-
-                    }
-                }
-                if (vnpay != null )
-                {
-                    vnpay.Type = "PROFIT_VNPAY";
-                    vnpay.UpdateTime = DateTime.Now;
-                    vnpay.CreateDate = DateTime.Now;
-                    vnpay.CreatedBy = _UserId;
-                    vnpay.UpdatedBy = _UserId;
-                    if (vnpay.Description == null) vnpay.Description = "";
-                    if (vnpay.Id > 0)
-                    {
-                        await _allCodeRepository.Update(vnpay);
-                    }
-                    else
-                    {
-                        await _allCodeRepository.Create(vnpay);
+                        
 
                     }
                 }
@@ -250,6 +213,47 @@ namespace WEB.CMS.Controllers.Homepage
             return Ok(new
             {
                 is_success=false,
+                message = "Cập nhật thất bại"
+
+            });
+        }
+        [HttpPost]
+        public async Task<IActionResult> DeleteById(int id)
+        {
+
+            try
+            {
+                int _UserId = 0;
+
+                if (HttpContext.User.FindFirst(ClaimTypes.NameIdentifier) != null)
+                {
+                    _UserId = Convert.ToInt32(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+                }
+                if (id<=0 )
+                {
+                    return Ok(new
+                    {
+                        is_success = false,
+                        message = "FAILED"
+                    });
+                }
+               
+                await _allCodeRepository.Delete(id);
+
+                _redisConn.clear(CacheName.HOMEPAGE_SLIDE, Convert.ToInt32(_configuration["Redis:Database:db_common"]));
+                return Ok(new
+                {
+                    is_success = true,
+                    message = "SUCCESS"
+                });
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("DeleteById - HomepageController: " + ex);
+            }
+            return Ok(new
+            {
+                is_success = false,
                 message = "Cập nhật thất bại"
 
             });

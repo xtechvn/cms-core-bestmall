@@ -429,6 +429,11 @@ namespace WEB.CMS.Controllers
                                 catch { }
                                 _redisConn.clear(CacheName.ARTICLE_CATEGORY_MENU + "_" + id, Convert.ToInt32(_configuration["Redis:Database:db_common"]));
                                 _redisConn.clear("ARTICLE_B2C_CATEGORY_MENU_FOOTER" + id, Convert.ToInt32(_configuration["Redis:Database:db_common"]));
+                                _redisConn.clear(CacheName.ARTICLE_B2C_CATEGORY_MENU + id, Convert.ToInt32(_configuration["Redis:Database:db_common"]));
+                                _redisConn.clear(CacheName.ARTICLE_B2C_CATEGORY_MENU + 188, Convert.ToInt32(_configuration["Redis:Database:db_common"]));
+                                _redisConn.clear(CacheName.ARTICLE_B2C_CATEGORY_MENU_FOOTER + 188, Convert.ToInt32(_configuration["Redis:Database:db_common"]));
+                                _redisConn.clear("GROUP_PRODUCT_FLASHSALE_" + id, Convert.ToInt32(_configuration["Redis:Database:db_common"]));
+                                await _redisConn.DeleteCacheByKeyword(CacheName.ARTICLE_CATEGORY_MENU, Convert.ToInt32(_configuration["Redis:Database:db_common"]));
                             }
                         }
                     }
@@ -1291,7 +1296,7 @@ namespace WEB.CMS.Controllers
                     var list_label = await _labelRepository.GetAll();
                     var list_suplier = await _supplierRepository.GetAll();
 
-                    ExcelHelper.ExportProductsToExcel(main_products, list_group_product, list_label, list_suplier, FilePath);
+                    ExcelHelper.ExportProductsToExcel(main_products, sub_products, list_group_product, list_label, list_suplier, FilePath);
                     return Ok(new
                     {
                         is_success = true,

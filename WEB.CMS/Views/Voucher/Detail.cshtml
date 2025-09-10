@@ -266,13 +266,13 @@
                 <p class="mt-1 text-secondary">Số lượt Mã giảm giá có thể sử dụng</p>
             </div>
         </div>
-        <div class="item flex flex-lg-nowrap gap10 mb-2 w-100" style="@((voucher != null && voucher.IsLimitVoucher == true) ? "" : "display:none;")">
+        <div class="item flex flex-lg-nowrap gap10 mb-2 w-100" >
             <label class="label">Giá trị đơn hàng tối thiểu</label>
             <div class="wrap_input">
                 <div class="form-group mb-0">
                     <input id="voucher-min-product-amount" type="text" class="form-control input-price" placeholder="Giá trị đơn hàng tối thiểu" value="@((voucher == null || voucher.MinTotalAmount == null || voucher.MinTotalAmount <= 0) ? "0" : ((double)voucher.MinTotalAmount).ToString("N0"))">
                 </div>
-                <p class="mt-1 text-secondary">SGiá trị đơn hàng tối thiểu để áp dụng được mã giảm giá</p>
+                <p class="mt-1 text-secondary">Giá trị đơn hàng tối thiểu để áp dụng được mã giảm giá</p>
             </div>
         </div>
         <div class="item flex flex-lg-nowrap gap10 mb-2 w-100">

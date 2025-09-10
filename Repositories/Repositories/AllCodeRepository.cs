@@ -43,9 +43,10 @@ namespace Repositories.Repositories
             }
         }
 
-        public Task<long> Delete(int id)
+        public async Task<long> Delete(int id)
         {
-            throw new NotImplementedException();
+             _AllCodeDAL.Delete(id);
+            return id;
         }
 
         public List<AllCode> GetAll()
@@ -167,7 +168,11 @@ namespace Repositories.Repositories
         {
             return  _AllCodeDAL.DeleteEmptyAllcodeDescription(type);
         }
-        public bool Excute(string command)
+        public bool DeleteByType(string type)
+        {
+            return  _AllCodeDAL.DeleteByType(type);
+        }
+        public string Excute(string command)
         {
             return _AllCodeDAL.Excute(command);
         }

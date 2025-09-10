@@ -592,6 +592,12 @@ var flashsale_detail = {
             _msgalert.error("Tên chương trình không được để trống")
             return false
         }
+
+        if ($('tbody tr.flashsale-data-tr-product') == undefined || $('tbody tr.flashsale-data-tr-product').length <= 0) {
+            _msgalert.error("Chiến dịch FlashSale cần ít nhất 1 sản phẩm")
+            $('#flashsale-data-tr-product-body').get(0).scrollIntoView({ block: 'center', behavior: 'smooth' });
+            return false;
+        }
         $('tbody tr.flashsale-data-tr-product').each(function (index) {
             const $productRow = $(this); // Dòng sản phẩm hiện tại
 
@@ -675,10 +681,10 @@ var flashsale_detail = {
             flashsale_product: flashsale_detail.collectProductInfo(),
             flashsale: {
                 Id: $('#flashsale-detail').val(),
-                FromDate: _global_function.GetDayText($('#flashsale-search-fromdate').data('daterangepicker').startDate._d, false),
-                ToDate: _global_function.GetDayText($('#flashsale-search-todate').data('daterangepicker').startDate._d, false),
+                FromDate: _global_function.GetDayText($('#flashsale-search-fromdate').data('daterangepicker').startDate._d, true),
+                ToDate: _global_function.GetDayText($('#flashsale-search-todate').data('daterangepicker').startDate._d, true),
                 SupplierId: $('#supplier-id select').find(':selected').val(),
-                Status: $('#status input').is(':checked') ? 1 : 0,
+                Status: $('#voucher-is-public').is(':checked') ? 1 : 0,
                 Name: $('#flashsale-name').val(),
 
             }

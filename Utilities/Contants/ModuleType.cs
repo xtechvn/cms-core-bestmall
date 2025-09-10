@@ -5,16 +5,16 @@ using System.Text;
 
 namespace Utilities.Contants
 {
-    public enum ModuleType
-    {
-        PHIEU_YEU_CAU_CHI = 0,
-        DON_HANG = 1,
-        HOP_DONG = 2,
-        KHACH_HANG = 3,
-        PHIEU_THU = 4,
-        DICH_VU = 5,
-        BANG_KE = 6,
-    }
+    //public enum ModuleType
+    //{
+    //    PHIEU_YEU_CAU_CHI = 0,
+    //    DON_HANG = 1,
+    //    HOP_DONG = 2,
+    //    KHACH_HANG = 3,
+    //    PHIEU_THU = 4,
+    //    DICH_VU = 5,
+    //    BANG_KE = 6,
+    //}
     public enum ActionType1
     {
         TAO_DON = 0,

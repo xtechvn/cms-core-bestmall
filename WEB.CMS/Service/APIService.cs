@@ -43,7 +43,7 @@ namespace WEB.Adavigo.CMS.Service
                 {
                    {"user_name_send", user.Entity.FullName.ToString()}, //tên người gửi
                     {"user_id_send", user_id_send}, //id người gửi
-                    {"code", Code}, // mã đối tượng gửi
+                    {"code", Code}, // mã đơn Hàng
                     {"link_redirect", link_redirect}, // Link mà khi người dùng click vào detail item notify sẽ chuyển sang đó
                     //{"module_type", module_type}, // loại module thực thi luồng notify. Ví dụ: Đơn hàng, khách hàng.......
                     {"action_type", action_type} // action thực hiện. Ví dụ: Duyệt, tạo mới, từ chối....
@@ -58,7 +58,7 @@ namespace WEB.Adavigo.CMS.Service
                     {
                     new KeyValuePair<string, string>("token",token)
                 });
-                var url = "https://localhost:60556" + "/api/notify/message/send.json";
+                var url = "http://api.best-mall.vn" + "/api/notify/message/send.json";
                 var response = await httpClient.PostAsync(url, request);
                 if (response.IsSuccessStatusCode)
                 {

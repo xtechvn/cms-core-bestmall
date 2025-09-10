@@ -180,6 +180,7 @@ namespace WEB.CMS.Controllers.FlashSale
                 flashsale.CreateDate = DateTime.Now;
                 flashsale.UserUpdateId = _UserLogin;
                 flashsale.UpdateLast = DateTime.Now;
+                List<FlashSaleProduct> exists_products= new List<FlashSaleProduct>();
                 // 2. Create FlashSale
                 if (flashsale.Id <= 0)
                 {
@@ -192,6 +193,7 @@ namespace WEB.CMS.Controllers.FlashSale
                     {
                         flashsale.UserCreateId = exists.UserCreateId;
                         flashsale.CreateDate = exists.CreateDate;
+                        exists_products=await _flashSaleProductRepository.GetByFlashSaleID(flashsale.Id);
                         _flashSaleRepository.UpdateFlashSale(flashsale);
                     }
                     else
@@ -210,7 +212,7 @@ namespace WEB.CMS.Controllers.FlashSale
                 }
                 #region Sync ES
                 await _flashSaleESRepository.DeleteByFlashsaleId(flashsale.Id);
-                var supplier= _supplierRepository.GetSuplierById((int)flashsale.SupplierId);
+                var supplier = _supplierRepository.GetSuplierById((int)flashsale.SupplierId);
                 FlashSaleESModel flashsale_es = new FlashSaleESModel()
                 {
                     id = _flashSaleESRepository.GenerateId(),
@@ -219,24 +221,24 @@ namespace WEB.CMS.Controllers.FlashSale
                     status = flashsale.Status,
                     supplierid = flashsale.SupplierId,
                     todate = flashsale.ToDate,
-                    name=flashsale.Name,
-                    banner=flashsale.Banner,
-                    supplier_name=supplier.FullName,
-                    created_date= flashsale.CreateDate,
+                    name = flashsale.Name,
+                    banner = flashsale.Banner,
+                    supplier_name = supplier.FullName,
+                    created_date = flashsale.CreateDate,
 
                 };
                 await _flashSaleESRepository.InsertAsync(flashsale_es);
+                //SyncES();
                 #endregion
-              
+
 
                 // 3. Validate and Create FlashSale Products
                 if (flashsale_product != null && flashsale_product.Any())
                 {
-                    var exists_list= await _flashSaleProductRepository.GetByFlashSaleID(flashsale.Id);
-                    if (exists_list!=null && exists_list.Count > 0)
+                    if (exists_products != null && exists_products.Count > 0)
                     {
                         var new_list = flashsale_product.Select(x => x.Id);
-                        var deleted = exists_list.Where(x => !new_list.Contains(x.Id));
+                        var deleted = exists_products.Where(x => !new_list.Contains(x.Id));
                         if (deleted.Any())
                         {
                             foreach (var del in deleted)
@@ -245,7 +247,7 @@ namespace WEB.CMS.Controllers.FlashSale
                                 _flashSaleProductRepository.UpdateFlashSaleProduct(del);
                             }
                         }
-                        await _flashSaleProductESRepository.DeleteByIds(exists_list.Select(x=>x.Id).ToList());
+                        await _flashSaleProductESRepository.DeleteByIds(exists_products.Select(x=>x.Id).ToList());
 
                     }
                     var new_items = new List<FlashSaleProductESModel>();
@@ -422,6 +424,7 @@ namespace WEB.CMS.Controllers.FlashSale
                     await _flashSaleESRepository.IndexMany(all_fsl_es);
                 }
                 var fspl = await _flashSaleProductRepository.GetAll();
+                await _flashSaleProductESRepository.DeleteAll();
                 if (fspl != null && fspl.Count > 0)
                 {
                     List<FlashSaleProductESModel> all_fspl_es = fspl.Select(x => new FlashSaleProductESModel()
@@ -447,7 +450,7 @@ namespace WEB.CMS.Controllers.FlashSale
 
                         }
                     }
-                    await _flashSaleProductESRepository.DeleteByIds(all_fspl_es.Select(x => x.flashsale_productid).ToList());
+                   // await _flashSaleProductESRepository.DeleteByIds(all_fspl_es.Select(x => x.flashsale_productid).ToList());
                     await _flashSaleProductESRepository.IndexMany(all_fspl_es);
                 }
             }

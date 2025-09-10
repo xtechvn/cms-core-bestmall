@@ -1,4 +1,8 @@
-﻿using Caching.Elasticsearch;
+using Caching.Elasticsearch;
+using Caching.Elasticsearch.FlashSale;
+using Caching.RedisWorker;
+using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
+using Caching.Elasticsearch;
 using Caching.Elasticsearch.FlashSale;
 using Caching.RedisWorker;
 using Entities.Models;
@@ -10,6 +14,7 @@ using Entities.ViewModels.SupplierConfig;
 using ENTITIES.ViewModels.ElasticSearch;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
+using Nest;
 using Newtonsoft.Json;
 using Repositories.IRepositories;
 using Repositories.Repositories;
@@ -37,6 +42,7 @@ namespace WEB.CMS.Controllers
         private readonly IUserRepository _userRepository;
         private RedisConn _redisConn;
         private SupplierService _supplierService;
+        private ProductDetailMongoAccess _productV2DetailMongoAccess;
         private readonly SupplierESRepository _supplierESRepository;
         private readonly LocationESService _locationESService;
         private readonly int db_index = 9;
@@ -57,6 +63,7 @@ namespace WEB.CMS.Controllers
             _userRepository = userRepository;
             _supplierService = new SupplierService(configuration, productV2DetailMongoAccess, _productESRepository);
             db_index = Convert.ToInt32(configuration["Redis:Database:db_search_result"]);
+            _productV2DetailMongoAccess = productV2DetailMongoAccess;
             _supplierESRepository = supplierESRepository;
             _locationESService = locationESService;
         }
@@ -233,10 +240,12 @@ namespace WEB.CMS.Controllers
                 await _redisConn.DeleteCacheByKeyword(CacheName.PRODUCT_DETAIL, db_index);
                 if (result > 0)
                 {
+                    var exists = _supplierRepository.GetById(model.SupplierId);
+                    await _supplierService.UpdateSuplierAllProductStatus(exists.SupplierId, (int)exists.Status);
                     try
                     {
-                        var exists = _supplierRepository.GetSuplierById(result);
-                        string json = JsonConvert.SerializeObject(exists);
+                        var exists_model = _supplierRepository.GetSuplierById(result);
+                        string json = JsonConvert.SerializeObject(exists_model);
                         SupplierESModel sp_es = JsonConvert.DeserializeObject<SupplierESModel>(json.ToLower());
                         sp_es.id = sp_es.supplierid;
                         await _supplierESRepository.DeleteById(sp_es.supplierid);

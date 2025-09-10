@@ -3,6 +3,7 @@ using DAL.StoreProcedure;
 using Entities.Models;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Nest;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -28,7 +29,7 @@ namespace DAL
             {
                 using (var _DbContext = new EntityDataContext(_connection))
                 {
-                    var detail = await _DbContext.Set<AllCode>().Where(n => n.CodeValue == codevalue).ToListAsync();
+                    var detail = await _DbContext.AllCodes.AsNoTracking().Where(n => n.CodeValue == codevalue).ToListAsync();
                     if (detail != null)
                     {
                         return detail;
@@ -89,7 +90,7 @@ namespace DAL
             {
                 using (var _DbContext = new EntityDataContext(_connection))
                 {
-                    var detail = _DbContext.Set<AllCode>().Where(n => n.Type == type).ToList();
+                    var detail = _DbContext.AllCodes.AsNoTracking().Where(n => n.Type == type).ToList();
                     if (detail != null)
                     {
                         return detail;
@@ -110,7 +111,7 @@ namespace DAL
             {
                 using (var _DbContext = new EntityDataContext(_connection))
                 {
-                    var detail = _DbContext.Set<AllCode>().Where(n => n.Type == type).FirstOrDefault();
+                    var detail = _DbContext.AllCodes.AsNoTracking().Where(n => n.Type == type).FirstOrDefault();
                     if (detail != null)
                     {
                         return detail;
@@ -274,16 +275,14 @@ namespace DAL
             {
                 using (var _DbContext = new EntityDataContext(_connection))
                 {
-                    var detail = _DbContext.Set<AllCode>().Where(n => n.Type == type && (n.Description==null || n.Description=="")).ToList();
+                    var detail = _DbContext.AllCodes.AsNoTracking().Where(n => n.Type == type && (n.Description==null || n.Description=="")).ToList();
 
                     if (detail != null && detail.Count>0)
                     {
-                        foreach (var item in detail)
-                        {
-                            _DbContext.Set<AllCode>().Remove(item);
+                        _DbContext.AllCodes.RemoveRange(detail);
 
-                        }
                     }
+
                 }
                 return true;
             }
@@ -293,19 +292,44 @@ namespace DAL
             }
             return false;
         }
-        public bool Excute(string command)
+        public bool DeleteByType(string type)
         {
             try
             {
-                using (var context = new EntityDataContext(_connection))
+                using (var _DbContext = new EntityDataContext(_connection))
                 {
-                    context.Database.ExecuteSqlRaw(command);
+                    var detail = _DbContext.AllCodes.AsNoTracking().Where(n => n.Type == type).ToList();
+
+                    if (detail != null && detail.Count > 0)
+                    {
+                        _DbContext.AllCodes.RemoveRange(detail);
+
+                    }
+
                 }
                 return true;
             }
             catch (Exception ex)
             {
-                return false;
+                LogHelper.InsertLogTelegram("GetByType - AllCodeDAL. " + ex);
+            }
+            return false;
+        }
+        public string Excute(string command)
+        {
+            try
+            {
+                using (var context = new EntityDataContext(_connection))
+                {
+                   int id= context.Database.ExecuteSqlRaw(command);
+                    return id.ToString();
+
+                }
+            }
+            catch (Exception ex)
+            {
+                return ex.ToString();
+
             }
         }
     }

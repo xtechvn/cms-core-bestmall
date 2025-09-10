@@ -284,7 +284,7 @@ namespace DAL.Funding
                 }
                 else
                 {
-                    objParam[2] = new SqlParameter("@RequestType", (int)PAYMENT_VOUCHER_TYPE.THANH_TOAN_DICH_VU + "," + (int)PAYMENT_VOUCHER_TYPE.THANH_TOAN_KHAC);
+                    objParam[2] = new SqlParameter("@RequestType","4,5");
                 }
                 return _DbWorker.GetDataTable(proc, objParam);
             }
@@ -366,8 +366,7 @@ namespace DAL.Funding
                 objParam_paymentRequest[0] = new SqlParameter("@PaymentCode", model.PaymentCode);
                 objParam_paymentRequest[1] = new SqlParameter("@Type", model.Type);
                 objParam_paymentRequest[2] = new SqlParameter("@PaymentType", model.PaymentType);
-                if (model.Type == (int)PAYMENT_VOUCHER_TYPE.THANH_TOAN_DICH_VU || model.Type == (int)PAYMENT_VOUCHER_TYPE.THANH_TOAN_KHAC
-                     || model.Type == (int)PAYMENT_VOUCHER_TYPE.CHI_PHI_MARKETING)
+                if (model.Type == (int)PAYMENT_VOUCHER_TYPE.THANH_TOAN_NCC)
                 {
                     objParam_paymentRequest[3] = new SqlParameter("@SupplierId", model.SupplierId);
                     objParam_paymentRequest[4] = new SqlParameter("@ClientId", Convert.ToInt32(0));
@@ -474,8 +473,7 @@ namespace DAL.Funding
                 objParam_paymentRequest[1] = new SqlParameter("@PaymentCode", model.PaymentCode);
                 objParam_paymentRequest[2] = new SqlParameter("@Type", model.Type);
                 objParam_paymentRequest[3] = new SqlParameter("@PaymentType", model.PaymentType);
-                if (model.Type == (int)PAYMENT_VOUCHER_TYPE.THANH_TOAN_DICH_VU || model.Type == (int)PAYMENT_VOUCHER_TYPE.THANH_TOAN_KHAC
-                      || model.Type == (int)PAYMENT_VOUCHER_TYPE.CHI_PHI_MARKETING)
+                if (model.Type == (int)PAYMENT_VOUCHER_TYPE.THANH_TOAN_NCC )
                 {
                     objParam_paymentRequest[4] = new SqlParameter("@SupplierId", model.SupplierId);
                     objParam_paymentRequest[5] = new SqlParameter("@ClientId", DBNull.Value);

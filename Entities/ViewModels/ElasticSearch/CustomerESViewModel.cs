@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Nest;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,54 +8,81 @@ namespace Entities.ViewModels.ElasticSearch
 {
     public class CustomerESViewModel
     {
-        // Đặt tên JsonProperty trùng với tên cột trong ảnh
-        [JsonProperty("Id")]
-        public int Id { get; set; }
+        [PropertyName("Id")]
 
-        [JsonProperty("ClientName")]
+        public long Id { get; set; }
+        [PropertyName("ClientMapId")]
+
+        public int? ClientMapId { get; set; }
+        [PropertyName("SaleMapId")]
+
+        public int? SaleMapId { get; set; }
+        [PropertyName("ClientType")]
+
+        public int? ClientType { get; set; }
+        [PropertyName("ClientName")]
+
         public string ClientName { get; set; }
+        [PropertyName("Email")]
 
-        [JsonProperty("ClientCode")]
-        public string ClientCode { get; set; }
-
-        [JsonProperty("ClientType")]
-        public string ClientType { get; set; }
-
-        [JsonProperty("Email")]
         public string Email { get; set; }
+        [PropertyName("Gender")]
 
-        [JsonProperty("Status")]
+        public int? Gender { get; set; }
+        [PropertyName("Status")]
+
         public int Status { get; set; }
+        [PropertyName("Note")]
 
-        [JsonProperty("Phone")]
-        public string Phone { get; set; } // string vì có thể null hoặc chuỗi số
+        public string Note { get; set; }
+        [PropertyName("Avartar")]
 
-        [JsonProperty("JoinDate")]
+        public string Avartar { get; set; }
+        [PropertyName("JoinDate")]
+
         public DateTime JoinDate { get; set; }
+        [PropertyName("IsReceiverInfoEmail")]
 
-        [JsonProperty("UpdateTime")]
-        public DateTime UpdateTime { get; set; }
+        public bool? IsReceiverInfoEmail { get; set; }
+        [PropertyName("Phone")]
 
-        [JsonProperty("suggest_search")] // Cột này vẫn là snake_case trong ảnh
-        public string SuggestSearch { get; set; }
+        public string Phone { get; set; }
+        [PropertyName("Birthday")]
 
-        [JsonProperty("UserId")]
-        public string UserId { get; set; } // Dựa trên ảnh là null, có thể là string hoặc int?
+        public DateTime? Birthday { get; set; }
+        [PropertyName("UpdateTime")]
 
-        [JsonProperty("TaxNo")]
-        public string TaxNo { get; set; } // Dựa trên ảnh là null, có thể là string
+        public DateTime? UpdateTime { get; set; }
+        [PropertyName("TaxNo")]
 
-        [JsonProperty("BusinessAddress")]
-        public string BusinessAddress { get; set; } // Dựa trên ảnh là null, có thể là string
+        public string TaxNo { get; set; }
+        [PropertyName("AgencyType")]
 
-        [JsonProperty("ExportBill")] // Cột mới
-        public string ExportBill { get; set; } // Dựa trên ảnh là null, có thể là string
+        public int? AgencyType { get; set; }
+        [PropertyName("PermisionType")]
 
-        [JsonProperty("Gender")] // Cột mới
-        public string Gender { get; set; } // Dựa trên ảnh là null, có thể là string (ví dụ: "Nam", "Nữ") hoặc int (0, 1)
+        public int? PermisionType { get; set; }
+        [PropertyName("BusinessAddress")]
 
-        [JsonProperty("Birthday")] // Cột mới
-        public DateTime? Birthday { get; set; } // DateTime? vì có thể null
+        public string BusinessAddress { get; set; }
+        [PropertyName("ExportBillAddress")]
+
+        public string ExportBillAddress { get; set; }
+        [PropertyName("ClientCode")]
+
+        public string ClientCode { get; set; }
+        [PropertyName("IsRegisterAffiliate")]
+
+        public bool? IsRegisterAffiliate { get; set; }
+        [PropertyName("ReferralId")]
+
+        public string ReferralId { get; set; }
+        [PropertyName("ParentId")]
+
+        public int? ParentId { get; set; }
+        [PropertyName("CitizenId")]
+
+        public string CitizenId { get; set; }
     }
     public class ClientESViewModel
     {
