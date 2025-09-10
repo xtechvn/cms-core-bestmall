@@ -53,7 +53,7 @@ namespace Repositories.Repositories
                 var requestInfo = requestInfos.FirstOrDefault();
                 requestInfo.PaymentDateStr = DateUtil.DateToString(requestInfo.PaymentDate);
                 requestInfo.RelateData = new List<PaymentRequestDetailViewModel>();
-                if (requestInfo.Type == (int)PAYMENT_VOUCHER_TYPE.HOAN_TRA_KHACH_HANG)
+                if (requestInfo.Type == (int)PAYMENT_VOUCHER_TYPE.REFUND)
                 {
                     foreach (var item in requestInfos)
                     {
@@ -78,28 +78,28 @@ namespace Repositories.Repositories
                         requestInfo.RelateData.Add(model);
                     }
                 }
-                if (requestInfo.Type == (int)PAYMENT_VOUCHER_TYPE.THANH_TOAN_DICH_VU || requestInfo.Type == (int)PAYMENT_VOUCHER_TYPE.CHI_PHI_MARKETING)
-                {
-                    var requestServiceDetails = paymentRequestDAL.GetRequestDetail(paymentRequestId,
-                        ProcedureConstants.sp_GetAllServiceByRequestiD).ToList<PaymentRequestViewModel>();
-                    foreach (var item in requestServiceDetails)
-                    {
-                        PaymentRequestDetailViewModel model = new PaymentRequestDetailViewModel();
-                        item.CopyProperties(model);
-                        model.OrderId = item.OrderId;
-                        model.ServiceId = (int)item.ServiceId;
-                        var serviceInfo = paymentRequestDAL.GetDetailServiceById(item.ServiceId, item.ServiceType,
-                        ProcedureConstants.Sp_GetDetailServiceById).ToList<PaymentRequestViewModel>().FirstOrDefault();
-                        model.ServiceAmount = serviceInfo != null ? serviceInfo.Amount : 0;
-                        double servicePrice = 0;
-                        if (requestInfo.Type == (int)PAYMENT_VOUCHER_TYPE.THANH_TOAN_DICH_VU)
-                        {
-                            //servicePrice = GetAmontRequestForSupplier(item.ServiceId, item.ServiceType, requestInfo.SupplierId.Value, serviceInfo.Price);
-                        }
-                        model.ServicePrice = servicePrice;
-                        requestInfo.RelateData.Add(model);
-                    }
-                }
+                //if (requestInfo.Type == (int)PAYMENT_VOUCHER_TYPE.THANH_TOAN_DICH_VU || requestInfo.Type == (int)PAYMENT_VOUCHER_TYPE.CHI_PHI_MARKETING)
+                //{
+                //    var requestServiceDetails = paymentRequestDAL.GetRequestDetail(paymentRequestId,
+                //        ProcedureConstants.sp_GetAllServiceByRequestiD).ToList<PaymentRequestViewModel>();
+                //    foreach (var item in requestServiceDetails)
+                //    {
+                //        PaymentRequestDetailViewModel model = new PaymentRequestDetailViewModel();
+                //        item.CopyProperties(model);
+                //        model.OrderId = item.OrderId;
+                //        model.ServiceId = (int)item.ServiceId;
+                //        var serviceInfo = paymentRequestDAL.GetDetailServiceById(item.ServiceId, item.ServiceType,
+                //        ProcedureConstants.Sp_GetDetailServiceById).ToList<PaymentRequestViewModel>().FirstOrDefault();
+                //        model.ServiceAmount = serviceInfo != null ? serviceInfo.Amount : 0;
+                //        double servicePrice = 0;
+                //        if (requestInfo.Type == (int)PAYMENT_VOUCHER_TYPE.THANH_TOAN_DICH_VU)
+                //        {
+                //            //servicePrice = GetAmontRequestForSupplier(item.ServiceId, item.ServiceType, requestInfo.SupplierId.Value, serviceInfo.Price);
+                //        }
+                //        model.ServicePrice = servicePrice;
+                //        requestInfo.RelateData.Add(model);
+                //    }
+                //}
                 //foreach (var item in requestInfo.RelateData)
                 //{
                 //    var serviceInfo = paymentRequestDAL.GetDetailServiceById(item.ServiceId, item.ServiceType,

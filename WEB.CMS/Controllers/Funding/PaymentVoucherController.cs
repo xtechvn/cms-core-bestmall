@@ -159,11 +159,11 @@ namespace WEB.Adavigo.CMS.Controllers.Funding
                 message = "Ghi chú chỉ được nhập tối đa 3000 kí tự";
                 return -1;
             }
-            if (model.PaymentRequestDetails == null || model.PaymentRequestDetails.Count == 0)
-            {
-                message = "Vui lòng chọn phiếu yêu cầu chi";
-                return -1;
-            }
+            //if (model.PaymentRequestDetails == null || model.PaymentRequestDetails.Count == 0)
+            //{
+            //    message = "Vui lòng chọn phiếu yêu cầu chi";
+            //    return -1;
+            //}
             return result;
         }
 

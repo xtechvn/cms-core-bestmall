@@ -165,9 +165,7 @@ namespace DAL.Funding
                 objParam_PaymentVoucher[2] = new SqlParameter("@RequestId",
                     string.Join(",", model.PaymentRequestDetails.Select(n => n.Id).ToList()));
                 objParam_PaymentVoucher[3] = new SqlParameter("@PaymentType", model.PaymentType);
-                if (model.Type == (int)PAYMENT_VOUCHER_TYPE.THANH_TOAN_DICH_VU ||
-                    model.Type == (int)PAYMENT_VOUCHER_TYPE.THANH_TOAN_KHAC ||
-                    model.Type == (int)PAYMENT_VOUCHER_TYPE.CHI_PHI_MARKETING)
+                if (model.Type == (int)PAYMENT_VOUCHER_TYPE.THANH_TOAN_NCC )
                 {
                     objParam_PaymentVoucher[4] = new SqlParameter("@SupplierId", model.SupplierId);
                     objParam_PaymentVoucher[5] = new SqlParameter("@ClientId", Convert.ToInt32(0));
@@ -199,7 +197,7 @@ namespace DAL.Funding
                     objParam_PaymentVoucher[15] = new SqlParameter("@SourceAccount", Convert.ToInt32(model.SourceAccount));
                 id = _DbWorker.ExecuteNonQuery(StoreProcedureConstant.SP_InsertPaymentVoucher, objParam_PaymentVoucher);
                 UpdatePaymentRequestStatus(model.PaymentRequestDetails.Select(n => n.Id).ToList());
-                if (model.Type == (int)PAYMENT_VOUCHER_TYPE.HOAN_TRA_KHACH_HANG)
+                if (model.Type == (int)PAYMENT_VOUCHER_TYPE.REFUND)
                 {
                     UpdateOrderRefund(model.PaymentRequestDetails.Select(n => n.Id).ToList());
                 }
@@ -226,9 +224,7 @@ namespace DAL.Funding
                 objParam_PaymentVoucher[3] = new SqlParameter("@PaymentType", model.PaymentType);
                 objParam_PaymentVoucher[4] = new SqlParameter("@RequestId",
                     string.Join(",", listRequestId));
-                if (model.Type == (int)PAYMENT_VOUCHER_TYPE.THANH_TOAN_DICH_VU ||
-                    model.Type == (int)PAYMENT_VOUCHER_TYPE.THANH_TOAN_KHAC ||
-                    model.Type == (int)PAYMENT_VOUCHER_TYPE.CHI_PHI_MARKETING)
+                if (model.Type == (int)PAYMENT_VOUCHER_TYPE.THANH_TOAN_NCC)
                 {
                     objParam_PaymentVoucher[5] = new SqlParameter("@SupplierId", model.SupplierId);
                     objParam_PaymentVoucher[6] = new SqlParameter("@ClientId", Convert.ToInt32(0));
@@ -277,7 +273,7 @@ namespace DAL.Funding
                     var exists = listOrigin.FirstOrDefault(n => n == item);
                     if (exists == 0) listRequestNew.Add(item);
                 }
-                if (model.Type == (int)PAYMENT_VOUCHER_TYPE.HOAN_TRA_KHACH_HANG)
+                if (model.Type == (int)PAYMENT_VOUCHER_TYPE.REFUND)
                 {
                     UpdateOrderRefund(listRequestNew);
                     UpdateOrderRefund(listUpdateApproveStatus, false);
@@ -335,7 +331,7 @@ namespace DAL.Funding
                 var listRequestDetails = paymentRequestDAL.GetByRequestIds(requestIds);
                 foreach (var item in listRequestInfo)
                 {
-                    if(item.Type == (int)PAYMENT_VOUCHER_TYPE.HOAN_TRA_KHACH_HANG)
+                    if(item.Type == (int)PAYMENT_VOUCHER_TYPE.REFUND)
                     {
                         var listDetail = listRequestDetails.Where(n => n.RequestId == item.Id).ToList();
                         foreach (var detail in listDetail)

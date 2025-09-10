@@ -26,7 +26,7 @@ $(document).ready(function () {
         placeholder: "Tên KH, Điện Thoại, Email",
         maximumSelectionLength: 1,
         ajax: {
-            url: "/Contract/ClientSuggestion",
+            url: "/client/ClientSuggestion",
             type: "post",
             dataType: 'json',
             delay: 250,

@@ -38,12 +38,12 @@
                                 <div class="col-7 mb10">: @Model.PaymentVoucherType</div>
                                 <div class="col-5 mb10">Hình thức</div>
                                 <div class="col-7 mb10">: @Model.PaymentTypeStr</div>
-                                @if (Model.Type == (int)PAYMENT_VOUCHER_TYPE.HOAN_TRA_KHACH_HANG)
+                                @if (Model.Type == (int)PAYMENT_VOUCHER_TYPE.REFUND||Model.Type == (int)PAYMENT_VOUCHER_TYPE.THANH_TOAN_NCC)
                                 {
                                     <div class="col-5 mb10">Khách hàng</div>
                                     <div class="col-7 mb10">: @Model.ClientName</div>
                                 }
-                                @if (Model.Type != (int)PAYMENT_VOUCHER_TYPE.HOAN_TRA_KHACH_HANG)
+                                @if (Model.Type != (int)PAYMENT_VOUCHER_TYPE.THANH_TOAN_NCC)
                                 {
                                     <div class="col-5 mb10">Nhà cung cấp</div>
                                     <div class="col-7 mb10">: @Model.SupplierName</div>
@@ -187,10 +187,10 @@
             </table>
         </div>
         <div class="flex flex-end">
-            @if (Model.Type == (int)PAYMENT_VOUCHER_TYPE.THANH_TOAN_DICH_VU)
+           @*  @if (Model.Type == (int)PAYMENT_VOUCHER_TYPE.THANH_TOAN_DICH_VU)
             {
                 <button class="btn btn-default bg-main ml-1" id="summit-email" onclick="_payment_voucher_service.EmalPaymentVoucher()">Gửi Email UNC</button>
-            }
+            } *@
             <button type="submit" class="btn btn-default cancel ml-1" onclick="_payment_voucher_service.BackToList()">Quay lại</button>
             <button type="button" class="btn btn-default bg-main ml-1" onclick="_payment_voucher_service.EditPaymentVoucher(@Model.Id)">Chỉnh sửa</button>
         </div>
