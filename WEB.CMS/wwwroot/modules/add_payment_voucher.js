@@ -120,8 +120,25 @@ var _add_payment_voucher = {
         $('#divCustomer').hide()
         $('input').attr('autocomplete', 'off');
         $('#btnDeleteImage').hide()
+        $('#amount').removeAttr('disabled')
+        $('#amount').removeClass('background-disabled')
+        _add_payment_voucher.DynamicBind()
+    },
+    DynamicBind: function () {
         $('body').on('click', '#global_modal_popup .cancel', function () {
             $('#global_modal_popup').modal('hide')
+        })
+        $('body').on('select2:select', '#payment-voucher-type', function () {
+            _add_payment_voucher.OnChooseType()
+        })
+        $('body').on('select2:select', '#payment-voucher-pay-type', function () {
+            _add_payment_voucher.OnChoosePaymentType()
+        })
+        $('body').on('select2:select', '#client-select', function () {
+            _add_payment_voucher.OnChooseType()
+        })
+        $('body').on('select2:select', '#bankingAccount', function () {
+            _add_payment_voucher.GetAccountName()
         })
     },
     FormatNumber: function () {
@@ -435,6 +452,17 @@ var _add_payment_voucher = {
             'PaymentRequestDetails': [],
             'OtherImages': other_image
         }
+        switch (obj.type) {
+            case '1':
+            case '2':
+                {
+                    obj.supplierId = -1;
+                } break;
+            case '3':
+                {
+                    obj.clientId = -1;
+                } break;
+        }
         //formData.append('imagefile', file);
         //formData.append('jsonData', JSON.stringify(obj))
         _global_function.AddLoading()
@@ -515,19 +543,32 @@ var _add_payment_voucher = {
             }, 500)
         }
 
-        var payment_request_type = $('#payment-voucher-type').val()
-        if (payment_request_type !== null && payment_request_type !== '' && parseInt(payment_request_type) == 1) { // thanh toán dịch vụ
-            $('#amount').attr('disabled', true)
-            $('#amount').addClass('background-disabled')
-        }
-        if (payment_request_type !== null && payment_request_type !== '' && parseInt(payment_request_type) == 3) {//hoàn trả khách hàng
-            $('#amount').attr('disabled', true)
-            $('#amount').addClass('background-disabled')
-        }
-        if (payment_request_type !== null && payment_request_type !== '' && parseInt(payment_request_type) == 5) {//Quỹ chăm sóc khách hàng
-            $('#amount').attr('disabled', true)
-            $('#amount').addClass('background-disabled')
-        }
+        //var payment_request_type = $('#payment-voucher-type').val()
+        //if (payment_request_type !== null && payment_request_type !== '' && parseInt(payment_request_type) == 1) { // thanh toán dịch vụ
+        //    $('#amount').attr('disabled', true)
+        //    $('#amount').addClass('background-disabled')
+        //}
+        //if (payment_request_type !== null && payment_request_type !== '' && parseInt(payment_request_type) == 3) {//hoàn trả khách hàng
+        //    $('#amount').attr('disabled', true)
+        //    $('#amount').addClass('background-disabled')
+        //}
+        //if (payment_request_type !== null && payment_request_type !== '' && parseInt(payment_request_type) == 5) {//Quỹ chăm sóc khách hàng
+        //    $('#amount').attr('disabled', true)
+        //    $('#amount').addClass('background-disabled')
+        //}
+        //switch (payment_request_type) {
+        //    case '1':
+        //    case '2':
+        //        {
+        //            obj.supplierId = -1;
+        //        } break;
+        //    case '3':
+        //        {
+        //            obj.clientId = -1;
+        //        } break;
+        //}
+        $('#amount').removeAttr('disabled')
+        $('#amount').removeClass('background-disabled')
         if (client_id !== null && client_id !== undefined && client_id !== '' && client_id !== 0) {
             this.GetDataByClientOrSupplier(client_id, 0, true)
         }
@@ -597,6 +638,17 @@ var _add_payment_voucher = {
             'amount': parseFloat($('#amount').val().replaceAll('.', '').replaceAll(',', '')),
             'paymentRequestDetails': PaymentRequestDetails,
             'OtherImages': other_image
+        }
+        switch (payment_request_type) {
+            case '1':
+            case '2':
+                {
+                    obj.supplierId = -1;
+                } break;
+            case '3':
+                {
+                    obj.clientId = -1;
+                } break;
         }
         //formData.append('imagefile', file);
         //formData.append('jsonData', JSON.stringify(obj))
@@ -850,19 +902,21 @@ var _add_payment_voucher = {
             }, 500)
         }
 
-        var payment_request_type = $('#payment-voucher-type').val()
-        if (payment_request_type !== null && payment_request_type !== '' && parseInt(payment_request_type) == 1) { // thanh toán dịch vụ
-            $('#amount').attr('disabled', true)
-            $('#amount').addClass('background-disabled')
-        }
-        if (payment_request_type !== null && payment_request_type !== '' && parseInt(payment_request_type) == 3) {//hoàn trả khách hàng
-            $('#amount').attr('disabled', true)
-            $('#amount').addClass('background-disabled')
-        }
-        if (payment_request_type !== null && payment_request_type !== '' && parseInt(payment_request_type) == 5) {//Quỹ chăm sóc khách hàng
-            $('#amount').attr('disabled', true)
-            $('#amount').addClass('background-disabled')
-        }
+        //var payment_request_type = $('#payment-voucher-type').val()
+        //if (payment_request_type !== null && payment_request_type !== '' && parseInt(payment_request_type) == 1) { // thanh toán dịch vụ
+        //    $('#amount').attr('disabled', true)
+        //    $('#amount').addClass('background-disabled')
+        //}
+        //if (payment_request_type !== null && payment_request_type !== '' && parseInt(payment_request_type) == 3) {//hoàn trả khách hàng
+        //    $('#amount').attr('disabled', true)
+        //    $('#amount').addClass('background-disabled')
+        //}
+        //if (payment_request_type !== null && payment_request_type !== '' && parseInt(payment_request_type) == 5) {//Quỹ chăm sóc khách hàng
+        //    $('#amount').attr('disabled', true)
+        //    $('#amount').addClass('background-disabled')
+        //}
+        $('#amount').removeAttr('disabled')
+        $('#amount').removeClass('background-disabled')
         if (client_id !== null && client_id !== undefined && client_id !== '' && client_id !== 0) {
             this.GetDataByClientOrSupplierPaymentrequest(client_id, 0, true)
         }
