@@ -237,13 +237,11 @@
 
 <script type="text/javascript" src="~/modules/add_payment_voucher.js?v=1"></script>
 <script>
+    _add_payment_voucher.Initialization();
     $(document).ready(function () {
         _add_payment_voucher.OnChooseTypeEdit(@clientId, @supplierId, @bankingAccountId)
         _global_function.RenderFileAttachment($('.attachment-edit'),@Model.Id, @((int)AttachmentType.Payment_Voucher))
-        setTimeout(function () {
-                  _add_payment_voucher.Initialization();
 
-            }, 1000)
     })
 
 </script>
