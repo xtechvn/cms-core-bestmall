@@ -3,6 +3,9 @@ let listUserCreate = []
 var listServiceType = []
 var listPaymentType = []
 $(document).ready(function () {
+    $('#payment_request_index select').select2({
+        dropdownParent: $('#payment_request_index')
+    });
     $('input').attr('autocomplete', 'off');
     $('input').keyup(function (e) {
         if (e.which === 13) {
@@ -25,6 +28,7 @@ $(document).ready(function () {
         theme: 'bootstrap4',
         placeholder: "Tên KH, Điện Thoại, Email",
         maximumSelectionLength: 1,
+        dropdownParent: $('#myModal'),
         ajax: {
             url: "/client/ClientSuggestion",
             type: "post",
@@ -193,6 +197,7 @@ $(document).ready(function () {
             }
         });
     })
+  
 });
 var _payment_voucher_service = {
     Init: function (objSearch) {
@@ -200,6 +205,8 @@ var _payment_voucher_service = {
         $('#divSupplier').show()
         this.SearchParam = objSearch;
         this.Search(objSearch);
+        _payment_voucher_service.modal_element = $('#global_modal_popup');
+
     },
     GetParam: function () {
         var objSearch = {
@@ -210,7 +217,7 @@ var _payment_voucher_service = {
             bankingAccountSource: $('#bankingAccountSource').val(),
             typeMulti: listServiceType,
             paymentTypeMulti: listPaymentType,
-            createByIds: $('#createdBy').select2("val"),
+            createByIds: $('#createdBy').find(':selected').val(),
             clientId: $('#token-input-client').val() != null && $('#token-input-client').val() !== undefined &&
                 ($('#token-input-client').val()).length > 0 ? ($('#token-input-client').val())[0] : 0,
             supplierId: $('#token-input-supplier').val() != null && $('#token-input-supplier').val() !== undefined &&
@@ -318,14 +325,39 @@ var _payment_voucher_service = {
         let url = '/PaymentVoucher/AddNew';
         var param = {
         };
-        _magnific.OpenSmallPopup(title, url, param);
+        //_magnific.OpenSmallPopup(title, url, param);
+        _ajax_caller.get(url, param, function (result) {
+
+            _payment_voucher_service.modal_element.find('.modal-title').html(title);
+            _payment_voucher_service.modal_element.find('.modal-body').html(result);
+            _payment_voucher_service.modal_element.modal('show');
+            $('.modal-backdrop').css('z-index', '0')
+            _payment_voucher_service.modal_element.find('.modal-content').css('width', '1200px')
+            _payment_voucher_service.modal_element.find('.modal-dialog').css('max-width', '1200px')
+            $('#payment_request_index .select2').css('z-index', '0')
+            
+            _add_payment_voucher.Initialization();
+        });
     },
     EditPaymentVoucher: function (id) {
         let title = 'Chỉnh sửa phiếu chi';
         let url = '/PaymentVoucher/Edit?paymentVoucherId=' + id;
         var param = {
         };
-        _magnific.OpenSmallPopup(title, url, param);
+       // _magnific.OpenSmallPopup(title, url, param);
+
+        _ajax_caller.get(url, param, function (result) {
+
+            _payment_voucher_service.modal_element.find('.modal-title').html(title);
+            _payment_voucher_service.modal_element.find('.modal-body').html(result);
+            _payment_voucher_service.modal_element.modal('show');
+            $('.modal-backdrop').css('z-index', '0')
+            _payment_voucher_service.modal_element.find('.modal-content').css('width', '1200px')
+            _payment_voucher_service.modal_element.find('.modal-dialog').css('max-width', '1200px')
+            _add_payment_voucher.Initialization();
+            $('#payment_request_index .select2').css('z-index', '0')
+
+        });
     },
     FileAttachment: function (data_id, type, readonly = false, allowPreview = true) {
         _global_function.RenderFileAttachment($('.attachment_file'), data_id, type, readonly, allowPreview)

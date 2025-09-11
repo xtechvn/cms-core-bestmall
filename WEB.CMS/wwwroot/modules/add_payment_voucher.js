@@ -35,16 +35,17 @@ var _add_payment_voucher = {
                     return query;
                 },
                 processResults: function (response) {
+                    
                     return {
                         results: $.map(response.data, function (item) {
+                            
                             return {
-                                text: item.clientname + ' - ' + item.email + ' - ' + item.phone,
+                                text: item.clientName + ' - ' + item.email + ' - ' + item.phone,
                                 id: item.id,
                             }
                         })
                     };
                 },
-                cache: true
             }
         });
         $("#supplier-select").select2({
@@ -65,8 +66,10 @@ var _add_payment_voucher = {
                     return query;
                 },
                 processResults: function (response) {
+                    
                     return {
                         results: $.map(response, function (item) {
+                            
                             return {
                                 text: item.name,
                                 id: item.id,
@@ -74,7 +77,6 @@ var _add_payment_voucher = {
                         })
                     };
                 },
-                cache: true
             }
         });
         $("#paymentRequestCode").select2({
@@ -118,7 +120,9 @@ var _add_payment_voucher = {
         $('#divCustomer').hide()
         $('input').attr('autocomplete', 'off');
         $('#btnDeleteImage').hide()
-
+        $('body').on('click', '#global_modal_popup .cancel', function () {
+            $('#global_modal_popup').modal('hide')
+        })
     },
     FormatNumber: function () {
         var amount = $('#amount').val()
@@ -456,37 +460,36 @@ var _add_payment_voucher = {
         $("#body_payment_requests").empty();
         $('#bankName').val("")
         $("#bankingAccount").empty();
-       /* debugger*/
-        if (payment_request_type !== null && payment_request_type !== '' && parseInt(payment_request_type) == 3) { // thanh toán dịch vụ và khác
-            $('#lblSupplier').show()
-            $('#divSupplier').show()
-            $('#lblCustomer').hide()
-            $('#divCustomer').hide()
-            var supplier_id = $('#supplier-select').val()
-            if (supplier_id !== null && supplier_id !== undefined && supplier_id !== '') {
-                this.GetDataByClientOrSupplier(0, parseInt(supplier_id[0]))
-            }
+        switch (payment_request_type) {
+            case '1':
+            case '2':
+                {
+                    $('#lblSupplier').hide()
+                    $('#divSupplier').hide()
+                    $('#lblCustomer').show()
+                    $('#divCustomer').show()
+                    $('#global_modal_popup #supplier-select').next(".select2-container").hide();
+                    $('#global_modal_popup #client-select').next(".select2-container").show();
+                    var client_id = $('#client-select').val()
+                    if (client_id !== null && client_id !== undefined && client_id !== '') {
+                        this.GetDataByClientOrSupplier(parseInt(client_id[0]), 0)
+                    }
+                } break;
+            case '3':
+                {
+                    $('#divSupplier').show()
+                    $('#lblSupplier').show()
+                    $('#lblCustomer').hide()
+                    $('#divCustomer').hide()
+                    $('#global_modal_popup #supplier-select').next(".select2-container").show();
+                    $('#global_modal_popup #client-select').next(".select2-container").hide();
+                    var supplier_id = $('#supplier-select').val()
+                    if (supplier_id !== null && supplier_id !== undefined && supplier_id !== '') {
+                        this.GetDataByClientOrSupplier(0, parseInt(supplier_id[0]))
+                    }
+                } break;
         }
-        if (payment_request_type !== null && payment_request_type !== '' && parseInt(payment_request_type) == 1) {//hoàn trả khách hàng
-            $('#lblSupplier').hide()
-            $('#divSupplier').hide()
-            $('#lblCustomer').show()
-            $('#divCustomer').show()
-            var client_id = $('#client-select').val()
-            if (client_id !== null && client_id !== undefined && client_id !== '') {
-                this.GetDataByClientOrSupplier(parseInt(client_id[0]), 0)
-            }
-        }
-        if (payment_request_type !== null && payment_request_type !== '' && parseInt(payment_request_type) == 2) {//Quỹ chăm sóc khách hàng
-            $('#lblSupplier').hide()
-            $('#divSupplier').hide()
-            $('#lblCustomer').show()
-            $('#divCustomer').show()
-            var client_id = $('#client-select').val()
-            if (client_id !== null && client_id !== undefined && client_id !== '') {
-                this.GetDataByClientOrSupplier(parseInt(client_id[0]), 0)
-            }
-        }
+       
     },
     OnChooseTypeEdit: function (client_id, supplier_id, bankAccountId) {
         bankingAccountId = bankAccountId
@@ -617,7 +620,7 @@ var _add_payment_voucher = {
     },
     OnChoosePaymentType: function () {
         var pay_type = $('#payment-voucher-pay-type').val()
-        /*debugger*/
+        /**/
         if (parseInt(pay_type) != 2) { //thanh toán tiền mặt
             $('#bankingAccount').attr('disabled', true)
             $('#bankingAccount').addClass('background-disabled')

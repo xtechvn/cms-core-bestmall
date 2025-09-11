@@ -40,5 +40,9 @@ namespace Repositories.Repositories
         {
             return bankingAccountDAL.GetById(bankAccountId);
         }
+        public BankingAccount GetBySupplierId(int supplierId)
+        {
+            return bankingAccountDAL.GetBySupplierId(supplierId);
+        }
     }
 }

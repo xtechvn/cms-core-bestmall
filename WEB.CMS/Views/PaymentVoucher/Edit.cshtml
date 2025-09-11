@@ -86,7 +86,7 @@
 <div class="row m-0 p-0">
     <div class="col-md-6 mb10" id="lblSupplier"><label class="lbl mt5 mb0">Tên nhà cung cấp <sup class="red">*</sup></label></div>
     <div class="col-md-12 mb10" id="divSupplier">
-        <select class="select2 supplier-select" id="supplier-select" style="width:100% !important" multiple="multiple" disabled
+        <select class=" supplier-select" id="supplier-select" style="width:100% !important" multiple="multiple" disabled
                 onchange="_add_payment_voucher.OnChooseType()">
         </select>
         <div class="validate-supplier-select"></div>
@@ -94,7 +94,7 @@
 
     <div class="col-md-6 mb10" id="lblCustomer"><label class="lbl mt5 mb0">Tên khách hàng <sup class="red">*</sup></label></div>
     <div class="col-md-12 mb10" id="divCustomer">
-        <select class="select2 client-select" id="client-select" style="width:100% !important" multiple="multiple" disabled
+        <select class=" client-select" id="client-select" style="width:100% !important" multiple="multiple" disabled
                 onchange="_add_payment_voucher.OnChooseType()">
         </select>
         <div class="validate-client-select"></div>
@@ -235,9 +235,8 @@
     <button type="submit" class="btn btn-default" onclick="_add_payment_voucher.EditPaymentVoucher()" style="background: #5cb566 !important;">Cập nhật</button>
 </div>
 
-<script type="text/javascript" src="~/modules/add_payment_voucher.js?v=1"></script>
 <script>
-    _add_payment_voucher.Initialization();
+   // _add_payment_voucher.Initialization();
     $(document).ready(function () {
         _add_payment_voucher.OnChooseTypeEdit(@clientId, @supplierId, @bankingAccountId)
         _global_function.RenderFileAttachment($('.attachment-edit'),@Model.Id, @((int)AttachmentType.Payment_Voucher))

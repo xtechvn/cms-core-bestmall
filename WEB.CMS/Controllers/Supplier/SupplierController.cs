@@ -34,6 +34,7 @@ namespace WEB.CMS.Controllers
 
         private readonly IConfiguration configuration;
         private readonly IAllCodeRepository _allCodeRepository;
+        private readonly IBankingAccountRepository _bankingAccountRepository;
         private readonly ICommonRepository _commonRepository;
         private readonly IWebHostEnvironment _WebHostEnvironment;
         private readonly ISupplierRepository _supplierRepository;
@@ -49,7 +50,8 @@ namespace WEB.CMS.Controllers
 
         public SupplierController(IAllCodeRepository allCodeRepository, ISupplierRepository supplierRepository, IUserRepository userRepository,
             ICommonRepository commonRepository, IConfiguration _configuration, IWebHostEnvironment webHostEnvironment, IAttachFileRepository attachFileRepository
-            , ProductDetailMongoAccess productV2DetailMongoAccess, SupplierESRepository supplierESRepository, LocationESService locationESService, ProductESRepository _productESRepository)
+            , ProductDetailMongoAccess productV2DetailMongoAccess, SupplierESRepository supplierESRepository, LocationESService locationESService, 
+            ProductESRepository _productESRepository, IBankingAccountRepository bankingAccountRepository)
         {
             _allCodeRepository = allCodeRepository;
             _supplierRepository = supplierRepository;
@@ -66,6 +68,7 @@ namespace WEB.CMS.Controllers
             _productV2DetailMongoAccess = productV2DetailMongoAccess;
             _supplierESRepository = supplierESRepository;
             _locationESService = locationESService;
+            _bankingAccountRepository=bankingAccountRepository;
         }
 
         #region supplier
@@ -110,6 +113,7 @@ namespace WEB.CMS.Controllers
             ViewBag.Ward = new Ward();
             ViewBag.BannerMain = new List<string>();
             ViewBag.BannerSub = new List<string>();
+            ViewBag.BankAccount = new BankingAccount();
             if (id > 0)
             {
                 model = _supplierRepository.GetById(id);
@@ -142,6 +146,8 @@ namespace WEB.CMS.Controllers
                 }
                 string static_domain = configuration["DomainConfig:ImageStatic"];
                 ViewBag.StaticDomain = static_domain;
+                var bank = _bankingAccountRepository.GetBySupplierId(id);
+                if (bank != null && bank.Id>0) ViewBag.BankAccount = bank;
             }
             try
             {

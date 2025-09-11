@@ -67,6 +67,21 @@ namespace DAL
                 return null;
             }
         }
+        public BankingAccount GetBySupplierId(int supplierId)
+        {
+            try
+            {
+                using (var _DbContext = new EntityDataContext(_connection))
+                {
+                    return _DbContext.BankingAccounts.AsNoTracking().FirstOrDefault(n => n.SupplierId == supplierId);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("GetById - GetBySupplierId: " + ex);
+                return null;
+            }
+        }
 
         public int InsertBankingAccount(BankingAccount model)
         {

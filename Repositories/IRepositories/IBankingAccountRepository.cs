@@ -9,5 +9,6 @@ namespace Repositories.IRepositories
     {
         BankingAccount GetById(int bankAccountId);
         List<BankingAccount> GetBankAccountByClientId(long clientId);
+        public BankingAccount GetBySupplierId(int supplierId);
     }
 }

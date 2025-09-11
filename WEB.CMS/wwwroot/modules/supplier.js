@@ -284,6 +284,12 @@ var _supplier_service = {
         formData['ProvinceId'] = $('#supplier-province').find(':selected').val();
         formData['DistrictId'] = $('#supplier-district').find(':selected').val();
         formData['WardId'] = $('#supplier-ward').find(':selected').val();
+        //banking
+        formData['BankAccountId'] = $('#bank-id').val();
+        formData['BankAccountNumber'] = $('#bank-account-number').val();
+        formData['BankId'] = $('#bank-bank-name').val();
+        formData['BankAccountName'] = $('#bank-account-name').val();
+        formData['BankBranch'] = $('#bank-branch').val();
 
         var banner_main = []
         $('#banner-main .col-md-3 .magnific_popup').each(function (index, item) {
