@@ -9,6 +9,7 @@ using Entities.ViewModels.SupplierConfig;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
+using Nest;
 using Repositories.IRepositories;
 using Repositories.Repositories.BaseRepos;
 using System;
@@ -214,7 +215,7 @@ namespace Repositories.Repositories
                             Mobile = model.ContactPhone,
                             CreatedBy = _SysUserModel.Id,
                         });
-                    if (model.BankId != null && model.BankId.Trim() != "")
+                    if (model.BankAccountId <=0)
                     {
                         bankingAccountDAL.InsertBankingAccount(new BankingAccount
                         {
@@ -226,7 +227,20 @@ namespace Repositories.Repositories
                             SupplierId = supplier_id,
                         });
                     }
-
+                    else
+                    {
+                        var exists=bankingAccountDAL.GetById(model.BankAccountId);
+                        if(exists!=null && exists.Id > 0)
+                        {
+                            exists.BankId = model.BankId;
+                            exists.AccountName = model.BankAccountName;
+                            exists.AccountNumber = model.BankAccountNumber;
+                            exists.Branch = model.BankBranch;
+                            exists.CreatedBy = _SysUserModel.Id;
+                            exists.SupplierId = supplier_id;
+                            bankingAccountDAL.UpdateBankingAccount(exists);
+                        }
+                    }
                 }
                 return supplier_id;
             }

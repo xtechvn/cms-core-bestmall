@@ -8,7 +8,7 @@
     var listBankingAccountAdavigo = (List<BankingAccount>)ViewBag.listBankingAccountAdavigo;
 }
 
-<section style=" overflow-x: hidden;">
+<section id="payment_request_index" style=" overflow-x: hidden;">
     <div class="main-container">
         <div class="row-main container">
             <h2 class="txt_18 bold mb20">Danh sách phiếu chi</h2>
@@ -20,8 +20,8 @@
                     <input type="text" class="form-control" id="content" placeholder="Phiếu yêu cầu chi liên quan" style=" width: 200px;">
                 </div>
                 <div class="form-group mb10 mr-2">
-                    <div class="multiple-select form-group mb10 mr-2" style="width: 200px;    margin-top: 10px;">
-                        <div class="select-btn select-btn-service-type" id="select-btn-service-type">
+                    <div class="multiple-select form-group mb10 mr-2" style="width: 200px;height: 40px;margin: 0 !important;">
+                        <div class="select-btn select-btn-service-type" id="select-btn-service-type" style=" height: 40px; ">
                             <span class="btn-text-service-type">Tất cả loại nghiệp vụ</span>
                             <span class="arrow-dwn">
                                 <i class="fa fa-angle-down"></i>
@@ -42,8 +42,8 @@
                     </div>
                 </div>
                 <div class="form-group mb10  mr-2">
-                    <div class="multiple-select form-group mb10 mr-2" style="width: 200px;    margin-top: 10px;">
-                        <div class="select-btn select-btn-payment-type" id="select-btn-payment-type">
+                    <div class="multiple-select form-group mb10 mr-2" style="width: 200px;height: 40px;margin: 0 !important;">
+                        <div class="select-btn select-btn-payment-type" id="select-btn-payment-type" style=" height: 40px; ">
                             <span class="btn-text-payment-type">Tất cả hình thức</span>
                             <span class="arrow-dwn">
                                 <i class="fa fa-angle-down"></i>
@@ -65,15 +65,15 @@
                 </div>
 
                 <div class="form-group mb10 mr-2" style="min-width: 300px;" id="divClient">
-                    <select class="select2" id="token-input-client" style="width:100% !important" multiple="multiple">
+                    <select class="" id="token-input-client" style="width:100% !important" multiple="multiple">
                     </select>
                 </div>
                 <div class="form-group mb10 mr-2" style="min-width: 300px;" id="divSupplier">
-                    <select class="select2" id="token-input-supplier" style="width:100% !important" multiple="multiple">
+                    <select class="" id="token-input-supplier" style="width:100% !important" multiple="multiple">
                     </select>
                 </div>
                 <div class="form-group mb10 mr-2" style="min-width: 200px;">
-                    <select class="form-control select2" id="bankingAccountSource">
+                    <select class="form-control" id="bankingAccountSource">
                         <option value="-1" disabled selected>Tất cả tài khoản nguồn </option>
                         @foreach (var item in listBankingAccountAdavigo)
                         {
@@ -88,7 +88,7 @@
                     </div>
                 </div>
                 <div class="form-group mb10 mr-2" style="min-width: 200px;">
-                    <select class="select2 client-select main-staff-select" id="createdBy" multiple="multiple" style="width:100% !important">
+                    <select class=" client-select main-staff-select" id="createdBy" multiple="multiple" style="width:100% !important">
                     </select>
                 </div>
                 <div class="mb10 mr-2">
@@ -143,6 +143,8 @@
 @section scripts {
     <script type="text/javascript" src="~/js/zebra_datepicker.min.js"></script>
     <script type="text/javascript" src="~/modules/payment_voucher.js"></script>
+    <script type="text/javascript" src="~/modules/add_payment_voucher.js?v=1"></script>
+
     <script>
 
         $('input[name="datetimeCreate"]').daterangepicker({
@@ -169,7 +171,7 @@
         width: 100%;
     }
 
-    .select2-selection .select2-selection--single {
+    .-selection .-selection--single {
         height: 34px !important;
     }
 

@@ -11,7 +11,7 @@
     List<string> banner_main = (List<string>)ViewBag.BannerMain;
     List<string> banner_sub = (List<string>)ViewBag.BannerSub;
     string static_url = (string)ViewBag.Static;
-
+    BankingAccount bank = (BankingAccount)ViewBag.BankAccount;
 }
 @using Entities.Models
 @using Entities.ViewModels.Funding
@@ -90,6 +90,39 @@
                         <label class="lbl">Địa chỉ</label>
                         <div class="wrap_input">
                             <input type="text" class="form-control" asp-for="@Model.Address" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="grid-item col-md-6">
+            <div class="border mb20">
+                <div class="lb-form">Thông tin thanh toán</div>
+                <div class="pd10">
+                    <div class="form-group">
+                        <label class="lbl">Số tài khoản <sup class="red">*</sup></label>
+                        <div class="wrap_input">
+                            <input type="text"style="display:none;" id="bank-id" value="@bank.Id" />
+                            <input type="text" class="form-control" id="bank-account-number" value="@bank.AccountNumber" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="lbl">Tên ngân hàng</label>
+                        <div class="wrap_input">
+                            <input type="text" class="form-control" id="bank-bank-name" value="@bank.BankId" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="lbl">Tên chủ tài khoản</label>
+                        <div class="wrap_input">
+                            <input type="text" class="form-control" id="bank-account-name" value="@bank.AccountName" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="lbl">Chi nhánh</label>
+                        <div class="wrap_input">
+                            <input type="text" class="form-control" id="bank-branch" value="@bank.Branch" />
                         </div>
                     </div>
                 </div>

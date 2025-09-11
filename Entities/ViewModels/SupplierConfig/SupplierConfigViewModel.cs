@@ -16,6 +16,7 @@ namespace Entities.ViewModels.SupplierConfig
         public string ContactPhone { get; set; }
         public string ContactPosition { get; set; }
 
+        public int BankAccountId { get; set; }
         public string BankAccountNumber { get; set; }
         public string BankAccountName { get; set; }
         public string BankId { get; set; }
