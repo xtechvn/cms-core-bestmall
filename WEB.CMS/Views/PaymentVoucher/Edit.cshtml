@@ -166,8 +166,8 @@
         </div>
         <div class="col-md-6 mb10"><label class="lbl mt5 mb0"> Số tiền <sup class="red">*</sup></label></div>
         <div class="col-md-12 mb10">
-            <input type="text" class="form-control background-disabled " id="amount" maxlength="15"
-                   disabled asp-for="@Model.Amount" value="@Model.Amount.ToString("N0")">
+            <input type="text" class="form-control background-disabled input-price" id="amount" maxlength="15"
+                    asp-for="@Model.Amount" value="@Model.Amount.ToString("N0")">
             <div class="validate-amount"></div>
         </div>
 
