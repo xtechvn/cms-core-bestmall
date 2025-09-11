@@ -140,6 +140,12 @@ var _add_payment_voucher = {
         $('body').on('select2:select', '#bankingAccount', function () {
             _add_payment_voucher.GetAccountName()
         })
+        $('body').on('keyup', '.input-price', function () {
+            var element = $(this)
+            var value = parseFloat(element.val().replaceAll(',', ''))
+            if (isNaN(value)) value = 0
+            element.val(_add_payment_voucher.Comma(value))
+        });
     },
     FormatNumber: function () {
         var amount = $('#amount').val()
@@ -364,14 +370,27 @@ var _add_payment_voucher = {
             _add_payment_voucher.DisplayError('validate-payment-voucher-type', 'Vui lòng chọn loại nghiệp vụ')
             result = false;
         }
-        if (($('#payment-voucher-type').val() === '3' || $('#payment-voucher-type').val() === '5') && ($('#client-select').val() == undefined || $('#client-select').val() == null || $('#client-select').val() == '')) {
-            _add_payment_voucher.DisplayError('validate-client-select', 'Vui lòng chọn khách hàng')
-            result = false;
-        }
-        if (($('#payment-voucher-type').val() === '1' || $('#payment-voucher-type').val() === '2')
-            && ($('#supplier-select').val() == undefined || $('#supplier-select').val() == null || $('#supplier-select').val() == '')) {
-            _add_payment_voucher.DisplayError('validate-supplier-select', 'Vui lòng chọn nhà cung cấp')
-            result = false;
+        //if (($('#payment-voucher-type').val() === '3' || $('#payment-voucher-type').val() === '5') && ($('#client-select').val() == undefined || $('#client-select').val() == null || $('#client-select').val() == '')) {
+        //    _add_payment_voucher.DisplayError('validate-client-select', 'Vui lòng chọn khách hàng')
+        //    result = false;
+        //}
+        //if (($('#payment-voucher-type').val() === '1' || $('#payment-voucher-type').val() === '2')
+        //    && ($('#supplier-select').val() == undefined || $('#supplier-select').val() == null || $('#supplier-select').val() == '')) {
+        //    _add_payment_voucher.DisplayError('validate-supplier-select', 'Vui lòng chọn nhà cung cấp')
+        //    result = false;
+        //}
+        switch ($('#payment-voucher-type').val()) {
+            case '1':
+            case '2':
+                {
+                    _add_payment_voucher.DisplayError('validate-client-select', 'Vui lòng chọn khách hàng')
+                    result = false;
+                } break;
+            case '3':
+                {
+                    _add_payment_voucher.DisplayError('validate-supplier-select', 'Vui lòng chọn nhà cung cấp')
+                    result = false; 
+                } break;
         }
         if ($('#payment-voucher-pay-type').val() == undefined || $('#payment-voucher-pay-type').val() == null || $('#payment-voucher-pay-type').val() == '') {
             _add_payment_voucher.DisplayError('validate-payment-voucher-pay-type', 'Vui lòng chọn hình thức')
@@ -441,13 +460,13 @@ var _add_payment_voucher = {
             'bankingAccountId': $('#bankingAccount').val() == null || $('#bankingAccount').val() == ''
                 || $('#bankingAccount').val() == undefined ? 0 : parseInt($('#bankingAccount').val()),
             'description': $('#description').val(),
-            'note': $('#content').val(),
+            'note': $('#payment-content').val(),
             'clientId': parseInt(($('#client-select').val())),
             'bankName': $('#bankName').val(),
             'bankAccount': $('#bankAccount').val(),
             'sourceAccount': $('#bankingAccountSource').val(),
             'supplierId': parseInt(($('#supplier-select').val())),
-            'amount': parseFloat($('#amount').val().replaceAll('.', '').replaceAll(',', '')),
+            'amount': parseFloat($('#amount').val().replaceAll(',', '')),
             //'PaymentRequestDetails': PaymentRequestDetails,
             'PaymentRequestDetails': [],
             'OtherImages': other_image
@@ -631,11 +650,11 @@ var _add_payment_voucher = {
             'description': $('#description').val(),
             'bankName': $('#bankName').val(),
             'bankAccount': $('#bankAccount').val(),
-            'note': $('#content').val(),
+            'note': $('#payment-content').val(),
             'clientId': parseInt(($('#client-select').val())),
             'supplierId': parseInt(($('#supplier-select').val())),
             'sourceAccount': $('#bankingAccountSource').val(),
-            'amount': parseFloat($('#amount').val().replaceAll('.', '').replaceAll(',', '')),
+            'amount': parseFloat($('#amount').val().replaceAll(',', '')),
             'paymentRequestDetails': PaymentRequestDetails,
             'OtherImages': other_image
         }
@@ -1088,4 +1107,16 @@ var _add_payment_voucher = {
         });
         _add_payment_voucher.GetListBankAccountByClientID(clientIdSearch);
     },
+    Comma: function (number) { //function to add commas to textboxes
+        number = ('' + number).replace(/[^0-9.,]+/g, '');
+        number += '';
+        number = number.replaceAll(',', '');
+        x = number.split('.');
+        x1 = x[0];
+        x2 = x.length > 1 ? '.' + x[1] : '';
+        var rgx = /(\d+)(\d{3})/;
+        while (rgx.test(x1))
+            x1 = x1.replace(rgx, '$1' + ',' + '$2');
+        return x1 + x2;
+    }
 }
