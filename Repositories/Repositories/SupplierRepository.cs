@@ -261,7 +261,32 @@ namespace Repositories.Repositories
                 }
 
                 model.UpdatedBy = _SysUserModel.Id;
-
+                if (model.BankAccountId <= 0)
+                {
+                    bankingAccountDAL.InsertBankingAccount(new BankingAccount
+                    {
+                        BankId = model.BankId,
+                        AccountName = model.BankAccountName,
+                        AccountNumber = model.BankAccountNumber,
+                        Branch = model.BankBranch,
+                        CreatedBy = _SysUserModel.Id,
+                        SupplierId = model.SupplierId,
+                    });
+                }
+                else
+                {
+                    var exists = bankingAccountDAL.GetById(model.BankAccountId);
+                    if (exists != null && exists.Id > 0)
+                    {
+                        exists.BankId = model.BankId;
+                        exists.AccountName = model.BankAccountName;
+                        exists.AccountNumber = model.BankAccountNumber;
+                        exists.Branch = model.BankBranch;
+                        exists.CreatedBy = _SysUserModel.Id;
+                        exists.SupplierId = model.SupplierId;
+                        bankingAccountDAL.UpdateBankingAccount(exists);
+                    }
+                }
                 return supplierDAL.UpdateSupplier(model);
             }
             catch

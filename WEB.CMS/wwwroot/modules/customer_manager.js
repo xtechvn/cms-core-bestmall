@@ -96,7 +96,7 @@ $(document).ready(function () {
         placeholder: "Tên KH, Điện Thoại, Email",
         maximumSelectionLength: 1,
         ajax: {
-            url: "/CustomerManager/ClientSuggestion",
+            url: "/client/ClientSuggestion",
             type: "post",
             dataType: 'json',
             delay: 250,
@@ -112,7 +112,7 @@ $(document).ready(function () {
                 return {
                     results: $.map(response.data, function (item) {
                         return {
-                            text: item.clientname + ' - ' + item.email + ' - ' + item.phone,
+                            text: item.clientName + ' - ' + item.email + ' - ' + item.phone,
                             id: item.id,
                         }
                     })
