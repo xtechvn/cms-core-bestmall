@@ -199,10 +199,6 @@
 </div>
 
 <script type="text/javascript" src="~/modules/add_payment_voucher.js?v=1"></script>
-<script>
-    _add_payment_voucher.Initialization();
-            _global_function.RenderFileAttachment($('.attachment-addnew'),0, @((int)AttachmentType.Payment_Voucher))
-</script>
 @section scripts {
     <script>
         $().ready(function () {
@@ -210,6 +206,8 @@
             setTimeout(function () {
                 $('#order-relate').hide()
                 $('#deposit-relate').hide()
+                _add_payment_voucher.Initialization();
+
             }, 1000)
         })
     </script>
