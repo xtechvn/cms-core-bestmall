@@ -60,13 +60,14 @@ var _add_payment_voucher = {
                 delay: 250,
                 data: function (params) {
                     var query = {
-                        FullName: params.term,
-                        ServiceType: '',
-                        SalerId: '',
-                        currentPage: 1,
-                        pageSize: 20
-                    }
-                    
+                        searchModel: {
+                            FullName: params.term,
+                            ServiceType: '',
+                            SalerId: '',
+                            currentPage: 1,
+                            pageSize: 20
+                        }
+                    } 
                     return query;
                 },
                 processResults: function (response) {
