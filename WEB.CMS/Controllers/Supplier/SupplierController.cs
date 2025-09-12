@@ -99,6 +99,31 @@ namespace WEB.CMS.Controllers
             }
             return PartialView(model);
         }
+        [HttpPost]
+        public IActionResult SearchData(SupplierSearchModel searchModel)
+        {
+            var model = new GenericViewModel<SupplierViewModel>();
+            model.ListData = new List<SupplierViewModel>();
+
+            try
+            {
+                var listSuppliers = _supplierRepository.GetSuppliers(searchModel);
+                model.CurrentPage = searchModel.currentPage;
+                model.ListData = listSuppliers;
+                model.PageSize = searchModel.pageSize;
+                model.TotalRecord = listSuppliers != null && listSuppliers.Any() ? listSuppliers.FirstOrDefault().TotalRow : 0;
+                model.TotalPage = (int)Math.Ceiling((double)model.TotalRecord / searchModel.pageSize);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("SearchData - SupplierController: " + ex);
+            }
+            return new JsonResult(new
+            {
+                isSuccess = true,
+                data = model.ListData
+            });
+        }
 
         public async Task<IActionResult> AddOrUpdate(int id)
         {

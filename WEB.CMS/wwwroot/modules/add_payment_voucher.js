@@ -55,7 +55,7 @@ var _add_payment_voucher = {
             searchingText: "Đang tìm kiếm...",
             maximumSelectionLength: 1,
             ajax: {
-                url: "/Supplier/Search",
+                url: "/Supplier/SearchData",
                 type: "post",
                 delay: 250,
                 data: function (params) {
@@ -72,7 +72,7 @@ var _add_payment_voucher = {
                 processResults: function (response) {
                     
                     return {
-                        results: $.map(response, function (item) {
+                        results: $.map(response.data, function (item) {
                             
                             return {
                                 text: item.fullName,
