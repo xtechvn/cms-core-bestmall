@@ -63,18 +63,16 @@ var _add_payment_voucher = {
                         searchModel: {
                             FullName: params.term,
                             currentPage: 1,
-                            pageSize: 20
+                            pageSize: 3
                         }
                     } 
                     return query;
                 },
                 processResults: function (response) {
-                    
                     return {
                         results: $.map(response.data, function (item) {
-                            
                             return {
-                                text: item.fullName,
+                                text: '[' + item.supplierId +'] '+ item.fullName,
                                 id: item.supplierId,
                             }
                         })
@@ -1139,3 +1137,4 @@ var _add_payment_voucher = {
         return x1 + x2;
     }
 }
+

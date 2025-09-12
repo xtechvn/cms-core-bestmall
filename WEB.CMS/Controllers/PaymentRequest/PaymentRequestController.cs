@@ -68,8 +68,8 @@ namespace WEB.CMS.Controllers.PaymentRequest
                 var supplierList = await _supplierRepository.GetSuggestionList(name);
                 var suggestionlist = supplierList.Select(s => new SupplierViewModel
                 {
-                    id = s.SupplierId,
-                    fullname = s.FullName,
+                    SupplierId=s.SupplierId,
+                    FullName= s.FullName,
                     Email = s.Email,
                     Phone = s.Phone,
                 }).ToList();

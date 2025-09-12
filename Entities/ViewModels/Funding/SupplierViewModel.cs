@@ -7,30 +7,11 @@ namespace Entities.ViewModels.Funding
 {
     public class SupplierViewModel : Supplier
     {
-        public string ServiceTypeName { get; set; }
-        public string ProvinceName { get; set; }
         public string SalerName { get; set; }
         public string CreatedName { get; set; }
-        public string LocalVerifyDate { get; set; }
         public string UpdatedName { get; set; }
-        public int DepartmentId { get; set; }
-        public string DepartmentName { get; set; }
-        public string VerifyDateName { get; set; }
         public long TotalRow { get; set; }
-        public int id { get; set; }
-        public string name
-        {
-            get
-            {
-                var nameStr = fullname;
-                if (!string.IsNullOrEmpty(Email))
-                    nameStr += " - " + Email;
-                if (!string.IsNullOrEmpty(Phone))
-                    nameStr += " - " + Phone;
-                return nameStr;
-            }
-        }
-        public string fullname { get; set; }
+       
     }
 
     public class SupplierDetailViewModel : Supplier
