@@ -62,8 +62,6 @@ var _add_payment_voucher = {
                     var query = {
                         searchModel: {
                             FullName: params.term,
-                            ServiceType: '',
-                            SalerId: '',
                             currentPage: 1,
                             pageSize: 20
                         }

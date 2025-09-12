@@ -27,11 +27,11 @@ var _supplier_service = {
 
         let objSearch = {
             FullName: $('#ip_search_fullname').val() != undefined ? $('#ip_search_fullname').val().trim().replaceAll(/  +/g, ' ') : null,
-            ServiceType: services != null ? services.join(',') : "",
+           // ServiceType: services != null ? services.join(',') : "",
             //ProvinceId: provinces != null ? provinces.join(',') : "",
             //RatingStar: stars != null ? stars.join(',') : "",
             //ChainBrands: brands != null ? brands.join(',') : "",
-            SalerId: users != null ? users.join(',') : "",
+            //SalerId: users != null ? users.join(',') : "",
             currentPage: 1,
             pageSize: 10
         }
