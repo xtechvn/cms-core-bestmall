@@ -63,7 +63,7 @@ var _add_payment_voucher = {
                         searchModel: {
                             FullName: params.term,
                             currentPage: 1,
-                            pageSize: 3
+                            pageSize: 20
                         }
                     } 
                     return query;
@@ -391,7 +391,7 @@ var _add_payment_voucher = {
             case '1':
             case '2':
                 {
-                    var validate_detail = $('#validate-client-select').find(':selected').val()
+                    var validate_detail = $('#client-select').find(':selected').val()
                     if (validate_detail == undefined || validate_detail == null || validate_detail.trim() == '') {
                         _add_payment_voucher.DisplayError('validate-client-select', 'Vui lòng chọn khách hàng')
                         result = false;
@@ -399,7 +399,7 @@ var _add_payment_voucher = {
                 } break;
             case '3':
                 {
-                    var validate_detail = $('#validate-supplier-select').find(':selected').val()
+                    var validate_detail = $('#supplier-select').find(':selected').val()
                     if (validate_detail == undefined || validate_detail == null || validate_detail.trim() == '') {
                         _add_payment_voucher.DisplayError('validate-supplier-select', 'Vui lòng chọn nhà cung cấp')
                         result = false;
@@ -423,11 +423,11 @@ var _add_payment_voucher = {
             _add_payment_voucher.DisplayError('validate-bankingAccount', 'Vui lòng chọn số tài khoản nhận')
             result = false;
         }
-        if ($('#content').val() == undefined || $('#content').val() == null || $('#content').val() == '') {
+        if ($('#payment-content').val() == undefined || $('#payment-content').val() == null || $('#payment-content').val() == '') {
             _add_payment_voucher.DisplayError('validate-content', 'Vui lòng nhập nội dung')
             result = false;
         }
-        if (($('#content').val()).length > 500) {
+        if (($('#payment-content').val()).length > 500) {
             _add_payment_voucher.DisplayError('validate-content', 'Vui lòng nhập nội dung không quá 500 kí tự')
             result = false;
         }
@@ -675,7 +675,7 @@ var _add_payment_voucher = {
             'paymentRequestDetails': PaymentRequestDetails,
             'OtherImages': other_image
         }
-        switch (payment_request_type) {
+        switch ($('#payment-voucher-type').find(':selected').val()) {
             case '1':
             case '2':
                 {
@@ -730,6 +730,17 @@ var _add_payment_voucher = {
             $('#lblBankNameRequired').show()
             $('#lblBankAccount').hide()
             $('#lblBankName').hide()
+        }
+        switch ($('#payment-voucher-type').find(':selected').val()) {
+            case '1':
+            case '2':
+                {
+                    _add_payment_voucher.GetListBankAccountByClientID($('#client-select').find(':selected').val());
+                } break;
+            case '3':
+                {
+                    _add_payment_voucher.GetListBankAccountBySupplierID($('#supplier-select').find(':selected').val())
+                } break;
         }
         //var payment_request_type = $('#payment-voucher-type').val()
         //if (payment_request_type !== null && payment_request_type !== '' && (parseInt(payment_request_type) == 1 || parseInt(payment_request_type) == 2)) { // thanh toán dịch vụ

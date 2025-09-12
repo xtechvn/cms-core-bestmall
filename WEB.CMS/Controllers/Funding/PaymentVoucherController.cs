@@ -27,9 +27,11 @@ namespace WEB.Adavigo.CMS.Controllers.Funding
         private readonly WEB.CMS.Models.AppSettings config;
         private readonly IUserRepository _userRepository;
         private readonly ISupplierRepository _supplierRepository;
+        private readonly IIdentifierServiceRepository identifierServiceRepository;
 
         public PaymentVoucherController(IAllCodeRepository allCodeRepository, IWebHostEnvironment hostEnvironment,
-           IPaymentRequestRepository paymentRequestRepository, IPaymentVoucherRepository paymentVoucherRepository, IUserRepository userRepository, ISupplierRepository supplierRepository)
+           IPaymentRequestRepository paymentRequestRepository, IPaymentVoucherRepository paymentVoucherRepository, IUserRepository userRepository
+            , ISupplierRepository supplierRepository, IIdentifierServiceRepository identifierServiceRepository)
         {
             _WebHostEnvironment = hostEnvironment;
             _allCodeRepository = allCodeRepository;
@@ -38,6 +40,7 @@ namespace WEB.Adavigo.CMS.Controllers.Funding
             config = ReadFile.LoadConfig();
             _userRepository = userRepository;
             _supplierRepository = supplierRepository;
+            this.identifierServiceRepository = identifierServiceRepository;
         }
 
         public IActionResult Index()
@@ -188,24 +191,25 @@ namespace WEB.Adavigo.CMS.Controllers.Funding
                         message = messages
                     });
                 }
-                var client = new HttpClient();
-                var apiPrefix = ReadFile.LoadConfig().API_URL + ReadFile.LoadConfig().API_GET_BILL_NO;
-                var key_token_api = ReadFile.LoadConfig().KEY_TOKEN_API_MANUAL;
-                HttpClient httpClient = new HttpClient();
-                JObject jsonObject = new JObject(
-                   new JProperty("code_type", ((int)GET_CODE_MODULE.PHIEU_CHI).ToString())
-                );
-                var j_param = new Dictionary<string, object>
-                 {
-                     { "key",jsonObject}
-                 };
-                var data_product = JsonConvert.SerializeObject(j_param);
-                var token = CommonHelper.Encode(data_product, key_token_api);
-                var content = new FormUrlEncodedContent(new[] { new KeyValuePair<string, string>("token", token) });
-                var response = await httpClient.PostAsync(apiPrefix, content);
-                var resultAPI = await response.Content.ReadAsStringAsync();
-                var output = JsonConvert.DeserializeObject<OutputAPI>(resultAPI);
-                model.PaymentCode = output.code;
+                //var client = new HttpClient();
+                //var apiPrefix = ReadFile.LoadConfig().API_URL + ReadFile.LoadConfig().API_GET_BILL_NO;
+                //var key_token_api = ReadFile.LoadConfig().KEY_TOKEN_API_MANUAL;
+                //HttpClient httpClient = new HttpClient();
+                //JObject jsonObject = new JObject(
+                //   new JProperty("code_type", ((int)GET_CODE_MODULE.PHIEU_CHI).ToString())
+                //);
+                //var j_param = new Dictionary<string, object>
+                // {
+                //     { "key",jsonObject}
+                // };
+                //var data_product = JsonConvert.SerializeObject(j_param);
+                //var token = CommonHelper.Encode(data_product, key_token_api);
+                //var content = new FormUrlEncodedContent(new[] { new KeyValuePair<string, string>("token", token) });
+                //var response = await httpClient.PostAsync(apiPrefix, content);
+                //var resultAPI = await response.Content.ReadAsStringAsync();
+                //var output = JsonConvert.DeserializeObject<OutputAPI>(resultAPI);
+                //model.PaymentCode = output.code;
+                model.PaymentCode = await identifierServiceRepository.BuildPaymentVoucher();
                 var result = _paymentVoucherRepository.CreatePaymentVoucher(model, out string msg);
                 if (result == -3)
                     return Ok(new
