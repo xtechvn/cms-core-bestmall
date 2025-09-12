@@ -55,14 +55,18 @@ var _add_payment_voucher = {
             searchingText: "Đang tìm kiếm...",
             maximumSelectionLength: 1,
             ajax: {
-                url: "/PaymentRequest/GetSuppliersSuggest",
+                url: "/Supplier/Search",
                 type: "post",
-                dataType: 'json',
                 delay: 250,
                 data: function (params) {
                     var query = {
-                        name: params.term,
+                        FullName: params.term,
+                        ServiceType: '',
+                        SalerId: '',
+                        currentPage: 1,
+                        pageSize: 20
                     }
+                    
                     return query;
                 },
                 processResults: function (response) {
@@ -71,8 +75,8 @@ var _add_payment_voucher = {
                         results: $.map(response, function (item) {
                             
                             return {
-                                text: item.name,
-                                id: item.id,
+                                text: item.fullName,
+                                id: item.supplierId,
                             }
                         })
                     };
@@ -135,7 +139,14 @@ var _add_payment_voucher = {
             _add_payment_voucher.OnChoosePaymentType()
         })
         $('body').on('select2:select', '#client-select', function () {
-            _add_payment_voucher.OnChooseType()
+            var element = $(this)
+            var value = element.find(':selected').val()
+            _add_payment_voucher.OnChooseTypeEdit(value, undefined, undefined)
+        })
+        $('body').on('select2:select', '#supplier-select', function () {
+            var element = $(this)
+            var value = element.find(':selected').val()
+            _add_payment_voucher.OnChooseTypeEdit(undefined, value, undefined)
         })
         $('body').on('select2:select', '#bankingAccount', function () {
             _add_payment_voucher.GetAccountName()
@@ -365,8 +376,8 @@ var _add_payment_voucher = {
     Validate: function () {
         let result = true
         _add_payment_voucher.ClearError()
-        console.log('payment-voucher-type:'+ $('#payment-voucher-type').val())
-        if ($('#payment-voucher-type').val() == undefined || $('#payment-voucher-type').val() == null || $('#payment-voucher-type').val() == '') {
+        var validate = $('#payment-voucher-type').find(':selected').val();
+        if (validate == undefined || validate == null || validate.trim() == '') {
             _add_payment_voucher.DisplayError('validate-payment-voucher-type', 'Vui lòng chọn loại nghiệp vụ')
             result = false;
         }
@@ -379,20 +390,27 @@ var _add_payment_voucher = {
         //    _add_payment_voucher.DisplayError('validate-supplier-select', 'Vui lòng chọn nhà cung cấp')
         //    result = false;
         //}
-        switch ($('#payment-voucher-type').val()) {
+        switch (validate) {
             case '1':
             case '2':
                 {
-                    _add_payment_voucher.DisplayError('validate-client-select', 'Vui lòng chọn khách hàng')
-                    result = false;
+                    var validate_detail = $('#validate-client-select').find(':selected').val()
+                    if (validate_detail == undefined || validate_detail == null || validate_detail.trim() == '') {
+                        _add_payment_voucher.DisplayError('validate-client-select', 'Vui lòng chọn khách hàng')
+                        result = false;
+                    }
                 } break;
             case '3':
                 {
-                    _add_payment_voucher.DisplayError('validate-supplier-select', 'Vui lòng chọn nhà cung cấp')
-                    result = false; 
+                    var validate_detail = $('#validate-supplier-select').find(':selected').val()
+                    if (validate_detail == undefined || validate_detail == null || validate_detail.trim() == '') {
+                        _add_payment_voucher.DisplayError('validate-supplier-select', 'Vui lòng chọn nhà cung cấp')
+                        result = false;
+                    }
                 } break;
         }
-        if ($('#payment-voucher-pay-type').val() == undefined || $('#payment-voucher-pay-type').val() == null || $('#payment-voucher-pay-type').val() == '') {
+        validate = $('#payment-voucher-pay-type').find(':selected').val();
+        if (validate == undefined || validate == null || validate.trim() == '') {
             _add_payment_voucher.DisplayError('validate-payment-voucher-pay-type', 'Vui lòng chọn hình thức')
             result = false;
         }
@@ -401,8 +419,10 @@ var _add_payment_voucher = {
         //    _add_payment_voucher.DisplayError('validate-bankingName', 'Vui lòng nhập tên người thụ hưởng')
         //    result = false;
         //}
-        if (parseInt($('#payment-voucher-pay-type').val()) == 2 && ($('#bankingAccount').val() == undefined
-            || $('#bankingAccount').val() == null || $('#bankingAccount').val() == '' || $('#bankingAccount').val() == 0 || $('#bankingAccount').val() == '0')) {
+        validate = $('#bankingAccount').find(':selected').val();
+
+        if (parseInt($('#payment-voucher-pay-type').find(':selected').val()) == 2 && (validate == undefined
+            || validate == null || validate.trim() == '' || validate == 0 || validate == '0')) {
             _add_payment_voucher.DisplayError('validate-bankingAccount', 'Vui lòng chọn số tài khoản nhận')
             result = false;
         }
@@ -561,7 +581,8 @@ var _add_payment_voucher = {
                 $('#supplier-select').append(newOption).trigger('change');
             }, 500)
         }
-
+        $('#amount').removeAttr('disabled')
+        $('#amount').removeClass('background-disabled')
         //var payment_request_type = $('#payment-voucher-type').val()
         //if (payment_request_type !== null && payment_request_type !== '' && parseInt(payment_request_type) == 1) { // thanh toán dịch vụ
         //    $('#amount').attr('disabled', true)
@@ -586,33 +607,32 @@ var _add_payment_voucher = {
         //            obj.clientId = -1;
         //        } break;
         //}
-        $('#amount').removeAttr('disabled')
-        $('#amount').removeClass('background-disabled')
-        if (client_id !== null && client_id !== undefined && client_id !== '' && client_id !== 0) {
-            this.GetDataByClientOrSupplier(client_id, 0, true)
-        }
-        if (supplier_id !== null && supplier_id !== undefined && supplier_id !== '' && supplier_id !== 0) {
-            this.GetDataByClientOrSupplier(0, supplier_id, true)
-        }
-        var payment_request_type = $('#payment-voucher-type').val()
-        if (payment_request_type !== null && payment_request_type !== '' && parseInt(payment_request_type) != 3) { // thanh toán dịch vụ và khác
-            $('#lblSupplier').show()
-            $('#divSupplier').show()
-            $('#lblCustomer').hide()
-            $('#divCustomer').hide()
-        }
-        if (payment_request_type !== null && payment_request_type !== '' && parseInt(payment_request_type) == 3) {//hoàn trả khách hàng
-            $('#lblSupplier').hide()
-            $('#divSupplier').hide()
-            $('#lblCustomer').show()
-            $('#divCustomer').show()
-        }
-        if (payment_request_type !== null && payment_request_type !== '' && parseInt(payment_request_type) == 5) {//Quỹ chăm sóc khách hàng
-            $('#lblSupplier').hide()
-            $('#divSupplier').hide()
-            $('#lblCustomer').show()
-            $('#divCustomer').show()
-        }
+       
+        //if (client_id !== null && client_id !== undefined && client_id !== '' && client_id !== 0) {
+        //    this.GetDataByClientOrSupplier(client_id, 0, true)
+        //}
+        //if (supplier_id !== null && supplier_id !== undefined && supplier_id !== '' && supplier_id !== 0) {
+        //    this.GetDataByClientOrSupplier(0, supplier_id, true)
+        //}
+        //var payment_request_type = $('#payment-voucher-type').val()
+        //if (payment_request_type !== null && payment_request_type !== '' && parseInt(payment_request_type) != 3) { // thanh toán dịch vụ và khác
+        //    $('#lblSupplier').show()
+        //    $('#divSupplier').show()
+        //    $('#lblCustomer').hide()
+        //    $('#divCustomer').hide()
+        //}
+        //if (payment_request_type !== null && payment_request_type !== '' && parseInt(payment_request_type) == 3) {//hoàn trả khách hàng
+        //    $('#lblSupplier').hide()
+        //    $('#divSupplier').hide()
+        //    $('#lblCustomer').show()
+        //    $('#divCustomer').show()
+        //}
+        //if (payment_request_type !== null && payment_request_type !== '' && parseInt(payment_request_type) == 5) {//Quỹ chăm sóc khách hàng
+        //    $('#lblSupplier').hide()
+        //    $('#divSupplier').hide()
+        //    $('#lblCustomer').show()
+        //    $('#divCustomer').show()
+        //}
         _add_payment_voucher.OnChoosePaymentType()
     },
     Close: function () {
@@ -714,16 +734,16 @@ var _add_payment_voucher = {
             $('#lblBankAccount').hide()
             $('#lblBankName').hide()
         }
-        var payment_request_type = $('#payment-voucher-type').val()
-        if (payment_request_type !== null && payment_request_type !== '' && (parseInt(payment_request_type) == 1 || parseInt(payment_request_type) == 2)) { // thanh toán dịch vụ
-            _add_payment_voucher.GetListBankAccountBySupplierID($('#supplier-select').val())
-        }
-        if (payment_request_type !== null && payment_request_type !== '' && parseInt(payment_request_type) == 3) { // thanh toán dịch vụ
-            _add_payment_voucher.GetListBankAccountByClientID($('#client-select').val());
-        }
-        if (payment_request_type !== null && payment_request_type !== '' && parseInt(payment_request_type) == 5) { // thanh toán dịch vụ
-            _add_payment_voucher.GetListBankAccountByClientID($('#client-select').val());
-        }
+        //var payment_request_type = $('#payment-voucher-type').val()
+        //if (payment_request_type !== null && payment_request_type !== '' && (parseInt(payment_request_type) == 1 || parseInt(payment_request_type) == 2)) { // thanh toán dịch vụ
+        //    _add_payment_voucher.GetListBankAccountBySupplierID($('#supplier-select').val())
+        //}
+        //if (payment_request_type !== null && payment_request_type !== '' && parseInt(payment_request_type) == 3) { // thanh toán dịch vụ
+        //    _add_payment_voucher.GetListBankAccountByClientID($('#client-select').val());
+        //}
+        //if (payment_request_type !== null && payment_request_type !== '' && parseInt(payment_request_type) == 5) { // thanh toán dịch vụ
+        //    _add_payment_voucher.GetListBankAccountByClientID($('#client-select').val());
+        //}
     },
     OnCheckBox: function (index) {
         var totalAmount = 0
