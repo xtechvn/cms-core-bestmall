@@ -80,8 +80,8 @@ var _contract_pay_create_new = {
                     return {
                         results: $.map(response, function (item) {
                             return {
-                                text: item.name,
-                                id: item.id,
+                                text: '[' + item.supplierId + '] ' + item.fullName,
+                                id: item.supplierId,
                             }
                         })
                     };

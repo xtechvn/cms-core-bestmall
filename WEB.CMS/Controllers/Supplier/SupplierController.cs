@@ -102,27 +102,39 @@ namespace WEB.CMS.Controllers
         [HttpPost]
         public IActionResult SearchData(SupplierSearchModel searchModel)
         {
-            var model = new GenericViewModel<SupplierViewModel>();
-            model.ListData = new List<SupplierViewModel>();
+            var model = new GenericViewModel<SupplierViewModel>
+            {
+                ListData = new List<SupplierViewModel>()
+            };
 
             try
             {
-                var listSuppliers = _supplierRepository.GetSuppliers(searchModel);
+                var listSuppliers = _supplierRepository.GetSuppliers(searchModel) ?? new List<SupplierViewModel>();
+
                 model.CurrentPage = searchModel.currentPage;
                 model.ListData = listSuppliers;
-                model.PageSize = searchModel.pageSize;
-                model.TotalRecord = listSuppliers != null && listSuppliers.Any() ? listSuppliers.FirstOrDefault().TotalRow : 0;
-                model.TotalPage = (int)Math.Ceiling((double)model.TotalRecord / searchModel.pageSize);
+                model.PageSize = searchModel.pageSize > 0 ? searchModel.pageSize : 1; // tránh chia 0
+                model.TotalRecord = listSuppliers.Any() ? (listSuppliers.FirstOrDefault()?.TotalRow ?? 0) : 0;
+                model.TotalPage = (int)Math.Ceiling((double)model.TotalRecord / model.PageSize);
+
+                return Ok(new
+                {
+                    isSuccess = true,
+                    data = model.ListData,
+                    totalRecord = model.TotalRecord,
+                    totalPage = model.TotalPage
+                });
             }
             catch (Exception ex)
             {
                 LogHelper.InsertLogTelegram("SearchData - SupplierController: " + ex);
+
+                return StatusCode(500, new
+                {
+                    isSuccess = false,
+                    message = "Đã xảy ra lỗi khi lấy dữ liệu nhà cung cấp"
+                });
             }
-            return  Ok(new
-            {
-                isSuccess = true,
-                data = model.ListData
-            });
         }
 
         public async Task<IActionResult> AddOrUpdate(int id)
