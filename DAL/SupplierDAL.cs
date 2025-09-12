@@ -130,11 +130,11 @@ namespace DAL.Funding
                 SqlParameter[] objParam = new SqlParameter[]
                 {
                     new SqlParameter("@FullName", searchModel.FullName ?? (object)DBNull.Value),
-                    new SqlParameter("@ServiceType", searchModel.ServiceType ?? (object)DBNull.Value),
-                    new SqlParameter("@ProvinceId", searchModel.ProvinceId ?? (object)DBNull.Value),
-                    new SqlParameter("@RatingStar", searchModel.RatingStar ?? (object)DBNull.Value),
-                    new SqlParameter("@ChainBrands", searchModel.ChainBrands ?? (object)DBNull.Value),
-                    new SqlParameter("@SalerId", searchModel.SalerId ?? (object)DBNull.Value),
+                    //new SqlParameter("@ServiceType", searchModel.ServiceType ?? (object)DBNull.Value),
+                    //new SqlParameter("@ProvinceId", searchModel.ProvinceId ?? (object)DBNull.Value),
+                    //new SqlParameter("@RatingStar", searchModel.RatingStar ?? (object)DBNull.Value),
+                    //new SqlParameter("@ChainBrands", searchModel.ChainBrands ?? (object)DBNull.Value),
+                    //new SqlParameter("@SalerId", searchModel.SalerId ?? (object)DBNull.Value),
                     new SqlParameter("@PageIndex", searchModel.currentPage),
                     new SqlParameter("@PageSize", searchModel.pageSize)
                 };

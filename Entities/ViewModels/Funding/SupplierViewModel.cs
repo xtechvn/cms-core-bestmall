@@ -8,8 +8,6 @@ namespace Entities.ViewModels.Funding
     public class SupplierViewModel : Supplier
     {
         public string ServiceTypeName { get; set; }
-        public string ServiceName { get; set; }
-        public string ResidenceName { get; set; }
         public string ProvinceName { get; set; }
         public string SalerName { get; set; }
         public string CreatedName { get; set; }

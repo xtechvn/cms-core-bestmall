@@ -118,7 +118,7 @@ namespace WEB.CMS.Controllers
             {
                 LogHelper.InsertLogTelegram("SearchData - SupplierController: " + ex);
             }
-            return new JsonResult(new
+            return  Ok(new
             {
                 isSuccess = true,
                 data = model.ListData
