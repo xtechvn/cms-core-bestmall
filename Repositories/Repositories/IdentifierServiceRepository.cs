@@ -172,5 +172,37 @@ namespace Repositories.Repositories
                 return bill_no;
             }
         }
+        public async Task<string> BuildPaymentVoucher()
+        {
+            string bill_no = string.Empty;
+            try
+            {
+                var current_date = DateTime.Now;
+                bill_no = "PC";
+
+                //1. 2 số cuối của năm
+                bill_no += current_date.Year.ToString().Substring(current_date.Year.ToString().Length - 2, 2);
+
+
+                //2. Số thứ tự trong năm.
+                long bill_count = contractPayDAL.CountPaymentVoucherInYear();
+
+                //format numb
+                string s_bill_new = string.Format(String.Format("{0,5:00000}", bill_count + 1));
+
+                bill_no += s_bill_new;
+
+                return bill_no;
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("BuildPaymentVoucher - IdentifierServiceRepository" + ex.ToString());
+                //Trả mã random
+                var rd = new Random();
+                var contract_pay_default = rd.Next(DateTime.Now.Day, DateTime.Now.Year) + rd.Next(1, 999);
+                bill_no = "PC-" + contract_pay_default;
+                return bill_no;
+            }
+        }
     }
 }
