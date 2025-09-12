@@ -328,5 +328,207 @@ namespace Caching.Elasticsearch
             long status4Count = status4CountResponse.IsValid ? status4CountResponse.Count : 0;
             return (allOrdersCount, status016Count, status25Count, status3Count, status4Count);
         }
+        public OrderMergeFEResponseModel GetFEAffiliateByClientID(
+   DateTime fromdate,
+   DateTime todate,
+   int page_index,
+   int page_size,
+   string status,
+   string utm_medium = null)
+        {
+            OrderMergeFEResponseModel result = new OrderMergeFEResponseModel();
+
+            try
+            {
+                var mustQueries = new List<Func<QueryContainerDescriptor<OrderMergeESModel>, QueryContainer>>();
+
+                // Filter utm_medium
+                if (utm_medium != null && utm_medium.Trim() != "")
+                {
+                    mustQueries.Add(q => q.Match(m => m
+                            .Field(f => f.UtmMedium)
+                            .Query(utm_medium)
+                        ));
+                }
+
+                // Filter CreatedDate trong khoảng fromdate - todate
+                mustQueries.Add(q => q.DateRange(r => r
+                    .Field(f => f.CreatedDate)
+                    .GreaterThanOrEquals(fromdate)
+                    .LessThanOrEquals(todate)));
+
+                // Add OrderStatus filter if status is provided
+                if (!string.IsNullOrWhiteSpace(status))
+                {
+                    List<int> status_value = new List<int>();
+                    try
+                    {
+                        var split = status.Split(",");
+                        if (split.Length > 0)
+                        {
+                            foreach (var item in split)
+                            {
+                                status_value.Add(Convert.ToInt32(item));
+                            }
+
+                        }
+                    }
+                    catch { }
+                    mustQueries.Add(q => q.Terms(t => t.Field(x => x.OrderStatus).Terms(status_value)));
+                }
+
+                // Combine all 'must' queries
+                Func<QueryContainerDescriptor<OrderMergeESModel>, QueryContainer> finalQueryContainer = q => q
+                    .Bool(b => b.Must(mustQueries.ToArray()));
+
+                var searchRequest = new SearchDescriptor<OrderMergeESModel>()
+                    .Query(finalQueryContainer)
+                    .From((page_index - 1) * page_size)
+                    .Size(page_size)
+                    .Sort(ss => ss.Descending(o => o.CreatedDate));
+
+                var query = elasticClient.Search<OrderMergeESModel>(searchRequest);
+
+                var countRequest = new CountDescriptor<OrderMergeESModel>().Query(finalQueryContainer);
+                var query_count = elasticClient.Count(countRequest);
+
+                if (!query.IsValid || !query_count.IsValid)
+                {
+                    return result;
+                }
+                else
+                {
+                    try
+                    {
+                        result.data = query.Documents.ToList();
+                    }
+                    catch (Exception deserializeEx)
+                    {
+                        string error_msg = "Deserialize error: " + deserializeEx.Message;
+                        LogHelper.InsertLogTelegramByUrl(configuration["BotSetting:bot_token"], configuration["BotSetting:bot_group_id"], error_msg);
+                        return result;
+                    }
+
+                    result.total = query_count.Count;
+                    result.page_index = page_index;
+                    result.page_size = page_size;
+                    return result;
+                }
+            }
+            catch (Exception ex)
+            {
+                string error_msg = Assembly.GetExecutingAssembly().GetName().Name + "->" + MethodBase.GetCurrentMethod().Name + "=>" + ex.Message;
+                LogHelper.InsertLogTelegramByUrl(configuration["BotSetting:bot_token"], configuration["BotSetting:bot_group_id"], "General error" + error_msg);
+            }
+
+            return null;
+        }
+
+        // Hàm 1: Đếm tổng số lượng order theo utm_medium
+        public long CountOrdersByUtmMedium(List<string> utm_medium)
+        {
+            try
+            {
+                var mustQueries = new List<Func<QueryContainerDescriptor<OrderMergeESModel>, QueryContainer>>();
+
+                if (utm_medium != null && utm_medium.Count > 0)
+                {
+                    mustQueries.Add(q => q.Terms(t => t.Field(x => x.UtmMedium).Terms(utm_medium)));
+                }
+
+                Func<QueryContainerDescriptor<OrderMergeESModel>, QueryContainer> finalQuery = q => q
+                    .Bool(b => b.Must(mustQueries.ToArray()));
+
+                var countRequest = new CountDescriptor<OrderMergeESModel>().Query(finalQuery);
+                var query_count = elasticClient.Count(countRequest);
+
+                if (!query_count.IsValid) return 0;
+
+                return query_count.Count;
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("CountOrdersByUtmMedium error: " + ex.Message);
+                return 0;
+            }
+        }
+
+        // Hàm 2: Sum Amount theo utm_medium
+        public double SumAmountByUtmMedium(List<string> utm_medium)
+        {
+            try
+            {
+                var mustQueries = new List<Func<QueryContainerDescriptor<OrderMergeESModel>, QueryContainer>>();
+
+                if (utm_medium != null && utm_medium.Count > 0)
+                {
+                    mustQueries.Add(q => q.Terms(t => t.Field(x => x.UtmMedium).Terms(utm_medium)));
+                }
+
+                Func<QueryContainerDescriptor<OrderMergeESModel>, QueryContainer> finalQuery = q => q
+                    .Bool(b => b.Must(mustQueries.ToArray()));
+
+                var searchRequest = new SearchDescriptor<OrderMergeESModel>()
+                    .Size(0) // không cần lấy documents
+                    .Query(finalQuery)
+                    .Aggregations(a => a
+                        .Sum("sum_amount", sa => sa.Field(f => f.Amount))
+                    );
+
+                var response = elasticClient.Search<OrderMergeESModel>(searchRequest);
+
+                if (!response.IsValid) return 0;
+
+                return response.Aggregations.Sum("sum_amount")?.Value ?? 0;
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("SumAmountByUtmMedium error: " + ex.Message);
+                return 0;
+            }
+        }
+
+        // Hàm gộp: trả về count + sum
+        public (long totalCount, double totalAmount) GetOrderStatsByUtmMedium(string utm_medium)
+        {
+            try
+            {
+                var mustQueries = new List<Func<QueryContainerDescriptor<OrderMergeESModel>, QueryContainer>>();
+
+                if (utm_medium != null && utm_medium.Trim() != "")
+                {
+                    mustQueries.Add(q => q.Match(t => t.Field(x => x.UtmMedium).Query(utm_medium)));
+                }
+
+                Func<QueryContainerDescriptor<OrderMergeESModel>, QueryContainer> finalQuery = q => q
+                    .Bool(b => b.Must(mustQueries.ToArray()));
+
+                var searchRequest = new SearchDescriptor<OrderMergeESModel>()
+                    .Size(0)
+                    .Query(finalQuery)
+                    .Aggregations(a => a
+                        .Sum("sum_amount", sa => sa.Field(f => f.Amount))
+                    );
+
+                var countRequest = new CountDescriptor<OrderMergeESModel>().Query(finalQuery);
+
+                var searchResponse = elasticClient.Search<OrderMergeESModel>(searchRequest);
+                var countResponse = elasticClient.Count(countRequest);
+                LogHelper.InsertLogTelegram("GetOrderStatsByUtmMedium countResponse: " + countResponse);
+
+                if (!searchResponse.IsValid || !countResponse.IsValid)
+                    return (0, 0);
+
+                var totalAmount = searchResponse.Aggregations.Sum("sum_amount")?.Value ?? 0;
+                var totalCount = countResponse.Count;
+
+                return (totalCount, totalAmount);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("GetOrderStatsByUtmMedium error: " + ex.Message);
+                return (0, 0);
+            }
+        }
     }
 }
