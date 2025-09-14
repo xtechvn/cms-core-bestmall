@@ -13,6 +13,9 @@ var bankingAccountId = 0
 var listBankAccount = []
 var _add_payment_voucher = {
     Initialization: function () {
+        console.log($('#supplier-select').find(':selected').val())
+
+        debugger
         this.validImageTypes = ['image/gif', 'image/jpeg', 'image/png', 'image/gif',
             'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/pdf'];
         this.validImageSize = 10 * 1024 * 1024;

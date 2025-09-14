@@ -38,15 +38,21 @@
                                 <div class="col-7 mb10">: @Model.PaymentVoucherType</div>
                                 <div class="col-5 mb10">Hình thức</div>
                                 <div class="col-7 mb10">: @Model.PaymentTypeStr</div>
-                                @if (Model.Type == (int)PAYMENT_VOUCHER_TYPE.REFUND||Model.Type == (int)PAYMENT_VOUCHER_TYPE.THANH_TOAN_NCC)
+                                @switch (Model.Type)
                                 {
-                                    <div class="col-5 mb10">Khách hàng</div>
-                                    <div class="col-7 mb10">: @Model.ClientName</div>
-                                }
-                                @if (Model.Type != (int)PAYMENT_VOUCHER_TYPE.THANH_TOAN_NCC)
-                                {
-                                    <div class="col-5 mb10">Nhà cung cấp</div>
-                                    <div class="col-7 mb10">: @Model.SupplierName</div>
+                                    case 1:
+                                    case 2:
+                                        {
+                                            <div class="col-5 mb10">Khách hàng</div>
+                                            <div class="col-7 mb10">: @Model.ClientName</div>
+                                        }
+                                        break;
+                                    case 3:
+                                        {
+                                            <div class="col-5 mb10">Nhà cung cấp</div>
+                                            <div class="col-7 mb10">: @Model.SupplierName</div>
+                                        }
+                                        break;
                                 }
                                 <div class="col-5 mb10">Số tiền</div>
                                 <div class="col-7 mb10">
