@@ -324,11 +324,6 @@ public partial class DataMSContext : DbContext
             entity.Property(e => e.Description).HasMaxLength(500);
             entity.Property(e => e.PaymentFromDate).HasColumnType("datetime");
             entity.Property(e => e.PaymentToDate).HasColumnType("datetime");
-
-            entity.HasOne(d => d.AllotmentFund).WithMany(p => p.AllotmentUses)
-                .HasForeignKey(d => d.AllotmentFundId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_AllotmentUse_AllotmentFund");
         });
 
         modelBuilder.Entity<Article>(entity =>

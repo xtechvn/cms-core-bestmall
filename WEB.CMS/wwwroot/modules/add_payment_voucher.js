@@ -566,17 +566,17 @@ var _add_payment_voucher = {
         isEdit = true
         if (client_id !== undefined && client_id !== null && client_id !== 0 && client_id !== '') {
             _add_payment_voucher.GetListBankAccountByClientID(client_id);
-            setTimeout(function () {
-                var newOption = new Option($('#client_name_hide').val(), client_id, true, true);
-                $('#client-select').append(newOption).trigger('change');
-            }, 500)
+            //setTimeout(function () {
+            //    var newOption = new Option($('#client_name_hide').val(), client_id, true, true);
+            //    $('#client-select').append(newOption).trigger('change');
+            //}, 500)
         }
         if (supplier_id !== undefined && supplier_id !== null && supplier_id !== 0 && supplier_id !== '') {
             _add_payment_voucher.GetListBankAccountBySupplierID(supplier_id);
-            setTimeout(function () {
-                var newOption = new Option($('#supplier_name_hide').val(), supplier_id, true, true);
-                $('#supplier-select').append(newOption).trigger('change');
-            }, 500)
+            //setTimeout(function () {
+            //    var newOption = new Option($('#supplier_name_hide').val(), supplier_id, true, true);
+            //    $('#supplier-select').append(newOption).trigger('change');
+            //}, 500)
         }
         $('#amount').removeAttr('disabled')
         $('#amount').removeClass('background-disabled')
