@@ -260,25 +260,25 @@ namespace DAL.Funding
                 else
                     objParam_PaymentVoucher[16] = new SqlParameter("@SourceAccount", Convert.ToInt32(model.SourceAccount));
                 id = _DbWorker.ExecuteNonQuery(StoreProcedureConstant.SP_UpdatePaymentVoucher, objParam_PaymentVoucher);
-                UpdatePaymentRequestStatus(listRequestId);
+               // UpdatePaymentRequestStatus(listRequestId);
                 var listOrigin = paymentVoucher.RequestId.Split(",").Select(n => long.Parse(n)).ToList();
                 var listUpdateApproveStatus = new List<long>();
-                foreach (var item in listOrigin)
-                {
-                    var exists = listRequestId.FirstOrDefault(n => n == item);
-                    if (exists == 0) listUpdateApproveStatus.Add(item);
-                }
-                var listRequestNew = new List<long>();
-                foreach (var item in listRequestId)
-                {
-                    var exists = listOrigin.FirstOrDefault(n => n == item);
-                    if (exists == 0) listRequestNew.Add(item);
-                }
-                if (model.Type == (int)PAYMENT_VOUCHER_TYPE.REFUND)
-                {
-                    UpdateOrderRefund(listRequestNew);
-                    UpdateOrderRefund(listUpdateApproveStatus, false);
-                }
+                //foreach (var item in listOrigin)
+                //{
+                //    var exists = listRequestId.FirstOrDefault(n => n == item);
+                //    if (exists == 0) listUpdateApproveStatus.Add(item);
+                //}
+                //var listRequestNew = new List<long>();
+                //foreach (var item in listRequestId)
+                //{
+                //    var exists = listOrigin.FirstOrDefault(n => n == item);
+                //    if (exists == 0) listRequestNew.Add(item);
+                //}
+                //if (model.Type == (int)PAYMENT_VOUCHER_TYPE.REFUND)
+                //{
+                //    UpdateOrderRefund(listRequestNew);
+                //    UpdateOrderRefund(listUpdateApproveStatus, false);
+                //}
                 UpdatePaymentRequestStatus(listUpdateApproveStatus, (int)PAYMENT_REQUEST_STATUS.CHO_CHI);
                 return id;
             }
