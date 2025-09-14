@@ -642,13 +642,13 @@ var _add_payment_voucher = {
         let validate = _add_payment_voucher.Validate()
         if (!validate)
             return;
-        let PaymentRequestDetails = []
-        for (var i = 0; i < listPaymentRequest.length; i++) {
-            var checked = $('#order_ckb_' + listPaymentRequest[i].paymentCode).is(":checked")
-            if (checked) {
-                PaymentRequestDetails.push({ 'id': listPaymentRequest[i].id })
-            }
-        }
+        //let PaymentRequestDetails = []
+        //for (var i = 0; i < listPaymentRequest.length; i++) {
+        //    var checked = $('#order_ckb_' + listPaymentRequest[i].paymentCode).is(":checked")
+        //    if (checked) {
+        //        PaymentRequestDetails.push({ 'id': listPaymentRequest[i].id })
+        //    }
+        //}
         //var formData = new FormData();
         //const file = document.querySelector('input[name=imagefile]').files[0];
         let other_image = [];
@@ -672,7 +672,7 @@ var _add_payment_voucher = {
             'supplierId': parseInt(($('#supplier-select').val())),
             'sourceAccount': $('#bankingAccountSource').val(),
             'amount': parseFloat($('#amount').val().replaceAll(',', '')),
-            'paymentRequestDetails': PaymentRequestDetails,
+            //'paymentRequestDetails': PaymentRequestDetails,
             'OtherImages': other_image
         }
         switch ($('#payment-voucher-type').find(':selected').val()) {
