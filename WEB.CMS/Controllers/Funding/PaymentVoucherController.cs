@@ -1,4 +1,5 @@
 ﻿using Azure.Core;
+using Caching.RedisWorker;
 using Entities.Models;
 using Entities.ViewModels;
 using Entities.ViewModels.Funding;
@@ -35,11 +36,13 @@ namespace WEB.Adavigo.CMS.Controllers.Funding
         private readonly IAllotmentUseRepository _allotmentUseRepository;
         private readonly IAllotmentFundRepository _allotmentFundRepository;
         private readonly IBankingAccountRepository _bankingAccountRepository;
+        private readonly RedisConn _redisService;
+        private readonly IConfiguration _configuration;
 
         public PaymentVoucherController(IAllCodeRepository allCodeRepository, IWebHostEnvironment hostEnvironment,
            IPaymentRequestRepository paymentRequestRepository, IPaymentVoucherRepository paymentVoucherRepository, IUserRepository userRepository
             , ISupplierRepository supplierRepository, IIdentifierServiceRepository identifierServiceRepository, IAllotmentUseRepository allotmentUseRepository, 
-           IAllotmentFundRepository allotmentFundRepository, IBankingAccountRepository bankingAccountRepository)
+           IAllotmentFundRepository allotmentFundRepository, IBankingAccountRepository bankingAccountRepository, RedisConn redisService, IConfiguration configuration)
         {
             _WebHostEnvironment = hostEnvironment;
             _allCodeRepository = allCodeRepository;
@@ -52,6 +55,9 @@ namespace WEB.Adavigo.CMS.Controllers.Funding
             _allotmentUseRepository = allotmentUseRepository;
             _allotmentFundRepository = allotmentFundRepository;
             _bankingAccountRepository = bankingAccountRepository;
+            _redisService = redisService;
+            _redisService.Connect();
+            _configuration = configuration;
         }
 
         public IActionResult Index()
@@ -274,6 +280,8 @@ namespace WEB.Adavigo.CMS.Controllers.Funding
                                 TotalAmoutCalculate = (double)model.Amount,
                             };
                             _allotmentUseRepository.Insert(fund_use);
+                            var cache_name = CacheType.ALLOTMENT_USE + (long)model.ClientId;
+                            await _redisService.DeleteCacheByKeyword(cache_name,  Convert.ToInt32(_configuration["Redis:Database:db_search_result"]));
 
                         }
                         break;
@@ -364,6 +372,8 @@ namespace WEB.Adavigo.CMS.Controllers.Funding
                                 exists_fund_use.PaymentToDate = DateTime.Now;
                                 exists_fund_use.TotalAmoutCalculate = (double)model.Amount;
                                 _allotmentUseRepository.Update(exists_fund_use);
+                                var cache_name = CacheType.ALLOTMENT_USE + (long)model.ClientId;
+                                await _redisService.DeleteCacheByKeyword(cache_name, Convert.ToInt32(_configuration["Redis:Database:db_search_result"]));
                             }
                         }
                         break;

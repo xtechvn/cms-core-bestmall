@@ -38,6 +38,7 @@ namespace Utilities.Contants
         public const string EXTENSION_XPATH_V2 = "EXTENSION_XPATH_V2"; // cache xpath for extension
         public const string APP_CONFIG = "APP_CONFIG"; // cache xpath for app
         public const string VOUCHER = "VOUCHER";
+        public const string ALLOTMENT_USE = "ALLOTMENT_USE_";
 
     }
 }
