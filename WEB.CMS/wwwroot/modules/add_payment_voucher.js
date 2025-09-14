@@ -17,6 +17,7 @@ var _add_payment_voucher = {
             'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/pdf'];
         this.validImageSize = 10 * 1024 * 1024;
         $('#attachFile').hide()
+        var client_id_select = $("#client-select").find(':selected').val()
         $("#client-select").select2({
             theme: 'bootstrap4',
             placeholder: "Tên KH, Điện Thoại, Email",
@@ -48,6 +49,8 @@ var _add_payment_voucher = {
                 },
             }
         });
+        $("#client-select").val(client_id_select).trigger('change')
+        client_id_select = $("#supplier-select").find(':selected').val()
         $("#supplier-select").select2({
             theme: 'bootstrap4',
             placeholder: "Tên NCC, Điện Thoại, Email",
@@ -80,6 +83,8 @@ var _add_payment_voucher = {
                 },
             }
         });
+        $("#supplier-select").val(client_id_select).trigger('change')
+
         $("#paymentRequestCode").select2({
             theme: 'bootstrap4',
             placeholder: "Tìm kiếm mã yêu cầu chi",
@@ -115,10 +120,24 @@ var _add_payment_voucher = {
         $('#lblBankNameRequired').show()
         $('#lblBankAccount').hide()
         $('#lblBankName').hide()
-        $('#lblSupplier').show()
-        $('#divSupplier').show()
-        $('#lblCustomer').hide()
-        $('#divCustomer').hide()
+        switch ($('#payment-voucher-type').find(':selected').val()) {
+            case '1':
+            case '2':
+                {
+                    $('#lblSupplier').hide()
+                    $('#divSupplier').hide()
+                    $('#lblCustomer').show()
+                    $('#divCustomer').show()
+                } break;
+            case '3':
+                {
+                    $('#lblSupplier').show()
+                    $('#divSupplier').show()
+                    $('#lblCustomer').hide()
+                    $('#divCustomer').hide()
+                } break;
+        }
+       
         $('input').attr('autocomplete', 'off');
         $('#btnDeleteImage').hide()
         $('#amount').removeAttr('disabled')
