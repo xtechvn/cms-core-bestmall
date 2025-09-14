@@ -131,7 +131,7 @@ namespace WEB.Adavigo.CMS.Controllers.Funding
             ViewBag.listBankingAccountAdavigo = _allCodeRepository.GetBankingAccounts().Where(n => n.SupplierId ==
          (long)config.SUPPLIERID_ADAVIGO).ToList();
             ViewBag.Client = new Client();
-            if (detail.ClientId > 0)
+            if (detail!=null && detail.ClientId!=null &&detail.ClientId > 0)
             {
                 var client = await _clientRepository.GetClientDetailAsync((long)detail.ClientId);
                 if (client != null) {
@@ -139,7 +139,7 @@ namespace WEB.Adavigo.CMS.Controllers.Funding
                 }
             }
             ViewBag.Supplier = new Supplier();
-            if (detail.SupplierId > 0)
+            if (detail != null  && detail.SupplierId > 0)
             {
                 var supplier =  _supplierRepository.GetSuplierById((int)detail.SupplierId);
                 if (supplier != null)
