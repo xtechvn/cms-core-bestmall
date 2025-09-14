@@ -295,7 +295,7 @@ namespace WEB.Adavigo.CMS.Controllers.Funding
                                 AccountName= (bank == null || bank.Id <= 0) ? "" : bank.AccountName,
                                 BankId = (bank == null || bank.Id <= 0) ? "" : bank.BankId,
                                 Branch = (bank == null || bank.Id <= 0) ? "" : bank.Branch,
-                                Description=model.Description,
+                                Description=model.Note,
                                 PaymentFromDate=DateTime.Now,
                                 PaymentToDate=DateTime.Now,
                                 TotalAmoutCalculate = (double)model.Amount,
@@ -390,7 +390,7 @@ namespace WEB.Adavigo.CMS.Controllers.Funding
                                 exists_fund_use.AccountName = (bank == null || bank.Id <= 0) ? "" : bank.AccountName;
                                 exists_fund_use.BankId = (bank == null || bank.Id <= 0) ? "" : bank.BankId;
                                 exists_fund_use.Branch = (bank == null || bank.Id <= 0) ? "" : bank.Branch;
-                                exists_fund_use.Description = model.Description;
+                                exists_fund_use.Description = model.Note;
                                 exists_fund_use.PaymentFromDate = DateTime.Now;
                                 exists_fund_use.PaymentToDate = DateTime.Now;
                                 exists_fund_use.TotalAmoutCalculate = (double)model.Amount;
