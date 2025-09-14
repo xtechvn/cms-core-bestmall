@@ -261,8 +261,8 @@ namespace DAL.Funding
                     objParam_PaymentVoucher[16] = new SqlParameter("@SourceAccount", Convert.ToInt32(model.SourceAccount));
                 id = _DbWorker.ExecuteNonQuery(StoreProcedureConstant.SP_UpdatePaymentVoucher, objParam_PaymentVoucher);
                // UpdatePaymentRequestStatus(listRequestId);
-                var listOrigin = paymentVoucher.RequestId.Split(",").Select(n => long.Parse(n)).ToList();
-                var listUpdateApproveStatus = new List<long>();
+                //var listOrigin = paymentVoucher.RequestId.Split(",").Select(n => long.Parse(n)).ToList();
+               // var listUpdateApproveStatus = new List<long>();
                 //foreach (var item in listOrigin)
                 //{
                 //    var exists = listRequestId.FirstOrDefault(n => n == item);
@@ -279,7 +279,7 @@ namespace DAL.Funding
                 //    UpdateOrderRefund(listRequestNew);
                 //    UpdateOrderRefund(listUpdateApproveStatus, false);
                 //}
-                UpdatePaymentRequestStatus(listUpdateApproveStatus, (int)PAYMENT_REQUEST_STATUS.CHO_CHI);
+               // UpdatePaymentRequestStatus(listUpdateApproveStatus, (int)PAYMENT_REQUEST_STATUS.CHO_CHI);
                 return id;
             }
             catch (Exception ex)
