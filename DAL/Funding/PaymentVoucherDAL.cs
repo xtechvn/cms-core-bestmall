@@ -217,14 +217,14 @@ namespace DAL.Funding
             try
             {
                 var paymentVoucher = GetById(model.Id);
-                var listRequestId = model.PaymentRequestDetails.Select(n => n.Id).ToList();
+               // var listRequestId = model.PaymentRequestDetails.Select(n => n.Id).ToList();
                 SqlParameter[] objParam_PaymentVoucher = new SqlParameter[17];
                 objParam_PaymentVoucher[0] = new SqlParameter("@Id", model.Id);
                 objParam_PaymentVoucher[1] = new SqlParameter("@PaymentCode", model.PaymentCode);
                 objParam_PaymentVoucher[2] = new SqlParameter("@Type", model.Type);
                 objParam_PaymentVoucher[3] = new SqlParameter("@PaymentType", model.PaymentType);
                 objParam_PaymentVoucher[4] = new SqlParameter("@RequestId",
-                    string.Join(",", listRequestId));
+                   model.PaymentRequestDetails==null?"": string.Join(",", model.PaymentRequestDetails.Select(n => n.Id).ToList()));
                 if (model.Type == (int)PAYMENT_VOUCHER_TYPE.THANH_TOAN_NCC)
                 {
                     objParam_PaymentVoucher[5] = new SqlParameter("@SupplierId", model.SupplierId);
