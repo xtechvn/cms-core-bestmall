@@ -300,7 +300,9 @@ namespace WEB.Adavigo.CMS.Controllers.Funding
                                 PaymentToDate=DateTime.Now,
                                 TotalAmoutCalculate = (double)model.Amount,
                             };
-                            _allotmentUseRepository.Insert(fund_use);
+                           var id= _allotmentUseRepository.Insert(fund_use);
+                            LogHelper.InsertLogTelegram("Update - PaymentVoucherController  _allotmentUseRepository.Insert(exists_fund_use): " + id);
+
                             var cache_name = CacheType.ALLOTMENT_USE + (long)model.ClientId;
                             await _redisService.DeleteCacheByKeyword(cache_name,  Convert.ToInt32(_configuration["Redis:Database:db_search_result"]));
 
@@ -392,7 +394,9 @@ namespace WEB.Adavigo.CMS.Controllers.Funding
                                 exists_fund_use.PaymentFromDate = DateTime.Now;
                                 exists_fund_use.PaymentToDate = DateTime.Now;
                                 exists_fund_use.TotalAmoutCalculate = (double)model.Amount;
-                                _allotmentUseRepository.Update(exists_fund_use);
+                               var id= _allotmentUseRepository.Update(exists_fund_use);
+                                LogHelper.InsertLogTelegram("Update - PaymentVoucherController  _allotmentUseRepository.Update(exists_fund_use): " + id);
+
                                 var cache_name = CacheType.ALLOTMENT_USE + (long)model.ClientId;
                                 await _redisService.DeleteCacheByKeyword(cache_name, Convert.ToInt32(_configuration["Redis:Database:db_search_result"]));
                             }
