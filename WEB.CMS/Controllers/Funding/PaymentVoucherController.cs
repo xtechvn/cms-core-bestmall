@@ -133,7 +133,7 @@ namespace WEB.Adavigo.CMS.Controllers.Funding
             ViewBag.Client = new Client();
             if (detail!=null && detail.ClientId!=null &&detail.ClientId > 0)
             {
-                var client = await _clientRepository.GetClientDetailAsync((long)detail.ClientId);
+                var client = await _clientRepository.GetClientDetailByClientId((long)detail.ClientId);
                 if (client != null) {
                     ViewBag.Client = client;
                 }
