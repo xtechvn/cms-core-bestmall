@@ -12,6 +12,7 @@ using OfficeOpenXml.FormulaParsing.Excel.Functions.Numeric;
 using Repositories.IRepositories;
 using Repositories.Repositories;
 using System.Security.Claims;
+using System.Threading.Tasks;
 using Telegram.Bot.Types;
 using Utilities;
 using Utilities.Contants;
@@ -38,11 +39,13 @@ namespace WEB.Adavigo.CMS.Controllers.Funding
         private readonly IBankingAccountRepository _bankingAccountRepository;
         private readonly RedisConn _redisService;
         private readonly IConfiguration _configuration;
+        private readonly IClientRepository _clientRepository;
 
         public PaymentVoucherController(IAllCodeRepository allCodeRepository, IWebHostEnvironment hostEnvironment,
            IPaymentRequestRepository paymentRequestRepository, IPaymentVoucherRepository paymentVoucherRepository, IUserRepository userRepository
             , ISupplierRepository supplierRepository, IIdentifierServiceRepository identifierServiceRepository, IAllotmentUseRepository allotmentUseRepository, 
-           IAllotmentFundRepository allotmentFundRepository, IBankingAccountRepository bankingAccountRepository, RedisConn redisService, IConfiguration configuration)
+           IAllotmentFundRepository allotmentFundRepository, IBankingAccountRepository bankingAccountRepository, RedisConn redisService, IConfiguration configuration
+            , IClientRepository clientRepository)
         {
             _WebHostEnvironment = hostEnvironment;
             _allCodeRepository = allCodeRepository;
@@ -58,6 +61,7 @@ namespace WEB.Adavigo.CMS.Controllers.Funding
             _redisService = redisService;
             _redisService.Connect();
             _configuration = configuration;
+            _clientRepository= clientRepository;
         }
 
         public IActionResult Index()
@@ -111,7 +115,7 @@ namespace WEB.Adavigo.CMS.Controllers.Funding
             return PartialView();
         }
 
-        public IActionResult Edit(int paymentVoucherId)
+        public async Task<IActionResult> Edit(int paymentVoucherId)
         {
             ViewBag.allCode_PAY_TYPE = _allCodeRepository.GetListByType(AllCodeType.PAY_TYPE);
             ViewBag.allCode_PAYMENT_VOUCHER_TYPE = _allCodeRepository.GetListByType(AllCodeType.PAYMENT_VOUCHER_TYPE);
@@ -126,6 +130,23 @@ namespace WEB.Adavigo.CMS.Controllers.Funding
             ViewBag.Type = (int)AttachmentType.Payment_Voucher;
             ViewBag.listBankingAccountAdavigo = _allCodeRepository.GetBankingAccounts().Where(n => n.SupplierId ==
          (long)config.SUPPLIERID_ADAVIGO).ToList();
+            ViewBag.Client = new Client();
+            if (detail.ClientId > 0)
+            {
+                var client = await _clientRepository.GetClientDetailAsync((long)detail.ClientId);
+                if (client != null) {
+                    ViewBag.Client = client;
+                }
+            }
+            ViewBag.Supplier = new Supplier();
+            if (detail.SupplierId > 0)
+            {
+                var supplier =  _supplierRepository.GetSuplierById((int)detail.SupplierId);
+                if (supplier != null)
+                {
+                    ViewBag.Supplier = supplier;
+                }
+            }
             return PartialView(detail);
         }
 

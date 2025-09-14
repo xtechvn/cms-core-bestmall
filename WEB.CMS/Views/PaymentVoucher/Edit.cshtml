@@ -18,6 +18,8 @@
     supplierId = Model.SupplierId;
     var URL_STATIC_IMAGE = domainConfig.Value.ImageStatic;
     var ManageUser = (int)ViewBag.UserId;
+    Client client = (Client)ViewBag.Client;
+    Supplier supplier = (Supplier)ViewBag.Supplier;
 }
 @using Utilities
 @using Utilities.Contants
@@ -88,6 +90,11 @@
     <div class="col-md-12 mb10" id="divSupplier">
         <select class=" supplier-select" id="supplier-select" style="width:100% !important" multiple="multiple" disabled
                 onchange="_add_payment_voucher.OnChooseType()">
+            @if (client != null && client.Id > 0)
+            {
+                <option value="@client.Id" selected>@client.ClientName -@client.Email - @client.Phone  </option>
+
+            }
         </select>
         <div class="validate-supplier-select"></div>
     </div>
@@ -96,6 +103,12 @@
     <div class="col-md-12 mb10" id="divCustomer">
         <select class=" client-select" id="client-select" style="width:100% !important" multiple="multiple" disabled
                 onchange="_add_payment_voucher.OnChooseType()">
+            @if (supplier != null && supplier.SupplierId > 0)
+            {
+                <option value="@supplier.SupplierId" selected>[@supplier.SupplierId] @supplier.FullName </option>
+
+            }
+
         </select>
         <div class="validate-client-select"></div>
     </div>
