@@ -25,13 +25,17 @@ namespace Repositories.Repositories
         private readonly PaymentRequestDAL paymentRequestDAL;
         private readonly string _UrlStaticImage;
         private readonly AttachFileDAL attachFileDAL;
+        private readonly IAllotmentFundRepository _allotmentFundRepository;
+        private readonly IAllotmentUseRepository _allotmentUseRepository;
 
-        public PaymentVoucherRepository(IOptions<DataBaseConfig> dataBaseConfig, IOptions<DomainConfig> domainConfig)
+        public PaymentVoucherRepository(IOptions<DataBaseConfig> dataBaseConfig, IOptions<DomainConfig> domainConfig, IAllotmentFundRepository allotmentFundRepository, IAllotmentUseRepository allotmentUseRepository)
         {
             paymentVoucherDAL = new PaymentVoucherDAL(dataBaseConfig.Value.SqlServer.ConnectionString);
             paymentRequestDAL = new PaymentRequestDAL(dataBaseConfig.Value.SqlServer.ConnectionString);
             _UrlStaticImage = domainConfig.Value.ImageStatic;
             attachFileDAL = new AttachFileDAL(dataBaseConfig.Value.SqlServer.ConnectionString);
+            _allotmentFundRepository = allotmentFundRepository;
+            _allotmentUseRepository = allotmentUseRepository;
         }
 
         public int CreatePaymentVoucher(PaymentVoucherViewModel model, out string msg)
@@ -40,22 +44,22 @@ namespace Repositories.Repositories
             var entity = paymentVoucherDAL.GetByPaymentCode(model.PaymentCode);
             if (entity != null)
                 return -2;
-            var checkExists = paymentVoucherDAL.CheckExistsPaymentRequest(model.PaymentRequestDetails.Select(n => n.Id).ToList(),
-                 StoreProcedureConstant.SP_CheckExistsPaymentVoucherByRequestId);
-            if (checkExists != null && checkExists.Count > 0)
-            {
-                msg = string.Join(',', checkExists.Select(n => n.PaymentCode).ToList());
-                return -3;
-            }
-            if (model.OtherImages != null && model.OtherImages.Count() > 0)
-            {
-                var arrImage = new List<string>();
-                foreach (var image in model.OtherImages)
-                {
-                    arrImage.Add(UpLoadHelper.UploadBase64Src(image, _UrlStaticImage).Result);
-                }
-                model.AttachFiles = String.Join(",", arrImage);
-            }
+            //var checkExists = paymentVoucherDAL.CheckExistsPaymentRequest(model.PaymentRequestDetails.Select(n => n.Id).ToList(),
+            //     StoreProcedureConstant.SP_CheckExistsPaymentVoucherByRequestId);
+            //if (checkExists != null && checkExists.Count > 0)
+            //{
+            //    msg = string.Join(',', checkExists.Select(n => n.PaymentCode).ToList());
+            //    return -3;
+            //}
+            //if (model.OtherImages != null && model.OtherImages.Count() > 0)
+            //{
+            //    var arrImage = new List<string>();
+            //    foreach (var image in model.OtherImages)
+            //    {
+            //        arrImage.Add(UpLoadHelper.UploadBase64Src(image, _UrlStaticImage).Result);
+            //    }
+            //    model.AttachFiles = String.Join(",", arrImage);
+            //}
             return paymentVoucherDAL.CreatePaymentVoucher(model);
         }
 

@@ -196,6 +196,7 @@ namespace DAL.Funding
                 else
                     objParam_PaymentVoucher[15] = new SqlParameter("@SourceAccount", Convert.ToInt32(model.SourceAccount));
                 id = _DbWorker.ExecuteNonQuery(StoreProcedureConstant.SP_InsertPaymentVoucher, objParam_PaymentVoucher);
+                model.Id = id;
                 UpdatePaymentRequestStatus(model.PaymentRequestDetails.Select(n => n.Id).ToList());
                 if (model.Type == (int)PAYMENT_VOUCHER_TYPE.REFUND)
                 {

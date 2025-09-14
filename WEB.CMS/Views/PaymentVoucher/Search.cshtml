@@ -31,8 +31,8 @@ else
                     <th style="width: 100px;">Tài khoản nguồn</th>
                     <th style="width: 100px;" class="text-right">Số tiền</th>
                     <th style="width: 200px;">Nội dung</th>
-                    <th style="width: 120px;">Phiếu yêu cầu chi liên quan</th>
-                    <th style="width: 140px;">Ngày tạo</th>
+@*                     <th style="width: 120px;">Phiếu yêu cầu chi liên quan</th>
+ *@                    <th style="width: 140px;">Ngày tạo</th>
                     <th style="width: 140px;">Người tạo</th>
                 </tr>
             </thead>
@@ -68,7 +68,7 @@ else
                                 <div>@item.Amount.ToString("N0")</div>
                             </td>
                             <td class=" text-break">@item.Note</td>
-                            <td class=" text-break">
+                           @*  <td class=" text-break">
                                 @if (item.RelateRequest != null && item.RelateRequest.Count > 0)
                                 {
                                     var counterContent = 1;
@@ -84,7 +84,7 @@ else
                                         counterContent += 1;
                                     }
                                 }
-                            </td>
+                            </td> *@
                             @if (item.CreatedDate != null)
                             {
                                 <td class=" text-break">@item.CreatedDate.Value.ToString("dd-MM-yyyy HH:mm")</td>

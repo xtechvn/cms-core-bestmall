@@ -1,9 +1,13 @@
-﻿using Entities.Models;
+﻿using Azure.Core;
+using Entities.Models;
 using Entities.ViewModels;
 using Entities.ViewModels.Funding;
+using HuloToys_Service.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Nest;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Numeric;
 using Repositories.IRepositories;
 using Repositories.Repositories;
 using System.Security.Claims;
@@ -28,10 +32,14 @@ namespace WEB.Adavigo.CMS.Controllers.Funding
         private readonly IUserRepository _userRepository;
         private readonly ISupplierRepository _supplierRepository;
         private readonly IIdentifierServiceRepository identifierServiceRepository;
+        private readonly IAllotmentUseRepository _allotmentUseRepository;
+        private readonly IAllotmentFundRepository _allotmentFundRepository;
+        private readonly IBankingAccountRepository _bankingAccountRepository;
 
         public PaymentVoucherController(IAllCodeRepository allCodeRepository, IWebHostEnvironment hostEnvironment,
            IPaymentRequestRepository paymentRequestRepository, IPaymentVoucherRepository paymentVoucherRepository, IUserRepository userRepository
-            , ISupplierRepository supplierRepository, IIdentifierServiceRepository identifierServiceRepository)
+            , ISupplierRepository supplierRepository, IIdentifierServiceRepository identifierServiceRepository, IAllotmentUseRepository allotmentUseRepository, 
+           IAllotmentFundRepository allotmentFundRepository, IBankingAccountRepository bankingAccountRepository)
         {
             _WebHostEnvironment = hostEnvironment;
             _allCodeRepository = allCodeRepository;
@@ -41,6 +49,9 @@ namespace WEB.Adavigo.CMS.Controllers.Funding
             _userRepository = userRepository;
             _supplierRepository = supplierRepository;
             this.identifierServiceRepository = identifierServiceRepository;
+            _allotmentUseRepository = allotmentUseRepository;
+            _allotmentFundRepository = allotmentFundRepository;
+            _bankingAccountRepository = bankingAccountRepository;
         }
 
         public IActionResult Index()
@@ -210,6 +221,7 @@ namespace WEB.Adavigo.CMS.Controllers.Funding
                 //var output = JsonConvert.DeserializeObject<OutputAPI>(resultAPI);
                 //model.PaymentCode = output.code;
                 model.PaymentCode = await identifierServiceRepository.BuildPaymentVoucher();
+                model.PaymentRequestDetails = new List<PaymentRequestViewModel>();
                 var result = _paymentVoucherRepository.CreatePaymentVoucher(model, out string msg);
                 if (result == -3)
                     return Ok(new
@@ -230,6 +242,43 @@ namespace WEB.Adavigo.CMS.Controllers.Funding
                         message = "Thêm phiếu chi thất bại",
                         id = -1
                     });
+
+                switch (model.Type)
+                {
+                    case 2:
+                        {
+                            var fund = _allotmentFundRepository.GetByAccountClientId((long)model.ClientId);
+                            BankingAccount bank = new BankingAccount();
+                            if ((int)model.BankingAccountId > 0)
+                            {
+                                bank = _bankingAccountRepository.GetById((int)model.BankingAccountId);
+
+                            }
+                            var fund_use = new AllotmentUse()
+                            {
+                                AllotmentFundId = (fund == null || fund.Id <= 0) ? 0 : fund.Id,
+                                AccountClientId = (long)model.ClientId,
+                                AmountUse = (double)model.Amount,
+                                ClientId = (long)model.ClientId,
+                                CreateDate = DateTime.Now,
+                                DataId = (long)model.Id,
+                                ServiceType = 1,
+                                PaymentStatus = 0,
+                                AccountNumber= (bank == null || bank.Id <= 0) ?"": bank.AccountNumber,
+                                AccountName= (bank == null || bank.Id <= 0) ? "" : bank.AccountName,
+                                BankId = (bank == null || bank.Id <= 0) ? "" : bank.BankId,
+                                Branch = (bank == null || bank.Id <= 0) ? "" : bank.Branch,
+                                Description=model.Description,
+                                PaymentFromDate=DateTime.Now,
+                                PaymentToDate=DateTime.Now,
+                                TotalAmoutCalculate = (double)model.Amount,
+                            };
+                            _allotmentUseRepository.Insert(fund_use);
+
+                        }
+                        break;
+                }
+
                 return Ok(new
                 {
                     isSuccess = true,
@@ -292,6 +341,33 @@ namespace WEB.Adavigo.CMS.Controllers.Funding
                     });
                 }
                 var result = _paymentVoucherRepository.UpdatePaymentVoucher(model);
+                switch (model.Type)
+                {
+                    case 2:
+                        {
+                            var fund = _allotmentFundRepository.GetByAccountClientId((long)model.ClientId);
+                            var exists_fund_use = await _allotmentUseRepository.GetByDataId(model.Id);
+                            if (exists_fund_use != null && exists_fund_use.Id > 0)
+                            {
+                                BankingAccount bank = new BankingAccount();
+                                if ((int)model.BankingAccountId > 0)
+                                {
+                                    bank = _bankingAccountRepository.GetById((int)model.BankingAccountId);
+
+                                }
+                                exists_fund_use.AccountNumber = (bank == null || bank.Id <= 0) ? "" : bank.AccountNumber;
+                                exists_fund_use.AccountName = (bank == null || bank.Id <= 0) ? "" : bank.AccountName;
+                                exists_fund_use.BankId = (bank == null || bank.Id <= 0) ? "" : bank.BankId;
+                                exists_fund_use.Branch = (bank == null || bank.Id <= 0) ? "" : bank.Branch;
+                                exists_fund_use.Description = model.Description;
+                                exists_fund_use.PaymentFromDate = DateTime.Now;
+                                exists_fund_use.PaymentToDate = DateTime.Now;
+                                exists_fund_use.TotalAmoutCalculate = (double)model.Amount;
+                                _allotmentUseRepository.Update(exists_fund_use);
+                            }
+                        }
+                        break;
+                }
                 if (result < 1)
                     return Ok(new
                     {

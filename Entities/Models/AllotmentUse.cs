@@ -50,6 +50,4 @@ public partial class AllotmentUse
     public string AccountName { get; set; }
 
     public string Branch { get; set; }
-
-    public virtual AllotmentFund AllotmentFund { get; set; }
 }

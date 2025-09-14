@@ -6,6 +6,7 @@ using HuloToys_Service.Controllers.Shipping.Business;
 using HuloToys_Service.ElasticSearch;
 using HuloToys_Service.ElasticSearch.NewEs;
 using HuloToys_Service.MongoDb;
+using HuloToys_Service.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Configuration;
@@ -99,6 +100,8 @@ builder.Services.AddSingleton<ICustomerManagerRepository, CustomerManagerReposit
 builder.Services.AddSingleton<IVoucherRepository, VoucherRepository>();
 builder.Services.AddSingleton<IOrderMergeRepository, OrderMergeRepository>();
 builder.Services.AddSingleton<IPaymentVoucherRepository, PaymentVoucherRepository>();
+builder.Services.AddSingleton<IAllotmentFundRepository, AllotmentFundRepository>();
+builder.Services.AddSingleton<IAllotmentUseRepository, AllotmentUseRepository>();
 
 // Đăng ký QueueService
 builder.Services.AddScoped<QueueService>();
