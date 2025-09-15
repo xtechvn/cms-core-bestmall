@@ -311,8 +311,8 @@ namespace WEB.Adavigo.CMS.Controllers.Funding
                                 BankId = (bank == null || bank.Id <= 0) ? "" : bank.BankId,
                                 Branch = (bank == null || bank.Id <= 0) ? "" : bank.Branch,
                                 Description=model.Description,
-                                PaymentFromDate=model.PaymentFromDate,
-                                PaymentToDate= model.PaymentToDate,
+                                PaymentFromDate=DateTime.Now,
+                                PaymentToDate= DateTime.Now.AddDays(7),
                                 TotalAmoutCalculate = totalAmount,
                             };
                            var id= _allotmentUseRepository.Insert(fund_use);
@@ -411,8 +411,8 @@ namespace WEB.Adavigo.CMS.Controllers.Funding
                                 exists_fund_use.BankId = (bank == null || bank.Id <= 0) ? "" : bank.BankId;
                                 exists_fund_use.Branch = (bank == null || bank.Id <= 0) ? "" : bank.Branch;
                                 exists_fund_use.Description = model.Description;
-                                exists_fund_use.PaymentFromDate = model.PaymentFromDate;
-                                exists_fund_use.PaymentToDate = model.PaymentToDate;
+                                exists_fund_use.PaymentFromDate = DateTime.Now;
+                                exists_fund_use.PaymentToDate = DateTime.Now.AddDays(7);
                                 var client = await _clientRepository.GetClientDetailByClientId((long)model.ClientId);
                                 var (totalCount, totalAmount, total_profit_affiliate) = _orderMergeESService.GetOrderStatsByUtmMedium(client.ReferralId, (DateTime)model.PaymentFromDate, (DateTime)model.PaymentToDate);
                                 exists_fund_use.TotalAmoutCalculate = totalAmount;
