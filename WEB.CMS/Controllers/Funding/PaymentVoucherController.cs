@@ -217,7 +217,7 @@ namespace WEB.Adavigo.CMS.Controllers.Funding
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddNewJson(PaymentVoucherViewModel model, string jsonData)
+        public async Task<IActionResult> AddNewJson(PaymentVoucherViewModel model)
         {
             try
             {
@@ -293,9 +293,9 @@ namespace WEB.Adavigo.CMS.Controllers.Funding
                                 bank = _bankingAccountRepository.GetById((int)model.BankingAccountId);
 
                             }
-                            LogHelper.InsertLogTelegram("Update - PaymentVoucherController  _clientRepository [" + (_clientRepository == null ? "NULL" : "_clientRepository") + "].GetClientDetailByClientId((long)model.ClientId): [" + (model == null ? "NULL" : "model") + "] [" + (model == null || model.ClientId == null ? "NULL" : (long)model.ClientId) + "]");
 
                             var client = await _clientRepository.GetClientDetailByClientId((long)model.ClientId);
+                            LogHelper.InsertLogTelegram("Update - PaymentVoucherController  _orderMergeESService [" + (_orderMergeESService == null ? "NULL" : "_orderMergeESService") + "].GetOrderStatsByUtmMedium(): [" + (client.ReferralId == null ? "NULL" : client.ReferralId) + "] [" + (model.PaymentFromDate == null ? "NULL" : ((DateTime)model.PaymentFromDate).ToString()) + "][" + (model.PaymentToDate == null ? "NULL" : ((DateTime)model.PaymentToDate).ToString()) + "]");
 
                             var (totalCount, totalAmount, total_profit_affiliate) = _orderMergeESService.GetOrderStatsByUtmMedium(client.ReferralId, (DateTime)model.PaymentFromDate, (DateTime)model.PaymentToDate);
 
@@ -346,7 +346,7 @@ namespace WEB.Adavigo.CMS.Controllers.Funding
         }
 
         [HttpPost]
-        public async Task<IActionResult> Update(PaymentVoucherViewModel model, string jsonData)
+        public async Task<IActionResult> Update(PaymentVoucherViewModel model)
         {
             try
             {
