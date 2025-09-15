@@ -495,7 +495,7 @@ var _add_payment_voucher = {
             'PaymentRequestDetails': [],
             'OtherImages': other_image
         }
-        switch (obj.type) {
+        switch ($('#payment-voucher-type').find(':selected').val()) {
             case '1': {
                 obj.SupplierId = -1;
             } break;
