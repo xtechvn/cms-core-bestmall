@@ -43,7 +43,7 @@ namespace DAL
                     new SqlParameter("@Branch", (object?)model.Branch ?? DBNull.Value),
                 };
 
-                return Convert.ToInt32(_DbWorker.ExecuteNonQuery("SP_InsertAllotmentUse", objParam));
+                return _DbWorker.ExecuteNonQuery("SP_InsertAllotmentUse", objParam);
             }
             catch (Exception ex)
             {
