@@ -1,4 +1,5 @@
 ﻿using Azure.Core;
+using Caching.Elasticsearch;
 using Caching.RedisWorker;
 using Entities.Models;
 using Entities.ViewModels;
@@ -40,12 +41,14 @@ namespace WEB.Adavigo.CMS.Controllers.Funding
         private readonly RedisConn _redisService;
         private readonly IConfiguration _configuration;
         private readonly IClientRepository _clientRepository;
+        private readonly IOrderRepository _orderRepository;
+        private readonly OrderMergeESService _orderMergeESService;
 
         public PaymentVoucherController(IAllCodeRepository allCodeRepository, IWebHostEnvironment hostEnvironment,
            IPaymentRequestRepository paymentRequestRepository, IPaymentVoucherRepository paymentVoucherRepository, IUserRepository userRepository
             , ISupplierRepository supplierRepository, IIdentifierServiceRepository identifierServiceRepository, IAllotmentUseRepository allotmentUseRepository, 
            IAllotmentFundRepository allotmentFundRepository, IBankingAccountRepository bankingAccountRepository, RedisConn redisService, IConfiguration configuration
-            , IClientRepository clientRepository)
+            , IClientRepository clientRepository, IOrderRepository orderRepository, OrderMergeESService orderMergeESService)
         {
             _WebHostEnvironment = hostEnvironment;
             _allCodeRepository = allCodeRepository;
@@ -61,7 +64,10 @@ namespace WEB.Adavigo.CMS.Controllers.Funding
             _redisService = redisService;
             _redisService.Connect();
             _configuration = configuration;
-            _clientRepository= clientRepository;
+            _clientRepository = clientRepository;
+            _orderRepository = orderRepository;
+            _orderMergeESService=orderMergeESService;
+
         }
 
         public IActionResult Index()
@@ -281,11 +287,15 @@ namespace WEB.Adavigo.CMS.Controllers.Funding
                                 bank = _bankingAccountRepository.GetById((int)model.BankingAccountId);
 
                             }
+                            var client = await _clientRepository.GetClientDetailByClientId((long)model.ClientId);
+
+                            var (totalCount, totalAmount, total_profit_affiliate) = _orderMergeESService.GetOrderStatsByUtmMedium(client.ReferralId, (DateTime)model.PaymentFromDate, (DateTime)model.PaymentToDate);
+
                             var fund_use = new AllotmentUse()
                             {
                                 AllotmentFundId = (fund == null || fund.Id <= 0) ? 0 : fund.Id,
                                 AccountClientId = (long)model.ClientId,
-                                AmountUse = (double)model.Amount,
+                                AmountUse = total_profit_affiliate,
                                 ClientId = (long)model.ClientId,
                                 CreateDate = DateTime.Now,
                                 DataId = (long)model.Id,
@@ -296,9 +306,9 @@ namespace WEB.Adavigo.CMS.Controllers.Funding
                                 BankId = (bank == null || bank.Id <= 0) ? "" : bank.BankId,
                                 Branch = (bank == null || bank.Id <= 0) ? "" : bank.Branch,
                                 Description=model.Description,
-                                PaymentFromDate=DateTime.Now,
-                                PaymentToDate=DateTime.Now,
-                                TotalAmoutCalculate = (double)model.Amount,
+                                PaymentFromDate=model.PaymentFromDate,
+                                PaymentToDate= model.PaymentToDate,
+                                TotalAmoutCalculate = totalAmount,
                             };
                             _allotmentUseRepository.Insert(fund_use);
                             var cache_name = CacheType.ALLOTMENT_USE + (long)model.ClientId;
@@ -378,6 +388,7 @@ namespace WEB.Adavigo.CMS.Controllers.Funding
                             var exists_fund_use = await _allotmentUseRepository.GetByDataId(model.Id);
                             if (exists_fund_use != null && exists_fund_use.Id > 0)
                             {
+                               
                                 BankingAccount bank = new BankingAccount();
                                 if ((int)model.BankingAccountId > 0)
                                 {
@@ -389,9 +400,9 @@ namespace WEB.Adavigo.CMS.Controllers.Funding
                                 exists_fund_use.BankId = (bank == null || bank.Id <= 0) ? "" : bank.BankId;
                                 exists_fund_use.Branch = (bank == null || bank.Id <= 0) ? "" : bank.Branch;
                                 exists_fund_use.Description = model.Description;
-                                exists_fund_use.PaymentFromDate = DateTime.Now;
-                                exists_fund_use.PaymentToDate = DateTime.Now;
-                                exists_fund_use.TotalAmoutCalculate = (double)model.Amount;
+                                exists_fund_use.PaymentFromDate = model.PaymentFromDate;
+                                exists_fund_use.PaymentToDate = model.PaymentToDate;
+                               // exists_fund_use.TotalAmoutCalculate = (double)model.Amount;
                                 _allotmentUseRepository.Update(exists_fund_use);
                                 var cache_name = CacheType.ALLOTMENT_USE + (long)model.ClientId;
                                 await _redisService.DeleteCacheByKeyword(cache_name, Convert.ToInt32(_configuration["Redis:Database:db_search_result"]));
@@ -646,6 +657,32 @@ namespace WEB.Adavigo.CMS.Controllers.Funding
         //    });
         //}
 
+        [HttpPost]
+        public async Task<IActionResult> CalucateAmount(PaymentVoucherViewModel model)
+        {
+            try
+            {
+                var client = await _clientRepository.GetClientDetailByClientId((long)model.ClientId);
+                var (totalCount, totalAmount, total_profit_affiliate) = _orderMergeESService.GetOrderStatsByUtmMedium(client.ReferralId, (DateTime)model.PaymentFromDate, (DateTime)model.PaymentToDate);
+                return Ok(new
+                {
+                    isSuccess = true,
+                    data =new {
+                        totalCount,
+                        totalAmount,
+                        total_profit_affiliate
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("CalucateAmount - PaymentVoucherController: " + ex);
+                return Ok(new
+                {
+                    isSuccess = false,
+                });
+            }
+        }
 
     }
 }

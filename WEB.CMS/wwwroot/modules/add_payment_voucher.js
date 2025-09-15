@@ -120,28 +120,15 @@ var _add_payment_voucher = {
         $('#lblBankNameRequired').show()
         $('#lblBankAccount').hide()
         $('#lblBankName').hide()
-        switch ($('#payment-voucher-type').find(':selected').val()) {
-            case '1':
-            case '2':
-                {
-                    $('#lblSupplier').hide()
-                    $('#divSupplier').hide()
-                    $('#lblCustomer').show()
-                    $('#divCustomer').show()
-                } break;
-            case '3':
-                {
-                    $('#lblSupplier').show()
-                    $('#divSupplier').show()
-                    $('#lblCustomer').hide()
-                    $('#divCustomer').hide()
-                } break;
-        }
-       
+
+        _add_payment_voucher.OnChooseType()
         $('input').attr('autocomplete', 'off');
         $('#btnDeleteImage').hide()
         $('#amount').removeAttr('disabled')
         $('#amount').removeClass('background-disabled')
+        var date_payment = '01/'+ $('#payment-from-date input').val();
+        _add_payment_voucher.DateRangePaymentFromDate($('#payment-from-date input'))
+        $('#payment-from-date input').data('daterangepicker').setStartDate(date_payment);
         _add_payment_voucher.DynamicBind()
     },
     DynamicBind: function () {
@@ -508,10 +495,15 @@ var _add_payment_voucher = {
             'OtherImages': other_image
         }
         switch (obj.type) {
-            case '1':
+            case '1': {
+                obj.supplierId = -1;
+            } break;
             case '2':
                 {
                     obj.supplierId = -1;
+                    var payment_fromdate = _add_payment_voucher.getMonthRange($('#payment-from-date input'))
+                    obj.PaymentFromDate = payment_fromdate.startDate
+                    obj.PaymentToDate = payment_fromdate.endDate
                 } break;
             case '3':
                 {
@@ -544,7 +536,20 @@ var _add_payment_voucher = {
         $('#bankName').val("")
         $("#bankingAccount").empty();
         switch (payment_request_type) {
-            case '1':
+            case '1': {
+                $('#lblSupplier').hide()
+                $('#divSupplier').hide()
+                $('#lblCustomer').show()
+                $('#divCustomer').show()
+                $('#global_modal_popup #supplier-select').next(".select2-container").hide();
+                $('#global_modal_popup #client-select').next(".select2-container").show();
+                var client_id = $('#client-select').val()
+                if (client_id !== null && client_id !== undefined && client_id !== '') {
+                    this.GetDataByClientOrSupplier(parseInt(client_id[0]), 0)
+                }
+                $('#payment-from-date').hide()
+
+            } break;
             case '2':
                 {
                     $('#lblSupplier').hide()
@@ -557,6 +562,9 @@ var _add_payment_voucher = {
                     if (client_id !== null && client_id !== undefined && client_id !== '') {
                         this.GetDataByClientOrSupplier(parseInt(client_id[0]), 0)
                     }
+                    $('#payment-from-date').show()
+                    $('#payment-content').prop('disabled', true)
+
                 } break;
             case '3':
                 {
@@ -570,7 +578,17 @@ var _add_payment_voucher = {
                     if (supplier_id !== null && supplier_id !== undefined && supplier_id !== '') {
                         this.GetDataByClientOrSupplier(0, parseInt(supplier_id[0]))
                     }
+                    $('#payment-from-date').hide()
+
                 } break;
+            default: {
+                $('#divSupplier').hide()
+                $('#lblSupplier').hide()
+                $('#lblCustomer').hide()
+                $('#divCustomer').hide()
+                $('#payment-from-date').hide()
+
+            }
         }
        
     },
@@ -695,10 +713,16 @@ var _add_payment_voucher = {
             'OtherImages': other_image
         }
         switch ($('#payment-voucher-type').find(':selected').val()) {
-            case '1':
+            case '1': {
+                obj.supplierId = -1;
+
+            } break;
             case '2':
                 {
                     obj.supplierId = -1;
+                    var payment_fromdate = _add_payment_voucher.getMonthRange($('#payment-from-date input'))
+                    obj.PaymentFromDate = payment_fromdate.startDate
+                    obj.PaymentToDate = payment_fromdate.endDate
                 } break;
             case '3':
                 {
@@ -1154,6 +1178,70 @@ var _add_payment_voucher = {
         });
         _add_payment_voucher.GetListBankAccountByClientID(clientIdSearch);
     },
+
+    DateRangePaymentFromDate: function (element) {
+        var maxDate = moment().subtract(1, 'month').endOf('month');
+
+        element.daterangepicker({
+            singleDatePicker: true,
+            showDropdowns: true,
+            autoUpdateInput: false,
+            locale: {
+                format: 'DD/MM/YYYY' // vẫn cho chọn ngày đầy đủ
+            },
+            minDate:'01/01/2025',
+            maxDate: maxDate.format('DD/MM/YYYY')
+        }, function (start) {
+            _add_payment_voucher.OnChangePaymentDate(start,element)
+        });
+    },
+    getMonthRange: function (element){
+        var val = element.val(); // lấy dữ liệu trong input, vd: "08/2025"
+        if (!val) return null;
+
+        // parse chuỗi theo định dạng MM/YYYY
+        var monthMoment = moment(val, "MM/YYYY");
+
+        // ngày đầu tháng
+        var startDate = monthMoment.startOf('month').format("MM/DD/YYYY");
+
+        // ngày cuối tháng
+        var endDate = monthMoment.endOf('month').format("MM/DD/YYYY");
+
+        return {
+            startDate: startDate,
+            endDate: endDate
+        };
+    },
+    OnChangePaymentDate: function (start, element) {
+        // Khi apply: chỉ hiển thị tháng/năm
+        element.val(start.format('MM/YYYY'));
+
+        $('#payment-content').val('Thanh toán hoa hồng tháng ' + start.format('MM/YYYY'))
+        // ngày đầu tháng
+        var startDate = start.startOf('month').format("MM/DD/YYYY");
+
+        // ngày cuối tháng
+        var endDate = start.endOf('month').format("MM/DD/YYYY");
+
+        $.ajax({
+            url: "/PaymentVoucher/CalucateAmount",
+            type: "Post",
+            data: {
+                model: {
+                    PaymentFromDate: startDate,
+                    PaymentToDate: endDate,
+                    ClientId: parseInt(($('#client-select').val()))
+                }
+            },
+            success: function (result) {
+                if (result.isSuccess) {
+                    $('#amount').val(_add_payment_voucher.Comma(result.data.total_profit_affiliate))
+                } 
+            }
+        });
+    },
+
     Comma: function (number) { //function to add commas to textboxes
         number = ('' + number).replace(/[^0-9.,]+/g, '');
         number += '';
