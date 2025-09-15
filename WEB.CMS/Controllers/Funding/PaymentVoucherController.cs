@@ -302,7 +302,7 @@ namespace WEB.Adavigo.CMS.Controllers.Funding
                             var fund_use = new AllotmentUse()
                             {
                                 AllotmentFundId = (fund == null || fund.Id <= 0) ? 0 : fund.Id,
-                                AccountClientId = (long)model.ClientId,
+                                AccountClientId = 0,
                                 AmountUse = total_profit_affiliate,
                                 ClientId = (long)model.ClientId,
                                 CreateDate = DateTime.Now,
