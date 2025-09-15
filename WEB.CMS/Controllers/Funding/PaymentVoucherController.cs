@@ -4,6 +4,7 @@ using Caching.RedisWorker;
 using Entities.Models;
 using Entities.ViewModels;
 using Entities.ViewModels.Funding;
+using ENTITIES.ViewModels.ElasticSearch;
 using HuloToys_Service.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Nest;
@@ -292,6 +293,8 @@ namespace WEB.Adavigo.CMS.Controllers.Funding
                                 bank = _bankingAccountRepository.GetById((int)model.BankingAccountId);
 
                             }
+                            LogHelper.InsertLogTelegram("Update - PaymentVoucherController  _clientRepository [" + (_clientRepository == null ? "NULL" : "_clientRepository") + "].GetClientDetailByClientId((long)model.ClientId): [" + (model == null ? "NULL" : "model") + "] [" + (model == null || model.ClientId == null ? "NULL" : (long)model.ClientId) + "]");
+
                             var client = await _clientRepository.GetClientDetailByClientId((long)model.ClientId);
 
                             var (totalCount, totalAmount, total_profit_affiliate) = _orderMergeESService.GetOrderStatsByUtmMedium(client.ReferralId, (DateTime)model.PaymentFromDate, (DateTime)model.PaymentToDate);
@@ -316,7 +319,6 @@ namespace WEB.Adavigo.CMS.Controllers.Funding
                                 TotalAmoutCalculate = totalAmount,
                             };
                            var id= _allotmentUseRepository.Insert(fund_use);
-                            LogHelper.InsertLogTelegram("Update - PaymentVoucherController  _allotmentUseRepository.Insert(exists_fund_use): " + id);
 
                             var cache_name = CacheType.ALLOTMENT_USE + (long)model.ClientId;
                             await _redisService.DeleteCacheByKeyword(cache_name,  Convert.ToInt32(_configuration["Redis:Database:db_search_result"]));
