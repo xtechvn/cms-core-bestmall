@@ -22,7 +22,7 @@ namespace Caching.Elasticsearch
         public OrderMergeESService(IConfiguration _configuration)
         {
             configuration = _configuration;
-            index = _configuration["DataBaseConfig:Elastic:Index:Order"];
+            index = _configuration["DataBaseConfig:Elastic:Index:OrderMerge"];
             var settings = new ConnectionSettings(new Uri(configuration["DataBaseConfig:Elastic:Host"]))
                .DefaultIndex(index);
             elasticClient = new ElasticClient(settings);
@@ -533,7 +533,7 @@ namespace Caching.Elasticsearch
 
                 if (!searchResponse.IsValid || !countResponse.IsValid)
                     return (0, 0, 0);
-                LogHelper.InsertLogTelegram("GetOrderStatsByUtmMedium: ["+ utm_medium + "]["+ fromdate.ToString() + "]["+ todate.ToString() + "] " + JsonConvert.SerializeObject(searchResponse.Aggregations));
+               // LogHelper.InsertLogTelegram("GetOrderStatsByUtmMedium: ["+ utm_medium + "]["+ fromdate.ToString() + "]["+ todate.ToString() + "] " + JsonConvert.SerializeObject(searchResponse.Aggregations));
 
                 var totalAmount = searchResponse.Aggregations.Sum("sum_amount")?.Value ?? 0;
                 var totalProfitAffiliate = searchResponse.Aggregations.Sum("sum_profit_affiliate")?.Value ?? 0;
