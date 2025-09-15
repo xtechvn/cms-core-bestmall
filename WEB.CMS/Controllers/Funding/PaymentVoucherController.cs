@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Nest;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.Numeric;
 using Repositories.IRepositories;
 using Repositories.Repositories;
@@ -280,6 +281,10 @@ namespace WEB.Adavigo.CMS.Controllers.Funding
                 {
                     case 2:
                         {
+                            if (model.PaymentFromDate != null && (((DateTime)model.PaymentFromDate).Month + ((DateTime)model.PaymentFromDate).Year) == (DateTime.Now.Month + DateTime.Now.Year))
+                            {
+                                model.PaymentToDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 23, 59, 59);
+                            }
                             var fund = _allotmentFundRepository.GetByAccountClientId((long)model.ClientId);
                             BankingAccount bank = new BankingAccount();
                             if ((int)model.BankingAccountId > 0)
@@ -386,6 +391,10 @@ namespace WEB.Adavigo.CMS.Controllers.Funding
                 {
                     case 2:
                         {
+                            if(model.PaymentFromDate!=null && (((DateTime)model.PaymentFromDate).Month + ((DateTime)model.PaymentFromDate).Year) == (DateTime.Now.Month + DateTime.Now.Year))
+                            {
+                                model.PaymentToDate= new DateTime(DateTime.Now.Year,DateTime.Now.Month,DateTime.Now.Day,23,59,59);
+                            }
                             var fund = _allotmentFundRepository.GetByAccountClientId((long)model.ClientId);
                             var exists_fund_use = await _allotmentUseRepository.GetByDataId(model.Id);
                             if (exists_fund_use != null && exists_fund_use.Id > 0)
@@ -404,7 +413,10 @@ namespace WEB.Adavigo.CMS.Controllers.Funding
                                 exists_fund_use.Description = model.Description;
                                 exists_fund_use.PaymentFromDate = model.PaymentFromDate;
                                 exists_fund_use.PaymentToDate = model.PaymentToDate;
-                               // exists_fund_use.TotalAmoutCalculate = (double)model.Amount;
+                                var client = await _clientRepository.GetClientDetailByClientId((long)model.ClientId);
+                                var (totalCount, totalAmount, total_profit_affiliate) = _orderMergeESService.GetOrderStatsByUtmMedium(client.ReferralId, (DateTime)model.PaymentFromDate, (DateTime)model.PaymentToDate);
+                                exists_fund_use.TotalAmoutCalculate = totalAmount;
+                                exists_fund_use.AmountUse = (double)model.Amount;
                                 _allotmentUseRepository.Update(exists_fund_use);
                                 var cache_name = CacheType.ALLOTMENT_USE + (long)model.ClientId;
                                 await _redisService.DeleteCacheByKeyword(cache_name, Convert.ToInt32(_configuration["Redis:Database:db_search_result"]));
