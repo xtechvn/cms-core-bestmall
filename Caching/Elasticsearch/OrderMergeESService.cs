@@ -2,6 +2,7 @@
 using HuloToys_Service.Models.Orders;
 using Microsoft.Extensions.Configuration;
 using Nest;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -532,6 +533,7 @@ namespace Caching.Elasticsearch
 
                 if (!searchResponse.IsValid || !countResponse.IsValid)
                     return (0, 0, 0);
+                LogHelper.InsertLogTelegram("GetOrderStatsByUtmMedium: ["+ utm_medium + "]["+ fromdate.ToString() + "]["+ todate.ToString() + "] " + JsonConvert.SerializeObject(searchResponse.Aggregations));
 
                 var totalAmount = searchResponse.Aggregations.Sum("sum_amount")?.Value ?? 0;
                 var totalProfitAffiliate = searchResponse.Aggregations.Sum("sum_profit_affiliate")?.Value ?? 0;

@@ -145,6 +145,7 @@ var _add_payment_voucher = {
             var element = $(this)
             var value = element.find(':selected').val()
             _add_payment_voucher.OnChooseTypeEdit(value, undefined, undefined)
+            $('#payment-from-date input').prop('disabled', false);
         })
         $('body').on('select2:select', '#supplier-select', function () {
             var element = $(this)
@@ -564,7 +565,10 @@ var _add_payment_voucher = {
                     }
                     $('#payment-from-date').show()
                     $('#payment-content').prop('disabled', true)
+                    if ($("#client-select").find(':selected').val() == null || $("#client-select").find(':selected').val() == undefined) {
+                        $('#payment-from-date input').prop('disabled', true);
 
+                    }
                 } break;
             case '3':
                 {
@@ -1180,7 +1184,7 @@ var _add_payment_voucher = {
     },
 
     DateRangePaymentFromDate: function (element) {
-        var maxDate = moment().subtract(1, 'month').endOf('month');
+        var maxDate = moment().subtract(0, 'month').endOf('month');
 
         element.daterangepicker({
             singleDatePicker: true,
