@@ -55,5 +55,10 @@ namespace Entities.ViewModels.Funding
         public List<AttachFile> AttachFile { get; set; }
         public IEnumerable<string> OtherImages { get; set; }
 
+        public DateTime? PaymentFromDate { get; set; }
+
+        public DateTime? PaymentToDate { get; set; }
+
+
     }
 }

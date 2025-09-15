@@ -125,6 +125,7 @@ builder.Services.AddSingleton<OrderESRepository>();
 builder.Services.AddSingleton<ElasticService>();
 builder.Services.AddSingleton<ClientContactMongodbService>();
 builder.Services.AddSingleton<SupplierESRepository>();
+builder.Services.AddSingleton<OrderMergeESService>();
 
 // Setting Redis                     
 builder.Services.AddSingleton<RedisConn>();

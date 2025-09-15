@@ -114,6 +114,16 @@
     </div>
 </div>
 
+<div class="row m-0 p-0" id="payment-from-date" style="display:none;">
+    <div class="col-md-6 mb10"><label class="lbl mt5 mb0">Tháng đối soát hoa hồng</label></div>
+    <div class="col-md-12 mb10">
+        <input class="form-control" type="text" name="payment-from-date" value="@(Model!=null && Model.PaymentFromDate != null ? ((DateTime)Model.PaymentFromDate).ToString("MM/yyyy") : "")">
+
+        <div class="validate-datetime-select"></div>
+    </div>
+</div>
+
+
 <div class="grid grid__2 grid-don-hang gap10 mb20">
     <div class="grid-item border">
 
