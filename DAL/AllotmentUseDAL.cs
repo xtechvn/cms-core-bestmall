@@ -43,7 +43,7 @@ namespace DAL
                     new SqlParameter("@Branch", (object?)model.Branch ?? DBNull.Value),
                 };
 
-                return Convert.ToInt32(_DbWorker.ExecuteScalar("SP_InsertAllotmentUse", objParam));
+                return _DbWorker.ExecuteNonQuery("SP_InsertAllotmentUse", objParam);
             }
             catch (Exception ex)
             {
@@ -67,7 +67,7 @@ namespace DAL
                     new SqlParameter("@ClientId", model.ClientId),
                     new SqlParameter("@CreateDate", model.CreateDate==null||model.CreateDate<=DateTime.MinValue ? DBNull.Value:model.CreateDate),
                     new SqlParameter("@PaymentStatus", model.PaymentStatus),
-                     new SqlParameter("@Description", (object?)model.Description ?? DBNull.Value),
+                    new SqlParameter("@Description", (object?)model.Description ?? DBNull.Value),
                     new SqlParameter("@TotalAmoutCalculate", (object?)model.TotalAmoutCalculate ?? DBNull.Value),
                     new SqlParameter("@PaymentFromDate", (object?)model.PaymentFromDate ?? DBNull.Value),
                     new SqlParameter("@PaymentToDate", (object?)model.PaymentToDate ?? DBNull.Value),

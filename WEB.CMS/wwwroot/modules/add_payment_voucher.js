@@ -145,6 +145,7 @@ var _add_payment_voucher = {
             var element = $(this)
             var value = element.find(':selected').val()
             _add_payment_voucher.OnChooseTypeEdit(value, undefined, undefined)
+            $('#payment-from-date input').prop('disabled', false);
         })
         $('body').on('select2:select', '#supplier-select', function () {
             var element = $(this)
@@ -478,36 +479,36 @@ var _add_payment_voucher = {
             other_image.push(image_item.attr('src'));
         });
         let obj = {
-            'type': parseInt($('#payment-voucher-type').val()),
-            'paymentType': parseInt($('#payment-voucher-pay-type').val()),
-            'bankingAccountId': $('#bankingAccount').val() == null || $('#bankingAccount').val() == ''
+            'Type': parseInt($('#payment-voucher-type').val()),
+            'PaymentType': parseInt($('#payment-voucher-pay-type').val()),
+            'BankingAccountId': $('#bankingAccount').val() == null || $('#bankingAccount').val() == ''
                 || $('#bankingAccount').val() == undefined ? 0 : parseInt($('#bankingAccount').val()),
-            'description': $('#description').val(),
-            'note': $('#payment-content').val(),
-            'clientId': parseInt(($('#client-select').val())),
-            'bankName': $('#bankName').val(),
-            'bankAccount': $('#bankAccount').val(),
-            'sourceAccount': $('#bankingAccountSource').val(),
-            'supplierId': parseInt(($('#supplier-select').val())),
-            'amount': parseFloat($('#amount').val().replaceAll(',', '')),
+            'Description': $('#description').val(),
+            'Note': $('#payment-content').val(),
+            'ClientId': parseInt(($('#client-select').val())),
+            'BankName': $('#bankName').val(),
+            'BankAccount': $('#bankAccount').val(),
+            'SourceAccount': $('#bankingAccountSource').val(),
+            'SupplierId': parseInt(($('#supplier-select').val())),
+            'Amount': parseFloat($('#amount').val().replaceAll(',', '')),
             //'PaymentRequestDetails': PaymentRequestDetails,
             'PaymentRequestDetails': [],
             'OtherImages': other_image
         }
-        switch (obj.type) {
+        switch ($('#payment-voucher-type').find(':selected').val()) {
             case '1': {
-                obj.supplierId = -1;
+                obj.SupplierId = -1;
             } break;
             case '2':
                 {
-                    obj.supplierId = -1;
+                    obj.SupplierId = -1;
                     var payment_fromdate = _add_payment_voucher.getMonthRange($('#payment-from-date input'))
                     obj.PaymentFromDate = payment_fromdate.startDate
                     obj.PaymentToDate = payment_fromdate.endDate
                 } break;
             case '3':
                 {
-                    obj.clientId = -1;
+                    obj.ClientId = -1;
                 } break;
         }
         //formData.append('imagefile', file);
@@ -516,7 +517,7 @@ var _add_payment_voucher = {
         $.ajax({
             url: "/PaymentVoucher/AddNewJson",
             type: "Post",
-            data: obj,
+            data: {model:obj},
             success: function (result) {
                 _global_function.RemoveLoading()
                 if (result.isSuccess) {
@@ -564,7 +565,10 @@ var _add_payment_voucher = {
                     }
                     $('#payment-from-date').show()
                     $('#payment-content').prop('disabled', true)
+                    if ($("#client-select").find(':selected').val() == null || $("#client-select").find(':selected').val() == undefined) {
+                        $('#payment-from-date input').prop('disabled', true);
 
+                    }
                 } break;
             case '3':
                 {
@@ -694,39 +698,39 @@ var _add_payment_voucher = {
             other_image.push(image_item.attr('src'));
         });
         let obj = {
-            'id': parseInt($('#paymentVoucherId').val()),
-            'paymentCode': $('#paymentCode').val(),
-            'type': parseInt($('#payment-voucher-type').val()),
-            'paymentType': parseInt($('#payment-voucher-pay-type').val()),
-            'bankingAccountId': $('#bankingAccount').val() == null || $('#bankingAccount').val() == ''
+            'Id': parseInt($('#paymentVoucherId').val()),
+            'PaymentCode': $('#paymentCode').val(),
+            'Type': parseInt($('#payment-voucher-type').val()),
+            'PaymentType': parseInt($('#payment-voucher-pay-type').val()),
+            'BankingAccountId': $('#bankingAccount').val() == null || $('#bankingAccount').val() == ''
                 || $('#bankingAccount').val() == undefined ? 0 : parseInt($('#bankingAccount').val()),
-            'attachFiles': $('#attachmentFile').val(),
-            'description': $('#description').val(),
-            'bankName': $('#bankName').val(),
-            'bankAccount': $('#bankAccount').val(),
-            'note': $('#payment-content').val(),
-            'clientId': parseInt(($('#client-select').val())),
-            'supplierId': parseInt(($('#supplier-select').val())),
-            'sourceAccount': $('#bankingAccountSource').val(),
-            'amount': parseFloat($('#amount').val().replaceAll(',', '')),
-            //'paymentRequestDetails': PaymentRequestDetails,
+            'AttachFiles': $('#attachmentFile').val(),
+            'Description': $('#description').val(),
+            'BankName': $('#bankName').val(),
+            'BankAccount': $('#bankAccount').val(),
+            'Note': $('#payment-content').val(),
+            'ClientId': parseInt(($('#client-select').val())),
+            'SupplierId': parseInt(($('#supplier-select').val())),
+            'SourceAccount': $('#bankingAccountSource').val(),
+            'Amount': parseFloat($('#amount').val().replaceAll(',', '')),
+            //'PaymentRequestDetails': PaymentRequestDetails,
             'OtherImages': other_image
         }
         switch ($('#payment-voucher-type').find(':selected').val()) {
             case '1': {
-                obj.supplierId = -1;
+                obj.SupplierId = -1;
 
             } break;
             case '2':
                 {
-                    obj.supplierId = -1;
+                    obj.SupplierId = -1;
                     var payment_fromdate = _add_payment_voucher.getMonthRange($('#payment-from-date input'))
                     obj.PaymentFromDate = payment_fromdate.startDate
                     obj.PaymentToDate = payment_fromdate.endDate
                 } break;
             case '3':
                 {
-                    obj.clientId = -1;
+                    obj.ClientId = -1;
                 } break;
         }
         //formData.append('imagefile', file);
@@ -735,7 +739,7 @@ var _add_payment_voucher = {
         $.ajax({
             url: "/PaymentVoucher/Update",
             type: "Post",
-            data: obj,
+            data: { model :obj},
             success: function (result) {
                 _global_function.RemoveLoading()
                 if (result.isSuccess) {
@@ -1180,7 +1184,7 @@ var _add_payment_voucher = {
     },
 
     DateRangePaymentFromDate: function (element) {
-        var maxDate = moment().subtract(1, 'month').endOf('month');
+        var maxDate = moment().subtract(0, 'month').endOf('month');
 
         element.daterangepicker({
             singleDatePicker: true,
