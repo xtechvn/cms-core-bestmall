@@ -438,6 +438,10 @@ namespace WEB.CMS.Controllers
                                 _redisConn.clear(CacheName.ARTICLE_B2C_CATEGORY_MENU_FOOTER + 188, Convert.ToInt32(_configuration["Redis:Database:db_common"]));
                                 _redisConn.clear("GROUP_PRODUCT_FLASHSALE_" + id, Convert.ToInt32(_configuration["Redis:Database:db_common"]));
                                 await _redisConn.DeleteCacheByKeyword(CacheName.ARTICLE_CATEGORY_MENU, Convert.ToInt32(_configuration["Redis:Database:db_common"]));
+                                string cache_name = "PRODUCT_LISTING_"+product_main.label_id;
+                                await _redisConn.DeleteCacheByKeyword(cache_name, Convert.ToInt32(_configuration["Redis:Database:db_search_result"]));
+                                cache_name = "PRODUCT_LISTING_" + product_main.supplier_id;
+                                await _redisConn.DeleteCacheByKeyword(cache_name, Convert.ToInt32(_configuration["Redis:Database:db_search_result"]));
                             }
                         }
                     }
@@ -1211,6 +1215,8 @@ namespace WEB.CMS.Controllers
                         //-- ES FlashsalePRoduct:
                         await _flashSaleProductESRepository.UpdateFlashSaleGroup(product._id, product.group_product_id);
                     }
+                    string cache_name = "PRODUCT_LISTING_";
+                    await _redisConn.DeleteCacheByKeyword(cache_name, Convert.ToInt32(_configuration["Redis:Database:db_search_result"]));
                 }
             }
             catch (Exception ex)
