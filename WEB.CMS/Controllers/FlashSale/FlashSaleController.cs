@@ -449,8 +449,8 @@ namespace WEB.CMS.Controllers.FlashSale
                             var product_mongo = await _productV2DetailMongoAccess.GetByID(product.productid);
                             if (fsl != null)
                             {
-                                var flashsale = fsl.FirstOrDefault(x => x.Id == product.flashsale_id);
-                                var flashsale_product = fspl.FirstOrDefault(x => x.Id == product.flashsale_productid);
+                                var flashsale = fsl.FirstOrDefault(x => x.Id == product.flashsale_id && x.Status==1);
+                                var flashsale_product = fspl.FirstOrDefault(x => x.Id == product.flashsale_productid && x.Status == 1);
                                 if (flashsale != null && flashsale_product != null)
                                 {
                                     await _productV2DetailMongoAccess.UpdateProductFlashsale(product_mongo, flashsale, flashsale_product);
