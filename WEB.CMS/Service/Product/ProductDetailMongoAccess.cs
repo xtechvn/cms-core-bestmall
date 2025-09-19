@@ -1,5 +1,7 @@
 ﻿using Azure.Core;
 using Elasticsearch.Net;
+using Entities.Models;
+using Entities.ViewModels.ElasticSearch;
 using Entities.ViewModels.Products;
 using IdGen;
 using MongoDB.Bson;
@@ -738,5 +740,102 @@ namespace WEB.CMS.Models.Product
             }
             return null;
         }
+        public async Task<ProductMongoDbModel> UpdateProductFlashsale(ProductMongoDbModel item, FlashSale active_flashsale, FlashSaleProduct active_flashsale_product)
+        {
+            try
+            {
+                if (item == null || item._id == null) return null;
+
+                string product_id_compare = item._id;
+                if (item.parent_product_id != null && item.parent_product_id.Trim() != "")
+                {
+                    product_id_compare = item.parent_product_id;
+                }
+                if (active_flashsale_product != null && active_flashsale_product.Id >0 && active_flashsale_product.DiscountValue != null && active_flashsale_product.ValueType != null)
+                {
+                    double total_discount = 0;
+
+                    double percent = Convert.ToDouble(active_flashsale_product.DiscountValue);
+                    var amount_product = item.amount;
+                    if (item.amount <= 0 && item.amount_min != null && item.amount_min > 0)
+                    {
+                        amount_product = (double)item.amount_min;
+
+                    }
+                    //double old_price = item.old_price == null || item.old_price <= 0 ? amount_product : (double)item.old_price;
+                    //if (old_price <= 0)
+                    //{
+                    //    old_price = amount_product;
+                    //}
+                    switch (active_flashsale_product.ValueType)
+                    {
+                        case 1:
+                            total_discount += (amount_product * Convert.ToDouble(percent / 100));
+                            break;
+                        case 0:
+                            total_discount += percent;
+                            break;
+
+                        default: break;
+                    }
+                    total_discount = Math.Round(total_discount, 0);
+                    item.exists_flashsale_id = active_flashsale.Id;
+                    item.flash_sale_fromdate = active_flashsale.FromDate;
+                    item.flash_sale_todate = active_flashsale.ToDate;
+                    item.exists_flashsale_name = active_flashsale.Name;
+                    item.amount_after_flashsale = amount_product - total_discount;
+                    //item.profit -= total_discount;
+                    if (item.amount <= 0 && item.amount_min != null && item.amount_min > 0)
+                    {
+                      item.flash_sale_amount_min=  item.amount_min - total_discount;
+                        item.flash_sale_amount_min = item.amount_min = Math.Ceiling((double)item.flash_sale_amount_min);
+
+                    }
+                    if (item.amount <= 0 && item.amount_max != null && item.amount_max > 0)
+                    {
+                        item.flash_sale_amount_max = item.amount_max - total_discount;
+                        item.flash_sale_amount_max = Math.Ceiling((double)item.flash_sale_amount_max);
+
+                    }
+                    item.flash_sale_discount = Math.Round(((amount_product - (double)item.amount_after_flashsale) / amount_product * 100), 0);
+                    item.flash_sale_discount = item.flash_sale_discount <= 0 ? 0 : item.flash_sale_discount;
+                    // item.price = amount_product- item.profit;
+                    item.old_price = amount_product;
+                    item.amount_after_flashsale = Math.Ceiling((double)item.amount_after_flashsale);
+                    //item.profit = NumberHelpers.RoundUpToHundredsDouble((double)item.profit);
+                    //item.flashsale_badge_type = exists_flash_sale_product.badgetype;
+                    //has_badge = true;
+                    item.flash_sale_unit = active_flashsale_product.ValueType;
+                    item.flash_sale_price_sales = Convert.ToDecimal(active_flashsale_product.DiscountValue);
+                    await UpdateAsync(item);
+                    return item;
+                }
+
+                //var base_product = await _productDetailMongoAccess.GetByID(item._id);
+                //if (base_product != null && base_product._id != null)
+                //{
+                //    item = JsonConvert.DeserializeObject<ProductMongoDbModelFEResponse>(JsonConvert.SerializeObject(base_product));
+
+                //}
+                //if (!has_badge) {
+                //    if (group_types != null && group_types.Count>0 && item.group_product_id!=null && item.group_product_id.Trim()!="" ) {
+                //        try
+                //        {
+                //            var exists = group_types.FirstOrDefault(x => x.Id == Convert.ToInt32(item.group_product_id.Trim().Split(",")[0]));
+                //            if (exists != null && exists.Id>0) { item.flashsale_badge_type = exists.Id; }
+                //        }
+                //        catch { }
+
+                //    }
+                //}
+            }
+            catch (Exception ex)
+            {
+                string error_msg = Assembly.GetExecutingAssembly().GetName().Name + "->" + MethodBase.GetCurrentMethod().Name + "=>" + ex.ToString();
+                LogHelper.InsertLogTelegramByUrl(_configuration["BotSetting:bot_token"], _configuration["BotSetting:bot_group_id"], error_msg);
+            }
+            return item;
+        }
+
     }
 }

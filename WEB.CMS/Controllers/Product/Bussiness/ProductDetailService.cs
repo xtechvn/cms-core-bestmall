@@ -1,7 +1,10 @@
 ﻿using Caching.RedisWorker;
 using Entities.ViewModels.Products;
+using HuloToys_Service.ElasticSearch;
+using HuloToys_Service.Models.Raiting;
 using Newtonsoft.Json;
 using Repositories.IRepositories;
+using System.Reflection;
 using Utilities.Contants.ProductV2;
 using WEB.CMS.Models.Product;
 
@@ -12,11 +15,15 @@ namespace WEB.CMS.Controllers.Product.Bussiness
         private readonly ProductDetailMongoAccess _productV2DetailMongoAccess;
         private readonly ProductSpecificationMongoAccess _productSpecificationMongoAccess;
         private readonly IConfiguration _configuration;
-        public ProductDetailService(IConfiguration configuration, ProductDetailMongoAccess productV2DetailMongoAccess, ProductSpecificationMongoAccess productSpecificationMongoAccess)
+        private readonly RaitingESService _raitingESService;
+
+        public ProductDetailService(IConfiguration configuration, ProductDetailMongoAccess productV2DetailMongoAccess,
+            ProductSpecificationMongoAccess productSpecificationMongoAccess, RaitingESService raitingESService)
         {
             _productV2DetailMongoAccess = productV2DetailMongoAccess;
             _productSpecificationMongoAccess = productSpecificationMongoAccess;
             _configuration = configuration;
+            _raitingESService=raitingESService;
         }
 
         public async Task<List<ProductMongoDbModel>> ConvertToProducts(List<ProductExcelUploadModel> request)
@@ -261,6 +268,40 @@ namespace WEB.CMS.Controllers.Product.Bussiness
             return list;
         
         }
+        public bool UpdateProductRaiting(ProductMongoDbModel item)
+        {
+            try
+            {
+                if (item == null || item._id == null) return false;
+                var raiting = _raitingESService.GetListByFilter(new ProductRaitingRequestModel()
+                {
+                    id = item._id,
+                    has_comment = false,
+                    has_media = false,
+                    page_index = 1,
+                    page_size = 500,
+                    stars = 0
+                });
+                if (raiting != null && raiting.Count > 0)
+                {
+                    var sum_raiting = raiting.Average(x => x.Star);
+                    item.star = sum_raiting == null ? 5 : (float)Math.Round((float)sum_raiting, 1);
+                    item.review_count = raiting.Count;
+                    item.rating = (sum_raiting == null ? 5 : (float)Math.Round((float)sum_raiting, 1));
+                }
+                else
+                {
+                    item.star = 0;
+                    item.review_count = 0;
+                    item.rating = 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+            return true;
+        }
     }
-   
+
 }

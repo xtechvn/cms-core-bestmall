@@ -4,6 +4,7 @@ using Caching.RedisWorker;
 using Entities.ConfigModels;
 using Entities.Models;
 using Entities.ViewModels.Products;
+using HuloToys_Service.ElasticSearch;
 using HuloToys_Service.ElasticSearch.NewEs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -45,12 +46,14 @@ namespace WEB.CMS.Controllers
         private readonly FlashSaleProductESRepository _flashSaleProductESRepository;
         private readonly IWebHostEnvironment _WebHostEnvironment;
         private readonly GroupProductESService _groupProductESService;
+        private readonly SupplierESRepository _supplierESRepository;
         private readonly string _UrlStaticImage;
 
         public ProductController(IConfiguration configuration, RedisConn redisConn, IGroupProductRepository groupProductRepository, ILabelRepository labelRepository,
             ISupplierRepository supplierRepository, IAllCodeRepository allCodeRepository, ProductDetailMongoAccess productV2DetailMongoAccess,
             ProductSpecificationMongoAccess productSpecificationMongoAccess, ProductESRepository productESRepository, FlashSaleProductESRepository flashSaleProductRepository,
-            IWebHostEnvironment WebHostEnvironment, GroupProductESService groupProductESService, IGroupProductRepository GroupProductRepository, IOptions<DomainConfig> domainConfig)
+            IWebHostEnvironment WebHostEnvironment, GroupProductESService groupProductESService, IGroupProductRepository GroupProductRepository, IOptions<DomainConfig> domainConfig
+            , RaitingESService raitingESService, SupplierESRepository supplierESRepository)
         {
             _productV2DetailMongoAccess = productV2DetailMongoAccess;
             _productSpecificationMongoAccess = productSpecificationMongoAccess;
@@ -60,7 +63,7 @@ namespace WEB.CMS.Controllers
             _groupProductRepository = groupProductRepository;
             db_index = Convert.ToInt32(configuration["Redis:Database:db_search_result"]);
             _configuration = configuration;
-            productDetailService = new ProductDetailService(configuration, productV2DetailMongoAccess, productSpecificationMongoAccess);
+            productDetailService = new ProductDetailService(configuration, productV2DetailMongoAccess, productSpecificationMongoAccess, raitingESService);
             _productESRepository = productESRepository;
             _labelRepository = labelRepository;
             _supplierRepository = supplierRepository;
@@ -70,7 +73,7 @@ namespace WEB.CMS.Controllers
             _WebHostEnvironment = WebHostEnvironment;
             _groupProductESService = groupProductESService;
             _UrlStaticImage = domainConfig.Value.ImageStatic;
-
+            _supplierESRepository = supplierESRepository;
         }
         public async Task<IActionResult> Index()
         {
@@ -318,6 +321,7 @@ namespace WEB.CMS.Controllers
                     if (suplier != null && suplier.SupplierId > 0)
                     {
                         product_main.supplier_status = suplier.Status;
+                        product_main.supplier_name = suplier.FullName;
                     }
                 }
 
@@ -1196,6 +1200,12 @@ namespace WEB.CMS.Controllers
                             }
                             product.images = images;
                         }
+                        if (product.supplier_id!=null)
+                        {
+                            var sup = await _supplierESRepository.GetById((int)product.supplier_id);
+                            product.supplier_name = sup.fullname;
+                        }
+                        productDetailService.UpdateProductRaiting(product);
                         await _productV2DetailMongoAccess.UpdateAsync(product);
                         await _productESRepository.InsertAsync(product_es);
                         //-- ES FlashsalePRoduct:
