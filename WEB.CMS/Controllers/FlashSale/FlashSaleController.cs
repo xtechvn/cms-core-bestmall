@@ -3,6 +3,7 @@ using Caching.Elasticsearch.FlashSale;
 using Caching.RedisWorker;
 using Entities.Models;
 using Entities.ViewModels.Products;
+using HuloToys_Service.ElasticSearch;
 using Microsoft.AspNetCore.Mvc;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
 using Repositories.IRepositories;
@@ -42,7 +43,7 @@ namespace WEB.CMS.Controllers.FlashSale
         public FlashSaleController(IConfiguration configuration, RedisConn redisConn, IGroupProductRepository groupProductRepository, ILabelRepository labelRepository,
             ISupplierRepository supplierRepository, IAllCodeRepository allCodeRepository, IFlashSaleRepository flashSaleRepository, IFlashSaleProductRepository flashSaleProductRepository
             , ProductDetailMongoAccess productV2DetailMongoAccess, ProductSpecificationMongoAccess productSpecificationMongoAccess,
-            ProductESRepository productESRepository, FlashSaleESRepository flashSaleESRepository, FlashSaleProductESRepository flashSaleProductESRepository)
+            ProductESRepository productESRepository, FlashSaleESRepository flashSaleESRepository, FlashSaleProductESRepository flashSaleProductESRepository, RaitingESService raitingESService)
         {
             _productV2DetailMongoAccess = productV2DetailMongoAccess;
             _productSpecificationMongoAccess = productSpecificationMongoAccess;
@@ -52,7 +53,7 @@ namespace WEB.CMS.Controllers.FlashSale
             _groupProductRepository = groupProductRepository;
             db_index = Convert.ToInt32(configuration["Redis:Database:db_search_result"]);
             _configuration = configuration;
-            productDetailService = new ProductDetailService(configuration,productV2DetailMongoAccess,productSpecificationMongoAccess);
+            productDetailService = new ProductDetailService(configuration,productV2DetailMongoAccess,productSpecificationMongoAccess,raitingESService);
             _productESRepository = productESRepository;
             _flashSaleESRepository = flashSaleESRepository;
             _flashSaleProductESRepository = flashSaleProductESRepository;
@@ -263,7 +264,7 @@ namespace WEB.CMS.Controllers.FlashSale
                             _flashSaleProductRepository.UpdateFlashSaleProduct(product);
                         }
                         var product_mongo = await _productV2DetailMongoAccess.GetByID(product.ProductId);
-
+                        await _productV2DetailMongoAccess.UpdateProductFlashsale(product_mongo,flashsale, product);
                         new_items.Add(new FlashSaleProductESModel()
                         {
                             valuetype=product.ValueType,
@@ -446,6 +447,15 @@ namespace WEB.CMS.Controllers.FlashSale
                         foreach(var product in all_fspl_es)
                         {
                             var product_mongo = await _productV2DetailMongoAccess.GetByID(product.productid);
+                            if (fsl != null)
+                            {
+                                var flashsale = fsl.FirstOrDefault(x => x.Id == product.flashsale_id);
+                                var flashsale_product = fspl.FirstOrDefault(x => x.Id == product.flashsale_productid);
+                                if (flashsale != null && flashsale_product != null)
+                                {
+                                    await _productV2DetailMongoAccess.UpdateProductFlashsale(product_mongo, flashsale, flashsale_product);
+                                }
+                            }
                             product.group_id = (product_mongo == null || product_mongo.group_product_id == null) ? "" : product_mongo.group_product_id;
 
                         }

@@ -3,6 +3,7 @@ using Caching.Elasticsearch.FlashSale;
 using Caching.RedisWorker;
 using Entities.ConfigModels;
 using Entities.Models;
+using HuloToys_Service.ElasticSearch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Repositories.IRepositories;
@@ -38,7 +39,7 @@ namespace WEB.CMS.Controllers.Homepage
 
         public HomepageController(IConfiguration configuration, RedisConn redisConn, IGroupProductRepository groupProductRepository, ILabelRepository labelRepository,
             ISupplierRepository supplierRepository, IAllCodeRepository allCodeRepository, ProductDetailMongoAccess productV2DetailMongoAccess, ProductSpecificationMongoAccess productSpecificationMongoAccess,
-            ProductESRepository productESRepository, IOptions<DomainConfig> domainConfig)
+            ProductESRepository productESRepository, IOptions<DomainConfig> domainConfig, RaitingESService raitingESService)
         {
             _productV2DetailMongoAccess = productV2DetailMongoAccess;
             _productSpecificationMongoAccess = productSpecificationMongoAccess;
@@ -47,7 +48,7 @@ namespace WEB.CMS.Controllers.Homepage
             _redisConn.Connect();
             _groupProductRepository = groupProductRepository;
             _configuration = configuration;
-            productDetailService = new ProductDetailService(configuration, productV2DetailMongoAccess, productSpecificationMongoAccess);
+            productDetailService = new ProductDetailService(configuration, productV2DetailMongoAccess, productSpecificationMongoAccess, raitingESService);
             _productESRepository = productESRepository;
             _labelRepository = labelRepository;
             _supplierRepository = supplierRepository;
