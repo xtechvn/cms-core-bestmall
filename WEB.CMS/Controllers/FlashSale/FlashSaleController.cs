@@ -265,6 +265,14 @@ namespace WEB.CMS.Controllers.FlashSale
                         }
                         var product_mongo = await _productV2DetailMongoAccess.GetByID(product.ProductId);
                         await _productV2DetailMongoAccess.UpdateProductFlashsale(product_mongo,flashsale, product);
+                        var list_sub=await _productV2DetailMongoAccess.SubListing(product.ProductId);
+                        if(list_sub != null && list_sub.Count>0)
+                        {
+                            foreach(var sub in list_sub)
+                            {
+                                await _productV2DetailMongoAccess.UpdateProductFlashsale(sub, flashsale, product);
+                            }
+                        } 
                         new_items.Add(new FlashSaleProductESModel()
                         {
                             valuetype=product.ValueType,
@@ -461,11 +469,26 @@ namespace WEB.CMS.Controllers.FlashSale
                                 if (flashsale != null && flashsale_product != null)
                                 {
                                     await _productV2DetailMongoAccess.UpdateProductFlashsale(product_mongo, flashsale, flashsale_product);
+                                    var list_sub = await _productV2DetailMongoAccess.SubListing(product.productid);
+                                    if (list_sub != null && list_sub.Count > 0)
+                                    {
+                                        foreach (var sub in list_sub)
+                                        {
+                                            await _productV2DetailMongoAccess.UpdateProductFlashsale(sub, flashsale, flashsale_product);
+                                        }
+                                    }
                                 }
                                 else
                                 {
                                     await _productV2DetailMongoAccess.UpdateProductFlashsale(product_mongo, null, null);
-
+                                    var list_sub = await _productV2DetailMongoAccess.SubListing(product.productid);
+                                    if (list_sub != null && list_sub.Count > 0)
+                                    {
+                                        foreach (var sub in list_sub)
+                                        {
+                                            await _productV2DetailMongoAccess.UpdateProductFlashsale(sub, null, null);
+                                        }
+                                    }
                                 }
                             }
                             product.group_id = (product_mongo == null || product_mongo.group_product_id == null) ? "" : product_mongo.group_product_id;
