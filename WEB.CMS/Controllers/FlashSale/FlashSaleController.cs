@@ -281,6 +281,13 @@ namespace WEB.CMS.Controllers.FlashSale
                         });
                        // LogHelper.InsertLogTelegram("Summit - FlashSaleController [group_id]: " + ((product_mongo == null || product_mongo.group_product_id == null) ? "" : product_mongo.group_product_id));
                         _redisConn.clear(CacheName.PRODUCT_DETAIL + product.ProductId, db_index);
+                        if (product_mongo!=null && product_mongo._id!=null)
+                        {
+                            string cache_name = "PRODUCT_LISTING_" + product_mongo.label_id;
+                            await _redisConn.DeleteCacheByKeyword(cache_name, Convert.ToInt32(_configuration["Redis:Database:db_search_result"]));
+                            cache_name = "PRODUCT_LISTING_" + product_mongo.supplier_id;
+                            await _redisConn.DeleteCacheByKeyword(cache_name, Convert.ToInt32(_configuration["Redis:Database:db_search_result"]));
+                        }
 
                     }
                     await _flashSaleProductESRepository.DeleteByIds(flashsale_product.Select(x => x.Id).ToList());
@@ -467,6 +474,8 @@ namespace WEB.CMS.Controllers.FlashSale
                     }
                    // await _flashSaleProductESRepository.DeleteByIds(all_fspl_es.Select(x => x.flashsale_productid).ToList());
                     await _flashSaleProductESRepository.IndexMany(all_fspl_es);
+                    string cache_name = "PRODUCT_LISTING_";
+                    await _redisConn.DeleteCacheByKeyword(cache_name, Convert.ToInt32(_configuration["Redis:Database:db_search_result"]));
                 }
             }
             catch (Exception ex)

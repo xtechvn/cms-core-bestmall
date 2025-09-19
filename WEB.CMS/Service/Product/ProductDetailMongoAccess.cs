@@ -740,7 +740,7 @@ namespace WEB.CMS.Models.Product
             }
             return null;
         }
-        public async Task<ProductMongoDbModel> UpdateProductFlashsale(ProductMongoDbModel item, FlashSale active_flashsale, FlashSaleProduct active_flashsale_product)
+        public async Task<ProductMongoDbModel> UpdateProductFlashsale(ProductMongoDbModel item, FlashSale? active_flashsale, FlashSaleProduct? active_flashsale_product)
         {
             try
             {
