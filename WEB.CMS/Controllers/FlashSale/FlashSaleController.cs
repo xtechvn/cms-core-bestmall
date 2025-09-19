@@ -455,6 +455,11 @@ namespace WEB.CMS.Controllers.FlashSale
                                 {
                                     await _productV2DetailMongoAccess.UpdateProductFlashsale(product_mongo, flashsale, flashsale_product);
                                 }
+                                else
+                                {
+                                    await _productV2DetailMongoAccess.UpdateProductFlashsale(product_mongo, null, null);
+
+                                }
                             }
                             product.group_id = (product_mongo == null || product_mongo.group_product_id == null) ? "" : product_mongo.group_product_id;
 
