@@ -1,5 +1,4 @@
 ﻿using Entities.ViewModels.ElasticSearch;
-using HuloToys_Service.Utilities.Lib;
 using IdGen;
 using Microsoft.Extensions.Configuration;
 using Nest;
