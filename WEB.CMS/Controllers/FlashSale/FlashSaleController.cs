@@ -264,15 +264,19 @@ namespace WEB.CMS.Controllers.FlashSale
                             _flashSaleProductRepository.UpdateFlashSaleProduct(product);
                         }
                         var product_mongo = await _productV2DetailMongoAccess.GetByID(product.ProductId);
-                        await _productV2DetailMongoAccess.UpdateProductFlashsale(product_mongo,flashsale, product);
-                        var list_sub=await _productV2DetailMongoAccess.SubListing(product.ProductId);
-                        if(list_sub != null && list_sub.Count>0)
+                        try
                         {
-                            foreach(var sub in list_sub)
+                            await _productV2DetailMongoAccess.UpdateProductFlashsale(product_mongo, flashsale, product);
+                            var list_sub = await _productV2DetailMongoAccess.SubListing(product.ProductId);
+                            if (list_sub != null && list_sub.Count > 0)
                             {
-                                await _productV2DetailMongoAccess.UpdateProductFlashsale(sub, flashsale, product);
+                                foreach (var sub in list_sub)
+                                {
+                                    await _productV2DetailMongoAccess.UpdateProductFlashsale(sub, flashsale, product);
+                                }
                             }
-                        } 
+                        }
+                        catch { }
                         new_items.Add(new FlashSaleProductESModel()
                         {
                             valuetype=product.ValueType,

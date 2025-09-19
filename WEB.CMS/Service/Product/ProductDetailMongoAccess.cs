@@ -757,6 +757,10 @@ namespace WEB.CMS.Models.Product
                     double total_discount = 0;
 
                     double percent = Convert.ToDouble(active_flashsale_product.DiscountValue);
+                    //if(item._id== "687dc3dfb1292b3f9b42b9c2")
+                    //{
+                    //    string console = "Match";
+                    //}
                     var amount_product = item.amount;
                     if (item.amount <= 0 && item.amount_min != null && item.amount_min > 0)
                     {
@@ -789,7 +793,7 @@ namespace WEB.CMS.Models.Product
                     if (item.amount <= 0 && item.amount_min != null && item.amount_min > 0)
                     {
                       item.flash_sale_amount_min=  item.amount_min - total_discount;
-                        item.flash_sale_amount_min = item.amount_min = Math.Ceiling((double)item.flash_sale_amount_min);
+                        item.flash_sale_amount_min  = Math.Ceiling((double)item.flash_sale_amount_min);
 
                     }
                     if (item.amount <= 0 && item.amount_max != null && item.amount_max > 0)
