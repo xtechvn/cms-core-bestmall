@@ -751,7 +751,8 @@ namespace WEB.CMS.Models.Product
                 {
                     product_id_compare = item.parent_product_id;
                 }
-                if (active_flashsale_product != null && active_flashsale_product.Id >0 && active_flashsale_product.DiscountValue != null && active_flashsale_product.ValueType != null)
+                if (active_flashsale != null && active_flashsale_product !=null
+                    && active_flashsale_product.Id >0 && active_flashsale_product.DiscountValue != null && active_flashsale_product.ValueType != null)
                 {
                     double total_discount = 0;
 
@@ -810,7 +811,20 @@ namespace WEB.CMS.Models.Product
                     await UpdateAsync(item);
                     return item;
                 }
-
+                else
+                {
+                    item.flash_sale_amount_max = null;
+                    item.flash_sale_amount_max = null;
+                    item.flash_sale_discount = null;
+                    item.exists_flashsale_id = null;
+                    item.exists_flashsale_name = null;
+                    item.amount_after_flashsale = null;
+                    item.flash_sale_discount = null;
+                    item.flash_sale_fromdate = null;
+                    item.flash_sale_todate = null;
+                    item.flash_sale_price_sales = null;
+                    item.flash_sale_unit = null;
+                }
                 //var base_product = await _productDetailMongoAccess.GetByID(item._id);
                 //if (base_product != null && base_product._id != null)
                 //{
