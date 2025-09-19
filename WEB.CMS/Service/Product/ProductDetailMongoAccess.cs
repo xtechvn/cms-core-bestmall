@@ -801,7 +801,7 @@ namespace WEB.CMS.Models.Product
                     item.flash_sale_discount = Math.Round(((amount_product - (double)item.amount_after_flashsale) / amount_product * 100), 0);
                     item.flash_sale_discount = item.flash_sale_discount <= 0 ? 0 : item.flash_sale_discount;
                     // item.price = amount_product- item.profit;
-                    item.old_price = amount_product;
+                    item.flash_sale_old_price = amount_product;
                     item.amount_after_flashsale = Math.Ceiling((double)item.amount_after_flashsale);
                     //item.profit = NumberHelpers.RoundUpToHundredsDouble((double)item.profit);
                     //item.flashsale_badge_type = exists_flash_sale_product.badgetype;
@@ -824,6 +824,7 @@ namespace WEB.CMS.Models.Product
                     item.flash_sale_todate = null;
                     item.flash_sale_price_sales = null;
                     item.flash_sale_unit = null;
+                    item.flash_sale_old_price = null;
                 }
                 //var base_product = await _productDetailMongoAccess.GetByID(item._id);
                 //if (base_product != null && base_product._id != null)
