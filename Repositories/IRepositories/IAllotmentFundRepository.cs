@@ -8,6 +8,5 @@ namespace Repositories.IRepositories
         public int Insert(AllotmentFund model);
         public int Update(AllotmentFund model);
         public AllotmentFund GetByAccountClientId(long accountClientId);
-        Task<AllotmentFund> GetByClientId(long clientId);
     }
 }

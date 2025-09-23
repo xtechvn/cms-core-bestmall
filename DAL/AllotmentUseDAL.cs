@@ -1,6 +1,7 @@
 ﻿using DAL.Generic;
 using DAL.StoreProcedure;
 using Entities.Models;
+using Entities.ViewModels;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -128,6 +129,36 @@ namespace DAL
                 return null;
             }
         }
-
+        public async Task<AllotmentFund> GetByClientId(long clientId)
+        {
+            try
+            {
+                using (var _DbContext = new EntityDataContext(_connection))
+                {
+                    return await _DbContext.AllotmentFunds.FirstOrDefaultAsync(s => s.AccountClientId == clientId);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("GetByUserName - UserDAL: " + ex);
+                return null;
+            }
+        }
+        public async Task<AllotmentUse> GetByDataId(long dataId)
+        {
+            try
+            {
+                using (var _DbContext = new EntityDataContext(_connection))
+                {
+                    return await _DbContext.AllotmentUses.FirstOrDefaultAsync(s => s.DataId == dataId);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.InsertLogTelegram("GetByDataId - UserDAL: " + ex);
+                return null;
+            }
+        }
+       
     }
 }
