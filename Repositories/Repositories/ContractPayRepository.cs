@@ -8,6 +8,7 @@ using Entities.ViewModels;
 using Entities.ViewModels.Funding;
 using Microsoft.Extensions.Options;
 using Nest;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Numeric;
 using Repositories.IRepositories;
 using System;
 using System.Collections.Generic;
@@ -27,10 +28,13 @@ namespace Repositories.Repositories
         private readonly ContractPayDAL _contractPayDAL;
         private readonly AllCodeDAL allCodeDAL;
         private readonly OrderDAL orderDAL;
+        private readonly OrderMergeDAL orderMergeDAL;
         private readonly DepositHistoryDAL depositHistoryDAL;
         private readonly BankingAccountDAL bankingAccountDAL;
         private readonly ClientDAL clientDAL;
         private readonly UserDAL userDAL;
+        private readonly AllotmentFundDAL allotmentFundDAL;
+        private readonly AllotmentUseDAL allotmentUseDAL;
 
         public ContractPayRepository(IOptions<DataBaseConfig> dataBaseConfig)
         {
@@ -38,9 +42,12 @@ namespace Repositories.Repositories
             _contractPayDAL = new ContractPayDAL(dataBaseConfig.Value.SqlServer.ConnectionString);
             clientDAL = new ClientDAL(dataBaseConfig.Value.SqlServer.ConnectionString);
             orderDAL = new OrderDAL(dataBaseConfig.Value.SqlServer.ConnectionString);
+            orderMergeDAL = new OrderMergeDAL(dataBaseConfig.Value.SqlServer.ConnectionString);
             depositHistoryDAL = new DepositHistoryDAL(dataBaseConfig.Value.SqlServer.ConnectionString);
             bankingAccountDAL = new BankingAccountDAL(dataBaseConfig.Value.SqlServer.ConnectionString);
             userDAL = new UserDAL(dataBaseConfig.Value.SqlServer.ConnectionString);
+            allotmentFundDAL=new AllotmentFundDAL(dataBaseConfig.Value.SqlServer.ConnectionString);
+            allotmentUseDAL = new AllotmentUseDAL(dataBaseConfig.Value.SqlServer.ConnectionString);
         }
 
         public string ExportDeposit(ContractPaySearchModel searchModel, string FilePath)
@@ -362,12 +369,71 @@ namespace Repositories.Repositories
             return contractPayViewModel;
         }
 
-        public int CreateContractPay(ContractPayViewModel model)
+        public async Task<int> CreateContractPay(ContractPayViewModel model)
         {
             var entity = _contractPayDAL.GetByBillNo(model.BillNo);
             if (entity != null)
                 return -2;
-            return _contractPayDAL.CreateContractPay(model);
+            var id= _contractPayDAL.CreateContractPay(model);
+            try
+            {
+                if (model.Type == (int)DepositHistoryConstant.CONTRACT_PAY_TYPE.THU_TIEN_DON_HANG)
+                {
+                    var client = await clientDAL.GetClientDetail((long)model.ClientId);
+                    if(client != null && client.IsRegisterAffiliate == true)
+                    {
+                        var order = orderDAL.GetByOrderId(model.OrderId);
+                        if (order != null && order.OrderId > 0 && order.OrderMergeId != null && order.OrderMergeId > 0)
+                        {
+                            var order_merge = orderMergeDAL.GetById((long)order.OrderMergeId);
+                            var allotment_use = await allotmentUseDAL.GetByOrderMergeId((long)order.OrderMergeId);
+                            if (order_merge != null && order_merge.Id > 0 && order_merge.ProfitAffiliate != null && order_merge.ProfitAffiliate > 0
+                                && (allotment_use==null || allotment_use.Id<=0))
+                            {
+                                long client_affiliate = CommonHelper.GetAffiliateClient(order_merge.UtmMedium);
+                                if (client_affiliate > 0)
+                                {
+                                    var fund = allotmentFundDAL.GetByAccountClientId(client_affiliate);
+                                    if (fund != null && fund.Id > 0)
+                                    {
+                                        fund.AccountBalance += Math.Ceiling((double)order_merge.ProfitAffiliate);
+                                        fund.UpdateTime = DateTime.Now;
+                                        allotmentFundDAL.Update(fund);
+                                    }
+                                    else
+                                    {
+                                        fund = new AllotmentFund()
+                                        {
+                                            UpdateTime = DateTime.Now,
+                                            AccountBalance = Math.Ceiling((double)order_merge.ProfitAffiliate),
+                                            AccountClientId = client_affiliate,
+                                            CreateDate = DateTime.Now,
+                                            FundType = 1,
+
+                                        };
+                                        fund.Id = allotmentFundDAL.Insert(fund);
+                                    }
+                                    var fund_use = new AllotmentUse()
+                                    {
+                                        AllotmentFundId = fund.Id,
+                                        AccountClientId = client_affiliate,
+                                        AmountUse = Math.Ceiling((double)order_merge.ProfitAffiliate),
+                                        ClientId = client.Id,
+                                        CreateDate = DateTime.Now,
+                                        DataId = order_merge.Id,
+                                        ServiceType = 0,
+                                        PaymentStatus = 0,
+                                    };
+                                    allotmentUseDAL.Insert(fund_use);
+                                }
+                            }
+                        }
+                    }
+                  
+                }
+            }
+            catch { }
+            return id;
         }
 
         public int UpdateContractPay(ContractPayViewModel model)

@@ -448,6 +448,28 @@ namespace Utilities
                 return false;
             }
         }
+        public static long GetAffiliateClient(string utm_medium)
+        {
+            long client_id = -1;
+            try
+            {
+                string decoded = Decode(utm_medium, "lmRI5gYANBix6AUX1STNNXhPIhJ2RVlvg6SrXASb3GoMDmbxdxAa");
+                if (decoded != null && decoded.Trim() != "" && decoded.ToLower().Contains("client_id"))
+                {
+                    string client_id_value = decoded.Split(";")[0].Replace("client_id=", "");
+                    if (client_id_value != null && client_id_value.Trim() != "")
+                    {
+                        client_id = Convert.ToInt64(client_id_value);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return client_id;
+        }
+
 
     }
 }
