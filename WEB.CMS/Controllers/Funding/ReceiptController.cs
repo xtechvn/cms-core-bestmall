@@ -370,7 +370,7 @@ namespace WEB.CMS.Controllers.Funding
                     }
                     model.AttatchmentFile = "/" + _UploadFolder + "/" + _FileName;
                 }
-                var result = _contractPayRepository.UpdateContractPay(model);
+                var result = await _contractPayRepository.UpdateContractPay(model);
                 if (result < 1)
                     return Ok(new
                     {
