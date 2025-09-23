@@ -8,7 +8,6 @@ namespace Repositories.IRepositories
     {
         public int Insert(AllotmentUse model);
         public int Update(AllotmentUse model);
-        public GenericViewModel<AllotmentUse> GetByAccountClientId(long accountClientId, int pageIndex = 1, int pageSize = 10);
         public  Task<AllotmentUse> GetByDataId(long dataId);
     }
 }

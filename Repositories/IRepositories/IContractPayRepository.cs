@@ -14,7 +14,7 @@ namespace Repositories.IRepositories
         ContractPayViewModel GetByPayId(int contractPayId);
         ContractPay GetById(long contractPayId);
         string ExportDeposit(ContractPaySearchModel searchModel, string FilePath);
-        int CreateContractPay(ContractPayViewModel model);
+       // int CreateContractPay(ContractPayViewModel model);
         int AddContractPayDetail(ContractPayViewModel model, bool isOrder = false);
         int UpdateContractPay(ContractPayViewModel model);
         Task<List<ContractPayDetaiByOrderIdlViewModel>> GetContractPayByOrderId(long OrderId);
@@ -34,5 +34,6 @@ namespace Repositories.IRepositories
         List<PaymentRequestViewModel> GetContractPayServiceListBySupplierId(long supplierId, int contractPayId = 0, int serviceId = 0);
         PaymentRequestViewModel GetServiceDetail(string serviceCode);
         double GetTotalAmountContractPayByServiceId(string ServiceId, long ServiceType, long ContractPayType);
+        Task<int> CreateContractPay(ContractPayViewModel model);
     }
 }

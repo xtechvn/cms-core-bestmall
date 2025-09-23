@@ -30,9 +30,6 @@ namespace HuloToys_Service.Repositories
         {
             return allotmentFundDAL.GetByAccountClientId(accountClientId);
         }
-        public async Task<AllotmentFund> GetByClientId(long clientId)
-        {
-            return await allotmentFundDAL.GetByClientId(clientId);
-        }
+      
     }
 }

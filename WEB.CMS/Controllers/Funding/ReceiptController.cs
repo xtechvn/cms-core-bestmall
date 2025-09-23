@@ -247,7 +247,7 @@ namespace WEB.CMS.Controllers.Funding
                 //model.BillNo = await identifierServiceRepository.buildContractPay();
                
                 model.BillNo = await identifierServiceRepository.buildContractPay();
-                var contractPayId = _contractPayRepository.CreateContractPay(model);
+                var contractPayId = await _contractPayRepository.CreateContractPay(model);
                 if (contractPayId == -2)
                     return Ok(new
                     {

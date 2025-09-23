@@ -27,10 +27,7 @@ namespace HuloToys_Service.Repositories
             return allotmentUseDAL.Update(model);
 
         }
-        public GenericViewModel<AllotmentUse> GetByAccountClientId(long accountClientId, int pageIndex = 1, int pageSize = 10)
-        {
-            return allotmentUseDAL.GetByAccountClientId(accountClientId,  pageIndex ,  pageSize);
-        }
+       
         public async Task<AllotmentUse> GetByDataId(long dataId)
         {
             return await allotmentUseDAL.GetByDataId(dataId);
