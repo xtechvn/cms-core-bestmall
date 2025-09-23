@@ -1,13 +1,12 @@
 ﻿using DAL.Generic;
 using DAL.StoreProcedure;
 using Entities.Models;
-using Entities.ViewModels;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Utilities;
-
 namespace DAL
 {
     public class AllotmentUseDAL : GenericService<AllotmentUse>
@@ -43,7 +42,7 @@ namespace DAL
                     new SqlParameter("@Branch", (object?)model.Branch ?? DBNull.Value),
                 };
 
-                return _DbWorker.ExecuteNonQuery("SP_InsertAllotmentUse", objParam);
+                return Convert.ToInt32(_DbWorker.ExecuteScalar("SP_InsertAllotmentUse", objParam));
             }
             catch (Exception ex)
             {
@@ -67,7 +66,7 @@ namespace DAL
                     new SqlParameter("@ClientId", model.ClientId),
                     new SqlParameter("@CreateDate", model.CreateDate==null||model.CreateDate<=DateTime.MinValue ? DBNull.Value:model.CreateDate),
                     new SqlParameter("@PaymentStatus", model.PaymentStatus),
-                    new SqlParameter("@Description", (object?)model.Description ?? DBNull.Value),
+                     new SqlParameter("@Description", (object?)model.Description ?? DBNull.Value),
                     new SqlParameter("@TotalAmoutCalculate", (object?)model.TotalAmoutCalculate ?? DBNull.Value),
                     new SqlParameter("@PaymentFromDate", (object?)model.PaymentFromDate ?? DBNull.Value),
                     new SqlParameter("@PaymentToDate", (object?)model.PaymentToDate ?? DBNull.Value),
@@ -86,52 +85,49 @@ namespace DAL
             }
         }
 
-        public GenericViewModel<AllotmentUse> GetByAccountClientId(long accountClientId, int pageIndex=1, int pageSize=10)
+        public List<AllotmentUse> GetByAccountClientId(long accountClientId)
         {
-            GenericViewModel<AllotmentUse> result = new GenericViewModel<AllotmentUse>();
             try
             {
                 SqlParameter[] objParam = new SqlParameter[]
                 {
-                    new SqlParameter("@AccountClientId", accountClientId),
-                    new SqlParameter("@page_index", pageIndex),
-                    new SqlParameter("@page_size", pageSize),
-                    new SqlParameter("@service_type", 1),
-
+                    new SqlParameter("@AccountClientId", accountClientId)
                 };
 
                 var dt= _DbWorker.GetDataTable("SP_GetAllotmentUseByAccountClientId", objParam);
                 if (dt != null && dt.Rows.Count > 0)
                 {
-                    result.ListData = dt.ToList<AllotmentUse>();
-                    result.CurrentPage = pageIndex;
-                    result.PageSize = pageSize;
-                    result.TotalRecord = Convert.ToInt32(dt.Rows[0]["TotalRow"]);
-                    result.TotalPage = (int)Math.Ceiling((double)result.TotalRecord / pageSize);
+                    var data = dt.ToList<AllotmentUse>();
+                    return data;
                 }
             }
             catch (Exception ex)
             {
                 LogHelper.InsertLogTelegram("GetByAccountClientId - AllotmentUseDAL: " + ex);
             }
-            return result;
+            return null;
 
         }
-
-        public async Task<AllotmentUse> GetByDataId(long dataId)
+        public async Task<AllotmentUse> GetByOrderMergeId(long orderMergeId)
         {
             try
             {
                 using (var _DbContext = new EntityDataContext(_connection))
                 {
-                    return await _DbContext.AllotmentUses.FirstOrDefaultAsync(s => s.DataId == dataId);
+                    var detail = await _DbContext.AllotmentUses.AsNoTracking().FirstOrDefaultAsync(x => x.DataId == orderMergeId && x.ServiceType==0);
+                    if (detail != null)
+                    {
+                        return detail;
+                    }
                 }
+                return null;
             }
             catch (Exception ex)
             {
-                LogHelper.InsertLogTelegram("GetByDataId - UserDAL: " + ex);
+                LogHelper.InsertLogTelegram("GetByOrderMergeId - AllotmentUseDAL: " + ex.ToString());
                 return null;
             }
         }
+
     }
 }

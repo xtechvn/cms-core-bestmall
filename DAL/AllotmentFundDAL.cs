@@ -2,9 +2,7 @@
 using DAL.StoreProcedure;
 using Entities.Models;
 using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
 using System;
-using System.Threading.Tasks;
 using Utilities;
 
 namespace DAL
@@ -62,7 +60,7 @@ namespace DAL
             }
         }
 
-        public AllotmentFund GetByAccountClientId(long accountClientId,int page_index=1,int page_size=10)
+        public AllotmentFund GetByAccountClientId(long accountClientId)
         {
             try
             {
@@ -84,21 +82,6 @@ namespace DAL
             }
             return null;
 
-        }
-        public async Task<AllotmentFund> GetByClientId(long clientId)
-        {
-            try
-            {
-                using (var _DbContext = new EntityDataContext(_connection))
-                {
-                    return await _DbContext.AllotmentFunds.FirstOrDefaultAsync(s => s.AccountClientId == clientId);
-                }
-            }
-            catch (Exception ex)
-            {
-                LogHelper.InsertLogTelegram("GetByUserName - UserDAL: " + ex);
-                return null;
-            }
         }
     }
 }
